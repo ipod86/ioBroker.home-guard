@@ -28,6 +28,8 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day of the same kind that was learned from your own switching, with shifted times) and *combined* (recommended).
+- **Evening light**: the lamps of type "evening" every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs.
+- **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, simulation and a logbook to open.

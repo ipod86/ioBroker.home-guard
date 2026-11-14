@@ -17,6 +17,8 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Bei Alarm**: Lampen an oder blinkend (danach wieder wie vorher), Sirenen, beliebige Geräte über eine Aktionstabelle (z. B. Tür abschließen beim Scharfschalten, Rollläden runter, Kameraaufnahme).
 - **Sabotage-Prüfung**: Sensoren, die sich eine einstellbare Zahl Stunden nicht gemeldet haben, werden gemeldet (Batterie leer, Funkproblem).
 - **Anwesenheitssimulation** mit drei Planungsarten: *Dämmerung* (zufällige Zeiten um den Sonnenuntergang, Licht aus um eine feste Zeit, Freitag/Samstag später, kurze Gänge in Flur und Bad), *gelernt* (spielt einen echten Tag derselben Art aus deinem eigenen Schaltverhalten mit verschobenen Zeiten ab) und *kombiniert* (empfohlen).
+- **Abendlicht**: die Lampen vom Typ „Abend“ jeden Abend, auch wenn jemand zu Hause ist – bei Dämmerung alle an (auch die am Vorabend von Hand ausgeschalteten), bei „Licht aus“ alle aus (auch die von Hand eingeschalteten). Kurze Gänge, Zubettgehen und Gelerntes nur, solange die Simulation läuft.
+- **Lernfenster**: Lernen und Nachspielen nur bei Dunkelheit (ab kurz vor Sonnenuntergang bis Sonnenaufgang), zwischen zwei Uhrzeiten oder immer.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulation und ein ausklappbares Logbuch.
