@@ -5,6 +5,8 @@
 
 Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Adapter. Beide Teile lassen sich einzeln oder zusammen nutzen.
 
+![Home Guard Panel](https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/widget_de.jpg)
+
 ## Highlights
 
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). 24-h-Sensoren (Rauch, Wasser) lösen immer aus.

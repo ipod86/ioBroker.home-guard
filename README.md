@@ -16,6 +16,8 @@
 
 Home Guard is an alarm system and a presence simulation in one adapter. Both parts can be used on their own or together.
 
+![Home Guard panel](https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/widget_en.jpg)
+
 ### Highlights
 
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
