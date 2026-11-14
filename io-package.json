@@ -1,1281 +1,1294 @@
 {
-	"common": {
-		"name": "home-guard",
-		"version": "0.0.1",
-		"news": {
-			"0.0.1": {
-				"en": "initial release",
-				"de": "Erstveröffentlichung",
-				"ru": "Начальная версия",
-				"pt": "lançamento inicial",
-				"nl": "Eerste uitgave",
-				"fr": "Première version",
-				"it": "Versione iniziale",
-				"es": "Versión inicial",
-				"pl": "Pierwsze wydanie",
-				"uk": "Початкова версія",
-				"zh-cn": "首次出版"
-			}
-		},
-		"titleLang": {
-			"en": "Home Guard – Alarm system & presence simulation",
-			"de": "Home Guard – Alarmanlage & Anwesenheitssimulation",
-			"ru": "Home Guard – сигнализация и имитация присутствия",
-			"pt": "Home Guard – Sistema de alarme e simulação de presença",
-			"nl": "Home Guard – Alarmsysteem & aanwezigheidssimulatie",
-			"fr": "Home Guard – Système d'alarme et simulation de présence",
-			"it": "Home Guard – Sistema di allarme e simulazione di presenza",
-			"es": "Home Guard – Sistema de alarma y simulación de presencia",
-			"pl": "Home Guard – system alarmowy i symulacja obecności",
-			"uk": "Home Guard – сигналізація та імітація присутності",
-			"zh-cn": "Home Guard – 报警系统与在家模拟"
-		},
-		"desc": {
-			"en": "Alarm system with full, perimeter and night protection, exit and entry delay, open window check, PIN, door lock and presence integration, plus a presence simulation that runs on its own or together with the alarm system.",
-			"de": "Alarmanlage mit Voll-, Hüll- und Nachtschutz, Ausgangs- und Eingangsverzögerung, Offen-Fenster-Prüfung, PIN, Türschloss- und Anwesenheitsanbindung sowie einer Anwesenheitssimulation, die allein oder zusammen mit der Alarmanlage läuft.",
-			"ru": "Сигнализация с полной охраной, охраной периметра и ночной охраной, задержкой на выход и вход, проверкой открытых окон, PIN, интеграцией дверного замка и присутствия, а также имитацией присутствия, которая работает отдельно или вместе с сигнализацией.",
-			"pt": "Sistema de alarme com proteção total, perimetral e noturna, atraso de saída e entrada, verificação de janelas abertas, PIN, integração de fechadura e presença, além de uma simulação de presença que funciona sozinha ou com o sistema de alarme.",
-			"nl": "Alarmsysteem met volledige, schil- en nachtbeveiliging, uitgangs- en ingangsvertraging, controle op open ramen, pincode, koppeling met deurslot en aanwezigheid, plus een aanwezigheidssimulatie die zelfstandig of samen met het alarmsysteem werkt.",
-			"fr": "Système d'alarme avec protection totale, périmétrique et de nuit, délais de sortie et d'entrée, contrôle des fenêtres ouvertes, code PIN, intégration de la serrure et de la présence, ainsi qu'une simulation de présence qui fonctionne seule ou avec le système d'alarme.",
-			"it": "Sistema d'allarme con protezione totale, perimetrale e notturna, ritardo di uscita e d'ingresso, controllo delle finestre aperte, PIN, integrazione di serratura e presenza, più una simulazione di presenza che funziona da sola o insieme al sistema d'allarme.",
-			"es": "Sistema de alarma con protección total, perimetral y nocturna, retardo de salida y entrada, control de ventanas abiertas, PIN, integración de cerradura y presencia, además de una simulación de presencia que funciona sola o junto con el sistema de alarma.",
-			"pl": "System alarmowy z ochroną pełną, obwodową i nocną, opóźnieniem wyjścia i wejścia, kontrolą otwartych okien, PIN-em, integracją zamka drzwi i obecności oraz symulacją obecności, która działa samodzielnie lub razem z systemem alarmowym.",
-			"uk": "Сигналізація з повною охороною, охороною периметра та нічною охороною, затримкою на вихід і вхід, перевіркою відчинених вікон, PIN, інтеграцією дверного замка та присутності, а також імітацією присутності, що працює окремо або разом із сигналізацією.",
-			"zh-cn": "报警系统，具备全面、周界和夜间保护、退出与进入延时、开窗检查、PIN、门锁与在家状态集成，另有可单独运行或与报警系统配合运行的在家模拟。"
-		},
-		"authors": [
-			"ipod86 <david@graef.email>"
-		],
-		"keywords": [
-			"alarm",
-			"alarm system",
-			"Alarmanlage",
-			"security",
-			"Einbruch",
-			"burglar",
-			"presence simulation",
-			"Anwesenheitssimulation",
-			"vacation",
-			"Urlaub",
-			"vis-2",
-			"aura",
-			"web component",
-			"dashboard",
-			"widget"
-		],
-		"licenseInformation": {
-			"type": "free",
-			"license": "MIT"
-		},
-		"platform": "Javascript/Node.js",
-		"icon": "home-guard.png",
-		"enabled": true,
-		"extIcon": "https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/admin/home-guard.png",
-		"readme": "https://github.com/ipod86/ioBroker.home-guard/blob/main/README.md",
-		"loglevel": "info",
-		"tier": 3,
-		"mode": "daemon",
-		"type": "alarm",
-		"compact": true,
-		"connectionType": "local",
-		"dataSource": "push",
-		"adminUI": {
-			"config": "json"
-		},
-		"dependencies": [
-			{
-				"js-controller": ">=6.0.11"
-			}
-		],
-		"globalDependencies": [
-			{
-				"admin": ">=7.6.20"
-			}
-		],
-		"messagebox": true,
-		"webComponents": [
-			"webcomponents/home-guard-panel.json"
-		]
-	},
-	"native": {
-		"alarmEnabled": true,
-		"simEnabled": true,
-		"autoFull": false,
-		"enumFull": "",
-		"autoPerimeter": false,
-		"enumPerimeter": "",
-		"autoFire": false,
-		"enumFire": "",
-		"sensors": [],
-		"motionCount": 2,
-		"motionWindowSec": 120,
-		"sabotageHours": 0,
-		"exitDelayFull": 60,
-		"exitDelayPerimeter": 0,
-		"armEarlyId": "",
-		"entryDelay": 30,
-		"openCheck": "warn",
-		"alarmDuration": 180,
-		"nightEnabled": false,
-		"nightStart": "22:30",
-		"nightEnd": "06:30",
-		"pin": "",
-		"pinForDisarmState": true,
-		"pinForArm": false,
-		"maxWrongPin": 3,
-		"lockEnabled": false,
-		"lockId": "",
-		"lockValues": "true",
-		"presenceAuto": false,
-		"enumPresence": "",
-		"presence": [],
-		"presenceArm": "off",
-		"presenceDisarm": true,
-		"notify": [],
-		"notifyArmed": true,
-		"notifyDisarmed": true,
-		"notifyArmingFailed": true,
-		"notifyOpenWarning": true,
-		"notifyEntry": true,
-		"notifyAlarm": true,
-		"notifyAlarmEnd": true,
-		"notifyWrongPin": true,
-		"notifySabotage": true,
-		"notifySim": false,
-		"alarmRepeatMin": 5,
-		"notificationManager": true,
-		"speechId": "",
-		"speechArming": true,
-		"speechEntry": true,
-		"speechAlarm": true,
-		"lampsAuto": false,
-		"enumLamps": "",
-		"lamps": [],
-		"lampMode": "blink",
-		"blinkSec": 1,
-		"lampsRestore": true,
-		"sirens": [],
-		"actions": [],
-		"simCoupling": "alarm",
-		"simAuto": false,
-		"enumSimLamps": "",
-		"simLamps": [],
-		"simMode": "combined",
-		"simStartOffset": -30,
-		"simStartRandom": 20,
-		"simLuxId": "",
-		"simLuxBelow": 0,
-		"simEnd": "22:30",
-		"simEndRandom": 60,
-		"simWeekendLater": 45,
-		"simVisits": 4,
-		"simVisitMin": 2,
-		"simVisitMax": 15,
-		"simLearnDays": 28,
-		"simLearnDevicesOnly": true,
-		"simJitter": 15,
-		"logSize": 100,
-		"pinLockMin": 5,
-		"testNotify": true,
-		"testSpeech": true,
-		"testLamps": true,
-		"testSirens": false,
-		"testActions": false,
-		"testDuration": 15,
-		"eveningLight": false,
-		"simLearnWindow": "dark",
-		"simLearnDarkOffset": 30,
-		"simLearnFrom": "15:00",
-		"simLearnTo": "02:00",
-		"eveningLightOn": true,
-		"eveningLightOff": true,
-		"simDeviceMin": 60,
-		"simDeviceMax": 180,
-		"simDeviceCount": 1,
-		"hazardDefault": "speech",
-		"notifyHazard": true,
-		"presenceEnabled": false,
-		"morningLight": false,
-		"morningLightOn": true,
-		"morningLightOff": true,
-		"simWake": "06:30",
-		"simWakeRandom": 20,
-		"simWakeWeekendLater": 60,
-		"reportWhen": "armed",
-		"notifyReport": true,
-		"autoReport": false,
-		"enumReport": ""
-	},
-	"objects": [],
-	"instanceObjects": [
-		{
-			"_id": "status",
-			"type": "channel",
-			"common": {
-				"name": {
-					"en": "Status",
-					"de": "Status",
-					"ru": "Статус",
-					"pt": "Estado",
-					"nl": "Status",
-					"fr": "État",
-					"it": "Stato",
-					"es": "Estado",
-					"pl": "Stan",
-					"uk": "Стан",
-					"zh-cn": "状态"
-				}
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.mode",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Mode",
-					"de": "Modus",
-					"ru": "Режим",
-					"pt": "Modo",
-					"nl": "Modus",
-					"fr": "Mode",
-					"it": "Modalità",
-					"es": "Modo",
-					"pl": "Tryb",
-					"uk": "Режим",
-					"zh-cn": "模式"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": false,
-				"states": {
-					"off": "off",
-					"full": "full",
-					"perimeter": "perimeter",
-					"night": "night"
-				},
-				"def": "off"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.phase",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Phase",
-					"de": "Phase",
-					"ru": "Фаза",
-					"pt": "Fase",
-					"nl": "Fase",
-					"fr": "Phase",
-					"it": "Fase",
-					"es": "Fase",
-					"pl": "Faza",
-					"uk": "Фаза",
-					"zh-cn": "阶段"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": false,
-				"states": {
-					"disarmed": "disarmed",
-					"arming": "arming",
-					"armed": "armed",
-					"entry": "entry",
-					"alarm": "alarm"
-				},
-				"def": "disarmed"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.text",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Status text",
-					"de": "Statustext",
-					"ru": "Текст статуса",
-					"pt": "Texto do estado",
-					"nl": "Statustekst",
-					"fr": "Texte d'état",
-					"it": "Testo dello stato",
-					"es": "Texto de estado",
-					"pl": "Tekst stanu",
-					"uk": "Текст стану",
-					"zh-cn": "状态文本"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": false,
-				"def": ""
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.armed",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Armed",
-					"de": "Scharf",
-					"ru": "На охране",
-					"pt": "Ativado",
-					"nl": "Ingeschakeld",
-					"fr": "Armé",
-					"it": "Inserito",
-					"es": "Armado",
-					"pl": "Uzbrojony",
-					"uk": "На охороні",
-					"zh-cn": "已布防"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": false
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.alarm",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Alarm",
-					"de": "Alarm",
-					"ru": "Тревога",
-					"pt": "Alarme",
-					"nl": "Alarm",
-					"fr": "Alarme",
-					"it": "Allarme",
-					"es": "Alarma",
-					"pl": "Alarm",
-					"uk": "Тривога",
-					"zh-cn": "报警"
-				},
-				"type": "boolean",
-				"role": "sensor.alarm.secure",
-				"read": true,
-				"write": false,
-				"def": false
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.entry",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Entry delay running",
-					"de": "Eingangsverzögerung läuft",
-					"ru": "Идёт задержка на вход",
-					"pt": "Atraso de entrada em curso",
-					"nl": "Ingangsvertraging loopt",
-					"fr": "Délai d'entrée en cours",
-					"it": "Ritardo d'ingresso in corso",
-					"es": "Retardo de entrada en curso",
-					"pl": "Trwa opóźnienie wejścia",
-					"uk": "Триває затримка на вхід",
-					"zh-cn": "进入延时进行中"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": false
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.countdown",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Countdown",
-					"de": "Countdown",
-					"ru": "Обратный отсчёт",
-					"pt": "Contagem decrescente",
-					"nl": "Aftellen",
-					"fr": "Compte à rebours",
-					"it": "Conto alla rovescia",
-					"es": "Cuenta atrás",
-					"pl": "Odliczanie",
-					"uk": "Зворотний відлік",
-					"zh-cn": "倒计时"
-				},
-				"type": "number",
-				"role": "value.timer",
-				"read": true,
-				"write": false,
-				"unit": "s",
-				"def": 0
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.openContacts",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Open contacts",
-					"de": "Offene Kontakte",
-					"ru": "Открытые контакты",
-					"pt": "Contactos abertos",
-					"nl": "Open contacten",
-					"fr": "Contacts ouverts",
-					"it": "Contatti aperti",
-					"es": "Contactos abiertos",
-					"pl": "Otwarte kontakty",
-					"uk": "Відчинені контакти",
-					"zh-cn": "打开的触点"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.openCount",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Number of open contacts",
-					"de": "Anzahl offener Kontakte",
-					"ru": "Количество открытых контактов",
-					"pt": "Número de contactos abertos",
-					"nl": "Aantal open contacten",
-					"fr": "Nombre de contacts ouverts",
-					"it": "Numero di contatti aperti",
-					"es": "Número de contactos abiertos",
-					"pl": "Liczba otwartych kontaktów",
-					"uk": "Кількість відчинених контактів",
-					"zh-cn": "打开的触点数量"
-				},
-				"type": "number",
-				"role": "value",
-				"read": true,
-				"write": false,
-				"def": 0
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.readyFull",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Full protection possible",
-					"de": "Vollschutz möglich",
-					"ru": "Полная охрана возможна",
-					"pt": "Proteção total possível",
-					"nl": "Volledige beveiliging mogelijk",
-					"fr": "Protection totale possible",
-					"it": "Protezione totale possibile",
-					"es": "Protección total posible",
-					"pl": "Ochrona pełna możliwa",
-					"uk": "Повна охорона можлива",
-					"zh-cn": "可全面保护"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.readyPerimeter",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Perimeter protection possible",
-					"de": "Hüllschutz möglich",
-					"ru": "Охрана периметра возможна",
-					"pt": "Proteção perimetral possível",
-					"nl": "Schilbeveiliging mogelijk",
-					"fr": "Protection périmétrique possible",
-					"it": "Protezione perimetrale possibile",
-					"es": "Protección perimetral posible",
-					"pl": "Ochrona obwodowa możliwa",
-					"uk": "Охорона периметра можлива",
-					"zh-cn": "可周界保护"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.lastTrigger",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Last trigger",
-					"de": "Letzter Auslöser",
-					"ru": "Последний триггер",
-					"pt": "Último gatilho",
-					"nl": "Laatste trigger",
-					"fr": "Dernier déclencheur",
-					"it": "Ultimo attivatore",
-					"es": "Último disparador",
-					"pl": "Ostatni wyzwalacz",
-					"uk": "Останній тригер",
-					"zh-cn": "最后触发"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": false,
-				"def": ""
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.lastTriggerTime",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Time of the last trigger",
-					"de": "Zeit des letzten Auslösers",
-					"ru": "Время последнего триггера",
-					"pt": "Hora do último gatilho",
-					"nl": "Tijd van de laatste trigger",
-					"fr": "Heure du dernier déclencheur",
-					"it": "Ora dell'ultimo attivatore",
-					"es": "Hora del último disparador",
-					"pl": "Czas ostatniego wyzwalacza",
-					"uk": "Час останнього тригера",
-					"zh-cn": "最后触发时间"
-				},
-				"type": "number",
-				"role": "date",
-				"read": true,
-				"write": false,
-				"def": 0
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.wrongPin",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Wrong PIN entries",
-					"de": "Falsche PIN-Eingaben",
-					"ru": "Неверные вводы PIN",
-					"pt": "Entradas de PIN erradas",
-					"nl": "Verkeerde pincode-invoer",
-					"fr": "Saisies de PIN erronées",
-					"it": "Inserimenti PIN errati",
-					"es": "Entradas de PIN incorrectas",
-					"pl": "Błędne wpisy PIN",
-					"uk": "Неправильні введення PIN",
-					"zh-cn": "PIN 输入错误次数"
-				},
-				"type": "number",
-				"role": "value",
-				"read": true,
-				"write": false,
-				"def": 0
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.sabotage",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Sensors without reports",
-					"de": "Sensoren ohne Meldung",
-					"ru": "Датчики без сообщений",
-					"pt": "Sensores sem mensagens",
-					"nl": "Sensoren zonder melding",
-					"fr": "Capteurs sans message",
-					"it": "Sensori senza messaggi",
-					"es": "Sensores sin mensajes",
-					"pl": "Czujniki bez wiadomości",
-					"uk": "Датчики без повідомлень",
-					"zh-cn": "无消息的传感器"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.sensors",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Monitored sensors",
-					"de": "Überwachte Sensoren",
-					"ru": "Контролируемые датчики",
-					"pt": "Sensores vigiados",
-					"nl": "Bewaakte sensoren",
-					"fr": "Capteurs surveillés",
-					"it": "Sensori sorvegliati",
-					"es": "Sensores vigilados",
-					"pl": "Monitorowane czujniki",
-					"uk": "Контрольовані датчики",
-					"zh-cn": "监控的传感器"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.presentCount",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Persons at home",
-					"de": "Personen zu Hause",
-					"ru": "Людей дома",
-					"pt": "Pessoas em casa",
-					"nl": "Personen thuis",
-					"fr": "Personnes à la maison",
-					"it": "Persone in casa",
-					"es": "Personas en casa",
-					"pl": "Osoby w domu",
-					"uk": "Людей удома",
-					"zh-cn": "在家人数"
-				},
-				"type": "number",
-				"role": "value",
-				"read": true,
-				"write": false,
-				"def": 0
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.someoneHome",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Someone at home",
-					"de": "Jemand zu Hause",
-					"ru": "Кто-то дома",
-					"pt": "Alguém em casa",
-					"nl": "Iemand thuis",
-					"fr": "Quelqu'un à la maison",
-					"it": "Qualcuno in casa",
-					"es": "Alguien en casa",
-					"pl": "Ktoś w domu",
-					"uk": "Хтось удома",
-					"zh-cn": "有人在家"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.present",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Persons and whether they are at home",
-					"de": "Personen und ob sie zu Hause sind",
-					"ru": "Люди и находятся ли они дома",
-					"pt": "Pessoas e se estão em casa",
-					"nl": "Personen en of ze thuis zijn",
-					"fr": "Personnes et si elles sont à la maison",
-					"it": "Persone e se sono in casa",
-					"es": "Personas y si están en casa",
-					"pl": "Osoby i czy są w domu",
-					"uk": "Люди та чи вони вдома",
-					"zh-cn": "人员及其是否在家"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "status.log",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Logbook",
-					"de": "Logbuch",
-					"ru": "Журнал",
-					"pt": "Registo",
-					"nl": "Logboek",
-					"fr": "Journal",
-					"it": "Registro",
-					"es": "Registro",
-					"pl": "Dziennik",
-					"uk": "Журнал",
-					"zh-cn": "日志"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "control",
-			"type": "channel",
-			"common": {
-				"name": {
-					"en": "Control",
-					"de": "Steuerung",
-					"ru": "Управление",
-					"pt": "Controlo",
-					"nl": "Bediening",
-					"fr": "Commande",
-					"it": "Controllo",
-					"es": "Control",
-					"pl": "Sterowanie",
-					"uk": "Керування",
-					"zh-cn": "控制"
-				}
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.mode",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Set mode",
-					"de": "Modus setzen",
-					"ru": "Установить режим",
-					"pt": "Definir modo",
-					"nl": "Modus instellen",
-					"fr": "Définir le mode",
-					"it": "Impostare la modalità",
-					"es": "Establecer modo",
-					"pl": "Ustaw tryb",
-					"uk": "Встановити режим",
-					"zh-cn": "设置模式"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": true,
-				"states": {
-					"off": "off",
-					"full": "full",
-					"perimeter": "perimeter",
-					"night": "night"
-				},
-				"def": "off"
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.full",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Arm full protection",
-					"de": "Vollschutz scharf schalten",
-					"ru": "Поставить полную охрану",
-					"pt": "Ativar proteção total",
-					"nl": "Volledige beveiliging inschakelen",
-					"fr": "Armer la protection totale",
-					"it": "Inserire protezione totale",
-					"es": "Armar protección total",
-					"pl": "Uzbrój ochronę pełną",
-					"uk": "Поставити повну охорону",
-					"zh-cn": "布防全面保护"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.perimeter",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Arm perimeter protection",
-					"de": "Hüllschutz scharf schalten",
-					"ru": "Поставить охрану периметра",
-					"pt": "Ativar proteção perimetral",
-					"nl": "Schilbeveiliging inschakelen",
-					"fr": "Armer la protection périmétrique",
-					"it": "Inserire protezione perimetrale",
-					"es": "Armar protección perimetral",
-					"pl": "Uzbrój ochronę obwodową",
-					"uk": "Поставити охорону периметра",
-					"zh-cn": "布防周界保护"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.night",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Arm night protection",
-					"de": "Nachtschutz scharf schalten",
-					"ru": "Поставить ночную охрану",
-					"pt": "Ativar proteção noturna",
-					"nl": "Nachtbeveiliging inschakelen",
-					"fr": "Armer la protection de nuit",
-					"it": "Inserire protezione notturna",
-					"es": "Armar protección nocturna",
-					"pl": "Uzbrój ochronę nocną",
-					"uk": "Поставити нічну охорону",
-					"zh-cn": "布防夜间保护"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.off",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Disarm",
-					"de": "Unscharf schalten",
-					"ru": "Снять с охраны",
-					"pt": "Desativar",
-					"nl": "Uitschakelen",
-					"fr": "Désarmer",
-					"it": "Disinserire",
-					"es": "Desarmar",
-					"pl": "Rozbrój",
-					"uk": "Зняти з охорони",
-					"zh-cn": "撤防"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.cancel",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Cancel arming",
-					"de": "Scharfschalten abbrechen",
-					"ru": "Отменить постановку на охрану",
-					"pt": "Cancelar ativação",
-					"nl": "Inschakelen annuleren",
-					"fr": "Annuler l'armement",
-					"it": "Annullare l'inserimento",
-					"es": "Cancelar armado",
-					"pl": "Anuluj uzbrajanie",
-					"uk": "Скасувати постановку на охорону",
-					"zh-cn": "取消布防"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.ack",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Acknowledge alarm",
-					"de": "Alarm quittieren",
-					"ru": "Подтвердить тревогу",
-					"pt": "Confirmar alarme",
-					"nl": "Alarm bevestigen",
-					"fr": "Acquitter l'alarme",
-					"it": "Confermare l'allarme",
-					"es": "Confirmar alarma",
-					"pl": "Potwierdź alarm",
-					"uk": "Підтвердити тривогу",
-					"zh-cn": "确认报警"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.panic",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Panic alarm",
-					"de": "Panik-Alarm",
-					"ru": "Тревожная кнопка",
-					"pt": "Alarme de pânico",
-					"nl": "Paniekalarm",
-					"fr": "Alarme panique",
-					"it": "Allarme panico",
-					"es": "Alarma de pánico",
-					"pl": "Alarm napadowy",
-					"uk": "Тривожна кнопка",
-					"zh-cn": "紧急报警"
-				},
-				"type": "boolean",
-				"role": "button",
-				"read": false,
-				"write": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.pin",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Enter PIN (disarms)",
-					"de": "PIN eingeben (entschärft)",
-					"ru": "Ввести PIN (снимает с охраны)",
-					"pt": "Introduzir PIN (desativa)",
-					"nl": "Pincode invoeren (schakelt uit)",
-					"fr": "Saisir le PIN (désarme)",
-					"it": "Inserire PIN (disinserisce)",
-					"es": "Introducir PIN (desarma)",
-					"pl": "Wprowadź PIN (rozbraja)",
-					"uk": "Ввести PIN (знімає з охорони)",
-					"zh-cn": "输入 PIN（撤防）"
-				},
-				"type": "string",
-				"role": "text",
-				"read": false,
-				"write": true,
-				"def": ""
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.autoArm",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Automatic arming/disarming by presence",
-					"de": "Automatisch scharf/unscharf über Anwesenheit",
-					"ru": "Автоматическая постановка/снятие по присутствию",
-					"pt": "Ativar/desativar automaticamente pela presença",
-					"nl": "Automatisch in-/uitschakelen op aanwezigheid",
-					"fr": "Armement/désarmement automatique selon la présence",
-					"it": "Inserimento/disinserimento automatico in base alla presenza",
-					"es": "Armado/desarmado automático según presencia",
-					"pl": "Automatyczne uzbrajanie/rozbrajanie wg obecności",
-					"uk": "Автоматична постановка/зняття за присутністю",
-					"zh-cn": "根据在家状态自动布防/撤防"
-				},
-				"type": "boolean",
-				"role": "switch.mode.auto",
-				"read": true,
-				"write": true,
-				"def": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "control.report",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Report-only sensors on",
-					"de": "Melde-Sensoren eingeschaltet",
-					"ru": "Датчики только для сообщений включены",
-					"pt": "Sensores só de aviso ligados",
-					"nl": "Meldsensoren ingeschakeld",
-					"fr": "Capteurs de signalement activés",
-					"it": "Sensori di sola segnalazione attivi",
-					"es": "Sensores solo de aviso activados",
-					"pl": "Czujniki tylko zgłaszające włączone",
-					"uk": "Датчики лише для повідомлень увімкнено",
-					"zh-cn": "仅报告传感器已开启"
-				},
-				"type": "boolean",
-				"role": "switch.enable",
-				"read": true,
-				"write": true,
-				"def": true
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation",
-			"type": "channel",
-			"common": {
-				"name": {
-					"en": "Presence simulation",
-					"de": "Anwesenheitssimulation",
-					"ru": "Имитация присутствия",
-					"pt": "Simulação de presença",
-					"nl": "Aanwezigheidssimulatie",
-					"fr": "Simulation de présence",
-					"it": "Simulazione di presenza",
-					"es": "Simulación de presencia",
-					"pl": "Symulacja obecności",
-					"uk": "Імітація присутності",
-					"zh-cn": "在家模拟"
-				}
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.enabled",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Simulation switched on by hand",
-					"de": "Simulation von Hand eingeschaltet",
-					"ru": "Имитация включена вручную",
-					"pt": "Simulação ligada à mão",
-					"nl": "Simulatie met de hand ingeschakeld",
-					"fr": "Simulation activée à la main",
-					"it": "Simulazione attivata a mano",
-					"es": "Simulación activada a mano",
-					"pl": "Symulacja włączona ręcznie",
-					"uk": "Імітацію ввімкнено вручну",
-					"zh-cn": "手动开启模拟"
-				},
-				"type": "boolean",
-				"role": "switch.enable",
-				"read": true,
-				"write": true,
-				"def": false
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.active",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Simulation running",
-					"de": "Simulation läuft",
-					"ru": "Имитация работает",
-					"pt": "Simulação em curso",
-					"nl": "Simulatie loopt",
-					"fr": "Simulation en cours",
-					"it": "Simulazione in corso",
-					"es": "Simulación en curso",
-					"pl": "Symulacja trwa",
-					"uk": "Імітація працює",
-					"zh-cn": "模拟运行中"
-				},
-				"type": "boolean",
-				"role": "indicator",
-				"read": true,
-				"write": false,
-				"def": false
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.next",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Next step",
-					"de": "Nächster Schritt",
-					"ru": "Следующий шаг",
-					"pt": "Próximo passo",
-					"nl": "Volgende stap",
-					"fr": "Prochaine étape",
-					"it": "Prossimo passo",
-					"es": "Siguiente paso",
-					"pl": "Następny krok",
-					"uk": "Наступний крок",
-					"zh-cn": "下一步"
-				},
-				"type": "string",
-				"role": "text",
-				"read": true,
-				"write": false,
-				"def": ""
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.plan",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Plan of the evening",
-					"de": "Plan des Abends",
-					"ru": "План вечера",
-					"pt": "Plano da noite",
-					"nl": "Plan van de avond",
-					"fr": "Plan de la soirée",
-					"it": "Piano della sera",
-					"es": "Plan de la noche",
-					"pl": "Plan wieczoru",
-					"uk": "План вечора",
-					"zh-cn": "晚间计划"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "[]"
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.learned",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Learned days",
-					"de": "Gelernte Tage",
-					"ru": "Обученные дни",
-					"pt": "Dias aprendidos",
-					"nl": "Geleerde dagen",
-					"fr": "Jours appris",
-					"it": "Giorni appresi",
-					"es": "Días aprendidos",
-					"pl": "Wyuczone dni",
-					"uk": "Навчені дні",
-					"zh-cn": "学习的天数据"
-				},
-				"type": "string",
-				"role": "json",
-				"read": true,
-				"write": false,
-				"def": "{\"days\":{}}"
-			},
-			"native": {}
-		},
-		{
-			"_id": "simulation.learnedDays",
-			"type": "state",
-			"common": {
-				"name": {
-					"en": "Number of learned days",
-					"de": "Anzahl gelernter Tage",
-					"ru": "Количество обученных дней",
-					"pt": "Número de dias aprendidos",
-					"nl": "Aantal geleerde dagen",
-					"fr": "Nombre de jours appris",
-					"it": "Numero di giorni appresi",
-					"es": "Número de días aprendidos",
-					"pl": "Liczba wyuczonych dni",
-					"uk": "Кількість навчених днів",
-					"zh-cn": "学习的天数"
-				},
-				"type": "number",
-				"role": "value",
-				"read": true,
-				"write": false,
-				"def": 0
-			},
-			"native": {}
-		}
-	],
-	"encryptedNative": [
-		"pin"
-	],
-	"protectedNative": [
-		"pin"
-	],
-	"notifications": [
-		{
-			"scope": "home-guard",
-			"name": {
-				"en": "Home Guard",
-				"de": "Home Guard",
-				"ru": "Home Guard",
-				"pt": "Home Guard",
-				"nl": "Home Guard",
-				"fr": "Home Guard",
-				"it": "Home Guard",
-				"es": "Home Guard",
-				"pl": "Home Guard",
-				"uk": "Home Guard",
-				"zh-cn": "Home Guard"
-			},
-			"description": {
-				"en": "Alarm system",
-				"de": "Alarmanlage",
-				"ru": "Сигнализация",
-				"pt": "Sistema de alarme",
-				"nl": "Alarmsysteem",
-				"fr": "Système d'alarme",
-				"it": "Sistema d'allarme",
-				"es": "Sistema de alarma",
-				"pl": "System alarmowy",
-				"uk": "Сигналізація",
-				"zh-cn": "报警系统"
-			},
-			"categories": [
-				{
-					"category": "alarm",
-					"name": {
-						"en": "Alarm",
-						"de": "Alarm",
-						"ru": "Тревога",
-						"pt": "Alarme",
-						"nl": "Alarm",
-						"fr": "Alarme",
-						"it": "Allarme",
-						"es": "Alarma",
-						"pl": "Alarm",
-						"uk": "Тривога",
-						"zh-cn": "报警"
-					},
-					"severity": "alert",
-					"description": {
-						"en": "The alarm system triggered",
-						"de": "Die Alarmanlage hat ausgelöst",
-						"ru": "Сработала сигнализация",
-						"pt": "O sistema de alarme disparou",
-						"nl": "Het alarmsysteem is afgegaan",
-						"fr": "Le système d'alarme s'est déclenché",
-						"it": "Il sistema d'allarme è scattato",
-						"es": "El sistema de alarma se ha disparado",
-						"pl": "System alarmowy został wyzwolony",
-						"uk": "Спрацювала сигналізація",
-						"zh-cn": "报警系统已触发"
-					},
-					"regex": [],
-					"limit": 10
-				}
-			]
-		}
-	]
+  "common": {
+    "name": "home-guard",
+    "version": "0.1.0",
+    "news": {
+      "0.1.0": {
+        "en": "initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component (AURA 0.106.0+, vis-2 2.20.7+)",
+        "de": "Erste Version: Alarmanlage mit Voll- und Nachtschutz, Präsenzsimulation (Dämmerung, gelernt, kombiniert) und Webkomponente (AURA 0.106.0+, vis-2 2.20.7+)",
+        "ru": "первая версия: система охранной сигнализации с полной защитой, защитой по периметру и ночью, симуляция присутствия (в сумерках, обучение, комбинированная защита) и веб-компонент (AURA 0.106.0+, vis-2 2.20.7+)",
+        "pt": "versão inicial: sistema de alarme com proteção total, perimetral e noturna, simulação de presença e componente web (AURA 0.106.0+, vis-2 2.20.7+)",
+        "nl": "eerste versie: alarmsysteem met volledige perimeter- en nachtbeveiliging, aanwezigheidssimulatie (schemering, geleerd, gecombineerd) en webcomponent (AURA 0.106.0+, vis-2 2.20.7+)",
+        "fr": "version initiale : système d'alarme avec protection complète, périmétrique et nocturne, simulation de présence (crépuscule, appris, combiné) et composant Web (AURA 0.106.0+, vis-2 2.20.7+)",
+        "it": "versione iniziale: sistema di allarme con protezione completa, perimetrale e notturna, simulazione di presenza e web (AURA 0.106.0+, vis-2 2.20.7+)",
+        "es": "versión inicial: sistema de alarma con protección total, perimetral y nocturna, simulación de presencia (anochecer, aprendido, combinado) y componente web (AURA 0.106.0+, vis-2 2.20.7+)",
+        "pl": "pierwsza wersja: system alarmowy z pełną ochroną obwodową i nocną, symulacją obecności (zmierzch, uczony, połączony) i komponentem sieciowym (AURA 0.106.0+, vis-2 2.20.7+)",
+        "uk": "початковий випуск: сигналізація з повним, периметральним та нічним захистом, моделювання присутності (сутінки, вивчені, комбіновані) та веб-компонент (AURA 0.106.0+, vis-2 2.20.7+)",
+        "zh-cn": "初始版本：具有全面保护、周界和夜间保护的警报系统、存在模拟（黄昏、学习、组合）和网络组件（AURA 0.106.0+，vis-2 2.20.7+）"
+      },
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "uk": "Початкова версія",
+        "zh-cn": "首次出版"
+      }
+    },
+    "titleLang": {
+      "en": "Home Guard – Alarm system & presence simulation",
+      "de": "Home Guard – Alarmanlage & Anwesenheitssimulation",
+      "ru": "Home Guard – сигнализация и имитация присутствия",
+      "pt": "Home Guard – Sistema de alarme e simulação de presença",
+      "nl": "Home Guard – Alarmsysteem & aanwezigheidssimulatie",
+      "fr": "Home Guard – Système d'alarme et simulation de présence",
+      "it": "Home Guard – Sistema di allarme e simulazione di presenza",
+      "es": "Home Guard – Sistema de alarma y simulación de presencia",
+      "pl": "Home Guard – system alarmowy i symulacja obecności",
+      "uk": "Home Guard – сигналізація та імітація присутності",
+      "zh-cn": "Home Guard – 报警系统与在家模拟"
+    },
+    "desc": {
+      "en": "Alarm system with full, perimeter and night protection, exit and entry delay, open window check, PIN, door lock and presence integration, plus a presence simulation that runs on its own or together with the alarm system.",
+      "de": "Alarmanlage mit Voll-, Hüll- und Nachtschutz, Ausgangs- und Eingangsverzögerung, Offen-Fenster-Prüfung, PIN, Türschloss- und Anwesenheitsanbindung sowie einer Anwesenheitssimulation, die allein oder zusammen mit der Alarmanlage läuft.",
+      "ru": "Сигнализация с полной охраной, охраной периметра и ночной охраной, задержкой на выход и вход, проверкой открытых окон, PIN, интеграцией дверного замка и присутствия, а также имитацией присутствия, которая работает отдельно или вместе с сигнализацией.",
+      "pt": "Sistema de alarme com proteção total, perimetral e noturna, atraso de saída e entrada, verificação de janelas abertas, PIN, integração de fechadura e presença, além de uma simulação de presença que funciona sozinha ou com o sistema de alarme.",
+      "nl": "Alarmsysteem met volledige, schil- en nachtbeveiliging, uitgangs- en ingangsvertraging, controle op open ramen, pincode, koppeling met deurslot en aanwezigheid, plus een aanwezigheidssimulatie die zelfstandig of samen met het alarmsysteem werkt.",
+      "fr": "Système d'alarme avec protection totale, périmétrique et de nuit, délais de sortie et d'entrée, contrôle des fenêtres ouvertes, code PIN, intégration de la serrure et de la présence, ainsi qu'une simulation de présence qui fonctionne seule ou avec le système d'alarme.",
+      "it": "Sistema d'allarme con protezione totale, perimetrale e notturna, ritardo di uscita e d'ingresso, controllo delle finestre aperte, PIN, integrazione di serratura e presenza, più una simulazione di presenza che funziona da sola o insieme al sistema d'allarme.",
+      "es": "Sistema de alarma con protección total, perimetral y nocturna, retardo de salida y entrada, control de ventanas abiertas, PIN, integración de cerradura y presencia, además de una simulación de presencia que funciona sola o junto con el sistema de alarma.",
+      "pl": "System alarmowy z ochroną pełną, obwodową i nocną, opóźnieniem wyjścia i wejścia, kontrolą otwartych okien, PIN-em, integracją zamka drzwi i obecności oraz symulacją obecności, która działa samodzielnie lub razem z systemem alarmowym.",
+      "uk": "Сигналізація з повною охороною, охороною периметра та нічною охороною, затримкою на вихід і вхід, перевіркою відчинених вікон, PIN, інтеграцією дверного замка та присутності, а також імітацією присутності, що працює окремо або разом із сигналізацією.",
+      "zh-cn": "报警系统，具备全面、周界和夜间保护、退出与进入延时、开窗检查、PIN、门锁与在家状态集成，另有可单独运行或与报警系统配合运行的在家模拟。"
+    },
+    "authors": [
+      "ipod86 <david@graef.email>"
+    ],
+    "keywords": [
+      "alarm",
+      "alarm system",
+      "Alarmanlage",
+      "security",
+      "Einbruch",
+      "burglar",
+      "presence simulation",
+      "Anwesenheitssimulation",
+      "vacation",
+      "Urlaub",
+      "vis-2",
+      "aura",
+      "web component",
+      "dashboard",
+      "widget"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "icon": "home-guard.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/admin/home-guard.png",
+    "readme": "https://github.com/ipod86/ioBroker.home-guard/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "mode": "daemon",
+    "type": "alarm",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.20"
+      }
+    ],
+    "messagebox": true,
+    "webComponents": [
+      "webcomponents/home-guard-panel.json"
+    ]
+  },
+  "native": {
+    "alarmEnabled": true,
+    "simEnabled": true,
+    "autoFull": false,
+    "enumFull": "",
+    "autoPerimeter": false,
+    "enumPerimeter": "",
+    "autoFire": false,
+    "enumFire": "",
+    "sensors": [],
+    "motionCount": 2,
+    "motionWindowSec": 120,
+    "sabotageHours": 0,
+    "exitDelayFull": 60,
+    "exitDelayPerimeter": 0,
+    "armEarlyId": "",
+    "entryDelay": 30,
+    "openCheck": "warn",
+    "alarmDuration": 180,
+    "nightEnabled": false,
+    "nightStart": "22:30",
+    "nightEnd": "06:30",
+    "pin": "",
+    "pinForDisarmState": true,
+    "pinForArm": false,
+    "maxWrongPin": 3,
+    "lockEnabled": false,
+    "lockId": "",
+    "lockValues": "true",
+    "presenceAuto": false,
+    "enumPresence": "",
+    "presence": [],
+    "presenceArm": "off",
+    "presenceDisarm": true,
+    "notify": [],
+    "notifyArmed": true,
+    "notifyDisarmed": true,
+    "notifyArmingFailed": true,
+    "notifyOpenWarning": true,
+    "notifyEntry": true,
+    "notifyAlarm": true,
+    "notifyAlarmEnd": true,
+    "notifyWrongPin": true,
+    "notifySabotage": true,
+    "notifySim": false,
+    "alarmRepeatMin": 5,
+    "notificationManager": true,
+    "speechId": "",
+    "speechArming": true,
+    "speechEntry": true,
+    "speechAlarm": true,
+    "lampsAuto": false,
+    "enumLamps": "",
+    "lamps": [],
+    "lampMode": "blink",
+    "blinkSec": 1,
+    "lampsRestore": true,
+    "sirens": [],
+    "actions": [],
+    "simCoupling": "alarm",
+    "simAuto": false,
+    "enumSimLamps": "",
+    "simLamps": [],
+    "simMode": "combined",
+    "simStartOffset": -30,
+    "simStartRandom": 20,
+    "simLuxId": "",
+    "simLuxBelow": 0,
+    "simEnd": "22:30",
+    "simEndRandom": 60,
+    "simWeekendLater": 45,
+    "simVisits": 4,
+    "simVisitMin": 2,
+    "simVisitMax": 15,
+    "simLearnDays": 28,
+    "simLearnDevicesOnly": true,
+    "simJitter": 15,
+    "logSize": 100,
+    "pinLockMin": 5,
+    "testNotify": true,
+    "testSpeech": true,
+    "testLamps": true,
+    "testSirens": false,
+    "testActions": false,
+    "testDuration": 15,
+    "eveningLight": false,
+    "simLearnWindow": "dark",
+    "simLearnDarkOffset": 30,
+    "simLearnFrom": "15:00",
+    "simLearnTo": "02:00",
+    "eveningLightOn": true,
+    "eveningLightOff": true,
+    "simDeviceMin": 60,
+    "simDeviceMax": 180,
+    "simDeviceCount": 1,
+    "hazardDefault": "speech",
+    "notifyHazard": true,
+    "presenceEnabled": false,
+    "morningLight": false,
+    "morningLightOn": true,
+    "morningLightOff": true,
+    "simWake": "06:30",
+    "simWakeRandom": 20,
+    "simWakeWeekendLater": 60,
+    "reportWhen": "armed",
+    "notifyReport": true,
+    "autoReport": false,
+    "enumReport": ""
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "status",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Status",
+          "de": "Status",
+          "ru": "Статус",
+          "pt": "Estado",
+          "nl": "Status",
+          "fr": "État",
+          "it": "Stato",
+          "es": "Estado",
+          "pl": "Stan",
+          "uk": "Стан",
+          "zh-cn": "状态"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.mode",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Mode",
+          "de": "Modus",
+          "ru": "Режим",
+          "pt": "Modo",
+          "nl": "Modus",
+          "fr": "Mode",
+          "it": "Modalità",
+          "es": "Modo",
+          "pl": "Tryb",
+          "uk": "Режим",
+          "zh-cn": "模式"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "states": {
+          "off": "off",
+          "full": "full",
+          "perimeter": "perimeter",
+          "night": "night"
+        },
+        "def": "off"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.phase",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Phase",
+          "de": "Phase",
+          "ru": "Фаза",
+          "pt": "Fase",
+          "nl": "Fase",
+          "fr": "Phase",
+          "it": "Fase",
+          "es": "Fase",
+          "pl": "Faza",
+          "uk": "Фаза",
+          "zh-cn": "阶段"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "states": {
+          "disarmed": "disarmed",
+          "arming": "arming",
+          "armed": "armed",
+          "entry": "entry",
+          "alarm": "alarm"
+        },
+        "def": "disarmed"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.text",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Status text",
+          "de": "Statustext",
+          "ru": "Текст статуса",
+          "pt": "Texto do estado",
+          "nl": "Statustekst",
+          "fr": "Texte d'état",
+          "it": "Testo dello stato",
+          "es": "Texto de estado",
+          "pl": "Tekst stanu",
+          "uk": "Текст стану",
+          "zh-cn": "状态文本"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.armed",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Armed",
+          "de": "Scharf",
+          "ru": "На охране",
+          "pt": "Ativado",
+          "nl": "Ingeschakeld",
+          "fr": "Armé",
+          "it": "Inserito",
+          "es": "Armado",
+          "pl": "Uzbrojony",
+          "uk": "На охороні",
+          "zh-cn": "已布防"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.alarm",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Alarm",
+          "de": "Alarm",
+          "ru": "Тревога",
+          "pt": "Alarme",
+          "nl": "Alarm",
+          "fr": "Alarme",
+          "it": "Allarme",
+          "es": "Alarma",
+          "pl": "Alarm",
+          "uk": "Тривога",
+          "zh-cn": "报警"
+        },
+        "type": "boolean",
+        "role": "sensor.alarm.secure",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.entry",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Entry delay running",
+          "de": "Eingangsverzögerung läuft",
+          "ru": "Идёт задержка на вход",
+          "pt": "Atraso de entrada em curso",
+          "nl": "Ingangsvertraging loopt",
+          "fr": "Délai d'entrée en cours",
+          "it": "Ritardo d'ingresso in corso",
+          "es": "Retardo de entrada en curso",
+          "pl": "Trwa opóźnienie wejścia",
+          "uk": "Триває затримка на вхід",
+          "zh-cn": "进入延时进行中"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.countdown",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Countdown",
+          "de": "Countdown",
+          "ru": "Обратный отсчёт",
+          "pt": "Contagem decrescente",
+          "nl": "Aftellen",
+          "fr": "Compte à rebours",
+          "it": "Conto alla rovescia",
+          "es": "Cuenta atrás",
+          "pl": "Odliczanie",
+          "uk": "Зворотний відлік",
+          "zh-cn": "倒计时"
+        },
+        "type": "number",
+        "role": "value.timer",
+        "read": true,
+        "write": false,
+        "unit": "s",
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.openContacts",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Open contacts",
+          "de": "Offene Kontakte",
+          "ru": "Открытые контакты",
+          "pt": "Contactos abertos",
+          "nl": "Open contacten",
+          "fr": "Contacts ouverts",
+          "it": "Contatti aperti",
+          "es": "Contactos abiertos",
+          "pl": "Otwarte kontakty",
+          "uk": "Відчинені контакти",
+          "zh-cn": "打开的触点"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.openCount",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Number of open contacts",
+          "de": "Anzahl offener Kontakte",
+          "ru": "Количество открытых контактов",
+          "pt": "Número de contactos abertos",
+          "nl": "Aantal open contacten",
+          "fr": "Nombre de contacts ouverts",
+          "it": "Numero di contatti aperti",
+          "es": "Número de contactos abiertos",
+          "pl": "Liczba otwartych kontaktów",
+          "uk": "Кількість відчинених контактів",
+          "zh-cn": "打开的触点数量"
+        },
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.readyFull",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Full protection possible",
+          "de": "Vollschutz möglich",
+          "ru": "Полная охрана возможна",
+          "pt": "Proteção total possível",
+          "nl": "Volledige beveiliging mogelijk",
+          "fr": "Protection totale possible",
+          "it": "Protezione totale possibile",
+          "es": "Protección total posible",
+          "pl": "Ochrona pełna możliwa",
+          "uk": "Повна охорона можлива",
+          "zh-cn": "可全面保护"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.readyPerimeter",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Perimeter protection possible",
+          "de": "Hüllschutz möglich",
+          "ru": "Охрана периметра возможна",
+          "pt": "Proteção perimetral possível",
+          "nl": "Schilbeveiliging mogelijk",
+          "fr": "Protection périmétrique possible",
+          "it": "Protezione perimetrale possibile",
+          "es": "Protección perimetral posible",
+          "pl": "Ochrona obwodowa możliwa",
+          "uk": "Охорона периметра можлива",
+          "zh-cn": "可周界保护"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.lastTrigger",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Last trigger",
+          "de": "Letzter Auslöser",
+          "ru": "Последний триггер",
+          "pt": "Último gatilho",
+          "nl": "Laatste trigger",
+          "fr": "Dernier déclencheur",
+          "it": "Ultimo attivatore",
+          "es": "Último disparador",
+          "pl": "Ostatni wyzwalacz",
+          "uk": "Останній тригер",
+          "zh-cn": "最后触发"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.lastTriggerTime",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Time of the last trigger",
+          "de": "Zeit des letzten Auslösers",
+          "ru": "Время последнего триггера",
+          "pt": "Hora do último gatilho",
+          "nl": "Tijd van de laatste trigger",
+          "fr": "Heure du dernier déclencheur",
+          "it": "Ora dell'ultimo attivatore",
+          "es": "Hora del último disparador",
+          "pl": "Czas ostatniego wyzwalacza",
+          "uk": "Час останнього тригера",
+          "zh-cn": "最后触发时间"
+        },
+        "type": "number",
+        "role": "date",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.wrongPin",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Wrong PIN entries",
+          "de": "Falsche PIN-Eingaben",
+          "ru": "Неверные вводы PIN",
+          "pt": "Entradas de PIN erradas",
+          "nl": "Verkeerde pincode-invoer",
+          "fr": "Saisies de PIN erronées",
+          "it": "Inserimenti PIN errati",
+          "es": "Entradas de PIN incorrectas",
+          "pl": "Błędne wpisy PIN",
+          "uk": "Неправильні введення PIN",
+          "zh-cn": "PIN 输入错误次数"
+        },
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.sabotage",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Sensors without reports",
+          "de": "Sensoren ohne Meldung",
+          "ru": "Датчики без сообщений",
+          "pt": "Sensores sem mensagens",
+          "nl": "Sensoren zonder melding",
+          "fr": "Capteurs sans message",
+          "it": "Sensori senza messaggi",
+          "es": "Sensores sin mensajes",
+          "pl": "Czujniki bez wiadomości",
+          "uk": "Датчики без повідомлень",
+          "zh-cn": "无消息的传感器"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.sensors",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Monitored sensors",
+          "de": "Überwachte Sensoren",
+          "ru": "Контролируемые датчики",
+          "pt": "Sensores vigiados",
+          "nl": "Bewaakte sensoren",
+          "fr": "Capteurs surveillés",
+          "it": "Sensori sorvegliati",
+          "es": "Sensores vigilados",
+          "pl": "Monitorowane czujniki",
+          "uk": "Контрольовані датчики",
+          "zh-cn": "监控的传感器"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.presentCount",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Persons at home",
+          "de": "Personen zu Hause",
+          "ru": "Людей дома",
+          "pt": "Pessoas em casa",
+          "nl": "Personen thuis",
+          "fr": "Personnes à la maison",
+          "it": "Persone in casa",
+          "es": "Personas en casa",
+          "pl": "Osoby w domu",
+          "uk": "Людей удома",
+          "zh-cn": "在家人数"
+        },
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.someoneHome",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Someone at home",
+          "de": "Jemand zu Hause",
+          "ru": "Кто-то дома",
+          "pt": "Alguém em casa",
+          "nl": "Iemand thuis",
+          "fr": "Quelqu'un à la maison",
+          "it": "Qualcuno in casa",
+          "es": "Alguien en casa",
+          "pl": "Ktoś w domu",
+          "uk": "Хтось удома",
+          "zh-cn": "有人在家"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.present",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Persons and whether they are at home",
+          "de": "Personen und ob sie zu Hause sind",
+          "ru": "Люди и находятся ли они дома",
+          "pt": "Pessoas e se estão em casa",
+          "nl": "Personen en of ze thuis zijn",
+          "fr": "Personnes et si elles sont à la maison",
+          "it": "Persone e se sono in casa",
+          "es": "Personas y si están en casa",
+          "pl": "Osoby i czy są w domu",
+          "uk": "Люди та чи вони вдома",
+          "zh-cn": "人员及其是否在家"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.log",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Logbook",
+          "de": "Logbuch",
+          "ru": "Журнал",
+          "pt": "Registo",
+          "nl": "Logboek",
+          "fr": "Journal",
+          "it": "Registro",
+          "es": "Registro",
+          "pl": "Dziennik",
+          "uk": "Журнал",
+          "zh-cn": "日志"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Control",
+          "de": "Steuerung",
+          "ru": "Управление",
+          "pt": "Controlo",
+          "nl": "Bediening",
+          "fr": "Commande",
+          "it": "Controllo",
+          "es": "Control",
+          "pl": "Sterowanie",
+          "uk": "Керування",
+          "zh-cn": "控制"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.mode",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Set mode",
+          "de": "Modus setzen",
+          "ru": "Установить режим",
+          "pt": "Definir modo",
+          "nl": "Modus instellen",
+          "fr": "Définir le mode",
+          "it": "Impostare la modalità",
+          "es": "Establecer modo",
+          "pl": "Ustaw tryb",
+          "uk": "Встановити режим",
+          "zh-cn": "设置模式"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": true,
+        "states": {
+          "off": "off",
+          "full": "full",
+          "perimeter": "perimeter",
+          "night": "night"
+        },
+        "def": "off"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.full",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Arm full protection",
+          "de": "Vollschutz scharf schalten",
+          "ru": "Поставить полную охрану",
+          "pt": "Ativar proteção total",
+          "nl": "Volledige beveiliging inschakelen",
+          "fr": "Armer la protection totale",
+          "it": "Inserire protezione totale",
+          "es": "Armar protección total",
+          "pl": "Uzbrój ochronę pełną",
+          "uk": "Поставити повну охорону",
+          "zh-cn": "布防全面保护"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.perimeter",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Arm perimeter protection",
+          "de": "Hüllschutz scharf schalten",
+          "ru": "Поставить охрану периметра",
+          "pt": "Ativar proteção perimetral",
+          "nl": "Schilbeveiliging inschakelen",
+          "fr": "Armer la protection périmétrique",
+          "it": "Inserire protezione perimetrale",
+          "es": "Armar protección perimetral",
+          "pl": "Uzbrój ochronę obwodową",
+          "uk": "Поставити охорону периметра",
+          "zh-cn": "布防周界保护"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.night",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Arm night protection",
+          "de": "Nachtschutz scharf schalten",
+          "ru": "Поставить ночную охрану",
+          "pt": "Ativar proteção noturna",
+          "nl": "Nachtbeveiliging inschakelen",
+          "fr": "Armer la protection de nuit",
+          "it": "Inserire protezione notturna",
+          "es": "Armar protección nocturna",
+          "pl": "Uzbrój ochronę nocną",
+          "uk": "Поставити нічну охорону",
+          "zh-cn": "布防夜间保护"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.off",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Disarm",
+          "de": "Unscharf schalten",
+          "ru": "Снять с охраны",
+          "pt": "Desativar",
+          "nl": "Uitschakelen",
+          "fr": "Désarmer",
+          "it": "Disinserire",
+          "es": "Desarmar",
+          "pl": "Rozbrój",
+          "uk": "Зняти з охорони",
+          "zh-cn": "撤防"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.cancel",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Cancel arming",
+          "de": "Scharfschalten abbrechen",
+          "ru": "Отменить постановку на охрану",
+          "pt": "Cancelar ativação",
+          "nl": "Inschakelen annuleren",
+          "fr": "Annuler l'armement",
+          "it": "Annullare l'inserimento",
+          "es": "Cancelar armado",
+          "pl": "Anuluj uzbrajanie",
+          "uk": "Скасувати постановку на охорону",
+          "zh-cn": "取消布防"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.ack",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Acknowledge alarm",
+          "de": "Alarm quittieren",
+          "ru": "Подтвердить тревогу",
+          "pt": "Confirmar alarme",
+          "nl": "Alarm bevestigen",
+          "fr": "Acquitter l'alarme",
+          "it": "Confermare l'allarme",
+          "es": "Confirmar alarma",
+          "pl": "Potwierdź alarm",
+          "uk": "Підтвердити тривогу",
+          "zh-cn": "确认报警"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.panic",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Panic alarm",
+          "de": "Panik-Alarm",
+          "ru": "Тревожная кнопка",
+          "pt": "Alarme de pânico",
+          "nl": "Paniekalarm",
+          "fr": "Alarme panique",
+          "it": "Allarme panico",
+          "es": "Alarma de pánico",
+          "pl": "Alarm napadowy",
+          "uk": "Тривожна кнопка",
+          "zh-cn": "紧急报警"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.pin",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Enter PIN (disarms)",
+          "de": "PIN eingeben (entschärft)",
+          "ru": "Ввести PIN (снимает с охраны)",
+          "pt": "Introduzir PIN (desativa)",
+          "nl": "Pincode invoeren (schakelt uit)",
+          "fr": "Saisir le PIN (désarme)",
+          "it": "Inserire PIN (disinserisce)",
+          "es": "Introducir PIN (desarma)",
+          "pl": "Wprowadź PIN (rozbraja)",
+          "uk": "Ввести PIN (знімає з охорони)",
+          "zh-cn": "输入 PIN（撤防）"
+        },
+        "type": "string",
+        "role": "text",
+        "read": false,
+        "write": true,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.autoArm",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Automatic arming/disarming by presence",
+          "de": "Automatisch scharf/unscharf über Anwesenheit",
+          "ru": "Автоматическая постановка/снятие по присутствию",
+          "pt": "Ativar/desativar automaticamente pela presença",
+          "nl": "Automatisch in-/uitschakelen op aanwezigheid",
+          "fr": "Armement/désarmement automatique selon la présence",
+          "it": "Inserimento/disinserimento automatico in base alla presenza",
+          "es": "Armado/desarmado automático según presencia",
+          "pl": "Automatyczne uzbrajanie/rozbrajanie wg obecności",
+          "uk": "Автоматична постановка/зняття за присутністю",
+          "zh-cn": "根据在家状态自动布防/撤防"
+        },
+        "type": "boolean",
+        "role": "switch.mode.auto",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.report",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Report-only sensors on",
+          "de": "Melde-Sensoren eingeschaltet",
+          "ru": "Датчики только для сообщений включены",
+          "pt": "Sensores só de aviso ligados",
+          "nl": "Meldsensoren ingeschakeld",
+          "fr": "Capteurs de signalement activés",
+          "it": "Sensori di sola segnalazione attivi",
+          "es": "Sensores solo de aviso activados",
+          "pl": "Czujniki tylko zgłaszające włączone",
+          "uk": "Датчики лише для повідомлень увімкнено",
+          "zh-cn": "仅报告传感器已开启"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Presence simulation",
+          "de": "Anwesenheitssimulation",
+          "ru": "Имитация присутствия",
+          "pt": "Simulação de presença",
+          "nl": "Aanwezigheidssimulatie",
+          "fr": "Simulation de présence",
+          "it": "Simulazione di presenza",
+          "es": "Simulación de presencia",
+          "pl": "Symulacja obecności",
+          "uk": "Імітація присутності",
+          "zh-cn": "在家模拟"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.enabled",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Simulation switched on by hand",
+          "de": "Simulation von Hand eingeschaltet",
+          "ru": "Имитация включена вручную",
+          "pt": "Simulação ligada à mão",
+          "nl": "Simulatie met de hand ingeschakeld",
+          "fr": "Simulation activée à la main",
+          "it": "Simulazione attivata a mano",
+          "es": "Simulación activada a mano",
+          "pl": "Symulacja włączona ręcznie",
+          "uk": "Імітацію ввімкнено вручну",
+          "zh-cn": "手动开启模拟"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.active",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Simulation running",
+          "de": "Simulation läuft",
+          "ru": "Имитация работает",
+          "pt": "Simulação em curso",
+          "nl": "Simulatie loopt",
+          "fr": "Simulation en cours",
+          "it": "Simulazione in corso",
+          "es": "Simulación en curso",
+          "pl": "Symulacja trwa",
+          "uk": "Імітація працює",
+          "zh-cn": "模拟运行中"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.next",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Next step",
+          "de": "Nächster Schritt",
+          "ru": "Следующий шаг",
+          "pt": "Próximo passo",
+          "nl": "Volgende stap",
+          "fr": "Prochaine étape",
+          "it": "Prossimo passo",
+          "es": "Siguiente paso",
+          "pl": "Następny krok",
+          "uk": "Наступний крок",
+          "zh-cn": "下一步"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.plan",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Plan of the evening",
+          "de": "Plan des Abends",
+          "ru": "План вечера",
+          "pt": "Plano da noite",
+          "nl": "Plan van de avond",
+          "fr": "Plan de la soirée",
+          "it": "Piano della sera",
+          "es": "Plan de la noche",
+          "pl": "Plan wieczoru",
+          "uk": "План вечора",
+          "zh-cn": "晚间计划"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.learned",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Learned days",
+          "de": "Gelernte Tage",
+          "ru": "Обученные дни",
+          "pt": "Dias aprendidos",
+          "nl": "Geleerde dagen",
+          "fr": "Jours appris",
+          "it": "Giorni appresi",
+          "es": "Días aprendidos",
+          "pl": "Wyuczone dni",
+          "uk": "Навчені дні",
+          "zh-cn": "学习的天数据"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "{\"days\":{}}"
+      },
+      "native": {}
+    },
+    {
+      "_id": "simulation.learnedDays",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Number of learned days",
+          "de": "Anzahl gelernter Tage",
+          "ru": "Количество обученных дней",
+          "pt": "Número de dias aprendidos",
+          "nl": "Aantal geleerde dagen",
+          "fr": "Nombre de jours appris",
+          "it": "Numero di giorni appresi",
+          "es": "Número de días aprendidos",
+          "pl": "Liczba wyuczonych dni",
+          "uk": "Кількість навчених днів",
+          "zh-cn": "学习的天数"
+        },
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    }
+  ],
+  "encryptedNative": [
+    "pin"
+  ],
+  "protectedNative": [
+    "pin"
+  ],
+  "notifications": [
+    {
+      "scope": "home-guard",
+      "name": {
+        "en": "Home Guard",
+        "de": "Home Guard",
+        "ru": "Home Guard",
+        "pt": "Home Guard",
+        "nl": "Home Guard",
+        "fr": "Home Guard",
+        "it": "Home Guard",
+        "es": "Home Guard",
+        "pl": "Home Guard",
+        "uk": "Home Guard",
+        "zh-cn": "Home Guard"
+      },
+      "description": {
+        "en": "Alarm system",
+        "de": "Alarmanlage",
+        "ru": "Сигнализация",
+        "pt": "Sistema de alarme",
+        "nl": "Alarmsysteem",
+        "fr": "Système d'alarme",
+        "it": "Sistema d'allarme",
+        "es": "Sistema de alarma",
+        "pl": "System alarmowy",
+        "uk": "Сигналізація",
+        "zh-cn": "报警系统"
+      },
+      "categories": [
+        {
+          "category": "alarm",
+          "name": {
+            "en": "Alarm",
+            "de": "Alarm",
+            "ru": "Тревога",
+            "pt": "Alarme",
+            "nl": "Alarm",
+            "fr": "Alarme",
+            "it": "Allarme",
+            "es": "Alarma",
+            "pl": "Alarm",
+            "uk": "Тривога",
+            "zh-cn": "报警"
+          },
+          "severity": "alert",
+          "description": {
+            "en": "The alarm system triggered",
+            "de": "Die Alarmanlage hat ausgelöst",
+            "ru": "Сработала сигнализация",
+            "pt": "O sistema de alarme disparou",
+            "nl": "Het alarmsysteem is afgegaan",
+            "fr": "Le système d'alarme s'est déclenché",
+            "it": "Il sistema d'allarme è scattato",
+            "es": "El sistema de alarma se ha disparado",
+            "pl": "System alarmowy został wyzwolony",
+            "uk": "Спрацювала сигналізація",
+            "zh-cn": "报警系统已触发"
+          },
+          "regex": [],
+          "limit": 10
+        }
+      ]
+    }
+  ]
 }
