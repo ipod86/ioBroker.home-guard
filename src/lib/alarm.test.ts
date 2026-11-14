@@ -1,0 +1,199 @@
+import { expect } from 'chai';
+import { AlarmEngine, isOpenValue, type AlarmEvent, type AlarmHost, type AlarmStatus, type SensorDef } from './alarm';
+
+/** fake host with a manual clock */
+function setup(opts: Partial<AlarmEngine['opts']> = {}): {
+	engine: AlarmEngine;
+	events: AlarmEvent[];
+	outputs: boolean[];
+	status: () => AlarmStatus;
+	tick: (sec: number) => void;
+} {
+	let now = 1_000_000;
+	let timers: { at: number; fn: () => void; id: number }[] = [];
+	let nextId = 1;
+	const events: AlarmEvent[] = [];
+	const outputs: boolean[] = [];
+	let last: AlarmStatus | null = null;
+	const host: AlarmHost = {
+		now: () => now,
+		setTimer: (fn, ms) => {
+			const t = { at: now + ms, fn, id: nextId++ };
+			timers.push(t);
+			return t.id;
+		},
+		clearTimer: id => {
+			timers = timers.filter(t => t.id !== id);
+		},
+		publish: s => {
+			last = s;
+		},
+		event: e => events.push(e),
+		outputs: on => outputs.push(on),
+	};
+	const engine = new AlarmEngine(host, {
+		exitDelayFull: 60,
+		exitDelayPerimeter: 0,
+		armEarlyId: 'door',
+		entryDelay: 30,
+		openCheck: 'warn',
+		alarmDuration: 180,
+		motionCount: 2,
+		motionWindowSec: 120,
+		...opts,
+	});
+	const sensors: SensorDef[] = [
+		{ id: 'door', name: 'Haustür', circuit: 'perimeter', delayed: true, invert: false, motion: false },
+		{ id: 'win', name: 'Küchenfenster', circuit: 'perimeter', delayed: false, invert: false, motion: false },
+		{ id: 'pir1', name: 'BWM Flur', circuit: 'interior', delayed: false, invert: false, motion: true },
+		{ id: 'pir2', name: 'BWM Wohnzimmer', circuit: 'interior', delayed: false, invert: false, motion: true },
+		{ id: 'smoke', name: 'Rauchmelder', circuit: '24h', delayed: false, invert: false, motion: false },
+	];
+	engine.setSensors(sensors, { door: false, win: 0, pir1: false, pir2: false, smoke: false });
+	const tick = (sec: number): void => {
+		const end = now + sec * 1000;
+		for (;;) {
+			timers.sort((a, b) => a.at - b.at);
+			const t = timers[0];
+			if (!t || t.at > end) {
+				break;
+			}
+			timers.shift();
+			now = t.at;
+			t.fn();
+		}
+		now = end;
+	};
+	return { engine, events, outputs, status: () => last ?? engine.status(), tick };
+}
+
+describe('isOpenValue', () => {
+	it('understands booleans, window states and texts', () => {
+		expect(isOpenValue(true)).to.equal(true);
+		expect(isOpenValue(false)).to.equal(false);
+		expect(isOpenValue(0)).to.equal(false);
+		expect(isOpenValue(1)).to.equal(true); // tilted
+		expect(isOpenValue(2)).to.equal(true);
+		expect(isOpenValue('open')).to.equal(true);
+		expect(isOpenValue('closed')).to.equal(false);
+		expect(isOpenValue(false, true)).to.equal(true);
+	});
+});
+
+describe('AlarmEngine', () => {
+	it('arms full protection after the exit delay, without alarm while leaving', () => {
+		const t = setup();
+		t.engine.arm('full', 'state');
+		expect(t.status().phase).to.equal('arming');
+		t.engine.sensorChanged('door', true); // walk out
+		t.tick(30);
+		expect(t.status().countdown).to.equal(30);
+		t.engine.sensorChanged('door', false);
+		// closing the front door arms at once
+		expect(t.status().phase).to.equal('armed');
+		expect(t.events).to.include('armedFull');
+		expect(t.events).to.not.include('alarm');
+	});
+
+	it('entry delay for the front door, disarm in time: no alarm', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('door', true);
+		expect(t.status().phase).to.equal('entry');
+		t.tick(20);
+		t.engine.disarm('pin');
+		t.tick(60);
+		expect(t.events).to.not.include('alarm');
+		expect(t.status().phase).to.equal('disarmed');
+	});
+
+	it('entry delay runs out: alarm, outputs on and off after the alarm duration', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('door', true);
+		t.tick(31);
+		expect(t.status().phase).to.equal('alarm');
+		expect(t.outputs).to.deep.equal([true]);
+		t.tick(181);
+		expect(t.outputs).to.deep.equal([true, false]);
+		expect(t.status().alarm).to.equal(true); // stays until acknowledged
+		t.engine.ack('state');
+		expect(t.status().phase).to.equal('armed');
+		expect(t.events).to.include('alarmEnd');
+	});
+
+	it('window opens: immediate alarm; closing does not trigger', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('perimeter', 'state');
+		t.engine.sensorChanged('win', 2);
+		expect(t.status().phase).to.equal('alarm');
+		const t2 = setup({ exitDelayFull: 0 });
+		t2.engine.sensorChanged('win', 2); // open while disarmed
+		t2.engine.arm('perimeter', 'state');
+		t2.engine.sensorChanged('win', 0); // closing it
+		expect(t2.events).to.not.include('alarm');
+	});
+
+	it('perimeter ignores motion detectors, full needs two different detectors', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('perimeter', 'state');
+		t.engine.sensorChanged('pir1', true);
+		t.engine.sensorChanged('pir2', true);
+		expect(t.events).to.not.include('alarm');
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('pir1', false);
+		t.engine.sensorChanged('pir1', true);
+		expect(t.events).to.not.include('alarm');
+		t.tick(10);
+		t.engine.sensorChanged('pir2', false);
+		t.engine.sensorChanged('pir2', true);
+		expect(t.events).to.include('alarm');
+	});
+
+	it('one detector twice is no alarm; outside the time window it starts again', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('pir1', true);
+		t.engine.sensorChanged('pir1', false);
+		t.engine.sensorChanged('pir1', true);
+		t.tick(200);
+		t.engine.sensorChanged('pir2', true);
+		expect(t.events).to.not.include('alarm');
+	});
+
+	it('open window: warn and arm, or refuse', () => {
+		const warn = setup({ exitDelayFull: 0 });
+		warn.engine.sensorChanged('win', true);
+		const r = warn.engine.arm('full', 'state');
+		expect(r.ok).to.equal(true);
+		expect(r.open.map(s => s.name)).to.deep.equal(['Küchenfenster']);
+		expect(warn.events).to.include('openWarning');
+		const refuse = setup({ exitDelayFull: 0, openCheck: 'refuse' });
+		refuse.engine.sensorChanged('win', true);
+		expect(refuse.engine.arm('full', 'state').ok).to.equal(false);
+		expect(refuse.status().phase).to.equal('disarmed');
+		expect(refuse.events).to.include('armingFailed');
+		expect(refuse.status().readyFull).to.equal(false);
+	});
+
+	it('24 h sensor triggers even when disarmed; panic too', () => {
+		const t = setup();
+		t.engine.sensorChanged('smoke', true);
+		expect(t.status().phase).to.equal('alarm');
+		t.engine.disarm('pin');
+		t.engine.panic('Panik-Taste');
+		expect(t.status().lastTrigger).to.equal('Panik-Taste');
+	});
+
+	it('cancel during the exit delay, restore after restart', () => {
+		const t = setup();
+		t.engine.arm('full', 'state');
+		t.engine.cancelArming('widget');
+		expect(t.status().phase).to.equal('disarmed');
+		t.tick(120);
+		expect(t.events).to.not.include('armedFull');
+		t.engine.restore('night');
+		expect(t.status().phase).to.equal('armed');
+		expect(t.status().mode).to.equal('night');
+	});
+});

@@ -50,35 +50,68 @@ export interface PlanStep {
 
 const MIN = 60000;
 
-/** the "evening day": switching after midnight still belongs to the evening before (until 12:00) */
+/**
+ * the "evening day": switching after midnight still belongs to the evening before (until 12:00)
+ *
+ * @param ts time in ms
+ */
 export function eveningKey(ts: number): string {
 	const d = new Date(ts - 12 * 3600000);
 	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-/** 12:00 local time of the evening day of ts */
+/**
+ * 12:00 local time of the evening day of ts
+ *
+ * @param ts time in ms
+ */
 export function eveningNoon(ts: number): number {
 	const d = new Date(ts - 12 * 3600000);
 	return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0).getTime();
 }
 
+/**
+ * Friday and Saturday evenings are the late ones
+ *
+ * @param ts time in ms
+ */
 export function isWeekendEvening(ts: number): boolean {
 	// Friday and Saturday evenings are the late ones
 	const day = new Date(eveningNoon(ts)).getDay();
 	return day === 5 || day === 6;
 }
 
+/**
+ * Minutes after midnight of "HH:MM"
+ *
+ * @param hm time text
+ * @param fallback used when the text is invalid
+ */
 function parseHm(hm: string, fallback: number): number {
 	const m = /^(\d{1,2}):(\d{2})$/.exec((hm || '').trim());
 	return m ? Number(m[1]) * 60 + Number(m[2]) : fallback;
 }
 
+/**
+ * Learns switching of the simulation lamps per day
+ */
 export class Learner {
 	private onSince = new Map<string, number>();
 
+	/**
+	 * Creates the learner
+	 *
+	 * @param data learned days of the last run
+	 */
 	constructor(public data: Learned = { days: {} }) {}
 
-	/** a lamp was switched by somebody else than the adapter */
+	/**
+	 * a lamp was switched by somebody else than the adapter
+	 *
+	 * @param id lamp state ID
+	 * @param on switched on (true) or off
+	 * @param ts time of the switching in ms
+	 */
 	record(id: string, on: boolean, ts: number): boolean {
 		if (on) {
 			if (!this.onSince.has(id)) {
@@ -101,7 +134,12 @@ export class Learner {
 		return true;
 	}
 
-	/** drop days older than the learning window */
+	/**
+	 * drop days older than the learning window
+	 *
+	 * @param now current time in ms
+	 * @param days number of days to keep
+	 */
 	prune(now: number, days: number): void {
 		const oldest = eveningKey(now - days * 86400000);
 		for (const k of Object.keys(this.data.days)) {
@@ -116,7 +154,13 @@ export class Learner {
 		this.onSince.clear();
 	}
 
-	/** learned days with sessions of the given lamps, same kind (weekday/weekend) preferred */
+	/**
+	 * learned days with sessions of the given lamps, same kind (weekday/weekend) preferred
+	 *
+	 * @param weekend Friday/Saturday evening
+	 * @param ids lamps that are wanted
+	 * @param today key of the current evening (not used)
+	 */
 	candidates(weekend: boolean, ids: Set<string>, today: string): LearnedDay[] {
 		const usable = Object.entries(this.data.days)
 			.filter(([k, d]) => k !== today && d.sessions.some(s => ids.has(s.id)))
@@ -223,11 +267,20 @@ export class SimRunner {
 	private plan: PlanStep[] = [];
 	private ours = new Set<string>(); // lamps the simulation switched on
 
+	/**
+	 * Creates the runner
+	 *
+	 * @param host timers and lamps
+	 * @param makePlan builds the plan of the current evening
+	 */
 	constructor(
 		private host: SimHost,
 		private makePlan: (now: number) => PlanStep[],
 	) {}
 
+	/**
+	 * Starts the simulation
+	 */
 	start(): void {
 		if (this.active) {
 			return;
@@ -236,6 +289,9 @@ export class SimRunner {
 		this.replan();
 	}
 
+	/**
+	 * Stops the simulation and switches off the lamps it switched on
+	 */
 	stop(): void {
 		if (!this.active) {
 			return;
@@ -273,10 +329,21 @@ export class SimRunner {
 		this.schedule();
 	}
 
+	/**
+	 * Was the lamp switched on by the simulation?
+	 *
+	 * @param id lamp state ID
+	 */
 	isOurs(id: string): boolean {
 		return this.ours.has(id);
 	}
 
+	/**
+	 * Switches a lamp - only lamps the simulation switched on are switched off again
+	 *
+	 * @param id lamp state ID
+	 * @param on on or off
+	 */
 	private apply(id: string, on: boolean): void {
 		if (on) {
 			if (!this.host.isOn(id)) {
@@ -289,6 +356,9 @@ export class SimRunner {
 		}
 	}
 
+	/**
+	 * Waits for the next step of the plan
+	 */
 	private schedule(): void {
 		if (this.timer) {
 			this.host.clearTimer(this.timer);

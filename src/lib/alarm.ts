@@ -73,7 +73,12 @@ export interface AlarmStatus {
 	lastTriggerTime: number;
 }
 
-/** Does a value mean "open" / "triggered"? Numbers > 0 (WINDOW_STATE 1 = tilted, 2 = open), strings like open/true/1 */
+/**
+ * Does a value mean "open" / "triggered"? Numbers > 0 (WINDOW_STATE 1 = tilted, 2 = open), strings like open/true/1
+ *
+ * @param val state value
+ * @param invert the sensor reports open as false
+ */
 export function isOpenValue(val: unknown, invert = false): boolean {
 	let open: boolean;
 	if (typeof val === 'boolean') {
@@ -89,7 +94,12 @@ export function isOpenValue(val: unknown, invert = false): boolean {
 	return invert ? !open : open;
 }
 
-/** Which circuits trigger in which mode */
+/**
+ * Which circuits trigger in which mode
+ *
+ * @param circuit circuit of the sensor
+ * @param mode current mode
+ */
 export function circuitActive(circuit: Circuit, mode: Mode): boolean {
 	if (circuit === '24h') {
 		return true;
@@ -103,6 +113,9 @@ export function circuitActive(circuit: Circuit, mode: Mode): boolean {
 	return mode === 'full';
 }
 
+/**
+ * Alarm logic: modes, delays, triggers and outputs
+ */
 export class AlarmEngine {
 	mode: Mode = 'off';
 	phase: Phase = 'disarmed';
@@ -112,12 +125,21 @@ export class AlarmEngine {
 	private countdownTimer: unknown = null;
 	private tickTimer: unknown = null;
 	private outputTimer: unknown = null;
-	private motionHits: { id: string; ts: number }[] = [];
+	private motionHits: {
+		id: string;
+		ts: number;
+	}[] = [];
 	private armingMode: Mode = 'off';
 	private lastTrigger = '';
 	private lastTriggerTime = 0;
 	private alarmActive = false;
 
+	/**
+	 * Creates the engine
+	 *
+	 * @param host access to timers, states and notifications
+	 * @param opts delays and rules
+	 */
 	constructor(
 		private host: AlarmHost,
 		public opts: AlarmOptions,
@@ -125,24 +147,42 @@ export class AlarmEngine {
 
 	// ---------- sensors ----------
 
+	/**
+	 * Sets the monitored sensors and their current values
+	 *
+	 * @param list the sensors
+	 * @param values current values by state ID
+	 */
 	setSensors(list: SensorDef[], values: Record<string, unknown>): void {
 		this.sensors = new Map(list.map(s => [s.id, s]));
 		this.open = new Map(list.map(s => [s.id, isOpenValue(values[s.id], s.invert)]));
 		this.publish();
 	}
 
+	/**
+	 * The monitored sensors
+	 */
 	getSensors(): SensorDef[] {
 		return [...this.sensors.values()];
 	}
 
-	/** open contacts that matter for a mode (motion detectors never block arming) */
+	/**
+	 * open contacts that matter for a mode (motion detectors never block arming)
+	 *
+	 * @param mode mode to check
+	 */
 	openFor(mode: Mode): SensorDef[] {
 		return this.getSensors().filter(
 			s => this.open.get(s.id) && !s.motion && s.circuit !== '24h' && circuitActive(s.circuit, mode),
 		);
 	}
 
-	/** a sensor value changed */
+	/**
+	 * a sensor value changed
+	 *
+	 * @param id state ID of the sensor
+	 * @param val new value
+	 */
 	sensorChanged(id: string, val: unknown): void {
 		const s = this.sensors.get(id);
 		if (!s) {
@@ -162,6 +202,11 @@ export class AlarmEngine {
 		this.publish();
 	}
 
+	/**
+	 * A sensor changed to open: alarm, entry delay or nothing, depending on mode and rules
+	 *
+	 * @param s the sensor
+	 */
 	private triggered(s: SensorDef): void {
 		if (s.circuit === '24h') {
 			this.alarm(s);
@@ -200,7 +245,13 @@ export class AlarmEngine {
 	 * @param mode full, perimeter or night
 	 * @param source who armed (pin, state, presence, widget, schedule)
 	 */
-	arm(mode: Mode, source: string): { ok: boolean; open: SensorDef[] } {
+	arm(
+		mode: Mode,
+		source: string,
+	): {
+		ok: boolean;
+		open: SensorDef[];
+	} {
 		if (mode === 'off') {
 			this.disarm(source);
 			return { ok: true, open: [] };
@@ -217,7 +268,8 @@ export class AlarmEngine {
 		if (open.length && this.opts.openCheck === 'warn') {
 			this.host.event('openWarning', { mode, sensors: open, source });
 		}
-		const delay = mode === 'full' ? this.opts.exitDelayFull : mode === 'perimeter' ? this.opts.exitDelayPerimeter : 0;
+		const delay =
+			mode === 'full' ? this.opts.exitDelayFull : mode === 'perimeter' ? this.opts.exitDelayPerimeter : 0;
 		this.armingMode = mode;
 		if (delay > 0) {
 			this.mode = mode;
@@ -231,13 +283,22 @@ export class AlarmEngine {
 		return { ok: true, open };
 	}
 
-	/** cancel a running exit delay */
+	/**
+	 * cancel a running exit delay
+	 *
+	 * @param source who cancelled
+	 */
 	cancelArming(source: string): void {
 		if (this.phase === 'arming') {
 			this.disarm(source);
 		}
 	}
 
+	/**
+	 * The exit delay is over (or skipped): armed
+	 *
+	 * @param source who armed
+	 */
 	private finishArming(source = 'delay'): void {
 		this.clearTimers();
 		this.mode = this.armingMode;
@@ -248,7 +309,11 @@ export class AlarmEngine {
 		this.publish();
 	}
 
-	/** restore after a restart: armed again without exit delay and without a notification */
+	/**
+	 * restore after a restart: armed again without exit delay and without a notification
+	 *
+	 * @param mode mode that was armed before the restart
+	 */
 	restore(mode: Mode): void {
 		if (mode === 'off') {
 			return;
@@ -261,6 +326,11 @@ export class AlarmEngine {
 
 	// ---------- entry delay and alarm ----------
 
+	/**
+	 * Starts the entry delay (silent alarm)
+	 *
+	 * @param s the delayed sensor
+	 */
 	private startEntry(s: SensorDef): void {
 		this.phase = 'entry';
 		this.lastTrigger = s.name;
@@ -269,7 +339,12 @@ export class AlarmEngine {
 		this.startCountdown(this.opts.entryDelay, () => this.alarm(s));
 	}
 
-	/** trigger the alarm (also used for panic) */
+	/**
+	 * trigger the alarm (also used for panic)
+	 *
+	 * @param s triggering sensor
+	 * @param panic true for the panic button
+	 */
 	alarm(s: SensorDef, panic = false): void {
 		this.clearTimers();
 		this.phase = 'alarm';
@@ -287,11 +362,20 @@ export class AlarmEngine {
 		this.publish();
 	}
 
+	/**
+	 * Panic alarm, also when disarmed
+	 *
+	 * @param source name shown as trigger
+	 */
 	panic(source: string): void {
 		this.alarm({ id: 'panic', name: source, circuit: '24h', delayed: false, invert: false, motion: false }, true);
 	}
 
-	/** acknowledge: outputs off, alarm flag off; the system stays armed */
+	/**
+	 * acknowledge: outputs off, alarm flag off; the system stays armed
+	 *
+	 * @param source who acknowledged
+	 */
 	ack(source: string): void {
 		if (!this.alarmActive && this.phase !== 'alarm') {
 			return;
@@ -303,6 +387,11 @@ export class AlarmEngine {
 		this.publish();
 	}
 
+	/**
+	 * Disarms and ends a running alarm
+	 *
+	 * @param source who disarmed
+	 */
 	disarm(source: string): void {
 		const hadAlarm = this.alarmActive || this.phase === 'alarm';
 		const wasOff = this.mode === 'off' && this.phase === 'disarmed';
@@ -324,6 +413,12 @@ export class AlarmEngine {
 
 	// ---------- timers ----------
 
+	/**
+	 * Countdown with a status update every second
+	 *
+	 * @param seconds length
+	 * @param done called at the end
+	 */
 	private startCountdown(seconds: number, done: () => void): void {
 		this.clearTimers();
 		this.countdownEnd = this.host.now() + seconds * 1000;
@@ -340,6 +435,9 @@ export class AlarmEngine {
 		tick();
 	}
 
+	/**
+	 * Stops the countdown
+	 */
 	private clearTimers(): void {
 		if (this.countdownTimer) {
 			this.host.clearTimer(this.countdownTimer);
@@ -352,6 +450,9 @@ export class AlarmEngine {
 		this.countdownEnd = 0;
 	}
 
+	/**
+	 * Switches lamps and sirens off
+	 */
 	private stopOutputs(): void {
 		if (this.outputTimer) {
 			this.host.clearTimer(this.outputTimer);
@@ -373,6 +474,9 @@ export class AlarmEngine {
 
 	// ---------- status ----------
 
+	/**
+	 * Current status for the states and the panel
+	 */
 	status(): AlarmStatus {
 		const countdown = this.countdownEnd ? Math.max(0, Math.ceil((this.countdownEnd - this.host.now()) / 1000)) : 0;
 		const openAll = this.getSensors().filter(s => this.open.get(s.id) && !s.motion);
@@ -390,6 +494,9 @@ export class AlarmEngine {
 		};
 	}
 
+	/**
+	 * Hands the status to the host
+	 */
 	private publish(): void {
 		this.host.publish(this.status());
 	}

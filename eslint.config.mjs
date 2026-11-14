@@ -25,7 +25,8 @@ export default [
 		// you may disable some 'jsdoc' warnings - but using jsdoc is highly recommended
 		// as this improves maintainability. jsdoc warnings will not block build process.
 		rules: {
-			// 'jsdoc/require-jsdoc': 'off',
+			// JSDoc for functions, methods and classes; not for every member of an interface or type
+			'jsdoc/require-jsdoc': ['warn', { require: { FunctionDeclaration: true, MethodDefinition: true, ClassDeclaration: true }, contexts: [] }],
 			// 'jsdoc/require-param': 'off',
 			// 'jsdoc/require-param-description': 'off',
 			// 'jsdoc/require-returns-description': 'off',

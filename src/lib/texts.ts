@@ -5,7 +5,13 @@ export type Lang = 'de' | 'en';
 const T = {
 	de: {
 		mode: { off: 'Aus', full: 'Vollschutz', perimeter: 'Hüllschutz', night: 'Nachtschutz' },
-		phase: { disarmed: 'Unscharf', arming: 'Wird scharf', armed: 'Scharf', entry: 'Eingangsverzögerung', alarm: 'ALARM' },
+		phase: {
+			disarmed: 'Unscharf',
+			arming: 'Wird scharf',
+			armed: 'Scharf',
+			entry: 'Eingangsverzögerung',
+			alarm: 'ALARM',
+		},
 		armed: (m: string, src: string) => `🛡️ Alarmanlage scharf: ${m}${src}`,
 		arming: (m: string, sec: number) => `⏳ ${m} wird in ${sec} Sekunden scharf geschaltet`,
 		disarmed: (src: string) => `🔓 Alarmanlage unscharf${src}`,
@@ -19,7 +25,18 @@ const T = {
 		sabotage: (list: string) => `🔋 Keine Meldung mehr von: ${list}`,
 		simStart: '💡 Anwesenheitssimulation gestartet',
 		simStop: '💡 Anwesenheitssimulation beendet',
-		by: { pin: 'PIN', state: 'Datenpunkt', presence: 'Anwesenheit', lock: 'Türschloss', widget: 'Bedienfeld', night: 'Nachtzeit', delay: '', panic: 'Panik-Taste', schedule: 'Zeitplan', message: 'Befehl' } as Record<string, string>,
+		by: {
+			pin: 'PIN',
+			state: 'Datenpunkt',
+			presence: 'Anwesenheit',
+			lock: 'Türschloss',
+			widget: 'Bedienfeld',
+			night: 'Nachtzeit',
+			delay: '',
+			panic: 'Panik-Taste',
+			schedule: 'Zeitplan',
+			message: 'Befehl',
+		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Testnachricht von Home Guard',
 	},
@@ -39,7 +56,18 @@ const T = {
 		sabotage: (list: string) => `🔋 No more reports from: ${list}`,
 		simStart: '💡 Presence simulation started',
 		simStop: '💡 Presence simulation stopped',
-		by: { pin: 'PIN', state: 'state', presence: 'presence', lock: 'door lock', widget: 'panel', night: 'night time', delay: '', panic: 'panic button', schedule: 'schedule', message: 'command' } as Record<string, string>,
+		by: {
+			pin: 'PIN',
+			state: 'state',
+			presence: 'presence',
+			lock: 'door lock',
+			widget: 'panel',
+			night: 'night time',
+			delay: '',
+			panic: 'panic button',
+			schedule: 'schedule',
+			message: 'command',
+		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Test message from Home Guard',
 	},
@@ -47,6 +75,11 @@ const T = {
 
 export type Texts = (typeof T)['de'];
 
+/**
+ * Texts in the system language (German or English)
+ *
+ * @param lang system language
+ */
 export function texts(lang: string): Texts {
-	return lang === 'de' ? T.de : (T.en as unknown as Texts);
+	return lang === 'de' ? T.de : T.en;
 }

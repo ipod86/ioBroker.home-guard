@@ -11,12 +11,33 @@ import {
 	type Mode,
 	type SensorDef,
 } from './lib/alarm';
-import { Learner, SimRunner, eveningKey, eveningNoon, planEvening, type Learned, type PlanStep, type SimLamp } from './lib/simulation';
+import {
+	Learner,
+	SimRunner,
+	eveningKey,
+	eveningNoon,
+	planEvening,
+	type Learned,
+	type PlanStep,
+	type SimLamp,
+} from './lib/simulation';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
-const MESSENGERS = ['telegram', 'pushover', 'whatsapp-cmb', 'signal-cmb', 'email', 'gotify', 'discord', 'matrix-org', 'ntfy', 'pushsafer', 'notification-manager'];
+const MESSENGERS = [
+	'telegram',
+	'pushover',
+	'whatsapp-cmb',
+	'signal-cmb',
+	'email',
+	'gotify',
+	'discord',
+	'matrix-org',
+	'ntfy',
+	'pushsafer',
+	'notification-manager',
+];
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 
 interface LampOut {
@@ -26,6 +47,9 @@ interface LampOut {
 	off: ioBroker.StateValue;
 }
 
+/**
+ * Home Guard adapter
+ */
 class HomeGuard extends utils.Adapter {
 	private T: Texts = texts('en');
 	private lat = 51;
@@ -52,6 +76,11 @@ class HomeGuard extends utils.Adapter {
 	private learnSaveTimer: ioBroker.Timeout | undefined;
 	private lastStatusJson = '';
 
+	/**
+	 * Creates the adapter
+	 *
+	 * @param options adapter options
+	 */
 	public constructor(options: Partial<utils.AdapterOptions> = {}) {
 		super({ ...options, name: 'home-guard' });
 		this.on('ready', this.onReady.bind(this));
@@ -64,13 +93,16 @@ class HomeGuard extends utils.Adapter {
 	// start
 	// ======================================================================
 
+	/**
+	 * Start: settings, sensors, presence, lamps, subscriptions, timers
+	 */
 	private async onReady(): Promise<void> {
 		const c = this.config;
 		const sys = await this.getForeignObjectAsync('system.config');
-		const lang = (sys?.common as ioBroker.SystemConfigCommon | undefined)?.language || 'en';
+		const lang = sys?.common?.language || 'en';
 		this.T = texts(lang);
-		this.lat = Number((sys?.common as ioBroker.SystemConfigCommon | undefined)?.latitude) || 51;
-		this.lon = Number((sys?.common as ioBroker.SystemConfigCommon | undefined)?.longitude) || 10;
+		this.lat = Number(sys?.common?.latitude) || 51;
+		this.lon = Number(sys?.common?.longitude) || 10;
 
 		// logbook and learned days from the last run
 		this.log_ = this.parseJson((await this.getStateAsync('status.log'))?.val, []);
@@ -146,6 +178,11 @@ class HomeGuard extends utils.Adapter {
 		);
 	}
 
+	/**
+	 * Stop: all timers off
+	 *
+	 * @param callback to call when done
+	 */
 	private onUnload(callback: () => void): void {
 		try {
 			this.alarm?.destroy();
@@ -171,13 +208,17 @@ class HomeGuard extends utils.Adapter {
 	// configuration: sensors, presence, lamps
 	// ======================================================================
 
-	/** state IDs of an enum (states directly, channels/devices with their sensor states) */
+	/**
+	 * state IDs of an enum (states directly, channels/devices with their sensor states)
+	 *
+	 * @param enumId ID of the enum, e.g. enum.functions.alarm
+	 */
 	private async enumStates(enumId: string): Promise<string[]> {
 		if (!enumId) {
 			return [];
 		}
 		const obj = await this.getForeignObjectAsync(enumId);
-		const members = ((obj?.common as ioBroker.EnumCommon | undefined)?.members || []) as string[];
+		const members = (obj?.common as ioBroker.EnumCommon | undefined)?.members || [];
 		const out: string[] = [];
 		for (const m of members) {
 			const o = await this.getForeignObjectAsync(m);
@@ -199,22 +240,38 @@ class HomeGuard extends utils.Adapter {
 		return out;
 	}
 
+	/**
+	 * Name of a state: given name, description or name of the object
+	 *
+	 * @param id state ID
+	 * @param given name from the settings
+	 */
 	private async nameOf(id: string, given?: string): Promise<string> {
 		if (given) {
 			return given;
 		}
 		const o = await this.getForeignObjectAsync(id);
-		const desc = o?.common && typeof (o.common as { desc?: unknown }).desc === 'string' ? (o.common as { desc: string }).desc : '';
+		const desc =
+			o?.common && typeof (o.common as { desc?: unknown }).desc === 'string'
+				? (o.common as { desc: string }).desc
+				: '';
 		if (desc) {
 			return desc;
 		}
 		const name = o?.common?.name;
 		if (name && typeof name === 'object') {
-			return (name as Record<string, string>)[this.T === texts('de') ? 'de' : 'en'] || (name as Record<string, string>).en || id;
+			return (
+				(name as Record<string, string>)[this.T === texts('de') ? 'de' : 'en'] ||
+				(name as Record<string, string>).en ||
+				id
+			);
 		}
 		return (name as string) || id;
 	}
 
+	/**
+	 * Collects the sensors from functions and the table
+	 */
 	private async setupSensors(): Promise<void> {
 		const c = this.config;
 		const found = new Map<string, SensorDef>();
@@ -272,11 +329,16 @@ class HomeGuard extends utils.Adapter {
 		this.alarm.setSensors(list, values);
 		await this.setStateAsync(
 			'status.sensors',
-			JSON.stringify(list.map(s => ({ id: s.id, name: s.name, circuit: s.circuit, delayed: s.delayed, motion: s.motion }))),
+			JSON.stringify(
+				list.map(s => ({ id: s.id, name: s.name, circuit: s.circuit, delayed: s.delayed, motion: s.motion })),
+			),
 			true,
 		);
 	}
 
+	/**
+	 * Collects the presence states
+	 */
 	private async setupPresence(): Promise<void> {
 		const c = this.config;
 		const ids = new Set<string>();
@@ -296,6 +358,9 @@ class HomeGuard extends utils.Adapter {
 		await this.publishPresence();
 	}
 
+	/**
+	 * Collects the lamps of the presence simulation
+	 */
 	private async setupSimLamps(): Promise<void> {
 		const c = this.config;
 		const lamps = new Map<string, SimLamp>();
@@ -321,6 +386,9 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
+	/**
+	 * Collects the lamps switched on alarm
+	 */
 	private async setupLamps(): Promise<void> {
 		const c = this.config;
 		const ids = new Set<string>();
@@ -339,7 +407,11 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
-	/** what "on" and "off" are for a state: true/false or max/0 for numbers */
+	/**
+	 * what "on" and "off" are for a state: true/false or max/0 for numbers
+	 *
+	 * @param id state ID
+	 */
 	private async onOffValues(id: string): Promise<{ on: ioBroker.StateValue; off: ioBroker.StateValue }> {
 		const o = await this.getForeignObjectAsync(id);
 		if (o?.common?.type === 'number') {
@@ -353,6 +425,12 @@ class HomeGuard extends utils.Adapter {
 	// state changes
 	// ======================================================================
 
+	/**
+	 * A subscribed state changed
+	 *
+	 * @param id state ID
+	 * @param state new state
+	 */
 	private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
 		if (!state) {
 			return;
@@ -390,7 +468,10 @@ class HomeGuard extends utils.Adapter {
 			this.simLampVals.set(id, on);
 			// learn: only switching that did not come from the adapter, not while simulating
 			const from = state.from || '';
-			const ignored = c.simLearnDevicesOnly !== false ? LEARN_IGNORE.test(from) : from.startsWith(`system.adapter.${this.namespace}`);
+			const ignored =
+				c.simLearnDevicesOnly !== false
+					? LEARN_IGNORE.test(from)
+					: from.startsWith(`system.adapter.${this.namespace}`);
 			if (before !== on && !this.sim.active && !ignored && state.ack !== false) {
 				if (this.learner.record(id, on, state.ts || Date.now())) {
 					this.saveLearnedSoon();
@@ -398,10 +479,16 @@ class HomeGuard extends utils.Adapter {
 			}
 		}
 		if (c.simLuxId && id === c.simLuxId) {
-			await this.onLux(Number(state.val));
+			this.onLux(Number(state.val));
 		}
 	}
 
+	/**
+	 * Own control states written by the user
+	 *
+	 * @param rel ID without the namespace
+	 * @param state new state
+	 */
 	private async onControl(rel: string, state: ioBroker.State): Promise<void> {
 		const c = this.config;
 		const val = state.val;
@@ -463,7 +550,12 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
-	/** mode change from a state: disarming may need the PIN */
+	/**
+	 * mode change from a state: disarming may need the PIN
+	 *
+	 * @param mode wanted mode
+	 * @param source who changed the mode
+	 */
 	private async setModeChecked(mode: Mode, source: string): Promise<void> {
 		const c = this.config;
 		if (!c.alarmEnabled) {
@@ -484,7 +576,13 @@ class HomeGuard extends utils.Adapter {
 		await this.updateSimulation();
 	}
 
-	/** checks a PIN; correct: switch to the mode, wrong: count */
+	/**
+	 * checks a PIN; correct: switch to the mode, wrong: count
+	 *
+	 * @param pin entered PIN
+	 * @param mode mode to switch to when the PIN is right
+	 * @param source who entered the PIN
+	 */
 	private checkPin(pin: string, mode: Mode, source: string): boolean {
 		const c = this.config;
 		if (!c.pin || pin === String(c.pin)) {
@@ -506,10 +604,19 @@ class HomeGuard extends utils.Adapter {
 		return false;
 	}
 
+	/**
+	 * Is at least one person at home?
+	 */
 	private someoneHome(): boolean {
 		return [...this.presenceVals.values()].some(Boolean);
 	}
 
+	/**
+	 * Presence changed: arm or disarm automatically
+	 *
+	 * @param wasHome somebody was at home before
+	 * @param isHome somebody is at home now
+	 */
 	private async onPresence(wasHome: boolean, isHome: boolean): Promise<void> {
 		const c = this.config;
 		if (!this.presenceIds.length || wasHome === isHome) {
@@ -529,11 +636,17 @@ class HomeGuard extends utils.Adapter {
 	// messages (web component, scripts, admin)
 	// ======================================================================
 
+	/**
+	 * Messages from the panel, scripts and the settings
+	 *
+	 * @param obj the message
+	 */
 	private async onMessage(obj: ioBroker.Message): Promise<void> {
 		if (!obj || !obj.command) {
 			return;
 		}
 		const msg = (typeof obj.message === 'object' && obj.message ? obj.message : {}) as Record<string, unknown>;
+		const str = (v: unknown, d = ''): string => (typeof v === 'string' || typeof v === 'number' ? String(v) : d);
 		const reply = (data: unknown): void => {
 			if (obj.callback) {
 				this.sendTo(obj.from, obj.command, data, obj.callback);
@@ -542,7 +655,7 @@ class HomeGuard extends utils.Adapter {
 		const c = this.config;
 		switch (obj.command) {
 			case 'arm': {
-				const mode = String(msg.mode || 'full') as Mode;
+				const mode = str(msg.mode, 'full') as Mode;
 				if (!MODES.includes(mode) || mode === 'off') {
 					return reply({ ok: false, error: 'unknown mode' });
 				}
@@ -550,19 +663,19 @@ class HomeGuard extends utils.Adapter {
 					return reply({ ok: false, error: 'alarm system disabled' });
 				}
 				if (c.pin && c.pinForArm) {
-					const ok = this.checkPin(String(msg.pin ?? ''), mode, 'pin');
+					const ok = this.checkPin(str(msg.pin), mode, 'pin');
 					return reply({ ok, error: ok ? undefined : 'wrong pin' });
 				}
-				const r = this.alarm.arm(mode, String(msg.source || 'message'));
+				const r = this.alarm.arm(mode, str(msg.source, 'message'));
 				await this.updateSimulation();
 				return reply({ ok: r.ok, open: r.open.map(s => s.name) });
 			}
 			case 'disarm': {
 				if (c.pin) {
-					const ok = this.checkPin(String(msg.pin ?? ''), 'off', 'pin');
+					const ok = this.checkPin(str(msg.pin), 'off', 'pin');
 					return reply({ ok, error: ok ? undefined : 'wrong pin' });
 				}
-				this.alarm.disarm(String(msg.source || 'message'));
+				this.alarm.disarm(str(msg.source, 'message'));
 				await this.updateSimulation();
 				return reply({ ok: true });
 			}
@@ -595,13 +708,19 @@ class HomeGuard extends utils.Adapter {
 					.filter(([id]) => id.split('.').length === 3)
 					.map(([id, o]) => {
 						const n = o.common?.name;
-						const name = typeof n === 'object' ? (n as Record<string, string>).de || (n as Record<string, string>).en : n;
+						const name =
+							typeof n === 'object'
+								? (n as Record<string, string>).de || (n as Record<string, string>).en
+								: n;
 						return { value: id, label: `${name || id} (${id})` };
 					});
 				return reply([{ value: '', label: '–' }, ...list]);
 			}
 			case 'getMessengers': {
-				const inst = await this.getObjectViewAsync('system', 'instance', { startkey: 'system.adapter.', endkey: 'system.adapter.香' });
+				const inst = await this.getObjectViewAsync('system', 'instance', {
+					startkey: 'system.adapter.',
+					endkey: 'system.adapter.香',
+				});
 				const list = inst.rows
 					.map(r => r.id.replace('system.adapter.', ''))
 					.filter(id => MESSENGERS.includes(id.replace(/\.\d+$/, '')))
@@ -609,7 +728,7 @@ class HomeGuard extends utils.Adapter {
 				return reply(list);
 			}
 			case 'test':
-				await this.notifyAll(this.T.test, true);
+				this.notifyAll(this.T.test, true);
 				return reply({ result: 'ok' });
 			default:
 				return reply({ error: `unknown command ${obj.command}` });
@@ -620,14 +739,30 @@ class HomeGuard extends utils.Adapter {
 	// alarm events: notifications, actions, logbook
 	// ======================================================================
 
+	/**
+	 * Name of a mode in the system language
+	 *
+	 * @param m mode
+	 */
 	private modeName(m?: Mode): string {
-		return this.T.mode[(m || 'off') as keyof Texts['mode']] || String(m);
+		return this.T.mode[m || 'off'] || String(m);
 	}
 
+	/**
+	 * " (by …)" for texts
+	 *
+	 * @param s source
+	 */
 	private src(s?: string): string {
-		return this.T.via(s ? this.T.by[s] ?? s : '');
+		return this.T.via(s ? (this.T.by[s] ?? s) : '');
 	}
 
+	/**
+	 * An event of the alarm: notifications, speech, actions, logbook
+	 *
+	 * @param e event
+	 * @param info details
+	 */
 	private async onAlarmEvent(e: AlarmEvent, info: EventInfo): Promise<void> {
 		const c = this.config;
 		const names = (info.sensors || []).map(s => s.name).join(', ');
@@ -642,7 +777,10 @@ class HomeGuard extends utils.Adapter {
 				notify = c.notifyArmed;
 				break;
 			case 'arming':
-				text = this.T.arming(this.modeName(info.mode), info.mode === 'full' ? num(c.exitDelayFull, 60) : num(c.exitDelayPerimeter, 0));
+				text = this.T.arming(
+					this.modeName(info.mode),
+					info.mode === 'full' ? num(c.exitDelayFull, 60) : num(c.exitDelayPerimeter, 0),
+				);
 				speech = c.speechArming;
 				break;
 			case 'disarmed':
@@ -699,7 +837,7 @@ class HomeGuard extends utils.Adapter {
 		this.addLog(e, text);
 		this.log.info(text);
 		if (notify) {
-			await this.notifyAll(text);
+			this.notifyAll(text);
 		}
 		if (speech && c.speechId) {
 			await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, '').trim());
@@ -707,14 +845,22 @@ class HomeGuard extends utils.Adapter {
 		await this.runActions(e);
 	}
 
+	/**
+	 * Repeats the alarm message until it is acknowledged
+	 *
+	 * @param text message
+	 */
 	private startRepeat(text: string): void {
 		this.stopRepeat();
 		const min = num(this.config.alarmRepeatMin, 0);
 		if (min > 0 && this.config.notifyAlarm) {
-			this.repeatTimer = this.setInterval(() => void this.notifyAll(text), min * 60000);
+			this.repeatTimer = this.setInterval(() => this.notifyAll(text), min * 60000);
 		}
 	}
 
+	/**
+	 * Stops repeating the alarm message
+	 */
 	private stopRepeat(): void {
 		if (this.repeatTimer) {
 			this.clearInterval(this.repeatTimer);
@@ -722,8 +868,13 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
-	/** sends a text to every configured messenger instance */
-	private async notifyAll(text: string, test = false): Promise<void> {
+	/**
+	 * sends a text to every configured messenger instance
+	 *
+	 * @param text message text
+	 * @param test true for the test message of the settings
+	 */
+	private notifyAll(text: string, test = false): void {
 		for (const row of this.config.notify || []) {
 			if (!row?.instance || row.enabled === false) {
 				continue;
@@ -755,6 +906,11 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
+	/**
+	 * Value from the settings: true, false, number or text
+	 *
+	 * @param v text
+	 */
 	private parseValue(v: string): ioBroker.StateValue {
 		const s = String(v ?? '').trim();
 		if (s === 'true') {
@@ -769,7 +925,11 @@ class HomeGuard extends utils.Adapter {
 		return s;
 	}
 
-	/** states written on an event (table "actions") */
+	/**
+	 * states written on an event (table "actions")
+	 *
+	 * @param e the event
+	 */
 	private async runActions(e: AlarmEvent | 'simStart' | 'simStop'): Promise<void> {
 		for (const a of this.config.actions || []) {
 			if (!a?.id || a.enabled === false) {
@@ -788,6 +948,11 @@ class HomeGuard extends utils.Adapter {
 	// alarm outputs: lamps (on/blink) and sirens
 	// ======================================================================
 
+	/**
+	 * Lamps and sirens on (or blink) and off again
+	 *
+	 * @param on on or off
+	 */
 	private async setOutputs(on: boolean): Promise<void> {
 		const c = this.config;
 		if (on) {
@@ -830,9 +995,16 @@ class HomeGuard extends utils.Adapter {
 	// status states
 	// ======================================================================
 
+	/**
+	 * Writes the status states
+	 *
+	 * @param s status
+	 */
 	private async publishAlarm(s: AlarmStatus): Promise<void> {
 		const json = JSON.stringify(s);
-		const countdownOnly = this.lastStatusJson && json.replace(/"countdown":\d+/, '') === this.lastStatusJson.replace(/"countdown":\d+/, '');
+		const countdownOnly =
+			this.lastStatusJson &&
+			json.replace(/"countdown":\d+/, '') === this.lastStatusJson.replace(/"countdown":\d+/, '');
 		this.lastStatusJson = json;
 		await this.setStateChangedAsync('status.countdown', s.countdown, true);
 		if (countdownOnly) {
@@ -841,10 +1013,15 @@ class HomeGuard extends utils.Adapter {
 		await this.setStateChangedAsync('status.mode', s.mode, true);
 		await this.setStateChangedAsync('control.mode', s.mode, true);
 		await this.setStateChangedAsync('status.phase', s.phase, true);
-		await this.setStateChangedAsync('status.armed', s.phase === 'armed' || s.phase === 'entry' || s.phase === 'alarm', true);
+		await this.setStateChangedAsync(
+			'status.armed',
+			s.phase === 'armed' || s.phase === 'entry' || s.phase === 'alarm',
+			true,
+		);
 		await this.setStateChangedAsync('status.alarm', s.alarm, true);
 		await this.setStateChangedAsync('status.entry', s.entry, true);
-		const text = s.phase === 'disarmed' ? this.T.phase.disarmed : `${this.T.phase[s.phase]} – ${this.modeName(s.mode)}`;
+		const text =
+			s.phase === 'disarmed' ? this.T.phase.disarmed : `${this.T.phase[s.phase]} – ${this.modeName(s.mode)}`;
 		await this.setStateChangedAsync('status.text', text, true);
 		await this.setStateChangedAsync('status.openContacts', JSON.stringify(s.openContacts.map(o => o.name)), true);
 		await this.setStateChangedAsync('status.openCount', s.openContacts.length, true);
@@ -853,12 +1030,21 @@ class HomeGuard extends utils.Adapter {
 		await this.updateSimulation();
 	}
 
+	/**
+	 * Writes the presence states
+	 */
 	private async publishPresence(): Promise<void> {
 		const home = [...this.presenceVals.values()].filter(Boolean).length;
 		await this.setStateChangedAsync('status.presentCount', home, true);
 		await this.setStateChangedAsync('status.someoneHome', home > 0 || !this.presenceIds.length, true);
 	}
 
+	/**
+	 * Adds an entry to the logbook
+	 *
+	 * @param type event
+	 * @param text text
+	 */
 	private addLog(type: string, text: string): void {
 		this.log_.unshift({ ts: Date.now(), type, text });
 		this.log_ = this.log_.slice(0, Math.max(10, num(this.config.logSize, 100)));
@@ -890,6 +1076,9 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
+	/**
+	 * Starts or stops the simulation as wanted
+	 */
 	private async updateSimulation(): Promise<void> {
 		if (!this.sim) {
 			return;
@@ -904,20 +1093,25 @@ class HomeGuard extends utils.Adapter {
 			this.learner.reset();
 			this.sim.start();
 			if (this.config.notifySim) {
-				await this.notifyAll(this.T.simStart);
+				this.notifyAll(this.T.simStart);
 			}
 			this.addLog('simStart', this.T.simStart);
 			await this.runActions('simStart');
 		} else {
 			this.sim.stop();
 			if (this.config.notifySim) {
-				await this.notifyAll(this.T.simStop);
+				this.notifyAll(this.T.simStop);
 			}
 			this.addLog('simStop', this.T.simStop);
 			await this.runActions('simStop');
 		}
 	}
 
+	/**
+	 * Plan of the current evening
+	 *
+	 * @param now current time
+	 */
 	private makePlan(now: number): PlanStep[] {
 		const c = this.config;
 		const noon = eveningNoon(now);
@@ -927,22 +1121,33 @@ class HomeGuard extends utils.Adapter {
 		if (this.luxDuskTs && eveningKey(this.luxDuskTs) === eveningKey(now)) {
 			sunset = Math.min(sunset, this.luxDuskTs - num(c.simStartOffset, -30) * 60000);
 		}
-		return planEvening(noon, sunset, this.simLamps, {
-			mode: c.simMode || 'dusk',
-			startOffset: num(c.simStartOffset, -30),
-			startRandom: num(c.simStartRandom, 20),
-			end: c.simEnd || '22:30',
-			endRandom: num(c.simEndRandom, 60),
-			weekendLater: num(c.simWeekendLater, 45),
-			visits: num(c.simVisits, 4),
-			visitMin: num(c.simVisitMin, 2),
-			visitMax: num(c.simVisitMax, 15),
-			learnDays: num(c.simLearnDays, 28),
-			jitter: num(c.simJitter, 15),
-		}, this.learner);
+		return planEvening(
+			noon,
+			sunset,
+			this.simLamps,
+			{
+				mode: c.simMode || 'dusk',
+				startOffset: num(c.simStartOffset, -30),
+				startRandom: num(c.simStartRandom, 20),
+				end: c.simEnd || '22:30',
+				endRandom: num(c.simEndRandom, 60),
+				weekendLater: num(c.simWeekendLater, 45),
+				visits: num(c.simVisits, 4),
+				visitMin: num(c.simVisitMin, 2),
+				visitMax: num(c.simVisitMax, 15),
+				learnDays: num(c.simLearnDays, 28),
+				jitter: num(c.simJitter, 15),
+			},
+			this.learner,
+		);
 	}
 
-	private async onLux(lux: number): Promise<void> {
+	/**
+	 * Brightness changed: the evening may start earlier
+	 *
+	 * @param lux brightness
+	 */
+	private onLux(lux: number): void {
 		const c = this.config;
 		if (isNaN(lux) || !c.simLuxBelow) {
 			return;
@@ -955,16 +1160,37 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
+	/**
+	 * Switches a simulation lamp
+	 *
+	 * @param id state ID
+	 * @param on on or off
+	 */
 	private async switchLamp(id: string, on: boolean): Promise<void> {
 		const { on: vOn, off } = await this.onOffValues(id);
 		await this.setForeignStateAsync(id, on ? vOn : off, false);
 	}
 
+	/**
+	 * Writes the simulation states
+	 *
+	 * @param active running
+	 * @param plan remaining steps
+	 * @param next next step
+	 */
 	private async publishSim(active: boolean, plan: PlanStep[], next: PlanStep | null): Promise<void> {
 		const name = (id: string): string => this.simLamps.find(l => l.id === id)?.name || id;
-		const fmt = (ts: number): string => new Date(ts).toLocaleTimeString(this.T === texts('de') ? 'de-DE' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
+		const fmt = (ts: number): string =>
+			new Date(ts).toLocaleTimeString(this.T === texts('de') ? 'de-DE' : 'en-GB', {
+				hour: '2-digit',
+				minute: '2-digit',
+			});
 		await this.setStateChangedAsync('simulation.active', active, true);
-		await this.setStateChangedAsync('simulation.next', next ? `${fmt(next.at)} ${name(next.id)} ${next.on ? 'an/on' : 'aus/off'}` : '', true);
+		await this.setStateChangedAsync(
+			'simulation.next',
+			next ? `${fmt(next.at)} ${name(next.id)} ${next.on ? 'an/on' : 'aus/off'}` : '',
+			true,
+		);
 		await this.setStateChangedAsync(
 			'simulation.plan',
 			JSON.stringify(plan.map(s => ({ at: s.at, time: fmt(s.at), lamp: name(s.id), on: s.on, why: s.why }))),
@@ -972,6 +1198,9 @@ class HomeGuard extends utils.Adapter {
 		);
 	}
 
+	/**
+	 * Saves the learned days a few seconds later
+	 */
 	private saveLearnedSoon(): void {
 		if (this.learnSaveTimer) {
 			this.clearTimeout(this.learnSaveTimer);
@@ -988,6 +1217,9 @@ class HomeGuard extends utils.Adapter {
 	// every minute: night mode, sabotage, daily simulation plan
 	// ======================================================================
 
+	/**
+	 * Every minute: night mode, sabotage, new plan at noon
+	 */
 	private async everyMinute(): Promise<void> {
 		const c = this.config;
 		const now = new Date();
@@ -1014,6 +1246,9 @@ class HomeGuard extends utils.Adapter {
 		await this.updateSimulation();
 	}
 
+	/**
+	 * Reports sensors that did not report for too long
+	 */
 	private async checkSabotage(): Promise<void> {
 		const hours = num(this.config.sabotageHours, 0);
 		if (hours <= 0) {
@@ -1036,6 +1271,12 @@ class HomeGuard extends utils.Adapter {
 		}
 	}
 
+	/**
+	 * JSON of a state or the fallback
+	 *
+	 * @param v state value
+	 * @param fallback used on errors
+	 */
 	private parseJson<T>(v: unknown, fallback: T): T {
 		try {
 			return typeof v === 'string' && v ? (JSON.parse(v) as T) : fallback;
@@ -1045,6 +1286,12 @@ class HomeGuard extends utils.Adapter {
 	}
 }
 
+/**
+ * Number of a setting or the fallback
+ *
+ * @param v value
+ * @param fallback used when empty or invalid
+ */
 function num(v: unknown, fallback: number): number {
 	const n = Number(v);
 	return v === '' || v === null || v === undefined || isNaN(n) ? fallback : n;
