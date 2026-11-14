@@ -34,6 +34,11 @@ Der [alarm-Adapter](https://github.com/misanorot/ioBroker.alarm) ist eine bewäh
 - eine **lernende Anwesenheitssimulation** im selben Adapter, gekoppelt an die Alarmanlage (läuft bei scharf, wenn niemand zu Hause ist, oder von Hand);
 - eine fertige **Web-Komponente** fürs Dashboard.
 
+## Voraussetzungen
+
+- Node.js 22 oder neuer, js-controller 6.0.11 oder neuer, Admin 7.6.20 oder neuer
+- Web-Komponente: AURA ab 0.106.0, vis-2 ab 2.20.7
+
 ## Einstellungen
 
 1. **Allgemein** – Alarmanlage und Anwesenheitssimulation ein- oder ausschalten.

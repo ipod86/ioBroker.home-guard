@@ -52,6 +52,7 @@ interface LampOut {
  */
 class HomeGuard extends utils.Adapter {
 	private T: Texts = texts('en');
+	private sysLang = 'en';
 	private lat = 51;
 	private lon = 10;
 	private alarm!: AlarmEngine;
@@ -118,6 +119,7 @@ class HomeGuard extends utils.Adapter {
 		const c = this.config;
 		const sys = await this.getForeignObjectAsync('system.config');
 		const lang = sys?.common?.language || 'en';
+		this.sysLang = lang;
 		this.T = texts(lang);
 
 		// state of the last run - read first: setting up the sensors already writes the status (still "off")
@@ -142,14 +144,15 @@ class HomeGuard extends utils.Adapter {
 				outputs: on => void this.setOutputs(on),
 			},
 			{
-				exitDelayFull: num(c.exitDelayFull, 60),
-				exitDelayPerimeter: num(c.exitDelayPerimeter, 0),
+				// limits as in the settings, also in code: a timer above 2^31 ms would fire at once
+				exitDelayFull: clamp(num(c.exitDelayFull, 60), 0, 600),
+				exitDelayPerimeter: clamp(num(c.exitDelayPerimeter, 0), 0, 600),
 				armEarlyId: c.armEarlyId || '',
-				entryDelay: num(c.entryDelay, 30),
+				entryDelay: clamp(num(c.entryDelay, 30), 0, 600),
 				openCheck: c.openCheck || 'warn',
-				alarmDuration: num(c.alarmDuration, 180),
-				motionCount: Math.max(1, num(c.motionCount, 2)),
-				motionWindowSec: num(c.motionWindowSec, 120),
+				alarmDuration: clamp(num(c.alarmDuration, 180), 0, 3600),
+				motionCount: clamp(num(c.motionCount, 2), 1, 10),
+				motionWindowSec: clamp(num(c.motionWindowSec, 120), 10, 1800),
 			},
 		);
 
@@ -632,12 +635,15 @@ class HomeGuard extends utils.Adapter {
 			}
 			return;
 		}
-		if (this.sensorIds.has(id) || id === c.armEarlyId) {
+		// a command (ack=false) is not a reading: only confirmed values count - except own states under 0_userdata,
+		// which no adapter confirms (virtual sensors, test buttons)
+		const confirmed = state.ack === true || id.startsWith('0_userdata.');
+		if ((this.sensorIds.has(id) || id === c.armEarlyId) && confirmed) {
 			if (c.alarmEnabled) {
 				this.alarm.sensorChanged(id, state.val);
 			}
 		}
-		if (c.lockEnabled && id === c.lockId) {
+		if (c.lockEnabled && id === c.lockId && confirmed) {
 			const values = String(c.lockValues || '')
 				.split(/[,;\s]+/)
 				.filter(Boolean);
@@ -645,7 +651,7 @@ class HomeGuard extends utils.Adapter {
 				this.alarm.disarm('lock');
 			}
 		}
-		if (this.presenceVals.has(id)) {
+		if (this.presenceVals.has(id) && confirmed) {
 			const was = this.someoneHome();
 			this.presenceVals.set(id, isOpenValue(state.val));
 			await this.publishPresence();
@@ -663,19 +669,13 @@ class HomeGuard extends utils.Adapter {
 					: from.startsWith(`system.adapter.${this.namespace}`);
 			const ts = state.ts || Date.now();
 			// switching on outside the learning window is not learned (switching off ends only what was learned)
-			if (
-				before !== on &&
-				!this.sim.active &&
-				!ignored &&
-				state.ack !== false &&
-				(!on || this.inLearnWindow(ts))
-			) {
+			if (before !== on && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindow(ts))) {
 				if (this.learner.record(id, on, ts)) {
 					this.saveLearnedSoon();
 				}
 			}
 		}
-		if (c.simLuxId && id === c.simLuxId) {
+		if (c.simLuxId && id === c.simLuxId && confirmed) {
 			this.onLux(Number(state.val));
 		}
 	}
@@ -696,7 +696,8 @@ class HomeGuard extends utils.Adapter {
 			case 'control.mode': {
 				const mode = String(val) as Mode;
 				if (!MODES.includes(mode)) {
-					await this.publishAlarm(this.alarm.status());
+					this.log.warn(`Unknown mode "${mode}" – use off, full, perimeter or night`);
+					await this.setStateAsync('control.mode', this.alarm.mode, true);
 					return;
 				}
 				await this.setModeChecked(mode, 'state');
@@ -761,19 +762,19 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private async setModeChecked(mode: Mode, source: string): Promise<void> {
 		const c = this.config;
+		// a refused change: control.mode shows the real mode again (acknowledged)
+		const refuse = async (why: string): Promise<void> => {
+			this.log.warn(why);
+			await this.setStateAsync('control.mode', this.alarm?.mode || 'off', true);
+		};
 		if (!c.alarmEnabled) {
-			this.log.warn('The alarm system is switched off in the settings');
-			return;
+			return refuse('The alarm system is switched off in the settings');
 		}
 		if (mode === 'off' && c.pin && c.pinForDisarmState) {
-			this.log.warn('Disarming by state is only possible with the PIN (control.pin) – see settings');
-			await this.publishAlarm(this.alarm.status());
-			return;
+			return refuse('Disarming by state is only possible with the PIN (control.pin) – see settings');
 		}
 		if (mode !== 'off' && c.pin && c.pinForArm) {
-			this.log.warn('Arming needs the PIN (message "arm" with pin) – see settings');
-			await this.publishAlarm(this.alarm.status());
-			return;
+			return refuse('Arming needs the PIN (message "arm" with pin) – see settings');
 		}
 		this.alarm.arm(mode, source);
 		await this.updateSimulation();
@@ -809,7 +810,7 @@ class HomeGuard extends utils.Adapter {
 		this.wrongPin++;
 		void this.setStateAsync('status.wrongPin', this.wrongPin, true);
 		if (this.wrongPin >= Math.max(1, num(c.maxWrongPin, 3))) {
-			const lockMin = num(c.pinLockMin, 5);
+			const lockMin = clamp(num(c.pinLockMin, 5), 0, 120);
 			if (lockMin > 0) {
 				this.pinLockedUntil = Date.now() + lockMin * 60000;
 			}
@@ -937,7 +938,7 @@ class HomeGuard extends utils.Adapter {
 						const n = o.common?.name;
 						const name =
 							typeof n === 'object'
-								? (n as Record<string, string>).de || (n as Record<string, string>).en
+								? (n as Record<string, string>)[this.sysLang] || (n as Record<string, string>).en
 								: n;
 						return { value: id, label: `${name || id} (${id})` };
 					});
@@ -977,18 +978,20 @@ class HomeGuard extends utils.Adapter {
 	 * Name of a mode in the system language
 	 *
 	 * @param m mode
+	 * @param T texts (system language by default)
 	 */
-	private modeName(m?: Mode): string {
-		return this.T.mode[m || 'off'] || String(m);
+	private modeName(m?: Mode, T: Texts = this.T): string {
+		return T.mode[m || 'off'] || String(m);
 	}
 
 	/**
 	 * " (by …)" for texts
 	 *
 	 * @param s source
+	 * @param T texts (system language by default)
 	 */
-	private src(s?: string): string {
-		return this.T.via(s ? (this.T.by[s] ?? s) : '');
+	private src(s?: string, T: Texts = this.T): string {
+		return T.via(s ? (T.by[s] ?? s) : '');
 	}
 
 	/**
@@ -1000,44 +1003,65 @@ class HomeGuard extends utils.Adapter {
 	private async onAlarmEvent(e: AlarmEvent, info: EventInfo): Promise<void> {
 		const c = this.config;
 		const names = (info.sensors || []).map(s => s.name).join(', ');
-		let text = '';
+		// the text in a language: system language for messages, logbook and speech, English for the ioBroker log
+		const textIn = (T: Texts): string => {
+			switch (e) {
+				case 'armedFull':
+				case 'armedPerimeter':
+				case 'armedNight':
+					return T.armed(this.modeName(info.mode, T), this.src(info.source, T));
+				case 'arming':
+					return T.arming(
+						this.modeName(info.mode, T),
+						info.mode === 'full' ? num(c.exitDelayFull, 60) : num(c.exitDelayPerimeter, 0),
+					);
+				case 'disarmed':
+					return T.disarmed(this.src(info.source, T));
+				case 'armingFailed':
+					return T.armingFailed(this.modeName(info.mode, T), names);
+				case 'openWarning':
+					return T.openWarning(this.modeName(info.mode, T), names);
+				case 'entry':
+					return T.entry(info.sensor?.name || '', num(c.entryDelay, 30));
+				case 'alarm':
+					return info.panic ? T.panic(info.sensor?.name || '') : T.alarm(info.sensor?.name || '');
+				case 'alarmEnd':
+					return T.alarmEnd(this.src(info.source, T));
+				case 'wrongPin':
+					return T.wrongPin(this.wrongPin);
+				case 'sabotage':
+					return T.sabotage(names);
+			}
+			return '';
+		};
+		const text = textIn(this.T);
 		let notify = false;
 		let speech = false;
 		switch (e) {
 			case 'armedFull':
 			case 'armedPerimeter':
 			case 'armedNight':
-				text = this.T.armed(this.modeName(info.mode), this.src(info.source));
 				notify = c.notifyArmed;
 				break;
 			case 'arming':
-				text = this.T.arming(
-					this.modeName(info.mode),
-					info.mode === 'full' ? num(c.exitDelayFull, 60) : num(c.exitDelayPerimeter, 0),
-				);
 				speech = c.speechArming;
 				break;
 			case 'disarmed':
-				text = this.T.disarmed(this.src(info.source));
 				notify = c.notifyDisarmed;
 				break;
 			case 'armingFailed':
-				text = this.T.armingFailed(this.modeName(info.mode), names);
 				notify = c.notifyArmingFailed;
 				speech = c.speechArming;
 				break;
 			case 'openWarning':
-				text = this.T.openWarning(this.modeName(info.mode), names);
 				notify = c.notifyOpenWarning;
 				speech = c.speechArming;
 				break;
 			case 'entry':
-				text = this.T.entry(info.sensor?.name || '', num(c.entryDelay, 30));
 				notify = c.notifyEntry;
 				speech = c.speechEntry;
 				break;
 			case 'alarm':
-				text = info.panic ? this.T.panic(info.sensor?.name || '') : this.T.alarm(info.sensor?.name || '');
 				notify = c.notifyAlarm;
 				speech = c.speechAlarm;
 				await this.setStateAsync('status.lastTrigger', info.sensor?.name || '', true);
@@ -1052,16 +1076,13 @@ class HomeGuard extends utils.Adapter {
 				}
 				break;
 			case 'alarmEnd':
-				text = this.T.alarmEnd(this.src(info.source));
 				notify = c.notifyAlarmEnd;
 				this.stopRepeat();
 				break;
 			case 'wrongPin':
-				text = this.T.wrongPin(this.wrongPin);
 				notify = c.notifyWrongPin;
 				break;
 			case 'sabotage':
-				text = this.T.sabotage(names);
 				notify = c.notifySabotage;
 				break;
 		}
@@ -1069,7 +1090,7 @@ class HomeGuard extends utils.Adapter {
 			this.stopRepeat();
 		}
 		this.addLog(e, text);
-		this.log.info(text);
+		this.log.info(textIn(texts('en')));
 		if (notify) {
 			this.notifyAll(text, false, e === 'alarm' || e === 'entry' || e === 'sabotage');
 		}
@@ -1086,7 +1107,7 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private startRepeat(text: string): void {
 		this.stopRepeat();
-		const min = num(this.config.alarmRepeatMin, 0);
+		const min = clamp(num(this.config.alarmRepeatMin, 0), 0, 120);
 		if (min > 0 && this.config.notifyAlarm) {
 			this.repeatTimer = this.setInterval(() => this.notifyAll(text, false, true), min * 60000);
 		}
@@ -1243,7 +1264,7 @@ class HomeGuard extends utils.Adapter {
 			}
 			if (c.lampMode === 'blink' && this.lampOuts.length) {
 				this.blinkOn = true;
-				const ms = Math.max(500, num(c.blinkSec, 1) * 1000);
+				const ms = clamp(num(c.blinkSec, 1), 0.5, 10) * 1000;
 				this.blinkTimer = this.setInterval(() => {
 					this.blinkOn = !this.blinkOn;
 					for (const l of this.lampOuts) {
@@ -1340,7 +1361,7 @@ class HomeGuard extends utils.Adapter {
 							void this.setForeignStateAsync(l.id, lit ? l.on : l.off, false);
 						}
 					},
-					Math.max(500, num(c.blinkSec, 1) * 1000),
+					clamp(num(c.blinkSec, 1), 0.5, 10) * 1000,
 				);
 			}
 			done.push(T.testParts.lamps(test.lamps.length));
@@ -1744,7 +1765,7 @@ class HomeGuard extends utils.Adapter {
 	 * Reports sensors that did not report for too long
 	 */
 	private async checkSabotage(): Promise<void> {
-		const hours = num(this.config.sabotageHours, 0);
+		const hours = clamp(num(this.config.sabotageHours, 0), 0, 720);
 		if (hours <= 0) {
 			return;
 		}
@@ -1778,6 +1799,17 @@ class HomeGuard extends utils.Adapter {
 			return fallback;
 		}
 	}
+}
+
+/**
+ * A number limited to a range
+ *
+ * @param v value
+ * @param min smallest value
+ * @param max largest value
+ */
+function clamp(v: number, min: number, max: number): number {
+	return Math.min(max, Math.max(min, v));
 }
 
 /**

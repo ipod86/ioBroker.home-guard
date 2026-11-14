@@ -45,6 +45,11 @@ The [alarm adapter](https://github.com/misanorot/ioBroker.alarm) is a proven, la
 - a **learning presence simulation** in the same adapter, coupled with the alarm system (runs when armed, when nobody is at home, or by hand);
 - a ready **web component** for the dashboard.
 
+### Requirements
+
+- Node.js 22 or newer, js-controller 6.0.11 or newer, admin 7.6.20 or newer
+- Web component: AURA 0.106.0 or newer, vis-2 2.20.7 or newer
+
 ### Configuration
 
 1. **General** – switch the alarm system and the presence simulation on or off.
@@ -114,7 +119,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component
+* (ipod86) initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component (AURA 0.106.0+, vis-2 2.20.7+)
 
 ## License
 MIT License

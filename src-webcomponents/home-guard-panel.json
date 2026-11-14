@@ -4,11 +4,29 @@
 	"tag": "iob-home-guard-panel",
 	"name": {
 		"en": "Home Guard panel",
-		"de": "Home Guard Bedienfeld"
+		"de": "Home Guard Bedienfeld",
+		"ru": "Панель Home Guard",
+		"pt": "Painel Home Guard",
+		"nl": "Home Guard-paneel",
+		"fr": "Panneau Home Guard",
+		"it": "Pannello Home Guard",
+		"es": "Panel de Home Guard",
+		"pl": "Panel Home Guard",
+		"uk": "Панель Home Guard",
+		"zh-cn": "Home Guard 面板"
 	},
 	"description": {
 		"en": "Alarm system: status, arming, PIN keypad, open windows, presence simulation and logbook",
-		"de": "Alarmanlage: Status, Scharfschalten, PIN-Ziffernfeld, offene Fenster, Anwesenheitssimulation und Logbuch"
+		"de": "Alarmanlage: Status, Scharfschalten, PIN-Ziffernfeld, offene Fenster, Anwesenheitssimulation und Logbuch",
+		"ru": "Сигнализация: статус, постановка на охрану, PIN-клавиатура, открытые окна, имитация присутствия и журнал",
+		"pt": "Sistema de alarme: estado, ativação, teclado PIN, janelas abertas, simulação de presença e registo",
+		"nl": "Alarmsysteem: status, inschakelen, pincodetoetsenbord, open ramen, aanwezigheidssimulatie en logboek",
+		"fr": "Système d'alarme : état, armement, clavier PIN, fenêtres ouvertes, simulation de présence et journal",
+		"it": "Sistema d'allarme: stato, inserimento, tastierino PIN, finestre aperte, simulazione di presenza e registro",
+		"es": "Sistema de alarma: estado, armado, teclado PIN, ventanas abiertas, simulación de presencia y registro",
+		"pl": "System alarmowy: stan, uzbrajanie, klawiatura PIN, otwarte okna, symulacja obecności i dziennik",
+		"uk": "Сигналізація: стан, постановка на охорону, PIN-клавіатура, відчинені вікна, імітація присутності та журнал",
+		"zh-cn": "报警系统：状态、布防、PIN 键盘、打开的窗户、在家模拟和日志"
 	},
 	"icon": "../home-guard.png",
 	"module": "home-guard-panel.js",
@@ -24,7 +42,16 @@
 				"adapter": "home-guard",
 				"label": {
 					"en": "Instance",
-					"de": "Instanz"
+					"de": "Instanz",
+					"ru": "Экземпляр",
+					"pt": "Instância",
+					"nl": "Instantie",
+					"fr": "Instance",
+					"it": "Istanza",
+					"es": "Instancia",
+					"pl": "Instancja",
+					"uk": "Екземпляр",
+					"zh-cn": "实例"
 				},
 				"default": "home-guard.0"
 			},
@@ -32,7 +59,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Button for night protection",
-					"de": "Taste für Nachtschutz"
+					"de": "Taste für Nachtschutz",
+					"ru": "Кнопка ночной охраны",
+					"pt": "Botão de proteção noturna",
+					"nl": "Knop voor nachtbeveiliging",
+					"fr": "Bouton protection de nuit",
+					"it": "Pulsante protezione notturna",
+					"es": "Botón de protección nocturna",
+					"pl": "Przycisk ochrony nocnej",
+					"uk": "Кнопка нічної охорони",
+					"zh-cn": "夜间保护按钮"
 				},
 				"default": true
 			},
@@ -40,7 +76,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Show open windows and doors",
-					"de": "Offene Fenster und Türen zeigen"
+					"de": "Offene Fenster und Türen zeigen",
+					"ru": "Показывать открытые окна и двери",
+					"pt": "Mostrar janelas e portas abertas",
+					"nl": "Open ramen en deuren tonen",
+					"fr": "Afficher les fenêtres et portes ouvertes",
+					"it": "Mostrare finestre e porte aperte",
+					"es": "Mostrar ventanas y puertas abiertas",
+					"pl": "Pokaż otwarte okna i drzwi",
+					"uk": "Показувати відчинені вікна та двері",
+					"zh-cn": "显示打开的门窗"
 				},
 				"default": true
 			},
@@ -48,7 +93,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Show presence simulation",
-					"de": "Anwesenheitssimulation zeigen"
+					"de": "Anwesenheitssimulation zeigen",
+					"ru": "Показывать имитацию присутствия",
+					"pt": "Mostrar simulação de presença",
+					"nl": "Aanwezigheidssimulatie tonen",
+					"fr": "Afficher la simulation de présence",
+					"it": "Mostrare simulazione di presenza",
+					"es": "Mostrar simulación de presencia",
+					"pl": "Pokaż symulację obecności",
+					"uk": "Показувати імітацію присутності",
+					"zh-cn": "显示在家模拟"
 				},
 				"default": true
 			},
@@ -56,28 +110,64 @@
 				"type": "select",
 				"label": {
 					"en": "Who is at home",
-					"de": "Wer ist zu Hause"
+					"de": "Wer ist zu Hause",
+					"ru": "Кто дома",
+					"pt": "Quem está em casa",
+					"nl": "Wie is thuis",
+					"fr": "Qui est à la maison",
+					"it": "Chi è in casa",
+					"es": "Quién está en casa",
+					"pl": "Kto jest w domu",
+					"uk": "Хто вдома",
+					"zh-cn": "谁在家"
 				},
 				"options": [
 					{
 						"value": "off",
 						"label": {
 							"en": "Do not show",
-							"de": "Nicht zeigen"
+							"de": "Nicht zeigen",
+							"ru": "Не показывать",
+							"pt": "Não mostrar",
+							"nl": "Niet tonen",
+							"fr": "Ne pas afficher",
+							"it": "Non mostrare",
+							"es": "No mostrar",
+							"pl": "Nie pokazuj",
+							"uk": "Не показувати",
+							"zh-cn": "不显示"
 						}
 					},
 					{
 						"value": "home",
 						"label": {
 							"en": "Only who is at home",
-							"de": "Nur wer zu Hause ist"
+							"de": "Nur wer zu Hause ist",
+							"ru": "Только кто дома",
+							"pt": "Só quem está em casa",
+							"nl": "Alleen wie thuis is",
+							"fr": "Seulement qui est à la maison",
+							"it": "Solo chi è in casa",
+							"es": "Solo quién está en casa",
+							"pl": "Tylko kto jest w domu",
+							"uk": "Лише хто вдома",
+							"zh-cn": "仅显示在家的人"
 						}
 					},
 					{
 						"value": "all",
 						"label": {
 							"en": "At home and away",
-							"de": "Zu Hause und weg"
+							"de": "Zu Hause und weg",
+							"ru": "Дома и нет",
+							"pt": "Em casa e fora",
+							"nl": "Thuis en weg",
+							"fr": "À la maison et absents",
+							"it": "In casa e fuori",
+							"es": "En casa y fuera",
+							"pl": "W domu i poza",
+							"uk": "Удома та ні",
+							"zh-cn": "在家和外出"
 						}
 					}
 				],
@@ -87,7 +177,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Switch for automatic arming by presence",
-					"de": "Schalter „Automatisch scharf/unscharf“"
+					"de": "Schalter „Automatisch scharf/unscharf“",
+					"ru": "Переключатель автопостановки по присутствию",
+					"pt": "Interruptor de ativação automática pela presença",
+					"nl": "Schakelaar automatisch inschakelen op aanwezigheid",
+					"fr": "Interrupteur d'armement automatique selon la présence",
+					"it": "Interruttore inserimento automatico per presenza",
+					"es": "Interruptor de armado automático por presencia",
+					"pl": "Przełącznik automatycznego uzbrajania wg obecności",
+					"uk": "Перемикач автопостановки за присутністю",
+					"zh-cn": "根据在家状态自动布防的开关"
 				},
 				"default": true
 			},
@@ -95,7 +194,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Monitored sensors (to open)",
-					"de": "Überwachte Sensoren (aufklappbar)"
+					"de": "Überwachte Sensoren (aufklappbar)",
+					"ru": "Контролируемые датчики (раскрываемые)",
+					"pt": "Sensores vigiados (expansível)",
+					"nl": "Bewaakte sensoren (uitklapbaar)",
+					"fr": "Capteurs surveillés (dépliable)",
+					"it": "Sensori sorvegliati (espandibile)",
+					"es": "Sensores vigilados (desplegable)",
+					"pl": "Monitorowane czujniki (rozwijane)",
+					"uk": "Контрольовані датчики (розгортаються)",
+					"zh-cn": "监控的传感器（可展开）"
 				},
 				"default": true
 			},
@@ -103,7 +211,16 @@
 				"type": "number",
 				"label": {
 					"en": "Logbook entries (0 = none)",
-					"de": "Logbuch-Einträge (0 = keine)"
+					"de": "Logbuch-Einträge (0 = keine)",
+					"ru": "Записей журнала (0 = нет)",
+					"pt": "Entradas do registo (0 = nenhuma)",
+					"nl": "Logboekregels (0 = geen)",
+					"fr": "Entrées du journal (0 = aucune)",
+					"it": "Voci del registro (0 = nessuna)",
+					"es": "Entradas del registro (0 = ninguna)",
+					"pl": "Wpisy dziennika (0 = brak)",
+					"uk": "Записів журналу (0 = немає)",
+					"zh-cn": "日志条目（0 = 无）"
 				},
 				"min": 0,
 				"max": 20,
@@ -113,7 +230,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Logbook open at start",
-					"de": "Logbuch anfangs ausgeklappt"
+					"de": "Logbuch anfangs ausgeklappt",
+					"ru": "Журнал раскрыт при запуске",
+					"pt": "Registo aberto no início",
+					"nl": "Logboek bij start open",
+					"fr": "Journal ouvert au départ",
+					"it": "Registro aperto all'avvio",
+					"es": "Registro abierto al inicio",
+					"pl": "Dziennik rozwinięty na starcie",
+					"uk": "Журнал розгорнуто на початку",
+					"zh-cn": "启动时展开日志"
 				},
 				"default": false
 			},
@@ -121,7 +247,16 @@
 				"type": "checkbox",
 				"label": {
 					"en": "Accept the PIN without OK when it is complete",
-					"de": "PIN ohne OK bestätigen, sobald er vollständig ist"
+					"de": "PIN ohne OK bestätigen, sobald er vollständig ist",
+					"ru": "Принимать полный PIN без OK",
+					"pt": "Aceitar o PIN completo sem OK",
+					"nl": "Volledige pincode zonder OK accepteren",
+					"fr": "Accepter le PIN complet sans OK",
+					"it": "Accettare il PIN completo senza OK",
+					"es": "Aceptar el PIN completo sin OK",
+					"pl": "Akceptuj pełny PIN bez OK",
+					"uk": "Приймати повний PIN без OK",
+					"zh-cn": "PIN 输入完整后无需确认"
 				},
 				"default": true
 			}

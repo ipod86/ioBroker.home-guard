@@ -56,7 +56,12 @@
 			"presence simulation",
 			"Anwesenheitssimulation",
 			"vacation",
-			"Urlaub"
+			"Urlaub",
+			"vis-2",
+			"aura",
+			"web component",
+			"dashboard",
+			"widget"
 		],
 		"licenseInformation": {
 			"type": "free",
@@ -191,7 +196,16 @@
 			"common": {
 				"name": {
 					"en": "Status",
-					"de": "Status"
+					"de": "Status",
+					"ru": "Статус",
+					"pt": "Estado",
+					"nl": "Status",
+					"fr": "État",
+					"it": "Stato",
+					"es": "Estado",
+					"pl": "Stan",
+					"uk": "Стан",
+					"zh-cn": "状态"
 				}
 			},
 			"native": {}
@@ -202,7 +216,16 @@
 			"common": {
 				"name": {
 					"en": "Mode",
-					"de": "Modus"
+					"de": "Modus",
+					"ru": "Режим",
+					"pt": "Modo",
+					"nl": "Modus",
+					"fr": "Mode",
+					"it": "Modalità",
+					"es": "Modo",
+					"pl": "Tryb",
+					"uk": "Режим",
+					"zh-cn": "模式"
 				},
 				"type": "string",
 				"role": "text",
@@ -224,7 +247,16 @@
 			"common": {
 				"name": {
 					"en": "Phase",
-					"de": "Phase"
+					"de": "Phase",
+					"ru": "Фаза",
+					"pt": "Fase",
+					"nl": "Fase",
+					"fr": "Phase",
+					"it": "Fase",
+					"es": "Fase",
+					"pl": "Faza",
+					"uk": "Фаза",
+					"zh-cn": "阶段"
 				},
 				"type": "string",
 				"role": "text",
@@ -247,7 +279,16 @@
 			"common": {
 				"name": {
 					"en": "Status text",
-					"de": "Statustext"
+					"de": "Statustext",
+					"ru": "Текст статуса",
+					"pt": "Texto do estado",
+					"nl": "Statustekst",
+					"fr": "Texte d'état",
+					"it": "Testo dello stato",
+					"es": "Texto de estado",
+					"pl": "Tekst stanu",
+					"uk": "Текст стану",
+					"zh-cn": "状态文本"
 				},
 				"type": "string",
 				"role": "text",
@@ -263,7 +304,16 @@
 			"common": {
 				"name": {
 					"en": "Armed",
-					"de": "Scharf"
+					"de": "Scharf",
+					"ru": "На охране",
+					"pt": "Ativado",
+					"nl": "Ingeschakeld",
+					"fr": "Armé",
+					"it": "Inserito",
+					"es": "Armado",
+					"pl": "Uzbrojony",
+					"uk": "На охороні",
+					"zh-cn": "已布防"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -279,10 +329,19 @@
 			"common": {
 				"name": {
 					"en": "Alarm",
-					"de": "Alarm"
+					"de": "Alarm",
+					"ru": "Тревога",
+					"pt": "Alarme",
+					"nl": "Alarm",
+					"fr": "Alarme",
+					"it": "Allarme",
+					"es": "Alarma",
+					"pl": "Alarm",
+					"uk": "Тривога",
+					"zh-cn": "报警"
 				},
 				"type": "boolean",
-				"role": "indicator.alarm",
+				"role": "sensor.alarm.secure",
 				"read": true,
 				"write": false,
 				"def": false
@@ -295,7 +354,16 @@
 			"common": {
 				"name": {
 					"en": "Entry delay running",
-					"de": "Eingangsverzögerung läuft"
+					"de": "Eingangsverzögerung läuft",
+					"ru": "Идёт задержка на вход",
+					"pt": "Atraso de entrada em curso",
+					"nl": "Ingangsvertraging loopt",
+					"fr": "Délai d'entrée en cours",
+					"it": "Ritardo d'ingresso in corso",
+					"es": "Retardo de entrada en curso",
+					"pl": "Trwa opóźnienie wejścia",
+					"uk": "Триває затримка на вхід",
+					"zh-cn": "进入延时进行中"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -311,10 +379,19 @@
 			"common": {
 				"name": {
 					"en": "Countdown",
-					"de": "Countdown"
+					"de": "Countdown",
+					"ru": "Обратный отсчёт",
+					"pt": "Contagem decrescente",
+					"nl": "Aftellen",
+					"fr": "Compte à rebours",
+					"it": "Conto alla rovescia",
+					"es": "Cuenta atrás",
+					"pl": "Odliczanie",
+					"uk": "Зворотний відлік",
+					"zh-cn": "倒计时"
 				},
 				"type": "number",
-				"role": "value",
+				"role": "value.timer",
 				"read": true,
 				"write": false,
 				"unit": "s",
@@ -328,7 +405,16 @@
 			"common": {
 				"name": {
 					"en": "Open contacts",
-					"de": "Offene Kontakte"
+					"de": "Offene Kontakte",
+					"ru": "Открытые контакты",
+					"pt": "Contactos abertos",
+					"nl": "Open contacten",
+					"fr": "Contacts ouverts",
+					"it": "Contatti aperti",
+					"es": "Contactos abiertos",
+					"pl": "Otwarte kontakty",
+					"uk": "Відчинені контакти",
+					"zh-cn": "打开的触点"
 				},
 				"type": "string",
 				"role": "json",
@@ -344,7 +430,16 @@
 			"common": {
 				"name": {
 					"en": "Number of open contacts",
-					"de": "Anzahl offener Kontakte"
+					"de": "Anzahl offener Kontakte",
+					"ru": "Количество открытых контактов",
+					"pt": "Número de contactos abertos",
+					"nl": "Aantal open contacten",
+					"fr": "Nombre de contacts ouverts",
+					"it": "Numero di contatti aperti",
+					"es": "Número de contactos abiertos",
+					"pl": "Liczba otwartych kontaktów",
+					"uk": "Кількість відчинених контактів",
+					"zh-cn": "打开的触点数量"
 				},
 				"type": "number",
 				"role": "value",
@@ -360,7 +455,16 @@
 			"common": {
 				"name": {
 					"en": "Full protection possible",
-					"de": "Vollschutz möglich"
+					"de": "Vollschutz möglich",
+					"ru": "Полная охрана возможна",
+					"pt": "Proteção total possível",
+					"nl": "Volledige beveiliging mogelijk",
+					"fr": "Protection totale possible",
+					"it": "Protezione totale possibile",
+					"es": "Protección total posible",
+					"pl": "Ochrona pełna możliwa",
+					"uk": "Повна охорона можлива",
+					"zh-cn": "可全面保护"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -376,7 +480,16 @@
 			"common": {
 				"name": {
 					"en": "Perimeter protection possible",
-					"de": "Hüllschutz möglich"
+					"de": "Hüllschutz möglich",
+					"ru": "Охрана периметра возможна",
+					"pt": "Proteção perimetral possível",
+					"nl": "Schilbeveiliging mogelijk",
+					"fr": "Protection périmétrique possible",
+					"it": "Protezione perimetrale possibile",
+					"es": "Protección perimetral posible",
+					"pl": "Ochrona obwodowa możliwa",
+					"uk": "Охорона периметра можлива",
+					"zh-cn": "可周界保护"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -392,7 +505,16 @@
 			"common": {
 				"name": {
 					"en": "Last trigger",
-					"de": "Letzter Auslöser"
+					"de": "Letzter Auslöser",
+					"ru": "Последний триггер",
+					"pt": "Último gatilho",
+					"nl": "Laatste trigger",
+					"fr": "Dernier déclencheur",
+					"it": "Ultimo attivatore",
+					"es": "Último disparador",
+					"pl": "Ostatni wyzwalacz",
+					"uk": "Останній тригер",
+					"zh-cn": "最后触发"
 				},
 				"type": "string",
 				"role": "text",
@@ -408,7 +530,16 @@
 			"common": {
 				"name": {
 					"en": "Time of the last trigger",
-					"de": "Zeit des letzten Auslösers"
+					"de": "Zeit des letzten Auslösers",
+					"ru": "Время последнего триггера",
+					"pt": "Hora do último gatilho",
+					"nl": "Tijd van de laatste trigger",
+					"fr": "Heure du dernier déclencheur",
+					"it": "Ora dell'ultimo attivatore",
+					"es": "Hora del último disparador",
+					"pl": "Czas ostatniego wyzwalacza",
+					"uk": "Час останнього тригера",
+					"zh-cn": "最后触发时间"
 				},
 				"type": "number",
 				"role": "date",
@@ -424,7 +555,16 @@
 			"common": {
 				"name": {
 					"en": "Wrong PIN entries",
-					"de": "Falsche PIN-Eingaben"
+					"de": "Falsche PIN-Eingaben",
+					"ru": "Неверные вводы PIN",
+					"pt": "Entradas de PIN erradas",
+					"nl": "Verkeerde pincode-invoer",
+					"fr": "Saisies de PIN erronées",
+					"it": "Inserimenti PIN errati",
+					"es": "Entradas de PIN incorrectas",
+					"pl": "Błędne wpisy PIN",
+					"uk": "Неправильні введення PIN",
+					"zh-cn": "PIN 输入错误次数"
 				},
 				"type": "number",
 				"role": "value",
@@ -440,7 +580,16 @@
 			"common": {
 				"name": {
 					"en": "Sensors without reports",
-					"de": "Sensoren ohne Meldung"
+					"de": "Sensoren ohne Meldung",
+					"ru": "Датчики без сообщений",
+					"pt": "Sensores sem mensagens",
+					"nl": "Sensoren zonder melding",
+					"fr": "Capteurs sans message",
+					"it": "Sensori senza messaggi",
+					"es": "Sensores sin mensajes",
+					"pl": "Czujniki bez wiadomości",
+					"uk": "Датчики без повідомлень",
+					"zh-cn": "无消息的传感器"
 				},
 				"type": "string",
 				"role": "json",
@@ -456,7 +605,16 @@
 			"common": {
 				"name": {
 					"en": "Monitored sensors",
-					"de": "Überwachte Sensoren"
+					"de": "Überwachte Sensoren",
+					"ru": "Контролируемые датчики",
+					"pt": "Sensores vigiados",
+					"nl": "Bewaakte sensoren",
+					"fr": "Capteurs surveillés",
+					"it": "Sensori sorvegliati",
+					"es": "Sensores vigilados",
+					"pl": "Monitorowane czujniki",
+					"uk": "Контрольовані датчики",
+					"zh-cn": "监控的传感器"
 				},
 				"type": "string",
 				"role": "json",
@@ -472,7 +630,16 @@
 			"common": {
 				"name": {
 					"en": "Persons at home",
-					"de": "Personen zu Hause"
+					"de": "Personen zu Hause",
+					"ru": "Людей дома",
+					"pt": "Pessoas em casa",
+					"nl": "Personen thuis",
+					"fr": "Personnes à la maison",
+					"it": "Persone in casa",
+					"es": "Personas en casa",
+					"pl": "Osoby w domu",
+					"uk": "Людей удома",
+					"zh-cn": "在家人数"
 				},
 				"type": "number",
 				"role": "value",
@@ -488,7 +655,16 @@
 			"common": {
 				"name": {
 					"en": "Someone at home",
-					"de": "Jemand zu Hause"
+					"de": "Jemand zu Hause",
+					"ru": "Кто-то дома",
+					"pt": "Alguém em casa",
+					"nl": "Iemand thuis",
+					"fr": "Quelqu'un à la maison",
+					"it": "Qualcuno in casa",
+					"es": "Alguien en casa",
+					"pl": "Ktoś w domu",
+					"uk": "Хтось удома",
+					"zh-cn": "有人在家"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -504,7 +680,16 @@
 			"common": {
 				"name": {
 					"en": "Persons and whether they are at home",
-					"de": "Personen und ob sie zu Hause sind"
+					"de": "Personen und ob sie zu Hause sind",
+					"ru": "Люди и находятся ли они дома",
+					"pt": "Pessoas e se estão em casa",
+					"nl": "Personen en of ze thuis zijn",
+					"fr": "Personnes et si elles sont à la maison",
+					"it": "Persone e se sono in casa",
+					"es": "Personas y si están en casa",
+					"pl": "Osoby i czy są w domu",
+					"uk": "Люди та чи вони вдома",
+					"zh-cn": "人员及其是否在家"
 				},
 				"type": "string",
 				"role": "json",
@@ -520,7 +705,16 @@
 			"common": {
 				"name": {
 					"en": "Logbook",
-					"de": "Logbuch"
+					"de": "Logbuch",
+					"ru": "Журнал",
+					"pt": "Registo",
+					"nl": "Logboek",
+					"fr": "Journal",
+					"it": "Registro",
+					"es": "Registro",
+					"pl": "Dziennik",
+					"uk": "Журнал",
+					"zh-cn": "日志"
 				},
 				"type": "string",
 				"role": "json",
@@ -536,7 +730,16 @@
 			"common": {
 				"name": {
 					"en": "Control",
-					"de": "Steuerung"
+					"de": "Steuerung",
+					"ru": "Управление",
+					"pt": "Controlo",
+					"nl": "Bediening",
+					"fr": "Commande",
+					"it": "Controllo",
+					"es": "Control",
+					"pl": "Sterowanie",
+					"uk": "Керування",
+					"zh-cn": "控制"
 				}
 			},
 			"native": {}
@@ -547,7 +750,16 @@
 			"common": {
 				"name": {
 					"en": "Set mode",
-					"de": "Modus setzen"
+					"de": "Modus setzen",
+					"ru": "Установить режим",
+					"pt": "Definir modo",
+					"nl": "Modus instellen",
+					"fr": "Définir le mode",
+					"it": "Impostare la modalità",
+					"es": "Establecer modo",
+					"pl": "Ustaw tryb",
+					"uk": "Встановити режим",
+					"zh-cn": "设置模式"
 				},
 				"type": "string",
 				"role": "text",
@@ -569,7 +781,16 @@
 			"common": {
 				"name": {
 					"en": "Arm full protection",
-					"de": "Vollschutz scharf schalten"
+					"de": "Vollschutz scharf schalten",
+					"ru": "Поставить полную охрану",
+					"pt": "Ativar proteção total",
+					"nl": "Volledige beveiliging inschakelen",
+					"fr": "Armer la protection totale",
+					"it": "Inserire protezione totale",
+					"es": "Armar protección total",
+					"pl": "Uzbrój ochronę pełną",
+					"uk": "Поставити повну охорону",
+					"zh-cn": "布防全面保护"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -584,7 +805,16 @@
 			"common": {
 				"name": {
 					"en": "Arm perimeter protection",
-					"de": "Hüllschutz scharf schalten"
+					"de": "Hüllschutz scharf schalten",
+					"ru": "Поставить охрану периметра",
+					"pt": "Ativar proteção perimetral",
+					"nl": "Schilbeveiliging inschakelen",
+					"fr": "Armer la protection périmétrique",
+					"it": "Inserire protezione perimetrale",
+					"es": "Armar protección perimetral",
+					"pl": "Uzbrój ochronę obwodową",
+					"uk": "Поставити охорону периметра",
+					"zh-cn": "布防周界保护"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -599,7 +829,16 @@
 			"common": {
 				"name": {
 					"en": "Arm night protection",
-					"de": "Nachtschutz scharf schalten"
+					"de": "Nachtschutz scharf schalten",
+					"ru": "Поставить ночную охрану",
+					"pt": "Ativar proteção noturna",
+					"nl": "Nachtbeveiliging inschakelen",
+					"fr": "Armer la protection de nuit",
+					"it": "Inserire protezione notturna",
+					"es": "Armar protección nocturna",
+					"pl": "Uzbrój ochronę nocną",
+					"uk": "Поставити нічну охорону",
+					"zh-cn": "布防夜间保护"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -614,7 +853,16 @@
 			"common": {
 				"name": {
 					"en": "Disarm",
-					"de": "Unscharf schalten"
+					"de": "Unscharf schalten",
+					"ru": "Снять с охраны",
+					"pt": "Desativar",
+					"nl": "Uitschakelen",
+					"fr": "Désarmer",
+					"it": "Disinserire",
+					"es": "Desarmar",
+					"pl": "Rozbrój",
+					"uk": "Зняти з охорони",
+					"zh-cn": "撤防"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -629,7 +877,16 @@
 			"common": {
 				"name": {
 					"en": "Cancel arming",
-					"de": "Scharfschalten abbrechen"
+					"de": "Scharfschalten abbrechen",
+					"ru": "Отменить постановку на охрану",
+					"pt": "Cancelar ativação",
+					"nl": "Inschakelen annuleren",
+					"fr": "Annuler l'armement",
+					"it": "Annullare l'inserimento",
+					"es": "Cancelar armado",
+					"pl": "Anuluj uzbrajanie",
+					"uk": "Скасувати постановку на охорону",
+					"zh-cn": "取消布防"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -644,7 +901,16 @@
 			"common": {
 				"name": {
 					"en": "Acknowledge alarm",
-					"de": "Alarm quittieren"
+					"de": "Alarm quittieren",
+					"ru": "Подтвердить тревогу",
+					"pt": "Confirmar alarme",
+					"nl": "Alarm bevestigen",
+					"fr": "Acquitter l'alarme",
+					"it": "Confermare l'allarme",
+					"es": "Confirmar alarma",
+					"pl": "Potwierdź alarm",
+					"uk": "Підтвердити тривогу",
+					"zh-cn": "确认报警"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -659,7 +925,16 @@
 			"common": {
 				"name": {
 					"en": "Panic alarm",
-					"de": "Panik-Alarm"
+					"de": "Panik-Alarm",
+					"ru": "Тревожная кнопка",
+					"pt": "Alarme de pânico",
+					"nl": "Paniekalarm",
+					"fr": "Alarme panique",
+					"it": "Allarme panico",
+					"es": "Alarma de pánico",
+					"pl": "Alarm napadowy",
+					"uk": "Тривожна кнопка",
+					"zh-cn": "紧急报警"
 				},
 				"type": "boolean",
 				"role": "button",
@@ -674,11 +949,20 @@
 			"common": {
 				"name": {
 					"en": "Enter PIN (disarms)",
-					"de": "PIN eingeben (entschärft)"
+					"de": "PIN eingeben (entschärft)",
+					"ru": "Ввести PIN (снимает с охраны)",
+					"pt": "Introduzir PIN (desativa)",
+					"nl": "Pincode invoeren (schakelt uit)",
+					"fr": "Saisir le PIN (désarme)",
+					"it": "Inserire PIN (disinserisce)",
+					"es": "Introducir PIN (desarma)",
+					"pl": "Wprowadź PIN (rozbraja)",
+					"uk": "Ввести PIN (знімає з охорони)",
+					"zh-cn": "输入 PIN（撤防）"
 				},
 				"type": "string",
 				"role": "text",
-				"read": true,
+				"read": false,
 				"write": true,
 				"def": ""
 			},
@@ -690,10 +974,19 @@
 			"common": {
 				"name": {
 					"en": "Automatic arming/disarming by presence",
-					"de": "Automatisch scharf/unscharf über Anwesenheit"
+					"de": "Automatisch scharf/unscharf über Anwesenheit",
+					"ru": "Автоматическая постановка/снятие по присутствию",
+					"pt": "Ativar/desativar automaticamente pela presença",
+					"nl": "Automatisch in-/uitschakelen op aanwezigheid",
+					"fr": "Armement/désarmement automatique selon la présence",
+					"it": "Inserimento/disinserimento automatico in base alla presenza",
+					"es": "Armado/desarmado automático según presencia",
+					"pl": "Automatyczne uzbrajanie/rozbrajanie wg obecności",
+					"uk": "Автоматична постановка/зняття за присутністю",
+					"zh-cn": "根据在家状态自动布防/撤防"
 				},
 				"type": "boolean",
-				"role": "switch",
+				"role": "switch.mode.auto",
 				"read": true,
 				"write": true,
 				"def": true
@@ -706,7 +999,16 @@
 			"common": {
 				"name": {
 					"en": "Presence simulation",
-					"de": "Anwesenheitssimulation"
+					"de": "Anwesenheitssimulation",
+					"ru": "Имитация присутствия",
+					"pt": "Simulação de presença",
+					"nl": "Aanwezigheidssimulatie",
+					"fr": "Simulation de présence",
+					"it": "Simulazione di presenza",
+					"es": "Simulación de presencia",
+					"pl": "Symulacja obecności",
+					"uk": "Імітація присутності",
+					"zh-cn": "在家模拟"
 				}
 			},
 			"native": {}
@@ -717,10 +1019,19 @@
 			"common": {
 				"name": {
 					"en": "Simulation switched on by hand",
-					"de": "Simulation von Hand eingeschaltet"
+					"de": "Simulation von Hand eingeschaltet",
+					"ru": "Имитация включена вручную",
+					"pt": "Simulação ligada à mão",
+					"nl": "Simulatie met de hand ingeschakeld",
+					"fr": "Simulation activée à la main",
+					"it": "Simulazione attivata a mano",
+					"es": "Simulación activada a mano",
+					"pl": "Symulacja włączona ręcznie",
+					"uk": "Імітацію ввімкнено вручну",
+					"zh-cn": "手动开启模拟"
 				},
 				"type": "boolean",
-				"role": "switch",
+				"role": "switch.enable",
 				"read": true,
 				"write": true,
 				"def": false
@@ -733,7 +1044,16 @@
 			"common": {
 				"name": {
 					"en": "Simulation running",
-					"de": "Simulation läuft"
+					"de": "Simulation läuft",
+					"ru": "Имитация работает",
+					"pt": "Simulação em curso",
+					"nl": "Simulatie loopt",
+					"fr": "Simulation en cours",
+					"it": "Simulazione in corso",
+					"es": "Simulación en curso",
+					"pl": "Symulacja trwa",
+					"uk": "Імітація працює",
+					"zh-cn": "模拟运行中"
 				},
 				"type": "boolean",
 				"role": "indicator",
@@ -749,7 +1069,16 @@
 			"common": {
 				"name": {
 					"en": "Next step",
-					"de": "Nächster Schritt"
+					"de": "Nächster Schritt",
+					"ru": "Следующий шаг",
+					"pt": "Próximo passo",
+					"nl": "Volgende stap",
+					"fr": "Prochaine étape",
+					"it": "Prossimo passo",
+					"es": "Siguiente paso",
+					"pl": "Następny krok",
+					"uk": "Наступний крок",
+					"zh-cn": "下一步"
 				},
 				"type": "string",
 				"role": "text",
@@ -765,7 +1094,16 @@
 			"common": {
 				"name": {
 					"en": "Plan of the evening",
-					"de": "Plan des Abends"
+					"de": "Plan des Abends",
+					"ru": "План вечера",
+					"pt": "Plano da noite",
+					"nl": "Plan van de avond",
+					"fr": "Plan de la soirée",
+					"it": "Piano della sera",
+					"es": "Plan de la noche",
+					"pl": "Plan wieczoru",
+					"uk": "План вечора",
+					"zh-cn": "晚间计划"
 				},
 				"type": "string",
 				"role": "json",
@@ -781,7 +1119,16 @@
 			"common": {
 				"name": {
 					"en": "Learned days",
-					"de": "Gelernte Tage"
+					"de": "Gelernte Tage",
+					"ru": "Обученные дни",
+					"pt": "Dias aprendidos",
+					"nl": "Geleerde dagen",
+					"fr": "Jours appris",
+					"it": "Giorni appresi",
+					"es": "Días aprendidos",
+					"pl": "Wyuczone dni",
+					"uk": "Навчені дні",
+					"zh-cn": "学习的天数据"
 				},
 				"type": "string",
 				"role": "json",
@@ -797,7 +1144,16 @@
 			"common": {
 				"name": {
 					"en": "Number of learned days",
-					"de": "Anzahl gelernter Tage"
+					"de": "Anzahl gelernter Tage",
+					"ru": "Количество обученных дней",
+					"pt": "Número de dias aprendidos",
+					"nl": "Aantal geleerde dagen",
+					"fr": "Nombre de jours appris",
+					"it": "Numero di giorni appresi",
+					"es": "Número de días aprendidos",
+					"pl": "Liczba wyuczonych dni",
+					"uk": "Кількість навчених днів",
+					"zh-cn": "学习的天数"
 				},
 				"type": "number",
 				"role": "value",
