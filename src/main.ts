@@ -1200,6 +1200,17 @@ class HomeGuard extends utils.Adapter {
 		const duration = Math.min(300, Math.max(5, num(msg.duration, 15)));
 		const text = `${T.testPrefix}${T.alarm(T.testTrigger)}`;
 		const done: string[] = [];
+		const sirenCount = (c.sirens || []).filter(x => x?.id && x.enabled !== false).length;
+		const actionCount = (c.actions || []).filter(a => a?.id && a.enabled !== false && a.event === 'alarm').length;
+		const anything =
+			(on('notify', true) && (c.notify || []).some(r => r?.instance && r.enabled !== false)) ||
+			(on('speech', true) && !!c.speechId) ||
+			(on('lamps', true) && this.lampOuts.length > 0) ||
+			(on('sirens', false) && sirenCount > 0) ||
+			(on('actions', false) && actionCount > 0);
+		if (!anything) {
+			return { result: T.testNothing };
+		}
 		this.addLog('test', text);
 		this.log.info(`Test alarm for ${duration} s`);
 		if (on('notify', true) && (c.notify || []).some(r => r?.instance && r.enabled !== false)) {
@@ -1231,13 +1242,11 @@ class HomeGuard extends utils.Adapter {
 			}
 			done.push(T.testParts.lamps(test.lamps.length));
 		}
-		const sirenCount = (c.sirens || []).filter(x => x?.id && x.enabled !== false).length;
 		if (on('sirens', false) && sirenCount) {
 			await this.sirens(true);
 			test.sirens = true;
 			done.push(T.testParts.sirens(sirenCount));
 		}
-		const actionCount = (c.actions || []).filter(a => a?.id && a.enabled !== false && a.event === 'alarm').length;
 		if (on('actions', false) && actionCount) {
 			await this.runActions('alarm');
 			test.actions = true;
