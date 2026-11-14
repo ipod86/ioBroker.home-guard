@@ -1790,6 +1790,7 @@ class HomeGuard extends utils.Adapter {
 				visitMax: num(c.simVisitMax, 15),
 				learnDays: num(c.simLearnDays, 28),
 				jitter: num(c.simJitter, 15),
+				learnPick: c.simLearnPick === 'weekday' ? 'weekday' : 'kind',
 				deviceMin: clamp(num(c.simDeviceMin, 60), 5, 600),
 				deviceMax: clamp(num(c.simDeviceMax, 180), 5, 600),
 				deviceCount: clamp(num(c.simDeviceCount, 1), 1, 5),

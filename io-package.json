@@ -187,6 +187,7 @@
     "simLearnDays": 28,
     "simLearnDevicesOnly": true,
     "simJitter": 15,
+    "simLearnPick": "kind",
     "logSize": 100,
     "pinLockMin": 5,
     "testNotify": true,

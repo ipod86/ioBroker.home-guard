@@ -2063,6 +2063,20 @@
 					"min": 0,
 					"max": 60
 				},
+				"simLearnPick": {
+					"type": "select",
+					"label": "Choose learned day",
+					"help": "Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.",
+					"options": [
+						{ "label": "Weekday/weekend", "value": "kind" },
+						{ "label": "Same day of the week", "value": "weekday" }
+					],
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
 				"simLearnDevicesOnly": {
 					"type": "checkbox",
 					"label": "Learn only switching by hand/devices (no scripts, scenes)",

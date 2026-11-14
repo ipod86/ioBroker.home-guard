@@ -232,5 +232,9 @@
 	"When nobody is at home": "When nobody is at home",
 	"When the simulation ends": "When the simulation ends",
 	"Wrong PIN": "Wrong PIN",
-	"… within (s)": "… within (s)"
+	"… within (s)": "… within (s)",
+	"Choose learned day": "Choose learned day",
+	"Weekday/weekend": "Weekday/weekend",
+	"Same day of the week": "Same day of the week",
+	"Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.": "Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned."
 }

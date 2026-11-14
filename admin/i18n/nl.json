@@ -232,5 +232,9 @@
 	"When nobody is at home": "Wanneer niemand thuis is",
 	"When the simulation ends": "Als de simulatie stopt",
 	"Wrong PIN": "Verkeerde pincode",
-	"… within (s)": "… binnen (s)"
+	"… within (s)": "… binnen (s)",
+	"Choose learned day": "Geleerde dag kiezen",
+	"Weekday/weekend": "Werkdag/weekend",
+	"Same day of the week": "Zelfde dag van de week",
+	"Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.": "Werkdag/weekend: voor een werkdagavond (zo–do) een willekeurige geleerde werkdag, voor het weekend een willekeurige vrijdag/zaterdag. Zelfde dag van de week: een donderdag voor een donderdag, als er minstens 3 geleerd zijn."
 }

@@ -354,13 +354,25 @@ describe('learned days: same weekday first', () => {
 			l.record('flur', false, day + ((h - 12) * 60 + 5) * MIN);
 		}
 		const ids = new Set(['flur']);
+		// default: all weekdays for a weekday evening
 		const wed = l.candidates(false, ids, eveningKey(noon)); // noon = Wednesday 18.11.
-		expect(wed.length).to.equal(1);
-		expect(wed[0].sessions[0].start).to.equal(9 * 60); // 21:00
-		const thu = l.candidates(false, ids, eveningKey(noon + 86400000)); // Thursday: no Thursday learned
-		expect(thu.length).to.equal(2); // Tuesday and Wednesday
+		expect(wed.length).to.equal(2); // Tuesday and Wednesday
+		const sat = l.candidates(true, ids, eveningKey(noon + 3 * 86400000));
+		expect(sat.length).to.equal(1);
+		// same weekday: only with at least three of them, otherwise weekday/weekend
+		expect(l.candidates(false, ids, eveningKey(noon), 'weekday').length).to.equal(2);
+		for (const d of [21, 28]) {
+			const day = new Date(2026, 9, d, 12).getTime(); // Wednesdays 21.10. and 28.10.
+			l.record('flur', true, day + 8 * 60 * MIN);
+			l.record('flur', false, day + (8 * 60 + 5) * MIN);
+		}
+		const wed3 = l.candidates(false, ids, eveningKey(noon), 'weekday');
+		expect(wed3.length).to.equal(3);
+		expect(wed3.every(d => [9 * 60, 8 * 60].includes(d.sessions[0].start))).to.equal(true);
+		const thu = l.candidates(false, ids, eveningKey(noon + 86400000), 'weekday'); // no Thursday learned
+		expect(thu.length).to.equal(4); // all weekdays
 		const sun = l.candidates(false, ids, eveningKey(noon + 4 * 86400000)); // Sunday counts as weekday
-		expect(sun.map(d => d.weekend)).to.deep.equal([false, false]);
+		expect(sun.every(d => !d.weekend)).to.equal(true);
 	});
 });
 

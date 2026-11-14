@@ -232,5 +232,9 @@
 	"When nobody is at home": "无人在家时",
 	"When the simulation ends": "模拟结束时",
 	"Wrong PIN": "PIN 错误",
-	"… within (s)": "…（秒）内"
+	"… within (s)": "…（秒）内",
+	"Choose learned day": "选择学习的日期",
+	"Weekday/weekend": "工作日/周末",
+	"Same day of the week": "同一星期几",
+	"Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.": "工作日/周末：工作日晚上（周日至周四）使用任意已学习的工作日，周末使用任意周五/周六。同一星期几：周四使用周四，前提是至少已学习 3 个。"
 }

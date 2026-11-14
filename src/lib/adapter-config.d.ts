@@ -184,6 +184,7 @@ declare global {
 			simLearnDays: number;
 			simLearnDevicesOnly: boolean;
 			simJitter: number;
+			simLearnPick: 'kind' | 'weekday';
 			// logbook
 			logSize: number;
 		}

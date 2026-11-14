@@ -3,6 +3,10 @@
 // the simulation replays a whole real day of the same kind (weekday/weekend) with shifted times.
 
 export type SimMode = 'dusk' | 'learned' | 'combined';
+/** which learned days are candidates: same kind (weekday/weekend) or the same day of the week first */
+export type LearnPick = 'kind' | 'weekday';
+/** the same day of the week is only preferred when at least this many of them are learned */
+const MIN_SAME_WEEKDAY = 3;
 export type LampType = 'evening' | 'visit' | 'bedtime' | 'device' | 'morning';
 
 export interface SimLamp {
@@ -45,6 +49,8 @@ export interface SimOptions {
 	visitMax: number; // min
 	learnDays: number;
 	jitter: number; // min
+	/** which learned days are candidates (default: weekday/weekend) */
+	learnPick?: LearnPick;
 	/** devices (TV, radio): running time in the evening from ... to ... minutes */
 	deviceMin?: number;
 	deviceMax?: number;
@@ -174,26 +180,30 @@ export class Learner {
 	}
 
 	/**
-	 * learned days with sessions of the given lamps: the same weekday first (a Tuesday for a Tuesday), then the
-	 * same kind (weekday/weekend), then any
+	 * learned days with sessions of the given lamps: with "weekday" the same weekday (a Tuesday for a Tuesday) when
+	 * at least three of them are learned, otherwise - and always with "kind" - the same kind (weekday/weekend),
+	 * then any
 	 *
 	 * @param weekend Friday/Saturday evening
 	 * @param ids lamps that are wanted
 	 * @param today key of the current evening (not used)
+	 * @param pick "kind" (weekday/weekend) or "weekday" (same day of the week first)
 	 */
-	candidates(weekend: boolean, ids: Set<string>, today: string): LearnedDay[] {
+	candidates(weekend: boolean, ids: Set<string>, today: string, pick: LearnPick = 'kind'): LearnedDay[] {
 		const usable = Object.entries(this.data.days).filter(
 			([k, d]) => k !== today && d.sessions.some(s => ids.has(s.id)),
 		);
-		const dayOf = (key: string): number => {
-			const [y, m, d] = key.split('-').map(Number);
-			return new Date(y, m - 1, d, 12).getDay();
-		};
-		const [ty, tm, td] = today.split('-').map(Number);
-		const todayDay = new Date(ty, tm - 1, td, 12).getDay();
-		const sameDay = usable.filter(([k]) => dayOf(k) === todayDay);
-		if (sameDay.length) {
-			return sameDay.map(([, d]) => d);
+		if (pick === 'weekday') {
+			const dayOf = (key: string): number => {
+				const [y, m, d] = key.split('-').map(Number);
+				return new Date(y, m - 1, d, 12).getDay();
+			};
+			const [ty, tm, td] = today.split('-').map(Number);
+			const todayDay = new Date(ty, tm - 1, td, 12).getDay();
+			const sameDay = usable.filter(([k]) => dayOf(k) === todayDay);
+			if (sameDay.length >= MIN_SAME_WEEKDAY) {
+				return sameDay.map(([, d]) => d);
+			}
 		}
 		const sameKind = usable.filter(([, d]) => d.weekend === weekend);
 		return (sameKind.length ? sameKind : usable).map(([, d]) => d);
@@ -234,7 +244,7 @@ export function planEvening(
 				.filter(l => l.type !== 'device' || l.learn)
 				.map(l => l.id),
 		);
-		const cands = learner.candidates(weekend, ids, today);
+		const cands = learner.candidates(weekend, ids, today, o.learnPick);
 		if (cands.length) {
 			learned = cands[Math.floor(rand() * cands.length)];
 			for (const s of learned.sessions) {

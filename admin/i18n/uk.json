@@ -232,5 +232,9 @@
 	"When nobody is at home": "Коли нікого немає вдома",
 	"When the simulation ends": "Коли імітація закінчується",
 	"Wrong PIN": "Неправильний PIN",
-	"… within (s)": "… протягом (с)"
+	"… within (s)": "… протягом (с)",
+	"Choose learned day": "Вибір вивченого дня",
+	"Weekday/weekend": "Будні/вихідні",
+	"Same day of the week": "Той самий день тижня",
+	"Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.": "Будні/вихідні: для вечора буднього дня (Нд–Чт) будь-який вивчений будній день, для вихідних будь-яка п'ятниця/субота. Той самий день тижня: четвер для четверга, якщо вивчено щонайменше 3."
 }

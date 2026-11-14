@@ -232,5 +232,9 @@
 	"When nobody is at home": "Quando ninguém está em casa",
 	"When the simulation ends": "Quando a simulação termina",
 	"Wrong PIN": "PIN errado",
-	"… within (s)": "… em (s)"
+	"… within (s)": "… em (s)",
+	"Choose learned day": "Escolher dia aprendido",
+	"Weekday/weekend": "Dia útil/fim de semana",
+	"Same day of the week": "Mesmo dia da semana",
+	"Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.": "Dia útil/fim de semana: para uma noite de dia útil (dom–qui) qualquer dia útil aprendido, para o fim de semana qualquer sexta/sábado. Mesmo dia da semana: uma quinta para uma quinta, quando pelo menos 3 foram aprendidas."
 }
