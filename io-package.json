@@ -1,0 +1,92 @@
+{
+	"common": {
+		"name": "home-guard",
+		"version": "0.0.1",
+		"news": {
+			"0.0.1": {
+				"en": "initial release",
+				"de": "Erstveröffentlichung",
+				"ru": "Начальная версия",
+				"pt": "lançamento inicial",
+				"nl": "Eerste uitgave",
+				"fr": "Première version",
+				"it": "Versione iniziale",
+				"es": "Versión inicial",
+				"pl": "Pierwsze wydanie",
+				"uk": "Початкова версія",
+				"zh-cn": "首次出版"
+			}
+		},
+		"titleLang": {
+			"en": "Home Guard – Alarm system & presence simulation",
+			"de": "Home Guard – Alarmanlage & Anwesenheitssimulation",
+			"ru": "Home Guard – сигнализация и имитация присутствия",
+			"pt": "Home Guard – Sistema de alarme e simulação de presença",
+			"nl": "Home Guard – Alarmsysteem & aanwezigheidssimulatie",
+			"fr": "Home Guard – Système d’alarme & simulation de présence",
+			"it": "Home Guard – Sistema di allarme e simulazione di presenza",
+			"es": "Home Guard – Sistema de alarma y simulación de presencia",
+			"pl": "Home Guard – system alarmowy i symulacja obecności",
+			"uk": "Home Guard – сигналізація та імітація присутності",
+			"zh-cn": "Home Guard – 报警系统和存在模拟"
+		},
+		"desc": {
+			"en": "Alarm system with full/perimeter/night protection, exit and entry delay, open window check, PIN, lock and presence integration, plus a presence simulation that can run on its own or together with the alarm system.",
+			"de": "Alarmanlage mit Voll-/Rand-/Nachtschutz, Ausgangs- und Eingangsverzögerung, Offenfensterkontrolle, PIN-, Schloss- und Anwesenheitsintegration sowie einer Anwesenheitssimulation, die alleine oder zusammen mit der Alarmanlage ablaufen kann.",
+			"ru": "Система сигнализации с полной/периметральной/ночной охраной, задержкой на вход и выход, проверкой открытых окон, интеграцией PIN-кода, блокировки и присутствия, а также имитацией присутствия, которая может работать сама по себе или вместе с системой охранной сигнализации.",
+			"pt": "Sistema de alarme com proteção total/perimetral/noturna, retardo de saída e entrada, verificação de janela aberta, PIN, fechadura e integração de presença, além de simulação de presença que pode ser executada isoladamente ou em conjunto com o sistema de alarme.",
+			"nl": "Alarmsysteem met volledige/perimeter-/nachtbeveiliging, in- en uitloopvertraging, open raamcontrole, PIN, slot en aanwezigheidsintegratie, plus een aanwezigheidssimulatie die zelfstandig of samen met het alarmsysteem kan draaien.",
+			"fr": "Système d'alarme avec protection complète/périmétrique/nuit, temporisation de sortie et d'entrée, contrôle de fenêtre ouverte, intégration de code PIN, de verrouillage et de présence, ainsi qu'une simulation de présence qui peut fonctionner seule ou avec le système d'alarme.",
+			"it": "Sistema di allarme con protezione totale/perimetrica/notturna, ritardo di uscita e ingresso, controllo di finestre aperte, PIN, integrazione di serratura e presenza, oltre a una simulazione di presenza che può essere eseguita da sola o insieme al sistema di allarme.",
+			"es": "Sistema de alarma con protección total/perimetral/nocturna, retardo de entrada y salida, control de ventana abierta, PIN, cerradura e integración de presencia, además de una simulación de presencia que puede ejecutarse sola o junto con el sistema de alarma.",
+			"pl": "System alarmowy z ochroną całodobową/obwodową/nocną, opóźnieniem wyjścia i wejścia, kontrolą otwartego okna, integracją kodu PIN, zamka i obecności oraz symulacją obecności, która może działać samodzielnie lub razem z systemem alarmowym.",
+			"uk": "Сигналізація з повним захистом/периметром/нічною охороною, затримкою на вихід і вхід, перевіркою відкритого вікна, інтеграцією PIN-коду, замка та присутності, а також імітацією присутності, яка може працювати окремо або разом із системою сигналізації.",
+			"zh-cn": "报警系统具有全面/周界/夜间保护、进出延迟、开窗检查、PIN 码、锁定和存在集成，以及可单独运行或与报警系统一起运行的存在模拟。"
+		},
+		"authors": ["ipod86 <david@graef.email>"],
+		"keywords": [
+			"alarm",
+			"alarm system",
+			"Alarmanlage",
+			"security",
+			"Einbruch",
+			"burglar",
+			"presence simulation",
+			"Anwesenheitssimulation",
+			"vacation",
+			"Urlaub"
+		],
+		"licenseInformation": {
+			"type": "free",
+			"license": "MIT"
+		},
+		"platform": "Javascript/Node.js",
+		"icon": "home-guard.png",
+		"enabled": true,
+		"extIcon": "https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/admin/home-guard.png",
+		"readme": "https://github.com/ipod86/ioBroker.home-guard/blob/main/README.md",
+		"loglevel": "info",
+		"tier": 3,
+		"mode": "daemon",
+		"type": "alarm",
+		"compact": true,
+		"connectionType": "local",
+		"dataSource": "push",
+		"adminUI": {
+			"config": "json"
+		},
+		"dependencies": [
+			{
+				"js-controller": ">=6.0.11"
+			}
+		],
+		"globalDependencies": [
+			{
+				"admin": ">=7.0.23"
+			}
+		]
+	},
+	"native": {},
+	"objects": [],
+	"instanceObjects": []
+}
