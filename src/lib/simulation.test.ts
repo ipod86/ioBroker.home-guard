@@ -339,3 +339,27 @@ describe('devices: count, learning, end of the simulation', () => {
 		now += 1;
 	});
 });
+
+describe('learned days: same weekday first', () => {
+	it('a Wednesday replays a learned Wednesday, else a weekday, else any day', () => {
+		const l = new Learner();
+		// Tuesday 10.11. at 20:00 and Wednesday 11.11. at 21:00, Saturday 14.11. at 23:00
+		for (const [d, h] of [
+			[10, 20],
+			[11, 21],
+			[14, 23],
+		]) {
+			const day = new Date(2026, 10, d, 12).getTime();
+			l.record('flur', true, day + (h - 12) * 60 * MIN);
+			l.record('flur', false, day + ((h - 12) * 60 + 5) * MIN);
+		}
+		const ids = new Set(['flur']);
+		const wed = l.candidates(false, ids, eveningKey(noon)); // noon = Wednesday 18.11.
+		expect(wed.length).to.equal(1);
+		expect(wed[0].sessions[0].start).to.equal(9 * 60); // 21:00
+		const thu = l.candidates(false, ids, eveningKey(noon + 86400000)); // Thursday: no Thursday learned
+		expect(thu.length).to.equal(2); // Tuesday and Wednesday
+		const sun = l.candidates(false, ids, eveningKey(noon + 4 * 86400000)); // Sunday counts as weekday
+		expect(sun.map(d => d.weekend)).to.deep.equal([false, false]);
+	});
+});

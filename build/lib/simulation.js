@@ -100,16 +100,29 @@ class Learner {
     this.onSince.clear();
   }
   /**
-   * learned days with sessions of the given lamps, same kind (weekday/weekend) preferred
+   * learned days with sessions of the given lamps: the same weekday first (a Tuesday for a Tuesday), then the
+   * same kind (weekday/weekend), then any
    *
    * @param weekend Friday/Saturday evening
    * @param ids lamps that are wanted
    * @param today key of the current evening (not used)
    */
   candidates(weekend, ids, today) {
-    const usable = Object.entries(this.data.days).filter(([k, d]) => k !== today && d.sessions.some((s) => ids.has(s.id))).map(([, d]) => d);
-    const same = usable.filter((d) => d.weekend === weekend);
-    return same.length ? same : usable;
+    const usable = Object.entries(this.data.days).filter(
+      ([k, d]) => k !== today && d.sessions.some((s) => ids.has(s.id))
+    );
+    const dayOf = (key) => {
+      const [y, m, d] = key.split("-").map(Number);
+      return new Date(y, m - 1, d, 12).getDay();
+    };
+    const [ty, tm, td] = today.split("-").map(Number);
+    const todayDay = new Date(ty, tm - 1, td, 12).getDay();
+    const sameDay = usable.filter(([k]) => dayOf(k) === todayDay);
+    if (sameDay.length) {
+      return sameDay.map(([, d]) => d);
+    }
+    const sameKind = usable.filter(([, d]) => d.weekend === weekend);
+    return (sameKind.length ? sameKind : usable).map(([, d]) => d);
   }
 }
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
