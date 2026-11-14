@@ -341,7 +341,7 @@ class SimRunner {
     if (!next) {
       return;
     }
-    const wait = Math.max(0, Math.min(next.at - this.host.now(), 2 ** 31 - 1));
+    const delayMs = Math.max(0, Math.min(next.at - this.host.now(), 2 ** 31 - 1));
     this.timer = this.host.setTimer(() => {
       this.timer = null;
       const now = this.host.now();
@@ -350,7 +350,7 @@ class SimRunner {
         this.apply(s.id, s.on);
       }
       this.schedule();
-    }, wait);
+    }, delayMs);
   }
 }
 // Annotate the CommonJS export names for ESM import in node:
