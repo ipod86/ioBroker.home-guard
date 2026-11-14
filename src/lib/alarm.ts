@@ -3,7 +3,7 @@
 
 export type Mode = 'off' | 'full' | 'perimeter' | 'night';
 export type Phase = 'disarmed' | 'arming' | 'armed' | 'entry' | 'alarm';
-export type Circuit = 'perimeter' | 'interior' | '24h';
+export type Circuit = 'perimeter' | 'interior' | '24h' | 'report';
 
 /** Events that can trigger notifications and actions */
 export type AlarmEvent =
@@ -19,7 +19,8 @@ export type AlarmEvent =
 	| 'alarmEnd'
 	| 'wrongPin'
 	| 'sabotage'
-	| 'hazard';
+	| 'hazard'
+	| 'report';
 
 export interface SensorDef {
 	id: string;
@@ -41,6 +42,8 @@ export interface AlarmOptions {
 	alarmDuration: number; // s
 	motionCount: number;
 	motionWindowSec: number;
+	/** report-only sensors: only while armed, or always */
+	reportWhen?: 'armed' | 'always';
 }
 
 export interface AlarmHost {
@@ -107,6 +110,9 @@ export function circuitActive(circuit: Circuit, mode: Mode): boolean {
 	if (circuit === '24h') {
 		return true;
 	}
+	if (circuit === 'report') {
+		return false; // report-only sensors never trigger the alarm and never block arming
+	}
 	if (mode === 'off') {
 		return false;
 	}
@@ -136,6 +142,8 @@ export class AlarmEngine {
 	private lastTrigger = '';
 	private lastTriggerTime = 0;
 	private alarmActive = false;
+	/** report-only sensors switched on (state control.report) */
+	reportOn = true;
 
 	/**
 	 * Creates the engine
@@ -211,6 +219,13 @@ export class AlarmEngine {
 	 * @param s the sensor
 	 */
 	private triggered(s: SensorDef): void {
+		if (s.circuit === 'report') {
+			// report-only (garden gate, letter box, shed): a message, never an alarm
+			if (this.reportOn && (this.opts.reportWhen === 'always' || this.mode !== 'off')) {
+				this.host.event('report', { mode: this.mode, sensor: s });
+			}
+			return;
+		}
 		if (s.circuit === '24h') {
 			// danger detectors (smoke, water, gas): a full alarm only when set so, otherwise a danger message
 			if (s.hazard === 'alarm') {
@@ -513,7 +528,7 @@ export class AlarmEngine {
 	 */
 	status(): AlarmStatus {
 		const countdown = this.countdownEnd ? Math.max(0, Math.ceil((this.countdownEnd - this.host.now()) / 1000)) : 0;
-		const openAll = this.getSensors().filter(s => this.open.get(s.id) && !s.motion);
+		const openAll = this.getSensors().filter(s => this.open.get(s.id) && !s.motion && s.circuit !== 'report');
 		return {
 			mode: this.mode,
 			phase: this.phase,

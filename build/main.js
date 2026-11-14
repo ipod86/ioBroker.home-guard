@@ -69,6 +69,7 @@ class HomeGuard extends utils.Adapter {
   pinLockedUntil = 0;
   pinError = "wrong pin";
   outputsOn = false;
+  sirenTimers = [];
   log_ = [];
   luxDuskTs = 0;
   lastSimActive = false;
@@ -130,7 +131,8 @@ class HomeGuard extends utils.Adapter {
         openCheck: c.openCheck || "warn",
         alarmDuration: clamp(num(c.alarmDuration, 180), 0, 3600),
         motionCount: clamp(num(c.motionCount, 2), 1, 10),
-        motionWindowSec: clamp(num(c.motionWindowSec, 120), 10, 1800)
+        motionWindowSec: clamp(num(c.motionWindowSec, 120), 10, 1800),
+        reportWhen: c.reportWhen === "always" ? "always" : "armed"
       }
     );
     this.sim = new import_simulation.SimRunner(
@@ -185,6 +187,11 @@ class HomeGuard extends utils.Adapter {
     await this.subscribeStatesAsync("simulation.enabled");
     if (this.watchedEnums().length) {
       await this.subscribeForeignObjectsAsync("enum.functions.*");
+    }
+    const rep = await this.getStateAsync("control.report");
+    this.alarm.reportOn = (rep == null ? void 0 : rep.val) !== false;
+    if ((rep == null ? void 0 : rep.val) == null) {
+      await this.setStateAsync("control.report", true, true);
     }
     const auto = await this.getStateAsync("control.autoArm");
     this.autoArm = (auto == null ? void 0 : auto.val) !== false;
@@ -306,6 +313,7 @@ class HomeGuard extends utils.Adapter {
       c.autoFull && c.enumFull,
       c.autoPerimeter && c.enumPerimeter,
       c.autoFire && c.enumFire,
+      c.autoReport && c.enumReport,
       c.presenceEnabled && c.presenceAuto && c.enumPresence,
       c.simAuto && c.enumSimLamps,
       c.lampsAuto && c.enumLamps
@@ -410,6 +418,13 @@ class HomeGuard extends utils.Adapter {
       for (const id of await this.enumStates(c.enumFire)) {
         found.delete(id);
         await add(id, "24h");
+      }
+    }
+    if (c.autoReport) {
+      for (const id of await this.enumStates(c.enumReport)) {
+        if (!found.has(id)) {
+          await add(id, "report");
+        }
       }
     }
     for (const row of c.sensors || []) {
@@ -714,6 +729,10 @@ class HomeGuard extends utils.Adapter {
         }
         return;
       }
+      case "control.report":
+        this.alarm.reportOn = !!val;
+        await this.setStateAsync("control.report", this.alarm.reportOn, true);
+        return;
       case "control.autoArm":
         this.autoArm = !!val;
         await this.setStateAsync("control.autoArm", this.autoArm, true);
@@ -960,7 +979,7 @@ class HomeGuard extends utils.Adapter {
     const c = this.config;
     const names = (info.sensors || []).map((s) => s.name).join(", ");
     const textIn = (T) => {
-      var _a2, _b2, _c2, _d;
+      var _a2, _b2, _c2, _d, _e;
       switch (e) {
         case "armedFull":
         case "armedPerimeter":
@@ -989,6 +1008,8 @@ class HomeGuard extends utils.Adapter {
           return T.sabotage(names);
         case "hazard":
           return T.hazard(((_d = info.sensor) == null ? void 0 : _d.name) || "");
+        case "report":
+          return T.report(((_e = info.sensor) == null ? void 0 : _e.name) || "");
       }
       return "";
     };
@@ -1042,6 +1063,9 @@ class HomeGuard extends utils.Adapter {
         break;
       case "sabotage":
         notify = c.notifySabotage;
+        break;
+      case "report":
+        notify = c.notifyReport !== false;
         break;
       case "hazard":
         notify = c.notifyHazard !== false;
@@ -1245,12 +1269,29 @@ class HomeGuard extends utils.Adapter {
    * @param on on or off
    */
   async sirens(on) {
+    var _a;
+    for (const t of this.sirenTimers) {
+      if (t) {
+        this.clearTimeout(t);
+      }
+    }
+    this.sirenTimers = [];
+    const mode = ((_a = this.alarm) == null ? void 0 : _a.mode) || "off";
     for (const s of this.config.sirens || []) {
-      if ((s == null ? void 0 : s.id) && s.enabled !== false) {
-        await this.setForeignStateAsync(
-          s.id,
-          this.parseValue((on ? s.valueOn : s.valueOff) || String(on)),
-          false
+      if (!(s == null ? void 0 : s.id) || s.enabled === false) {
+        continue;
+      }
+      const when = s.when || "all";
+      const runs = !on || mode === "off" || when === "all" || (when === "full" ? mode === "full" : mode !== "full");
+      if (!runs) {
+        continue;
+      }
+      const off = this.parseValue(s.valueOff || "false");
+      await this.setForeignStateAsync(s.id, on ? this.parseValue(s.valueOn || "true") : off, false);
+      const sec = clamp(num(s.durationSec, 0), 0, 3600);
+      if (on && sec > 0) {
+        this.sirenTimers.push(
+          this.setTimeout(() => void this.setForeignStateAsync(s.id, off, false), sec * 1e3)
         );
       }
     }
@@ -1479,7 +1520,9 @@ class HomeGuard extends utils.Adapter {
    * @param now current time
    */
   makePlan(now) {
-    const lamps = this.eveningOn() ? this.simLamps.filter((l) => l.type !== "evening") : this.simLamps;
+    const lamps = this.simLamps.filter(
+      (l) => !(l.type === "evening" && this.eveningOn()) && !(l.type === "morning" && this.morningOn())
+    );
     const first = (0, import_simulation.eveningNoon)(now);
     return [...this.planOne(first, now, lamps), ...this.planOne(first + 24 * 36e5, now, lamps)].sort(
       (a, b) => a.at - b.at
@@ -1491,20 +1534,31 @@ class HomeGuard extends utils.Adapter {
    * @param now current time
    */
   makeEveningPlan(now) {
-    const lamps = this.simLamps.filter((l) => l.type === "evening");
-    const first = (0, import_simulation.eveningNoon)(now);
     const c = this.config;
-    return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 36e5, now, lamps, true)].filter((st) => st.on ? c.eveningLightOn !== false : c.eveningLightOff !== false).sort((a, b) => a.at - b.at);
+    const lamps = this.simLamps.filter(
+      (l) => l.type === "evening" && this.eveningOn() || l.type === "morning" && this.morningOn()
+    );
+    const type = new Map(lamps.map((l) => [l.id, l.type]));
+    const first = (0, import_simulation.eveningNoon)(now);
+    return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 36e5, now, lamps, true)].filter(
+      (st) => type.get(st.id) === "morning" ? st.on ? c.morningLightOn !== false : c.morningLightOff !== false : st.on ? c.eveningLightOn !== false : c.eveningLightOff !== false
+    ).sort((a, b) => a.at - b.at);
   }
   /** @returns the evening light is switched on and has lamps */
   eveningOn() {
     return !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some((l) => l.type === "evening");
   }
-  /** Starts, re-plans or stops the evening light after the settings or the lamps changed */
+  /** @returns the morning light is switched on and has lamps */
+  morningOn() {
+    return !!this.config.simEnabled && !!this.config.morningLight && this.simLamps.some((l) => l.type === "morning");
+  }
+  /** Starts, re-plans or stops the evening and morning light after the settings or the lamps changed */
   updateEvening() {
-    if (this.eveningOn()) {
-      const lamps = this.simLamps.filter((l) => l.type === "evening").length;
-      this.log.info(`Evening light active for ${lamps} lamps`);
+    if (this.eveningOn() || this.morningOn()) {
+      const lamps = this.simLamps.filter(
+        (l) => l.type === "evening" && this.eveningOn() || l.type === "morning" && this.morningOn()
+      ).length;
+      this.log.info(`Evening/morning light active for ${lamps} lamps`);
       if (this.evening.active) {
         this.evening.replan();
       } else {
@@ -1543,6 +1597,7 @@ class HomeGuard extends utils.Adapter {
   }
   /**
    * Plan of one evening
+   * Plan of one evening and the following morning
    *
    * @param noon 12:00 of the evening day
    * @param now current time
@@ -1553,6 +1608,7 @@ class HomeGuard extends utils.Adapter {
     const c = this.config;
     const sun = (0, import_sun.sunTimes)(new Date(noon), this.lat, this.lon);
     let sunset = sun ? sun.sunset : noon + 6 * 36e5;
+    const next = (0, import_sun.sunTimes)(new Date(noon + 24 * 36e5), this.lat, this.lon);
     if (this.luxDuskTs && (0, import_simulation.eveningKey)(this.luxDuskTs) === (0, import_simulation.eveningKey)(noon) && (0, import_simulation.eveningKey)(noon) === (0, import_simulation.eveningKey)(now)) {
       sunset = Math.min(sunset, this.luxDuskTs - num(c.simStartOffset, -30) * 6e4);
     }
@@ -1575,6 +1631,10 @@ class HomeGuard extends utils.Adapter {
         deviceMin: clamp(num(c.simDeviceMin, 60), 5, 600),
         deviceMax: clamp(num(c.simDeviceMax, 180), 5, 600),
         deviceCount: clamp(num(c.simDeviceCount, 1), 1, 5),
+        wake: c.simWake || "06:30",
+        wakeRandom: clamp(num(c.simWakeRandom, 20), 0, 120),
+        wakeWeekendLater: clamp(num(c.simWakeWeekendLater, 60), 0, 240),
+        sunriseNext: next ? next.sunrise : void 0,
         learnFilter: (ts) => this.inLearnWindow(ts)
       },
       this.learner

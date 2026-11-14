@@ -3,7 +3,7 @@
 // the simulation replays a whole real day of the same kind (weekday/weekend) with shifted times.
 
 export type SimMode = 'dusk' | 'learned' | 'combined';
-export type LampType = 'evening' | 'visit' | 'bedtime' | 'device';
+export type LampType = 'evening' | 'visit' | 'bedtime' | 'device' | 'morning';
 
 export interface SimLamp {
 	id: string;
@@ -50,6 +50,12 @@ export interface SimOptions {
 	deviceMax?: number;
 	/** devices: how often per evening (1 = once) */
 	deviceCount?: number;
+	/** morning lamps: on at this time (HH:MM) plus a random delay, off after sunrise */
+	wake?: string;
+	wakeRandom?: number; // min
+	wakeWeekendLater?: number; // min, Saturday and Sunday morning
+	/** sunrise of the next morning (ms) - without it no morning is planned */
+	sunriseNext?: number;
 	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
 	learnFilter?: (ts: number) => boolean;
 }
@@ -300,6 +306,22 @@ export function planEvening(
 				const on = r(from, Math.max(from, from + slot - dur * MIN));
 				steps.push({ at: on, id: d.id, on: true, why: 'device' });
 				steps.push({ at: on + dur * MIN, id: d.id, on: false, why: 'device' });
+			}
+		}
+	}
+	// morning lamps without learned switching: on at wake-up time, off a little after sunrise - only while dark
+	const mornings = byType('morning').filter(m => !learnedIds.has(m.id));
+	if (mornings.length && o.sunriseNext) {
+		const nextDay = new Date(noon + 24 * 3600000).getDay();
+		const later = nextDay === 0 || nextDay === 6 ? (o.wakeWeekendLater ?? 60) : 0;
+		const wakeMin = parseHm(o.wake || '', 6 * 60 + 30) + later;
+		const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, o.wakeRandom ?? 20) * MIN;
+		for (const m of mornings) {
+			const on = wake + r(0, 10) * MIN;
+			const off = o.sunriseNext + r(5, 30) * MIN;
+			if (off - on >= 10 * MIN) {
+				steps.push({ at: on, id: m.id, on: true, why: 'morning' });
+				steps.push({ at: off, id: m.id, on: false, why: 'morning' });
 			}
 		}
 	}

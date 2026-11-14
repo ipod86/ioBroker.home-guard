@@ -194,7 +194,17 @@
 		"simDeviceCount": 1,
 		"hazardDefault": "speech",
 		"notifyHazard": true,
-		"presenceEnabled": false
+		"presenceEnabled": false,
+		"morningLight": false,
+		"morningLightOn": true,
+		"morningLightOff": true,
+		"simWake": "06:30",
+		"simWakeRandom": 20,
+		"simWakeWeekendLater": 60,
+		"reportWhen": "armed",
+		"notifyReport": true,
+		"autoReport": false,
+		"enumReport": ""
 	},
 	"objects": [],
 	"instanceObjects": [
@@ -995,6 +1005,31 @@
 				},
 				"type": "boolean",
 				"role": "switch.mode.auto",
+				"read": true,
+				"write": true,
+				"def": true
+			},
+			"native": {}
+		},
+		{
+			"_id": "control.report",
+			"type": "state",
+			"common": {
+				"name": {
+					"en": "Report-only sensors on",
+					"de": "Melde-Sensoren eingeschaltet",
+					"ru": "Датчики только для сообщений включены",
+					"pt": "Sensores só de aviso ligados",
+					"nl": "Meldsensoren ingeschakeld",
+					"fr": "Capteurs de signalement activés",
+					"it": "Sensori di sola segnalazione attivi",
+					"es": "Sensores solo de aviso activados",
+					"pl": "Czujniki tylko zgłaszające włączone",
+					"uk": "Датчики лише для повідомлень увімкнено",
+					"zh-cn": "仅报告传感器已开启"
+				},
+				"type": "boolean",
+				"role": "switch.enable",
 				"read": true,
 				"write": true,
 				"def": true

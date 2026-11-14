@@ -24,6 +24,9 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Wenn die Simulation endet** (z. B. beim Heimkommen): je Eintrag automatisch (Geräte wie der Fernseher aus, Lampen bleiben an), ausschalten oder anlassen. Einträge in den Tabellen überschreiben die über eine Funktion gefundenen.
 - **Lernfenster**: Lernen und Nachspielen nur bei Dunkelheit (ab kurz vor Sonnenuntergang bis Sonnenaufgang), zwischen zwei Uhrzeiten oder immer.
 - **Gefahrenmelder** (Rauch, Wasser, Gas – 24-h-Sensoren) melden immer, auch unscharf; je Sensor: nur Nachricht, Nachricht und Sprachausgabe oder voller Alarm mit Sirenen, Lampen und Aktionen. Eigenes Ereignis „Gefahrenmelder“ für die Aktionstabelle (z. B. Wasserventil schließen).
+- **Melde-Sensoren** (Gartentor, Briefkasten, Schuppen): eine Nachricht statt eines Alarms, nur bei scharfer Anlage oder immer; jederzeit schaltbar über `control.report`.
+- **Sirenen je Modus**: bei jedem Alarm, nur bei Vollschutz (Außensirene) oder nur bei Hüll-/Nachtschutz (Innensirene), jeweils mit eigener Dauer.
+- **Morgenlicht**: Lampen vom Typ „Morgens“ zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Simulation, überwachte Sensoren und ein ausklappbares Logbuch.
@@ -66,6 +69,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | Tasten |
 | `control.cancel`, `control.ack`, `control.panic` | Scharfschalten abbrechen, Alarm quittieren, Panikalarm |
 | `control.pin` | PIN schreiben zum Unscharfschalten |
+| `control.report` | Melde-Sensoren ein/aus |
 | `control.autoArm` | Automatisch scharf/unscharf über Anwesenheit ein/aus (auch als Schalter im Panel) |
 | `simulation.enabled` | Simulation von Hand einschalten |
 | `simulation.active` | Simulation läuft |

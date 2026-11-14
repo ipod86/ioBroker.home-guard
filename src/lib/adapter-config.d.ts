@@ -6,7 +6,7 @@ export interface SensorRow {
 	id: string;
 	name: string;
 	/** perimeter = doors/windows (perimeter, night, full), interior = inside/motion (full only), 24h = always (smoke, water) */
-	circuit: 'perimeter' | 'interior' | '24h';
+	circuit: 'perimeter' | 'interior' | '24h' | 'report';
 	/** entry delay instead of an immediate alarm (e.g. the door you come in through) */
 	delayed: boolean;
 	/** the sensor reports "open" as false */
@@ -30,6 +30,10 @@ export interface SirenRow {
 	id: string;
 	valueOn: string;
 	valueOff: string;
+	/** all = every alarm, full = outside siren (full protection only), home = inside siren (perimeter/night) */
+	when?: 'all' | 'full' | 'home';
+	/** own running time in s (0/empty = the alarm duration) */
+	durationSec?: number;
 }
 
 /** A state written on an event */
@@ -54,7 +58,7 @@ export interface SimLampRow {
 	id: string;
 	name: string;
 	/** evening = on for the evening, visit = short visits, bedtime = briefly at bedtime, device = TV/radio */
-	type: 'evening' | 'visit' | 'bedtime' | 'device';
+	type: 'evening' | 'visit' | 'bedtime' | 'device' | 'morning';
 	/** own value for on / off (optional) */
 	valueOn?: string;
 	valueOff?: string;
@@ -103,6 +107,16 @@ declare global {
 			testActions: boolean;
 			testDuration: number;
 			eveningLight: boolean;
+			morningLight: boolean;
+			morningLightOn: boolean;
+			morningLightOff: boolean;
+			simWake: string;
+			simWakeRandom: number;
+			simWakeWeekendLater: number;
+			reportWhen: 'armed' | 'always';
+			notifyReport: boolean;
+			autoReport: boolean;
+			enumReport: string;
 			hazardDefault: 'notify' | 'speech' | 'alarm';
 			notifyHazard: boolean;
 			presenceEnabled: boolean;

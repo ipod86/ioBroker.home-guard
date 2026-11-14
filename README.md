@@ -35,6 +35,9 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **When the simulation ends** (e.g. coming home): per entry automatic (devices like the TV off, lamps stay on), switch off or leave on. Entries in the tables override the ones found through a function.
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Danger detectors** (smoke, water, gas – 24 h sensors) report always, also when disarmed; per sensor: message only, message and speech output, or a full alarm with sirens, lamps and actions. Own event "danger detector" for the actions table (e.g. close a water valve).
+- **Report-only sensors** (garden gate, letter box, shed): a message instead of an alarm, only while armed or always; switchable at any time with `control.report`.
+- **Sirens per mode**: every alarm, full protection only (outside siren) or perimeter/night only (inside siren), each with its own duration.
+- **Morning light**: lamps of type "morning" on at wake-up time (later on the weekend) and off after sunrise – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, simulation, monitored sensors and a logbook to open.
@@ -77,6 +80,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | buttons |
 | `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
 | `control.pin` | write the PIN to disarm |
+| `control.report` | report-only sensors on/off |
 | `control.autoArm` | automatic arming/disarming by presence on/off (also a switch in the panel) |
 | `simulation.enabled` | switch the simulation on by hand |
 | `simulation.active` | simulation is running |

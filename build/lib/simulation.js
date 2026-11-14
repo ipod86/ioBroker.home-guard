@@ -126,7 +126,7 @@ class Learner {
   }
 }
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d, _e;
   const r = (a, b) => a + rand() * (b - a);
   const steps = [];
   const weekend = isWeekendEvening(noon);
@@ -205,6 +205,21 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
         const on = r(from, Math.max(from, from + slot - dur * MIN));
         steps.push({ at: on, id: d.id, on: true, why: "device" });
         steps.push({ at: on + dur * MIN, id: d.id, on: false, why: "device" });
+      }
+    }
+  }
+  const mornings = byType("morning").filter((m) => !learnedIds.has(m.id));
+  if (mornings.length && o.sunriseNext) {
+    const nextDay = new Date(noon + 24 * 36e5).getDay();
+    const later = nextDay === 0 || nextDay === 6 ? (_d = o.wakeWeekendLater) != null ? _d : 60 : 0;
+    const wakeMin = parseHm(o.wake || "", 6 * 60 + 30) + later;
+    const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, (_e = o.wakeRandom) != null ? _e : 20) * MIN;
+    for (const m of mornings) {
+      const on = wake + r(0, 10) * MIN;
+      const off = o.sunriseNext + r(5, 30) * MIN;
+      if (off - on >= 10 * MIN) {
+        steps.push({ at: on, id: m.id, on: true, why: "morning" });
+        steps.push({ at: off, id: m.id, on: false, why: "morning" });
       }
     }
   }

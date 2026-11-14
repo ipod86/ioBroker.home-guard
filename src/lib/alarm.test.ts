@@ -69,8 +69,17 @@ function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 			motion: false,
 			hazard: 'notify',
 		},
+		{ id: 'gate', name: 'Gartentor', circuit: 'report', delayed: false, invert: false, motion: false },
 	];
-	engine.setSensors(sensors, { door: false, win: 0, pir1: false, pir2: false, smoke: false, water: false });
+	engine.setSensors(sensors, {
+		door: false,
+		win: 0,
+		pir1: false,
+		pir2: false,
+		smoke: false,
+		water: false,
+		gate: false,
+	});
 	const tick = (sec: number): void => {
 		const end = now + sec * 1000;
 		for (;;) {
@@ -253,5 +262,23 @@ describe('AlarmEngine', () => {
 		expect(t.status().phase).to.equal('disarmed');
 		expect(t.outputs).to.deep.equal([]);
 		expect(t.status().lastTrigger).to.equal('Wassermelder');
+	});
+
+	it('report-only sensor: message while armed (or always), never alarm, never blocks arming', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.sensorChanged('gate', true); // disarmed: nothing
+		expect(t.events).to.deep.equal([]);
+		expect(t.engine.arm('perimeter', 'state').open).to.deep.equal([]); // open gate does not block
+		t.engine.sensorChanged('gate', false);
+		t.engine.sensorChanged('gate', true);
+		expect(t.events.filter(e => e === 'report').length).to.equal(1);
+		expect(t.status().phase).to.equal('armed');
+		const always = setup({ reportWhen: 'always' });
+		always.engine.sensorChanged('gate', true);
+		expect(always.events).to.deep.equal(['report']);
+		always.engine.reportOn = false; // switched off by state
+		always.engine.sensorChanged('gate', false);
+		always.engine.sensorChanged('gate', true);
+		expect(always.events).to.deep.equal(['report']);
 	});
 });

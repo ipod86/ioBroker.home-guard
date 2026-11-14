@@ -363,3 +363,45 @@ describe('learned days: same weekday first', () => {
 		expect(sun.map(d => d.weekend)).to.deep.equal([false, false]);
 	});
 });
+
+describe('morning', () => {
+	const kitchen: SimLamp[] = [{ id: 'kueche', name: 'Küche', type: 'morning' }];
+	it('morning lamps go on at wake-up time and off after sunrise, later on the weekend', () => {
+		const sunriseThu = new Date(2026, 10, 19, 7, 50).getTime(); // Wednesday evening -> Thursday morning
+		const plan = planEvening(
+			noon,
+			sunset,
+			kitchen,
+			{ ...opts, wake: '06:30', wakeRandom: 0, sunriseNext: sunriseThu },
+			new Learner(),
+			seeded(2),
+		);
+		const on = plan.find(s => s.id === 'kueche' && s.on)!;
+		const off = plan.find(s => s.id === 'kueche' && !s.on)!;
+		expect(new Date(on.at).getHours()).to.equal(6);
+		expect(off.at).to.be.within(sunriseThu + 5 * MIN, sunriseThu + 30 * MIN);
+		const fri = noon + 2 * 86400000; // Friday evening -> Saturday morning
+		const sunriseSat = new Date(2026, 10, 21, 7, 53).getTime();
+		const sat = planEvening(
+			fri,
+			sunset,
+			kitchen,
+			{ ...opts, wake: '06:30', wakeRandom: 0, wakeWeekendLater: 60, sunriseNext: sunriseSat },
+			new Learner(),
+			seeded(2),
+		);
+		expect(new Date(sat.find(s => s.on)!.at).getHours()).to.equal(7);
+	});
+	it('no morning light when it is already light at wake-up time', () => {
+		const sunriseSummer = new Date(2026, 10, 19, 5, 30).getTime();
+		const plan = planEvening(
+			noon,
+			sunset,
+			kitchen,
+			{ ...opts, wake: '06:30', sunriseNext: sunriseSummer },
+			new Learner(),
+			seeded(2),
+		);
+		expect(plan.filter(s => s.id === 'kueche')).to.deep.equal([]);
+	});
+});

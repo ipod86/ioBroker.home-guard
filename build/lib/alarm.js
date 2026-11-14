@@ -41,6 +41,9 @@ function circuitActive(circuit, mode) {
   if (circuit === "24h") {
     return true;
   }
+  if (circuit === "report") {
+    return false;
+  }
   if (mode === "off") {
     return false;
   }
@@ -73,6 +76,8 @@ class AlarmEngine {
   lastTrigger = "";
   lastTriggerTime = 0;
   alarmActive = false;
+  /** report-only sensors switched on (state control.report) */
+  reportOn = true;
   // ---------- sensors ----------
   /**
    * Sets the monitored sensors and their current values
@@ -130,6 +135,12 @@ class AlarmEngine {
    * @param s the sensor
    */
   triggered(s) {
+    if (s.circuit === "report") {
+      if (this.reportOn && (this.opts.reportWhen === "always" || this.mode !== "off")) {
+        this.host.event("report", { mode: this.mode, sensor: s });
+      }
+      return;
+    }
     if (s.circuit === "24h") {
       if (s.hazard === "alarm") {
         this.alarm(s);
@@ -404,7 +415,7 @@ class AlarmEngine {
    */
   status() {
     const countdown = this.countdownEnd ? Math.max(0, Math.ceil((this.countdownEnd - this.host.now()) / 1e3)) : 0;
-    const openAll = this.getSensors().filter((s) => this.open.get(s.id) && !s.motion);
+    const openAll = this.getSensors().filter((s) => this.open.get(s.id) && !s.motion && s.circuit !== "report");
     return {
       mode: this.mode,
       phase: this.phase,
