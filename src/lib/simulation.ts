@@ -13,6 +13,8 @@ export interface SimLamp {
 	valueOn?: string;
 	/** optional own value for "off", otherwise false / 0 */
 	valueOff?: string;
+	/** learned from a separate state (e.g. the real power state of the TV) - devices are learned only then */
+	learn?: boolean;
 }
 
 /** one learned switching: start in minutes after 12:00 of the evening day, duration in minutes */
@@ -46,6 +48,8 @@ export interface SimOptions {
 	/** devices (TV, radio): running time in the evening from ... to ... minutes */
 	deviceMin?: number;
 	deviceMax?: number;
+	/** devices: how often per evening (1 = once) */
+	deviceCount?: number;
 	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
 	learnFilter?: (ts: number) => boolean;
 }
@@ -206,10 +210,11 @@ export function planEvening(
 
 	// learned day (for "learned" all lamps, for "combined" only visit and bedtime lamps)
 	let learned: LearnedDay | null = null;
+	const learnedIds = new Set<string>();
 	if (o.mode !== 'dusk') {
 		const ids = new Set(
 			(o.mode === 'learned' ? lamps : lamps.filter(l => l.type !== 'evening'))
-				.filter(l => l.type !== 'device')
+				.filter(l => l.type !== 'device' || l.learn)
 				.map(l => l.id),
 		);
 		const cands = learner.candidates(weekend, ids, today);
@@ -222,6 +227,7 @@ export function planEvening(
 				if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
 					continue;
 				}
+				learnedIds.add(s.id);
 				const at = noon + (s.start + r(-o.jitter, o.jitter)) * MIN;
 				const dur = Math.max(1, s.dur * r(0.8, 1.2));
 				steps.push({ at, id: s.id, on: true, why: 'learned' });
@@ -262,8 +268,9 @@ export function planEvening(
 			}
 		}
 	}
-	// devices (TV, radio): once in the evening for a random time, between dusk and lights out
-	const devices = byType('device');
+	// devices (TV, radio) without learned switching: n times in the evening for a random time, between dusk and
+	// lights out - each in its own part of the evening, so they do not overlap
+	const devices = byType('device').filter(d => !learnedIds.has(d.id));
 	if (devices.length) {
 		const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
 		let endMin = parseHm(o.end, 22 * 60 + 30) + (weekend ? o.weekendLater : 0);
@@ -273,11 +280,16 @@ export function planEvening(
 		const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
 		const dMin = Math.max(5, o.deviceMin ?? 60);
 		const dMax = Math.max(dMin, o.deviceMax ?? 180);
+		const n = Math.max(1, Math.min(5, Math.round(o.deviceCount ?? 1)));
+		const slot = (end - start) / n;
 		for (const d of devices) {
-			const dur = Math.min(r(dMin, dMax), (end - start) / MIN);
-			const on = r(start, Math.max(start, end - dur * MIN));
-			steps.push({ at: on, id: d.id, on: true, why: 'device' });
-			steps.push({ at: on + dur * MIN, id: d.id, on: false, why: 'device' });
+			for (let i = 0; i < n; i++) {
+				const from = start + i * slot;
+				const dur = Math.min(r(dMin, dMax), (slot / MIN) * (n > 1 ? 0.8 : 1));
+				const on = r(from, Math.max(from, from + slot - dur * MIN));
+				steps.push({ at: on, id: d.id, on: true, why: 'device' });
+				steps.push({ at: on + dur * MIN, id: d.id, on: false, why: 'device' });
+			}
 		}
 	}
 	return steps.sort((a, b) => a.at - b.at);
@@ -292,6 +304,8 @@ export interface SimHost {
 	switchLamp(id: string, on: boolean): void;
 	/** plan and next step for the status states */
 	publish(active: boolean, plan: PlanStep[], next: PlanStep | null): void;
+	/** switch this lamp off when the simulation ends? (missing: yes) */
+	offOnStop?(id: string): boolean;
 }
 
 export interface RunnerOptions {
@@ -350,7 +364,9 @@ export class SimRunner {
 		}
 		if (!this.opts.force) {
 			for (const id of this.ours) {
-				this.host.switchLamp(id, false);
+				if (!this.host.offOnStop || this.host.offOnStop(id)) {
+					this.host.switchLamp(id, false);
+				}
 			}
 		}
 		this.ours.clear();

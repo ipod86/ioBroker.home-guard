@@ -113,16 +113,17 @@ class Learner {
   }
 }
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
-  var _a, _b;
+  var _a, _b, _c;
   const r = (a, b) => a + rand() * (b - a);
   const steps = [];
   const weekend = isWeekendEvening(noon);
   const today = eveningKey(noon);
   const byType = (t) => lamps.filter((l) => l.type === t);
   let learned = null;
+  const learnedIds = /* @__PURE__ */ new Set();
   if (o.mode !== "dusk") {
     const ids = new Set(
-      (o.mode === "learned" ? lamps : lamps.filter((l) => l.type !== "evening")).filter((l) => l.type !== "device").map((l) => l.id)
+      (o.mode === "learned" ? lamps : lamps.filter((l) => l.type !== "evening")).filter((l) => l.type !== "device" || l.learn).map((l) => l.id)
     );
     const cands = learner.candidates(weekend, ids, today);
     if (cands.length) {
@@ -134,6 +135,7 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
         if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
           continue;
         }
+        learnedIds.add(s.id);
         const at = noon + (s.start + r(-o.jitter, o.jitter)) * MIN;
         const dur = Math.max(1, s.dur * r(0.8, 1.2));
         steps.push({ at, id: s.id, on: true, why: "learned" });
@@ -171,7 +173,7 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
       }
     }
   }
-  const devices = byType("device");
+  const devices = byType("device").filter((d) => !learnedIds.has(d.id));
   if (devices.length) {
     const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
     let endMin = parseHm(o.end, 22 * 60 + 30) + (weekend ? o.weekendLater : 0);
@@ -181,11 +183,16 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
     const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
     const dMin = Math.max(5, (_a = o.deviceMin) != null ? _a : 60);
     const dMax = Math.max(dMin, (_b = o.deviceMax) != null ? _b : 180);
+    const n = Math.max(1, Math.min(5, Math.round((_c = o.deviceCount) != null ? _c : 1)));
+    const slot = (end - start) / n;
     for (const d of devices) {
-      const dur = Math.min(r(dMin, dMax), (end - start) / MIN);
-      const on = r(start, Math.max(start, end - dur * MIN));
-      steps.push({ at: on, id: d.id, on: true, why: "device" });
-      steps.push({ at: on + dur * MIN, id: d.id, on: false, why: "device" });
+      for (let i = 0; i < n; i++) {
+        const from = start + i * slot;
+        const dur = Math.min(r(dMin, dMax), slot / MIN * (n > 1 ? 0.8 : 1));
+        const on = r(from, Math.max(from, from + slot - dur * MIN));
+        steps.push({ at: on, id: d.id, on: true, why: "device" });
+        steps.push({ at: on + dur * MIN, id: d.id, on: false, why: "device" });
+      }
     }
   }
   return steps.sort((a, b) => a.at - b.at);
@@ -232,7 +239,9 @@ class SimRunner {
     }
     if (!this.opts.force) {
       for (const id of this.ours) {
-        this.host.switchLamp(id, false);
+        if (!this.host.offOnStop || this.host.offOnStop(id)) {
+          this.host.switchLamp(id, false);
+        }
       }
     }
     this.ours.clear();

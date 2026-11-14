@@ -56,6 +56,10 @@ export interface SimLampRow {
 	/** own value for on / off (optional) */
 	valueOn?: string;
 	valueOff?: string;
+	/** learn from this state instead (e.g. the real power state of the TV) */
+	learnFrom?: string;
+	/** when the simulation ends: '' automatic (devices off, lamps on), 'off', 'keep' */
+	stopOff?: '' | 'off' | 'keep';
 }
 
 declare global {
@@ -101,6 +105,7 @@ declare global {
 			eveningLightOff: boolean;
 			simDeviceMin: number;
 			simDeviceMax: number;
+			simDeviceCount: number;
 			simLearnWindow: 'all' | 'dark' | 'times';
 			simLearnDarkOffset: number;
 			simLearnFrom: string;

@@ -268,3 +268,74 @@ describe('devices in the simulation', () => {
 		}
 	});
 });
+
+describe('devices: count, learning, end of the simulation', () => {
+	it('a device runs n times per evening without overlap', () => {
+		const tv: SimLamp[] = [{ id: 'tv', name: 'TV', type: 'device' }];
+		const plan = planEvening(
+			noon,
+			sunset,
+			tv,
+			{ ...opts, deviceMin: 30, deviceMax: 60, deviceCount: 3 },
+			new Learner(),
+			seeded(9),
+		);
+		const steps = plan.filter(s => s.id === 'tv');
+		expect(steps.filter(s => s.on).length).to.equal(3);
+		for (let i = 1; i < steps.length; i++) {
+			expect(steps[i].at).to.be.at.least(steps[i - 1].at);
+			expect(steps[i].on).to.equal(!steps[i - 1].on); // on, off, on, off ...
+		}
+	});
+
+	it('a device with a learn source replays its learned evening (twice), otherwise it is planned at random', () => {
+		const l = new Learner();
+		const day = new Date(2026, 10, 11, 12).getTime();
+		l.record('tv', true, day + 6 * 60 * MIN); // 18:00
+		l.record('tv', false, day + 7 * 60 * MIN);
+		l.record('tv', true, day + (8 * 60 + 15) * MIN); // 20:15
+		l.record('tv', false, day + 10 * 60 * MIN);
+		const tv: SimLamp[] = [{ id: 'tv', name: 'TV', type: 'device', learn: true }];
+		const plan = planEvening(noon, sunset, tv, { ...opts, mode: 'combined', jitter: 0 }, l, seeded(3));
+		const on = plan.filter(s => s.id === 'tv' && s.on);
+		expect(on.map(s => s.why)).to.deep.equal(['learned', 'learned']);
+		expect(on.map(s => new Date(s.at).getHours())).to.deep.equal([18, 20]);
+		const notLearned = planEvening(
+			noon,
+			sunset,
+			[{ ...tv[0], learn: false }],
+			{ ...opts, mode: 'combined' },
+			l,
+			seeded(3),
+		);
+		expect(notLearned.filter(s => s.id === 'tv').every(s => s.why === 'device')).to.equal(true);
+	});
+
+	it('when the simulation ends, only lamps that should go off are switched off', () => {
+		let now = noon + 7 * 60 * MIN;
+		const state: Record<string, boolean> = { wz: false, tv: false };
+		const log: string[] = [];
+		const runner = new SimRunner(
+			{
+				now: () => now,
+				setTimer: () => 1,
+				clearTimer: () => undefined,
+				isOn: id => state[id],
+				switchLamp: (id, on) => {
+					state[id] = on;
+					log.push(`${id}:${on}`);
+				},
+				publish: () => undefined,
+				offOnStop: id => id === 'tv',
+			},
+			() => [
+				{ at: noon + 6 * 60 * MIN, id: 'wz', on: true, why: 'dusk' },
+				{ at: noon + 6 * 60 * MIN, id: 'tv', on: true, why: 'device' },
+			],
+		);
+		runner.start();
+		runner.stop();
+		expect(log).to.deep.equal(['wz:true', 'tv:true', 'tv:false']);
+		now += 1;
+	});
+});

@@ -53,6 +53,11 @@ class HomeGuard extends utils.Adapter {
   autoArm = true;
   simLamps = [];
   simLampVals = /* @__PURE__ */ new Map();
+  learnFrom = /* @__PURE__ */ new Map();
+  // learn source state -> simulation lamp
+  learnFromVals = /* @__PURE__ */ new Map();
+  stopOff = /* @__PURE__ */ new Map();
+  // simulation lamp -> switch off when the simulation ends
   lampOuts = [];
   blinkTimer;
   blinkOn = false;
@@ -135,7 +140,12 @@ class HomeGuard extends utils.Adapter {
         clearTimer: (h) => this.clearTimeout(h),
         isOn: (id) => this.simLampVals.get(id) || false,
         switchLamp: (id, on) => void this.switchLamp(id, on),
-        publish: (active, plan, next) => void this.publishSim(active, plan, next)
+        publish: (active, plan, next) => void this.publishSim(active, plan, next),
+        // end of the simulation (e.g. coming home): devices like the TV off, lamps stay on - or as set per row
+        offOnStop: (id) => {
+          var _a2, _b2;
+          return (_b2 = this.stopOff.get(id)) != null ? _b2 : ((_a2 = this.simLamps.find((l) => l.id === id)) == null ? void 0 : _a2.type) === "device";
+        }
       },
       (now) => this.makePlan(now)
     );
@@ -328,6 +338,7 @@ class HomeGuard extends utils.Adapter {
         ...this.sensorIds,
         ...this.presenceIds,
         ...this.simLamps.map((l) => l.id),
+        ...this.learnFrom.keys(),
         c.lockEnabled ? c.lockId : "",
         c.armEarlyId,
         c.simLuxId
@@ -491,9 +502,12 @@ class HomeGuard extends utils.Adapter {
    * Collects the lamps of the presence simulation
    */
   async setupSimLamps() {
-    var _a;
+    var _a, _b;
     const c = this.config;
     const lamps = /* @__PURE__ */ new Map();
+    this.learnFrom.clear();
+    this.learnFromVals.clear();
+    this.stopOff.clear();
     if (c.simAuto) {
       for (const id of await this.enumStates(c.enumSimLamps)) {
         lamps.set(id, { id, name: await this.nameOf(id), type: "evening" });
@@ -512,13 +526,24 @@ class HomeGuard extends utils.Adapter {
         name: await this.nameOf(row.id, row.name),
         type: row.type || "evening",
         valueOn: row.valueOn ? String(row.valueOn) : void 0,
-        valueOff: row.valueOff ? String(row.valueOff) : void 0
+        valueOff: row.valueOff ? String(row.valueOff) : void 0,
+        learn: !!row.learnFrom
       });
+      if (row.learnFrom) {
+        this.learnFrom.set(String(row.learnFrom), row.id);
+      }
+      if (row.stopOff === "off" || row.stopOff === "keep") {
+        this.stopOff.set(row.id, row.stopOff === "off");
+      }
     }
     this.simLamps = [...lamps.values()];
     for (const l of this.simLamps) {
       this.simLampVals.set(l.id, (0, import_alarm.isOpenValue)((_a = await this.getForeignStateAsync(l.id)) == null ? void 0 : _a.val));
       await this.subscribeForeignStatesAsync(l.id);
+    }
+    for (const src of this.learnFrom.keys()) {
+      this.learnFromVals.set(src, (0, import_alarm.isOpenValue)((_b = await this.getForeignStateAsync(src)) == null ? void 0 : _b.val));
+      await this.subscribeForeignStatesAsync(src);
     }
   }
   /**
@@ -601,8 +626,21 @@ class HomeGuard extends utils.Adapter {
       const from = state.from || "";
       const ignored = c.simLearnDevicesOnly !== false ? LEARN_IGNORE.test(from) : from.startsWith(`system.adapter.${this.namespace}`);
       const ts = state.ts || Date.now();
-      if (before !== on && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindow(ts))) {
+      const hasSource = [...this.learnFrom.values()].includes(id);
+      if (before !== on && !hasSource && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindow(ts))) {
         if (this.learner.record(id, on, ts)) {
+          this.saveLearnedSoon();
+        }
+      }
+    }
+    const target = this.learnFrom.get(id);
+    if (target && confirmed) {
+      const on = (0, import_alarm.isOpenValue)(state.val);
+      const before = this.learnFromVals.get(id);
+      this.learnFromVals.set(id, on);
+      const ts = state.ts || Date.now();
+      if (before !== on && !this.sim.active && (!on || this.inLearnWindow(ts))) {
+        if (this.learner.record(target, on, ts)) {
           this.saveLearnedSoon();
         }
       }
@@ -1514,6 +1552,7 @@ class HomeGuard extends utils.Adapter {
         jitter: num(c.simJitter, 15),
         deviceMin: clamp(num(c.simDeviceMin, 60), 5, 600),
         deviceMax: clamp(num(c.simDeviceMax, 180), 5, 600),
+        deviceCount: clamp(num(c.simDeviceCount, 1), 1, 5),
         learnFilter: (ts) => this.inLearnWindow(ts)
       },
       this.learner

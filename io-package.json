@@ -190,7 +190,8 @@
 		"eveningLightOn": true,
 		"eveningLightOff": true,
 		"simDeviceMin": 60,
-		"simDeviceMax": 180
+		"simDeviceMax": 180,
+		"simDeviceCount": 1
 	},
 	"objects": [],
 	"instanceObjects": [

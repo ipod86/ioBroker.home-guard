@@ -1436,26 +1436,26 @@
 							"type": "checkbox",
 							"attr": "enabled",
 							"title": "Active",
-							"width": "6%",
+							"width": "5%",
 							"default": true
 						},
 						{
 							"type": "objectId",
 							"attr": "id",
 							"title": "State",
-							"width": "32%"
+							"width": "22%"
 						},
 						{
 							"type": "text",
 							"attr": "name",
 							"title": "Name (optional)",
-							"width": "16%"
+							"width": "11%"
 						},
 						{
 							"type": "select",
 							"attr": "type",
 							"title": "Type",
-							"width": "18%",
+							"width": "14%",
 							"default": "evening",
 							"options": [
 								{
@@ -1480,19 +1480,46 @@
 							"type": "text",
 							"attr": "valueOn",
 							"title": "Value on (optional)",
-							"width": "14%"
+							"width": "9%"
 						},
 						{
 							"type": "text",
 							"attr": "valueOff",
 							"title": "Value off (optional)",
-							"width": "14%"
+							"width": "9%"
+						},
+						{
+							"type": "objectId",
+							"attr": "learnFrom",
+							"title": "Learn from (optional)",
+							"width": "18%"
+						},
+						{
+							"type": "select",
+							"attr": "stopOff",
+							"title": "When the simulation ends",
+							"width": "12%",
+							"default": "",
+							"options": [
+								{
+									"value": "",
+									"label": "automatic (devices off, lamps stay on)"
+								},
+								{
+									"value": "off",
+									"label": "switch off"
+								},
+								{
+									"value": "keep",
+									"label": "leave on"
+								}
+							]
 						}
 					]
 				},
 				"iDevices": {
 					"type": "staticText",
-					"text": "Type \"TV / device\": switched on once in the evening for a random time, only while the simulation runs. For several steps (TV on, then a channel) use a scene of the scenes adapter or a script as the state, with its own value for on and off.",
+					"text": "Type \"TV / device\": only while the simulation runs. With \"Learn from\" (e.g. the real power state of the TV) it replays your real evenings; without, it runs a few times for a random time. For several steps (TV on, then a channel) use a scene of the scenes adapter or a script as the state. \"When the simulation ends\": automatic switches devices off and leaves lamps on (e.g. coming home). Entries in the table override the ones found through a function.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -1517,6 +1544,18 @@
 					"min": 5,
 					"max": 600,
 					"default": 180,
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simDeviceCount": {
+					"type": "number",
+					"label": "Devices: times per evening",
+					"min": 1,
+					"max": 5,
+					"default": 1,
 					"xs": 12,
 					"sm": 12,
 					"md": 6,

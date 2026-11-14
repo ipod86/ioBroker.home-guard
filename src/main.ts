@@ -67,6 +67,9 @@ class HomeGuard extends utils.Adapter {
 	private autoArm = true;
 	private simLamps: SimLamp[] = [];
 	private simLampVals = new Map<string, boolean>();
+	private learnFrom = new Map<string, string>(); // learn source state -> simulation lamp
+	private learnFromVals = new Map<string, boolean>();
+	private stopOff = new Map<string, boolean>(); // simulation lamp -> switch off when the simulation ends
 	private lampOuts: LampOut[] = [];
 	private blinkTimer: ioBroker.Interval | undefined;
 	private blinkOn = false;
@@ -164,6 +167,8 @@ class HomeGuard extends utils.Adapter {
 				isOn: id => this.simLampVals.get(id) || false,
 				switchLamp: (id, on) => void this.switchLamp(id, on),
 				publish: (active, plan, next) => void this.publishSim(active, plan, next),
+				// end of the simulation (e.g. coming home): devices like the TV off, lamps stay on - or as set per row
+				offOnStop: id => this.stopOff.get(id) ?? this.simLamps.find(l => l.id === id)?.type === 'device',
 			},
 			now => this.makePlan(now),
 		);
@@ -381,6 +386,7 @@ class HomeGuard extends utils.Adapter {
 				...this.sensorIds,
 				...this.presenceIds,
 				...this.simLamps.map(l => l.id),
+				...this.learnFrom.keys(),
 				c.lockEnabled ? c.lockId : '',
 				c.armEarlyId,
 				c.simLuxId,
@@ -556,6 +562,9 @@ class HomeGuard extends utils.Adapter {
 	private async setupSimLamps(): Promise<void> {
 		const c = this.config;
 		const lamps = new Map<string, SimLamp>();
+		this.learnFrom.clear();
+		this.learnFromVals.clear();
+		this.stopOff.clear();
 		if (c.simAuto) {
 			for (const id of await this.enumStates(c.enumSimLamps)) {
 				lamps.set(id, { id, name: await this.nameOf(id), type: 'evening' });
@@ -575,12 +584,23 @@ class HomeGuard extends utils.Adapter {
 				type: row.type || 'evening',
 				valueOn: row.valueOn ? String(row.valueOn) : undefined,
 				valueOff: row.valueOff ? String(row.valueOff) : undefined,
+				learn: !!row.learnFrom,
 			});
+			if (row.learnFrom) {
+				this.learnFrom.set(String(row.learnFrom), row.id);
+			}
+			if (row.stopOff === 'off' || row.stopOff === 'keep') {
+				this.stopOff.set(row.id, row.stopOff === 'off');
+			}
 		}
 		this.simLamps = [...lamps.values()];
 		for (const l of this.simLamps) {
 			this.simLampVals.set(l.id, isOpenValue((await this.getForeignStateAsync(l.id))?.val));
 			await this.subscribeForeignStatesAsync(l.id);
+		}
+		for (const src of this.learnFrom.keys()) {
+			this.learnFromVals.set(src, isOpenValue((await this.getForeignStateAsync(src))?.val));
+			await this.subscribeForeignStatesAsync(src);
 		}
 	}
 
@@ -674,9 +694,31 @@ class HomeGuard extends utils.Adapter {
 					? LEARN_IGNORE.test(from)
 					: from.startsWith(`system.adapter.${this.namespace}`);
 			const ts = state.ts || Date.now();
+			// a lamp with its own learn source is learned from there, not from the state that is switched
+			const hasSource = [...this.learnFrom.values()].includes(id);
 			// switching on outside the learning window is not learned (switching off ends only what was learned)
-			if (before !== on && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindow(ts))) {
+			if (
+				before !== on &&
+				!hasSource &&
+				!this.sim.active &&
+				!ignored &&
+				confirmed &&
+				(!on || this.inLearnWindow(ts))
+			) {
 				if (this.learner.record(id, on, ts)) {
+					this.saveLearnedSoon();
+				}
+			}
+		}
+		// learn source of a device (e.g. the real power state of the TV): learned under the device
+		const target = this.learnFrom.get(id);
+		if (target && confirmed) {
+			const on = isOpenValue(state.val);
+			const before = this.learnFromVals.get(id);
+			this.learnFromVals.set(id, on);
+			const ts = state.ts || Date.now();
+			if (before !== on && !this.sim.active && (!on || this.inLearnWindow(ts))) {
+				if (this.learner.record(target, on, ts)) {
 					this.saveLearnedSoon();
 				}
 			}
@@ -1659,6 +1701,7 @@ class HomeGuard extends utils.Adapter {
 				jitter: num(c.simJitter, 15),
 				deviceMin: clamp(num(c.simDeviceMin, 60), 5, 600),
 				deviceMax: clamp(num(c.simDeviceMax, 180), 5, 600),
+				deviceCount: clamp(num(c.simDeviceCount, 1), 1, 5),
 				learnFilter: ts => this.inLearnWindow(ts),
 			},
 			this.learner,
