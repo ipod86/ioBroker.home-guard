@@ -15,19 +15,6 @@
         "pl": "pierwsza wersja: system alarmowy z pełną ochroną obwodową i nocną, symulacją obecności (zmierzch, uczony, połączony) i komponentem sieciowym (AURA 0.106.0+, vis-2 2.20.7+)",
         "uk": "початковий випуск: сигналізація з повним, периметральним та нічним захистом, моделювання присутності (сутінки, вивчені, комбіновані) та веб-компонент (AURA 0.106.0+, vis-2 2.20.7+)",
         "zh-cn": "初始版本：具有全面保护、周界和夜间保护的警报系统、存在模拟（黄昏、学习、组合）和网络组件（AURA 0.106.0+，vis-2 2.20.7+）"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "uk": "Початкова версія",
-        "zh-cn": "首次出版"
       }
     },
     "titleLang": {
