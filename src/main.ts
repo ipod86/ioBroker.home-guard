@@ -62,6 +62,8 @@ class HomeGuard extends utils.Adapter {
 	private sensorIds = new Set<string>();
 	private presenceIds: string[] = [];
 	private presenceVals = new Map<string, boolean>();
+	private personOf = new Map<string, string>();
+	private autoArm = true;
 	private simLamps: SimLamp[] = [];
 	private simLampVals = new Map<string, boolean>();
 	private lampOuts: LampOut[] = [];
@@ -165,7 +167,8 @@ class HomeGuard extends utils.Adapter {
 				isOn: id => this.simLampVals.get(id) || false,
 				switchLamp: (id, on) => void this.switchLamp(id, on),
 				publish: (active, plan, next) => {
-					const text = active && next ? `${new Date(next.at).toLocaleString()} ${next.on ? 'on' : 'off'}` : '';
+					const text =
+						active && next ? `${new Date(next.at).toLocaleString()} ${next.on ? 'on' : 'off'}` : '';
 					if (text && text !== this.eveningLogged) {
 						this.eveningLogged = text;
 						this.log.debug(`Evening light: next step ${text} (${plan.length} steps planned)`);
@@ -196,6 +199,13 @@ class HomeGuard extends utils.Adapter {
 		// new or removed members of the functions are picked up without a restart
 		if (this.watchedEnums().length) {
 			await this.subscribeForeignObjectsAsync('enum.functions.*');
+		}
+
+		// automatic arming by presence: switch of the last run, on for a new instance
+		const auto = await this.getStateAsync('control.autoArm');
+		this.autoArm = auto?.val !== false;
+		if (auto?.val == null) {
+			await this.setStateAsync('control.autoArm', true, true);
 		}
 
 		// back to the mode of the last run (no exit delay, no notification)
@@ -475,20 +485,60 @@ class HomeGuard extends utils.Adapter {
 	private async setupPresence(): Promise<void> {
 		const c = this.config;
 		const ids = new Set<string>();
+		this.personOf.clear();
 		if (c.presenceAuto) {
 			(await this.enumStates(c.enumPresence)).forEach(id => ids.add(id));
 		}
+		// rows of the table add states, give states of the function a person, or leave them out
 		for (const row of c.presence || []) {
-			if (row?.id && row.enabled !== false) {
-				ids.add(row.id);
+			if (!row?.id) {
+				continue;
+			}
+			if (row.enabled === false) {
+				ids.delete(row.id);
+				continue;
+			}
+			ids.add(row.id);
+			if (row.name) {
+				this.personOf.set(row.id, String(row.name).trim());
 			}
 		}
 		this.presenceIds = [...ids];
 		for (const id of this.presenceIds) {
+			if (!this.personOf.has(id)) {
+				this.personOf.set(id, await this.personName(id));
+			}
 			this.presenceVals.set(id, isOpenValue((await this.getForeignStateAsync(id))?.val));
 			await this.subscribeForeignStatesAsync(id);
 		}
 		await this.publishPresence();
+	}
+
+	/**
+	 * Name of the person of a presence state when the table gives none: the object name (or the last part of the
+	 * ID) without endings like _GPS, _Ping or _WLAN - "David_GPS" and "David_Ping" both become "David"
+	 *
+	 * @param id state ID
+	 */
+	private async personName(id: string): Promise<string> {
+		const o = await this.getForeignObjectAsync(id);
+		const n = o?.common?.name;
+		let name =
+			typeof n === 'object' && n
+				? (n as Record<string, string>)[this.T === texts('de') ? 'de' : 'en'] ||
+					(n as Record<string, string>).en
+				: (n as string) || '';
+		// names like "state", "ON" or the whole ID say nothing about the person: take the last part of the ID
+		if (!name || name.includes('.') || /^(state|value|presence|present|on|val)$/i.test(name)) {
+			name = id.split('.').pop() || id;
+		}
+		const stripped = name
+			.replace(
+				/[\s_.-]*(gps|ping|wlan|wifi|lan|bt|ble|bluetooth|phone|handy|smartphone|presence|present|anwesend|anwesenheit|status|state|home|zuhause)$/i,
+				'',
+			)
+			.trim();
+		return stripped || name;
 	}
 
 	/**
@@ -681,6 +731,11 @@ class HomeGuard extends utils.Adapter {
 				}
 				return;
 			}
+			case 'control.autoArm':
+				this.autoArm = !!val;
+				await this.setStateAsync('control.autoArm', this.autoArm, true);
+				this.addLog('autoArm', this.autoArm ? this.T.autoOn : this.T.autoOff);
+				return;
 			case 'simulation.enabled':
 				await this.setStateAsync('simulation.enabled', !!val, true);
 				await this.updateSimulation();
@@ -776,6 +831,10 @@ class HomeGuard extends utils.Adapter {
 			await this.updateSimulation();
 			return;
 		}
+		if (!this.autoArm) {
+			await this.updateSimulation();
+			return;
+		}
 		if (c.alarmEnabled && !isHome && c.presenceArm && c.presenceArm !== 'off' && this.alarm.mode === 'off') {
 			this.alarm.arm(c.presenceArm, 'presence');
 		}
@@ -853,6 +912,10 @@ class HomeGuard extends utils.Adapter {
 					...this.alarm.status(),
 					pinRequired: !!c.pin,
 					pinForArm: !!(c.pin && c.pinForArm),
+					autoArmAvailable:
+						!!c.alarmEnabled &&
+						this.presenceIds.length > 0 &&
+						((!!c.presenceArm && c.presenceArm !== 'off') || !!c.presenceDisarm),
 					simActive: this.sim.active,
 					simEnabled: !!(await this.getStateAsync('simulation.enabled'))?.val,
 					texts: { mode: this.T.mode, phase: this.T.phase },
@@ -1359,8 +1422,18 @@ class HomeGuard extends utils.Adapter {
 	 * Writes the presence states
 	 */
 	private async publishPresence(): Promise<void> {
-		const home = [...this.presenceVals.values()].filter(Boolean).length;
+		// one person may have several states (GPS, ping, ...): at home when one of them says so
+		const persons = new Map<string, boolean>();
+		for (const id of this.presenceIds) {
+			const name = this.personOf.get(id) || id;
+			persons.set(name, persons.get(name) || false || !!this.presenceVals.get(id));
+		}
+		const list = [...persons.entries()]
+			.map(([name, home]) => ({ name, home }))
+			.sort((a, b) => a.name.localeCompare(b.name));
+		const home = list.filter(p => p.home).length;
 		await this.setStateChangedAsync('status.presentCount', home, true);
+		await this.setStateChangedAsync('status.present', JSON.stringify(list), true);
 		await this.setStateChangedAsync('status.someoneHome', home > 0 || !this.presenceIds.length, true);
 	}
 

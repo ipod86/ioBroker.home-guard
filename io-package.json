@@ -499,6 +499,22 @@
 			"native": {}
 		},
 		{
+			"_id": "status.present",
+			"type": "state",
+			"common": {
+				"name": {
+					"en": "Persons and whether they are at home",
+					"de": "Personen und ob sie zu Hause sind"
+				},
+				"type": "string",
+				"role": "json",
+				"read": true,
+				"write": false,
+				"def": "[]"
+			},
+			"native": {}
+		},
+		{
 			"_id": "status.log",
 			"type": "state",
 			"common": {
@@ -665,6 +681,22 @@
 				"read": true,
 				"write": true,
 				"def": ""
+			},
+			"native": {}
+		},
+		{
+			"_id": "control.autoArm",
+			"type": "state",
+			"common": {
+				"name": {
+					"en": "Automatic arming/disarming by presence",
+					"de": "Automatisch scharf/unscharf über Anwesenheit"
+				},
+				"type": "boolean",
+				"role": "switch",
+				"read": true,
+				"write": true,
+				"def": true
 			},
 			"native": {}
 		},

@@ -28,6 +28,12 @@ const TXT = {
 		lastTrigger: 'Ausgelöst durch',
 		chooseInstance: 'Bitte eine Home-Guard-Instanz wählen',
 		logbook: 'Logbuch',
+		home: 'Zu Hause',
+		away: 'Weg',
+		nobody: 'Niemand zu Hause',
+		auto: 'Automatisch scharf/unscharf',
+		sensors: 'Überwachte Sensoren',
+		circuit: { perimeter: 'Hülle', interior: 'Innen', '24h': '24 h' },
 		locked: 'PIN-Eingabe vorübergehend gesperrt',
 	},
 	en: {
@@ -48,6 +54,12 @@ const TXT = {
 		lastTrigger: 'Triggered by',
 		chooseInstance: 'Please choose a Home Guard instance',
 		logbook: 'Logbook',
+		home: 'At home',
+		away: 'Away',
+		nobody: 'Nobody at home',
+		auto: 'Automatic arming',
+		sensors: 'Monitored sensors',
+		circuit: { perimeter: 'Perimeter', interior: 'Inside', '24h': '24 h' },
 		locked: 'PIN entry locked for a while',
 	},
 };
@@ -115,6 +127,15 @@ button:disabled { opacity: .5; cursor: default; }
 .loghead { all: unset; box-sizing: border-box; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 2cqmin; cursor: pointer; font-size: .85em; opacity: .85; }
 .log.shut { flex: none; }
 .logrows { margin-top: 1.5cqmin; }
+.logrows .grow { flex: 1; min-width: 0; }
+.persons { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5cqmin 3cqmin; }
+.lbl2 { font-size: .8em; opacity: .7; }
+.lbl2.gap { margin-left: 2cqmin; }
+.pers { display: inline-flex; align-items: center; gap: 1.2cqmin; }
+.pers i { width: 2.2cqmin; height: 2.2cqmin; border-radius: 50%; background: rgba(127,127,127,.6); display: inline-block; }
+.pers.on i { background: var(--iob-success, #2e7d32); }
+.pers.warn i { background: var(--iob-warning, #ed6c02); }
+.row.sep { margin-top: 2cqmin; padding-top: 2cqmin; border-top: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
 .pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
@@ -177,6 +198,9 @@ class HomeGuardPanel extends IobWebComponent {
 			`${i}.simulation.enabled`,
 			`${i}.simulation.active`,
 			`${i}.simulation.next`,
+			`${i}.status.present`,
+			`${i}.status.sensors`,
+			`${i}.control.autoArm`,
 		];
 	}
 
@@ -262,6 +286,10 @@ class HomeGuardPanel extends IobWebComponent {
 			await this.send('ack', {});
 		} else if (a === 'sim') {
 			await this.setState(`${this.inst}.simulation.enabled`, !this.val('simulation.enabled'));
+		} else if (a === 'auto') {
+			await this.setState(`${this.inst}.control.autoArm`, this.val('control.autoArm') === false);
+		} else if (a === 'sensors') {
+			this.sensorsOpen = !this.sensorsOpen;
 		} else if (a === 'key') {
 			if (this.pad && this.pad.pin.length < 12) {
 				this.pad.pin += b.dataset.k;
@@ -353,6 +381,36 @@ class HomeGuardPanel extends IobWebComponent {
 					: `<div class="ok">${esc(t.allClosed)}</div>`
 			}</div>`;
 		}
+		// who is at home, and the switch for automatic arming by presence
+		const persons = parse(this.val('status.present'), []);
+		const showPersons = (s.persons || 'off') !== 'off' && persons.length;
+		const showAuto =
+			s.autoArm !== false &&
+			(!this.info || this.info.autoArmAvailable !== false) &&
+			this.val('control.autoArm') !== null &&
+			this.val('control.autoArm') !== undefined;
+		if (showPersons || showAuto) {
+			html += '<div class="box">';
+			if (showPersons) {
+				const home = persons.filter(p => p.home);
+				const away = persons.filter(p => !p.home);
+				html += `<div class="persons">${
+					home.length
+						? `<span class="lbl2">${esc(t.home)}</span>${home.map(p => `<span class="pers on"><i></i>${esc(p.name)}</span>`).join('')}`
+						: `<span class="lbl2">${esc(t.nobody)}</span>`
+				}${
+					s.persons === 'all' && away.length
+						? `<span class="lbl2 gap">${esc(t.away)}</span>${away.map(p => `<span class="pers"><i></i>${esc(p.name)}</span>`).join('')}`
+						: ''
+				}</div>`;
+			}
+			if (showAuto) {
+				html += `<div class="row${showPersons ? ' sep' : ''}"><div class="grow">${esc(t.auto)}</div><button class="sw ${
+					this.val('control.autoArm') !== false ? 'on' : ''
+				}" data-a="auto" aria-label="${esc(t.auto)}"></button></div>`;
+			}
+			html += '</div>';
+		}
 		if (s.sim !== false) {
 			const active = !!this.val('simulation.active');
 			const next = this.val('simulation.next') || '';
@@ -361,6 +419,26 @@ class HomeGuardPanel extends IobWebComponent {
 			)}</b></div>${active && next ? `<div class="small">${esc(t.next)}: ${esc(next)}</div>` : ''}</div><button class="sw ${
 				this.val('simulation.enabled') ? 'on' : ''
 			}" data-a="sim" aria-label="${esc(t.sim)}"></button></div>`;
+		}
+		const sensors = parse(this.val('status.sensors'), []);
+		if (s.sensors !== false && sensors.length) {
+			const openNames = new Set(open);
+			html += `<div class="box log${this.sensorsOpen ? '' : ' shut'}"><button class="loghead" data-a="sensors" aria-expanded="${!!this.sensorsOpen}"><span>${esc(
+				t.sensors,
+			)}</span><span class="small">${sensors.length} ${this.sensorsOpen ? '▴' : '▾'}</span></button>${
+				this.sensorsOpen
+					? `<div class="logrows">${sensors
+							.map(
+								x =>
+									`<div><span class="pers${openNames.has(x.name) ? ' warn' : ' on'}"><i></i></span><span class="grow">${esc(x.name)}</span><span class="small">${esc(
+										(t.circuit[x.circuit] || x.circuit) +
+											(x.delayed ? ' ⏱' : '') +
+											(x.motion ? ' 🚶' : ''),
+									)}</span></div>`,
+							)
+							.join('')}</div>`
+					: ''
+			}</div>`;
 		}
 		const n = Number(s.log ?? 4);
 		if (n > 0 && log.length) {

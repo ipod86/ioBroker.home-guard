@@ -52,6 +52,53 @@
 				},
 				"default": true
 			},
+			"persons": {
+				"type": "select",
+				"label": {
+					"en": "Who is at home",
+					"de": "Wer ist zu Hause"
+				},
+				"options": [
+					{
+						"value": "off",
+						"label": {
+							"en": "Do not show",
+							"de": "Nicht zeigen"
+						}
+					},
+					{
+						"value": "home",
+						"label": {
+							"en": "Only who is at home",
+							"de": "Nur wer zu Hause ist"
+						}
+					},
+					{
+						"value": "all",
+						"label": {
+							"en": "At home and away",
+							"de": "Zu Hause und weg"
+						}
+					}
+				],
+				"default": "off"
+			},
+			"autoArm": {
+				"type": "checkbox",
+				"label": {
+					"en": "Switch for automatic arming by presence",
+					"de": "Schalter „Automatisch scharf/unscharf“"
+				},
+				"default": true
+			},
+			"sensors": {
+				"type": "checkbox",
+				"label": {
+					"en": "Monitored sensors (to open)",
+					"de": "Überwachte Sensoren (aufklappbar)"
+				},
+				"default": true
+			},
 			"log": {
 				"type": "number",
 				"label": {

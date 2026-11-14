@@ -48,6 +48,8 @@ class HomeGuard extends utils.Adapter {
   sensorIds = /* @__PURE__ */ new Set();
   presenceIds = [];
   presenceVals = /* @__PURE__ */ new Map();
+  personOf = /* @__PURE__ */ new Map();
+  autoArm = true;
   simLamps = [];
   simLampVals = /* @__PURE__ */ new Map();
   lampOuts = [];
@@ -165,6 +167,11 @@ class HomeGuard extends utils.Adapter {
     await this.subscribeStatesAsync("simulation.enabled");
     if (this.watchedEnums().length) {
       await this.subscribeForeignObjectsAsync("enum.functions.*");
+    }
+    const auto = await this.getStateAsync("control.autoArm");
+    this.autoArm = (auto == null ? void 0 : auto.val) !== false;
+    if ((auto == null ? void 0 : auto.val) == null) {
+      await this.setStateAsync("control.autoArm", true, true);
     }
     const lastMode = (_f = await this.getStateAsync("status.mode")) == null ? void 0 : _f.val;
     const lastAlarm = ((_g = await this.getStateAsync("status.alarm")) == null ? void 0 : _g.val) === true;
@@ -427,20 +434,52 @@ class HomeGuard extends utils.Adapter {
     var _a;
     const c = this.config;
     const ids = /* @__PURE__ */ new Set();
+    this.personOf.clear();
     if (c.presenceAuto) {
       (await this.enumStates(c.enumPresence)).forEach((id) => ids.add(id));
     }
     for (const row of c.presence || []) {
-      if ((row == null ? void 0 : row.id) && row.enabled !== false) {
-        ids.add(row.id);
+      if (!(row == null ? void 0 : row.id)) {
+        continue;
+      }
+      if (row.enabled === false) {
+        ids.delete(row.id);
+        continue;
+      }
+      ids.add(row.id);
+      if (row.name) {
+        this.personOf.set(row.id, String(row.name).trim());
       }
     }
     this.presenceIds = [...ids];
     for (const id of this.presenceIds) {
+      if (!this.personOf.has(id)) {
+        this.personOf.set(id, await this.personName(id));
+      }
       this.presenceVals.set(id, (0, import_alarm.isOpenValue)((_a = await this.getForeignStateAsync(id)) == null ? void 0 : _a.val));
       await this.subscribeForeignStatesAsync(id);
     }
     await this.publishPresence();
+  }
+  /**
+   * Name of the person of a presence state when the table gives none: the object name (or the last part of the
+   * ID) without endings like _GPS, _Ping or _WLAN - "David_GPS" and "David_Ping" both become "David"
+   *
+   * @param id state ID
+   */
+  async personName(id) {
+    var _a;
+    const o = await this.getForeignObjectAsync(id);
+    const n = (_a = o == null ? void 0 : o.common) == null ? void 0 : _a.name;
+    let name = typeof n === "object" && n ? n[this.T === (0, import_texts.texts)("de") ? "de" : "en"] || n.en : n || "";
+    if (!name || name.includes(".") || /^(state|value|presence|present|on|val)$/i.test(name)) {
+      name = id.split(".").pop() || id;
+    }
+    const stripped = name.replace(
+      /[\s_.-]*(gps|ping|wlan|wifi|lan|bt|ble|bluetooth|phone|handy|smartphone|presence|present|anwesend|anwesenheit|status|state|home|zuhause)$/i,
+      ""
+    ).trim();
+    return stripped || name;
   }
   /**
    * Collects the lamps of the presence simulation
@@ -616,6 +655,11 @@ class HomeGuard extends utils.Adapter {
         }
         return;
       }
+      case "control.autoArm":
+        this.autoArm = !!val;
+        await this.setStateAsync("control.autoArm", this.autoArm, true);
+        this.addLog("autoArm", this.autoArm ? this.T.autoOn : this.T.autoOff);
+        return;
       case "simulation.enabled":
         await this.setStateAsync("simulation.enabled", !!val, true);
         await this.updateSimulation();
@@ -706,6 +750,10 @@ class HomeGuard extends utils.Adapter {
       await this.updateSimulation();
       return;
     }
+    if (!this.autoArm) {
+      await this.updateSimulation();
+      return;
+    }
     if (c.alarmEnabled && !isHome && c.presenceArm && c.presenceArm !== "off" && this.alarm.mode === "off") {
       this.alarm.arm(c.presenceArm, "presence");
     }
@@ -782,6 +830,7 @@ class HomeGuard extends utils.Adapter {
           ...this.alarm.status(),
           pinRequired: !!c.pin,
           pinForArm: !!(c.pin && c.pinForArm),
+          autoArmAvailable: !!c.alarmEnabled && this.presenceIds.length > 0 && (!!c.presenceArm && c.presenceArm !== "off" || !!c.presenceDisarm),
           simActive: this.sim.active,
           simEnabled: !!((_a = await this.getStateAsync("simulation.enabled")) == null ? void 0 : _a.val),
           texts: { mode: this.T.mode, phase: this.T.phase },
@@ -1246,8 +1295,15 @@ class HomeGuard extends utils.Adapter {
    * Writes the presence states
    */
   async publishPresence() {
-    const home = [...this.presenceVals.values()].filter(Boolean).length;
+    const persons = /* @__PURE__ */ new Map();
+    for (const id of this.presenceIds) {
+      const name = this.personOf.get(id) || id;
+      persons.set(name, persons.get(name) || false || !!this.presenceVals.get(id));
+    }
+    const list = [...persons.entries()].map(([name, home2]) => ({ name, home: home2 })).sort((a, b) => a.name.localeCompare(b.name));
+    const home = list.filter((p) => p.home).length;
     await this.setStateChangedAsync("status.presentCount", home, true);
+    await this.setStateChangedAsync("status.present", JSON.stringify(list), true);
     await this.setStateChangedAsync("status.someoneHome", home > 0 || !this.presenceIds.length, true);
   }
   /**

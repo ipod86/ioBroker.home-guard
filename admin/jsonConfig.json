@@ -616,6 +616,15 @@
 					"noTranslation": true,
 					"hidden": "!data.presenceAuto"
 				},
+				"iPersons": {
+					"type": "staticText",
+					"text": "Several states of one person (e.g. GPS and ping) get the same name: the person counts as at home when one of them says so. States of the function can be named here too. Without a name, the object name without endings like _GPS or _Ping is used.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
 				"presence": {
 					"type": "table",
 					"label": "Presence states by hand",
@@ -641,7 +650,7 @@
 						{
 							"type": "text",
 							"attr": "name",
-							"title": "Name (optional)",
+							"title": "Person",
 							"width": "32%"
 						}
 					]
