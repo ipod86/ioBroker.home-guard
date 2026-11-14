@@ -27,6 +27,8 @@ const TXT = {
 		refused: 'Nicht scharf – offen:',
 		lastTrigger: 'Ausgelöst durch',
 		chooseInstance: 'Bitte eine Home-Guard-Instanz wählen',
+		logbook: 'Logbuch',
+		locked: 'PIN-Eingabe vorübergehend gesperrt',
 	},
 	en: {
 		mode: { off: 'Off', full: 'Full', perimeter: 'Perimeter', night: 'Night' },
@@ -45,6 +47,8 @@ const TXT = {
 		refused: 'Not armed – open:',
 		lastTrigger: 'Triggered by',
 		chooseInstance: 'Please choose a Home Guard instance',
+		logbook: 'Logbook',
+		locked: 'PIN entry locked for a while',
 	},
 };
 
@@ -106,8 +110,11 @@ button:disabled { opacity: .5; cursor: default; }
 .sw.on::after { left: 5.6cqmin; }
 .small { font-size: .82em; opacity: .85; }
 .log { overflow: auto; flex: 0 1 auto; min-height: 0; }
-.log div { display: flex; gap: 2cqmin; font-size: .85em; padding: .2em 0; border-bottom: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
-.log div:last-child { border-bottom: none; }
+.logrows > div { display: flex; gap: 2cqmin; font-size: .85em; padding: .2em 0; border-bottom: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
+.logrows > div:last-child { border-bottom: none; }
+.loghead { all: unset; box-sizing: border-box; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 2cqmin; cursor: pointer; font-size: .85em; opacity: .85; }
+.log.shut { flex: none; }
+.logrows { margin-top: 1.5cqmin; }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
 .pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
@@ -263,6 +270,8 @@ class HomeGuardPanel extends IobWebComponent {
 			if (this.pad) {
 				this.pad.pin = this.pad.pin.slice(0, -1);
 			}
+		} else if (a === 'log') {
+			this.logOpen = !(this.logOpen ?? this.settings.logOpen === true);
 		} else if (a === 'close') {
 			this.pad = null;
 		} else if (a === 'ok' && this.pad) {
@@ -285,9 +294,11 @@ class HomeGuardPanel extends IobWebComponent {
 			this.msg =
 				r.error === 'wrong pin'
 					? this.t.wrong
-					: r.open && r.open.length
-						? `${this.t.refused} ${r.open.join(', ')}`
-						: String(r.error || '');
+					: r.error === 'pin locked'
+						? this.t.locked
+						: r.open && r.open.length
+							? `${this.t.refused} ${r.open.join(', ')}`
+							: String(r.error || '');
 		}
 		this.render();
 	}
@@ -354,13 +365,22 @@ class HomeGuardPanel extends IobWebComponent {
 		const n = Number(s.log ?? 4);
 		if (n > 0 && log.length) {
 			const loc = this.systemLang === 'de' ? 'de-DE' : 'en-GB';
-			html += `<div class="box log">${log
-				.slice(0, n)
-				.map(
-					e =>
-						`<div><time>${new Date(e.ts).toLocaleString(loc, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</time><span>${esc(e.text)}</span></div>`,
-				)
-				.join('')}</div>`;
+			const open = this.logOpen ?? s.logOpen === true;
+			html += `<div class="box log${open ? '' : ' shut'}"><button class="loghead" data-a="log" aria-expanded="${open}"><span>${esc(
+				t.logbook,
+			)}</span><span class="small">${esc(
+				new Date(log[0].ts).toLocaleString(loc, { hour: '2-digit', minute: '2-digit' }),
+			)} ${open ? '▴' : '▾'}</span></button>${
+				open
+					? `<div class="logrows">${log
+							.slice(0, n)
+							.map(
+								e =>
+									`<div><time>${new Date(e.ts).toLocaleString(loc, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</time><span>${esc(e.text)}</span></div>`,
+							)
+							.join('')}</div>`
+					: ''
+			}</div>`;
 		}
 		if (this.pad) {
 			html += `<div class="pad"><div class="lbl center">${esc(t.pin)}</div><div class="dots">${'•'.repeat(this.pad.pin.length)}</div><div class="keys">${[

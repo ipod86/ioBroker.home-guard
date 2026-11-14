@@ -86,6 +86,13 @@ declare global {
 			pinForDisarmState: boolean;
 			pinForArm: boolean;
 			maxWrongPin: number;
+			pinLockMin: number;
+			testNotify: boolean;
+			testSpeech: boolean;
+			testLamps: boolean;
+			testSirens: boolean;
+			testActions: boolean;
+			testDuration: number;
 			// disarm and presence
 			lockEnabled: boolean;
 			lockId: string;

@@ -140,6 +140,9 @@ class AlarmEngine {
     if (!circuitActive(s.circuit, this.mode)) {
       return;
     }
+    if (this.phase === "entry" && s.circuit === "interior") {
+      return;
+    }
     if (s.motion && this.opts.motionCount > 1) {
       const t = this.host.now();
       const windowMs = this.opts.motionWindowSec * 1e3;
@@ -176,9 +179,13 @@ class AlarmEngine {
       this.publish();
       return { ok: false, open };
     }
+    const hadAlarm = this.alarmActive || this.phase === "alarm";
     this.clearTimers();
     this.stopOutputs();
     this.alarmActive = false;
+    if (hadAlarm) {
+      this.host.event("alarmEnd", { mode, source });
+    }
     if (open.length && this.opts.openCheck === "warn") {
       this.host.event("openWarning", { mode, sensors: open, source });
     }
@@ -231,6 +238,21 @@ class AlarmEngine {
     this.mode = mode;
     this.armingMode = mode;
     this.phase = "armed";
+    this.publish();
+  }
+  /**
+   * restore after a restart during an alarm: the alarm stays until it is acknowledged, without a new notification
+   *
+   * @param mode mode that was armed before the restart ("off" for a 24 h or panic alarm)
+   * @param trigger name of the sensor that triggered
+   */
+  restoreAlarm(mode, trigger) {
+    this.mode = mode;
+    this.armingMode = mode;
+    this.phase = "alarm";
+    this.alarmActive = true;
+    this.lastTrigger = trigger;
+    this.lastTriggerTime = this.host.now();
     this.publish();
   }
   // ---------- entry delay and alarm ----------

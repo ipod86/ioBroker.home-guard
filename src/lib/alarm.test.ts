@@ -200,4 +200,32 @@ describe('AlarmEngine', () => {
 		expect(t.status().phase).to.equal('armed');
 		expect(t.status().mode).to.equal('night');
 	});
+
+	it('entry delay: motion detectors inside follow, a window still triggers', () => {
+		const t = setup({ exitDelayFull: 0, motionCount: 1 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('door', true);
+		t.engine.sensorChanged('pir1', true); // walking to the panel
+		expect(t.status().phase).to.equal('entry');
+		t.engine.sensorChanged('win', 2);
+		expect(t.status().phase).to.equal('alarm');
+	});
+
+	it('arming again during an alarm ends the alarm first', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('perimeter', 'state');
+		t.engine.sensorChanged('win', 2);
+		t.engine.arm('full', 'state');
+		expect(t.events.filter(e => e === 'alarmEnd').length).to.equal(1);
+		expect(t.outputs).to.deep.equal([true, false]);
+	});
+
+	it('an alarm restored after a restart stays until acknowledged', () => {
+		const t = setup();
+		t.engine.restoreAlarm('full', 'Küchenfenster');
+		expect(t.status().phase).to.equal('alarm');
+		expect(t.events).to.deep.equal([]);
+		t.engine.ack('state');
+		expect(t.status().phase).to.equal('armed');
+	});
 });

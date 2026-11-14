@@ -45,6 +45,19 @@ const T = {
     simStart: "\u{1F4A1} Anwesenheitssimulation gestartet",
     simStop: "\u{1F4A1} Anwesenheitssimulation beendet",
     title: "Alarmanlage",
+    testPrefix: "\u{1F9EA} TEST \u2013 ",
+    testTrigger: "Testausl\xF6ser",
+    testEnd: "\u{1F9EA} Test beendet",
+    testBusy: "Gerade l\xE4uft ein echter Alarm oder eine Eingangsverz\xF6gerung \u2013 kein Test m\xF6glich",
+    testNothing: "Nichts zu testen \u2013 f\xFCr die angehakten Teile ist nichts eingerichtet",
+    testRunning: (s, list) => `Test l\xE4uft ${s} s: ${list}`,
+    testParts: {
+      notify: "Benachrichtigungen",
+      speech: "Sprachausgabe",
+      lamps: (n) => `${n} Lampe${n === 1 ? "" : "n"}`,
+      sirens: (n) => `${n} Sirene${n === 1 ? "" : "n"}`,
+      actions: (n) => `${n} Aktion${n === 1 ? "" : "en"}`
+    },
     alarmWord: "Alarm",
     by: {
       pin: "PIN",
@@ -79,6 +92,19 @@ const T = {
     simStart: "\u{1F4A1} Presence simulation started",
     simStop: "\u{1F4A1} Presence simulation stopped",
     title: "Alarm system",
+    testPrefix: "\u{1F9EA} TEST \u2013 ",
+    testTrigger: "test trigger",
+    testEnd: "\u{1F9EA} Test finished",
+    testBusy: "A real alarm or entry delay is running \u2013 no test possible",
+    testNothing: "Nothing to test \u2013 nothing is set up for the ticked parts",
+    testRunning: (s, list) => `Test running for ${s} s: ${list}`,
+    testParts: {
+      notify: "notifications",
+      speech: "speech output",
+      lamps: (n) => `${n} lamp${n === 1 ? "" : "s"}`,
+      sirens: (n) => `${n} siren${n === 1 ? "" : "s"}`,
+      actions: (n) => `${n} action${n === 1 ? "" : "s"}`
+    },
     alarmWord: "Alarm",
     by: {
       pin: "PIN",

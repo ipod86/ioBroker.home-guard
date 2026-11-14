@@ -169,7 +169,14 @@
 		"simLearnDays": 28,
 		"simLearnDevicesOnly": true,
 		"simJitter": 15,
-		"logSize": 100
+		"logSize": 100,
+		"pinLockMin": 5,
+		"testNotify": true,
+		"testSpeech": true,
+		"testLamps": true,
+		"testSirens": false,
+		"testActions": false,
+		"testDuration": 15
 	},
 	"objects": [],
 	"instanceObjects": [

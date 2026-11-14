@@ -66,9 +66,19 @@ class HomeGuard extends utils.Adapter {
 	private blinkTimer: ioBroker.Interval | undefined;
 	private blinkOn = false;
 	private repeatTimer: ioBroker.Interval | undefined;
+	private test: {
+		timer: ioBroker.Timeout | undefined;
+		lamps: LampOut[];
+		sirens: boolean;
+		actions: boolean;
+		blink?: ioBroker.Interval;
+	} | null = null;
 	private minuteTimer: ioBroker.Interval | undefined;
 	private rescanTimer: ioBroker.Timeout | undefined;
 	private wrongPin = 0;
+	private pinLockedUntil = 0;
+	private pinError = 'wrong pin';
+	private outputsOn = false;
 	private log_: { ts: number; type: string; text: string }[] = [];
 	private luxDuskTs = 0;
 	private lastSimActive = false;
@@ -167,7 +177,15 @@ class HomeGuard extends utils.Adapter {
 
 		// back to the mode of the last run (no exit delay, no notification)
 		const lastMode = (await this.getStateAsync('status.mode'))?.val as Mode;
-		if (c.alarmEnabled && MODES.includes(lastMode) && lastMode !== 'off') {
+		const lastAlarm = (await this.getStateAsync('status.alarm'))?.val === true;
+		if (lastAlarm && MODES.includes(lastMode)) {
+			// restarted during an alarm: it stays until acknowledged; sirens off, they would never stop otherwise
+			const trigger = String((await this.getStateAsync('status.lastTrigger'))?.val || '');
+			this.alarm.restore(lastMode);
+			this.alarm.restoreAlarm(lastMode, trigger);
+			await this.sirens(false);
+			this.log.warn(`Restarted during an alarm (${trigger}) – please acknowledge`);
+		} else if (c.alarmEnabled && MODES.includes(lastMode) && lastMode !== 'off') {
 			this.alarm.restore(lastMode);
 			this.log.info(`Restored mode ${lastMode}`);
 		} else {
@@ -613,6 +631,7 @@ class HomeGuard extends utils.Adapter {
 				return;
 			case 'control.ack':
 				if (val) {
+					await this.endTest();
 					this.alarm.ack('state');
 				}
 				await reset(false);
@@ -676,6 +695,13 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private checkPin(pin: string, mode: Mode, source: string): boolean {
 		const c = this.config;
+		if (c.pin && Date.now() < this.pinLockedUntil) {
+			// too many wrong entries: no PIN is checked until the lock time is over (against trying out)
+			this.pinError = 'pin locked';
+			this.log.warn('PIN entry is locked after too many wrong entries');
+			return false;
+		}
+		this.pinError = 'wrong pin';
 		if (!c.pin || pin === String(c.pin)) {
 			this.wrongPin = 0;
 			void this.setStateAsync('status.wrongPin', 0, true);
@@ -690,6 +716,10 @@ class HomeGuard extends utils.Adapter {
 		this.wrongPin++;
 		void this.setStateAsync('status.wrongPin', this.wrongPin, true);
 		if (this.wrongPin >= Math.max(1, num(c.maxWrongPin, 3))) {
+			const lockMin = num(c.pinLockMin, 5);
+			if (lockMin > 0) {
+				this.pinLockedUntil = Date.now() + lockMin * 60000;
+			}
 			void this.onAlarmEvent('wrongPin', {});
 		}
 		return false;
@@ -755,7 +785,7 @@ class HomeGuard extends utils.Adapter {
 				}
 				if (c.pin && c.pinForArm) {
 					const ok = this.checkPin(str(msg.pin), mode, 'pin');
-					return reply({ ok, error: ok ? undefined : 'wrong pin' });
+					return reply({ ok, error: ok ? undefined : this.pinError });
 				}
 				const r = this.alarm.arm(mode, str(msg.source, 'message'));
 				await this.updateSimulation();
@@ -764,7 +794,7 @@ class HomeGuard extends utils.Adapter {
 			case 'disarm': {
 				if (c.pin) {
 					const ok = this.checkPin(str(msg.pin), 'off', 'pin');
-					return reply({ ok, error: ok ? undefined : 'wrong pin' });
+					return reply({ ok, error: ok ? undefined : this.pinError });
 				}
 				this.alarm.disarm(str(msg.source, 'message'));
 				await this.updateSimulation();
@@ -774,8 +804,11 @@ class HomeGuard extends utils.Adapter {
 				this.alarm.cancelArming('message');
 				return reply({ ok: true });
 			case 'ack':
+				await this.endTest();
 				this.alarm.ack('message');
 				return reply({ ok: true });
+			case 'testAlarm':
+				return reply(await this.startTest(msg));
 			case 'panic':
 				this.alarm.panic(this.T.by.panic);
 				return reply({ ok: true });
@@ -1095,6 +1128,11 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private async setOutputs(on: boolean): Promise<void> {
 		const c = this.config;
+		// a second trigger during the alarm must not take the blinking lamps as "before" or start a second blinker
+		if (on === this.outputsOn) {
+			return;
+		}
+		this.outputsOn = on;
 		if (on) {
 			for (const l of this.lampOuts) {
 				l.prev = (await this.getForeignStateAsync(l.id))?.val ?? l.off;
@@ -1110,25 +1148,131 @@ class HomeGuard extends utils.Adapter {
 					}
 				}, ms);
 			}
-			for (const s of c.sirens || []) {
-				if (s?.id && s.enabled !== false) {
-					await this.setForeignStateAsync(s.id, this.parseValue(s.valueOn || 'true'), false);
-				}
-			}
+			await this.sirens(true);
 			return;
 		}
 		if (this.blinkTimer) {
 			this.clearInterval(this.blinkTimer);
 			this.blinkTimer = undefined;
 		}
-		for (const s of c.sirens || []) {
-			if (s?.id && s.enabled !== false) {
-				await this.setForeignStateAsync(s.id, this.parseValue(s.valueOff || 'false'), false);
-			}
-		}
+		await this.sirens(false);
 		for (const l of this.lampOuts) {
 			await this.setForeignStateAsync(l.id, c.lampsRestore !== false ? l.prev : l.on, false);
 		}
+	}
+
+	/**
+	 * Sirens on or off
+	 *
+	 * @param on on or off
+	 */
+	private async sirens(on: boolean): Promise<void> {
+		for (const s of this.config.sirens || []) {
+			if (s?.id && s.enabled !== false) {
+				await this.setForeignStateAsync(
+					s.id,
+					this.parseValue((on ? s.valueOn : s.valueOff) || String(on)),
+					false,
+				);
+			}
+		}
+	}
+
+	// ======================================================================
+	// test alarm: the chosen parts for a short time, marked as a test, without a real alarm
+	// ======================================================================
+
+	/**
+	 * Starts a test alarm
+	 *
+	 * @param msg parts to test: notify, speech, lamps, sirens, actions (booleans) and duration (s)
+	 */
+	private async startTest(msg: Record<string, unknown>): Promise<{ result?: string; error?: string }> {
+		const c = this.config;
+		const T = this.T;
+		const phase = this.alarm.status().phase;
+		if (phase === 'alarm' || phase === 'entry' || this.outputsOn) {
+			return { error: T.testBusy };
+		}
+		await this.endTest();
+		const on = (k: string, d: boolean): boolean =>
+			msg[k] === undefined ? d : msg[k] === true || msg[k] === 'true';
+		const duration = Math.min(300, Math.max(5, num(msg.duration, 15)));
+		const text = `${T.testPrefix}${T.alarm(T.testTrigger)}`;
+		const done: string[] = [];
+		this.addLog('test', text);
+		this.log.info(`Test alarm for ${duration} s`);
+		if (on('notify', true) && (c.notify || []).some(r => r?.instance && r.enabled !== false)) {
+			this.notifyAll(text, false, true);
+			done.push(T.testParts.notify);
+		}
+		if (on('speech', true) && c.speechId) {
+			await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, '').trim());
+			done.push(T.testParts.speech);
+		}
+		const test: NonNullable<typeof this.test> = { timer: undefined, lamps: [], sirens: false, actions: false };
+		if (on('lamps', true) && this.lampOuts.length) {
+			for (const l of this.lampOuts) {
+				const prev = (await this.getForeignStateAsync(l.id))?.val ?? l.off;
+				test.lamps.push({ ...l, prev });
+				await this.setForeignStateAsync(l.id, l.on, false);
+			}
+			if (c.lampMode === 'blink') {
+				let lit = true;
+				test.blink = this.setInterval(
+					() => {
+						lit = !lit;
+						for (const l of test.lamps) {
+							void this.setForeignStateAsync(l.id, lit ? l.on : l.off, false);
+						}
+					},
+					Math.max(500, num(c.blinkSec, 1) * 1000),
+				);
+			}
+			done.push(T.testParts.lamps(test.lamps.length));
+		}
+		const sirenCount = (c.sirens || []).filter(x => x?.id && x.enabled !== false).length;
+		if (on('sirens', false) && sirenCount) {
+			await this.sirens(true);
+			test.sirens = true;
+			done.push(T.testParts.sirens(sirenCount));
+		}
+		const actionCount = (c.actions || []).filter(a => a?.id && a.enabled !== false && a.event === 'alarm').length;
+		if (on('actions', false) && actionCount) {
+			await this.runActions('alarm');
+			test.actions = true;
+			done.push(T.testParts.actions(actionCount));
+		}
+		test.timer = this.setTimeout(() => void this.endTest(), duration * 1000);
+		this.test = test;
+		return { result: done.length ? T.testRunning(duration, done.join(', ')) : T.testNothing };
+	}
+
+	/**
+	 * Ends a running test alarm: lamps as before, sirens off, actions of "alarm ended"
+	 */
+	private async endTest(): Promise<void> {
+		const test = this.test;
+		if (!test) {
+			return;
+		}
+		this.test = null;
+		if (test.timer) {
+			this.clearTimeout(test.timer);
+		}
+		if (test.blink) {
+			this.clearInterval(test.blink);
+		}
+		for (const l of test.lamps) {
+			await this.setForeignStateAsync(l.id, l.prev, false);
+		}
+		if (test.sirens) {
+			await this.sirens(false);
+		}
+		if (test.actions) {
+			await this.runActions('alarmEnd');
+		}
+		this.addLog('test', this.T.testEnd);
 	}
 
 	// ======================================================================

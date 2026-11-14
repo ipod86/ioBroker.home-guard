@@ -2,44 +2,73 @@
 	"$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
 	"manifestVersion": 1,
 	"tag": "iob-home-guard-panel",
-	"name": { "en": "Home Guard panel", "de": "Home Guard Bedienfeld" },
+	"name": {
+		"en": "Home Guard panel",
+		"de": "Home Guard Bedienfeld"
+	},
 	"description": {
 		"en": "Alarm system: status, arming, PIN keypad, open windows, presence simulation and logbook",
 		"de": "Alarmanlage: Status, Scharfschalten, PIN-Ziffernfeld, offene Fenster, Anwesenheitssimulation und Logbuch"
 	},
 	"icon": "../home-guard.png",
 	"module": "home-guard-panel.js",
-	"size": { "width": 360, "height": 520 },
+	"size": {
+		"width": 360,
+		"height": 520
+	},
 	"settings": {
 		"type": "panel",
 		"items": {
 			"instance": {
 				"type": "instance",
 				"adapter": "home-guard",
-				"label": { "en": "Instance", "de": "Instanz" },
+				"label": {
+					"en": "Instance",
+					"de": "Instanz"
+				},
 				"default": "home-guard.0"
 			},
 			"night": {
 				"type": "checkbox",
-				"label": { "en": "Button for night protection", "de": "Taste für Nachtschutz" },
+				"label": {
+					"en": "Button for night protection",
+					"de": "Taste für Nachtschutz"
+				},
 				"default": true
 			},
 			"open": {
 				"type": "checkbox",
-				"label": { "en": "Show open windows and doors", "de": "Offene Fenster und Türen zeigen" },
+				"label": {
+					"en": "Show open windows and doors",
+					"de": "Offene Fenster und Türen zeigen"
+				},
 				"default": true
 			},
 			"sim": {
 				"type": "checkbox",
-				"label": { "en": "Show presence simulation", "de": "Anwesenheitssimulation zeigen" },
+				"label": {
+					"en": "Show presence simulation",
+					"de": "Anwesenheitssimulation zeigen"
+				},
 				"default": true
 			},
 			"log": {
 				"type": "number",
-				"label": { "en": "Logbook entries (0 = none)", "de": "Logbuch-Einträge (0 = keine)" },
+				"label": {
+					"en": "Logbook entries (0 = none)",
+					"de": "Logbuch-Einträge (0 = keine)"
+				},
 				"min": 0,
 				"max": 20,
 				"default": 4
+			},
+			"logOpen": {
+				"type": "checkbox",
+				"label": {
+					"en": "Logbook open at start",
+					"de": "Logbuch anfangs ausgeklappt"
+				},
+				"default": false
 			}
 		}
 	}

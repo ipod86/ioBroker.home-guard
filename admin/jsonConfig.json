@@ -511,6 +511,17 @@
 					"xl": 4,
 					"min": 1,
 					"max": 20
+				},
+				"pinLockMin": {
+					"type": "number",
+					"label": "Lock the PIN entry afterwards for (min, 0 = no)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 120
 				}
 			}
 		},
@@ -1161,6 +1172,18 @@
 								{
 									"value": "simStop",
 									"label": "Simulation stopped"
+								},
+								{
+									"value": "openWarning",
+									"label": "Armed with open windows"
+								},
+								{
+									"value": "wrongPin",
+									"label": "Wrong PIN"
+								},
+								{
+									"value": "sabotage",
+									"label": "Sensors without a message"
 								}
 							]
 						},
@@ -1178,6 +1201,104 @@
 							"default": "true"
 						}
 					]
+				},
+				"h4": {
+					"type": "header",
+					"text": "Test alarm",
+					"size": 5,
+					"newLine": true
+				},
+				"i4": {
+					"type": "staticText",
+					"text": "The test switches the ticked parts for real, marked as a test, without arming and without a real alarm. Afterwards lamps go back as before, sirens off and the actions of \"Alarm ended\" run. Acknowledge ends it early. Save the settings first.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"testNotify": {
+					"type": "checkbox",
+					"label": "Notifications",
+					"default": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2,
+					"newLine": true
+				},
+				"testSpeech": {
+					"type": "checkbox",
+					"label": "Speech output",
+					"default": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"testLamps": {
+					"type": "checkbox",
+					"label": "Lamps",
+					"default": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"testSirens": {
+					"type": "checkbox",
+					"label": "Sirens",
+					"default": false,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"testActions": {
+					"type": "checkbox",
+					"label": "Actions on alarm",
+					"default": false,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"testDuration": {
+					"type": "number",
+					"label": "Duration (s)",
+					"default": 15,
+					"min": 5,
+					"max": 300,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"testBtn": {
+					"type": "sendTo",
+					"label": "Test alarm",
+					"command": "testAlarm",
+					"variant": "contained",
+					"showProcess": true,
+					"jsonData": "{\"notify\":${data.testNotify},\"speech\":${data.testSpeech},\"lamps\":${data.testLamps},\"sirens\":${data.testSirens},\"actions\":${data.testActions},\"duration\":${data.testDuration}}",
+					"confirm": {
+						"title": "Test alarm",
+						"text": "The ticked parts are switched for real now (lamps, sirens, devices) and notifications are sent. Continue?",
+						"ok": "Start test",
+						"cancel": "Cancel"
+					},
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3,
+					"newLine": true
 				}
 			}
 		},
