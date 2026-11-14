@@ -87,7 +87,7 @@ const parse = (v, d) => {
 const STYLE = `
 :host { display: block; width: 100%; height: 100%; container-type: size; }
 * { box-sizing: border-box; }
-.wrap { --hg-fill: color-mix(in srgb, currentColor 12%, transparent); --hg-line: color-mix(in srgb, currentColor 22%, transparent); --hg-btn-line: color-mix(in srgb, currentColor 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
+.wrap { --hg-fill: color-mix(in srgb, currentColor 12%, transparent); --hg-line: color-mix(in srgb, currentColor 22%, transparent); --hg-btn-line: color-mix(in srgb, currentColor 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow-y: auto; overflow-x: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
 .head { border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 4cqmin; display: flex; align-items: center; justify-content: center; gap: 4cqmin; color: #fff; transition: background .3s; }
 .head svg { width: 14cqmin; height: 14cqmin; fill: currentColor; flex: none; }
 .head .t { flex: 0 1 auto; min-width: 0; text-align: center; }
@@ -121,7 +121,8 @@ button:disabled { opacity: .5; cursor: default; }
 .sw.on { background: var(--iob-primary, #1976d2); }
 .sw.on::after { left: 5.6cqmin; }
 .small { font-size: .82em; opacity: .85; }
-.log { overflow: auto; flex: 0 1 auto; min-height: 0; }
+.wrap > * { flex-shrink: 0; }
+.log { flex: none; }
 .logrows > div { display: flex; gap: 2cqmin; font-size: .85em; padding: .2em 0; border-bottom: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .logrows > div:last-child { border-bottom: none; }
 .loghead { all: unset; box-sizing: border-box; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 2cqmin; cursor: pointer; font-size: .85em; opacity: .85; }
