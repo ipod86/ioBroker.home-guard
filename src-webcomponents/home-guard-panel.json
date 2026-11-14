@@ -116,6 +116,14 @@
 					"de": "Logbuch anfangs ausgeklappt"
 				},
 				"default": false
+			},
+			"autoSubmit": {
+				"type": "checkbox",
+				"label": {
+					"en": "Accept the PIN without OK when it is complete",
+					"de": "PIN ohne OK bestätigen, sobald er vollständig ist"
+				},
+				"default": true
 			}
 		}
 	}

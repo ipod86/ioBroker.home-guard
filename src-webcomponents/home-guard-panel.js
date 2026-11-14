@@ -64,6 +64,9 @@ const TXT = {
 
 const ICON = {
 	shield: '<svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/></svg>',
+	// shield with an X cut out, same outline as the shield with the tick: shown while disarmed
+	disarmed:
+		'<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zM9.17 7.76 12 10.59l2.83-2.83 1.41 1.41L13.41 12l2.83 2.83-1.41 1.41L12 13.41l-2.83 2.83-1.41-1.41L10.59 12 7.76 9.17z"/></svg>',
 	full: '<svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zm-1 14-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z"/></svg>',
 	perimeter: '<svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3L12 3z"/></svg>',
 	night: '<svg viewBox="0 0 24 24"><path d="M12.3 2a9 9 0 1 0 9.7 11.6A7 7 0 0 1 12.3 2z"/></svg>',
@@ -292,6 +295,13 @@ class HomeGuardPanel extends IobWebComponent {
 		} else if (a === 'key') {
 			if (this.pad && this.pad.pin.length < 12) {
 				this.pad.pin += b.dataset.k;
+				this.pad.msg = '';
+				// PIN complete: accept without OK (the adapter tells only the length, never the PIN)
+				const len = Number(info.pinLength) || 0;
+				if (this.settings.autoSubmit !== false && len && this.pad.pin.length === len) {
+					await this.submitPad();
+					return;
+				}
 			}
 		} else if (a === 'del') {
 			if (this.pad) {
@@ -302,9 +312,23 @@ class HomeGuardPanel extends IobWebComponent {
 		} else if (a === 'close') {
 			this.pad = null;
 		} else if (a === 'ok' && this.pad) {
-			const { mode, pin } = this.pad;
+			await this.submitPad();
+			return;
+		}
+		this.render();
+	}
+
+	/** Sends the entered PIN; a wrong one leaves the keypad open and empty with the reason */
+	async submitPad() {
+		const { mode, pin } = this.pad;
+		this.pad.pin = '';
+		this.render();
+		const r = await this.doMode(mode, pin);
+		if (this.pad && r && r.ok === false && (r.error === 'wrong pin' || r.error === 'pin locked')) {
+			this.pad.msg = this.msg;
+			this.msg = '';
+		} else {
 			this.pad = null;
-			await this.doMode(mode, pin);
 		}
 		this.render();
 	}
@@ -314,6 +338,7 @@ class HomeGuardPanel extends IobWebComponent {
 	 *
 	 * @param {string} mode wanted mode
 	 * @param {string} pin entered PIN
+	 * @returns {Promise<object|null>} the answer of the adapter
 	 */
 	async doMode(mode, pin) {
 		const r = mode === 'off' ? await this.send('disarm', { pin }) : await this.send('arm', { mode, pin });
@@ -328,6 +353,7 @@ class HomeGuardPanel extends IobWebComponent {
 							: String(r.error || '');
 		}
 		this.render();
+		return r;
 	}
 
 	/**
@@ -355,7 +381,7 @@ class HomeGuardPanel extends IobWebComponent {
 					? ''
 					: esc(t.mode[mode] || mode);
 		let html = `<style>${STYLE}</style><div class="wrap" style="position:relative${this.pad ? ';overflow:hidden' : ''}">`;
-		html += `<div class="head ${phase}">${ICON[mode === 'off' ? 'shield' : mode] || ICON.shield}<div class="t"><div class="big">${esc(
+		html += `<div class="head ${phase}">${ICON[mode === 'off' ? (phase === 'alarm' ? 'shield' : 'disarmed') : mode] || ICON.shield}<div class="t"><div class="big">${esc(
 			t.phase[phase] || phase,
 		)}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${cd > 0 && (phase === 'arming' || phase === 'entry') ? `<div class="cd">${cd}</div>` : ''}</div>`;
 		if (phase === 'arming') {
@@ -458,9 +484,9 @@ class HomeGuardPanel extends IobWebComponent {
 			}</div>`;
 		}
 		if (this.pad) {
-			html += `<div class="pad"><div class="lbl center">${esc(t.pin)}</div><div class="dots">${'•'.repeat(this.pad.pin.length)}</div><div class="keys">${[
-				1, 2, 3, 4, 5, 6, 7, 8, 9,
-			]
+			html += `<div class="pad"><div class="lbl center">${esc(t.pin)}</div><div class="dots">${'•'.repeat(this.pad.pin.length)}</div>${
+				this.pad.msg ? `<div class="msg center">${esc(this.pad.msg)}</div>` : ''
+			}<div class="keys">${[1, 2, 3, 4, 5, 6, 7, 8, 9]
 				.map(k => `<button data-a="key" data-k="${k}">${k}</button>`)
 				.join(
 					'',

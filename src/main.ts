@@ -918,6 +918,8 @@ class HomeGuard extends utils.Adapter {
 					...this.alarm.status(),
 					pinRequired: !!c.pin,
 					pinForArm: !!(c.pin && c.pinForArm),
+					// only the length, so the panel can accept a complete PIN without OK - never the PIN itself
+					pinLength: c.pin ? String(c.pin).length : 0,
 					autoArmAvailable:
 						!!c.alarmEnabled &&
 						this.presenceIds.length > 0 &&
