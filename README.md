@@ -21,14 +21,16 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
 - **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
-- **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm.
-- **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries.
+- **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm. During the entry delay the inside sensors follow: walking past motion detectors to the panel is no alarm.
+- **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out.
 - **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
 - **Notifications** to Telegram, Pushover, e-mail, WhatsApp (cmb), Signal (cmb) and Pushsafer in their own format, and to **every messenger that supports ioBroker notifications** (e.g. Gotify, Discord, ioBroker.pro app, GSM-SMS) in the format of the notification manager; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day of the same kind that was learned from your own switching, with shifted times) and *combined* (recommended).
-- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, simulation and logbook.
+- **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
+- **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
+- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, simulation and a logbook to open.
 
 ### Differences to the alarm adapter
 
@@ -87,6 +89,7 @@ sendTo('home-guard.0', 'disarm', { pin: '1234' });
 sendTo('home-guard.0', 'cancel', {});      // cancel the exit delay
 sendTo('home-guard.0', 'ack', {});         // acknowledge the alarm
 sendTo('home-guard.0', 'panic', {});
+sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
 sendTo('home-guard.0', 'simulation', { enabled: true });
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```

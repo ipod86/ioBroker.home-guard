@@ -10,14 +10,16 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). 24-h-Sensoren (Rauch, Wasser) lösen immer aus.
 - **Ausgangsverzögerung** je Modus, **sofort scharf**, wenn die Haustür zufällt, **Eingangsverzögerung** (stiller Alarm) für verzögerte Sensoren wie die Haustür.
 - **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern oder ignorieren. Gekippte Fenster (Wert 1) zählen als offen.
-- **Bewegungsmelder** lösen erst aus, wenn mehrere verschiedene Melder innerhalb einer einstellbaren Zeit (Standard 120 s) melden – eine Katze oder ein Vorhang allein ist kein Alarm.
-- **PIN** (verschlüsselt gespeichert), auf Wunsch auch zum Scharfschalten; Meldung nach Fehleingaben.
+- **Bewegungsmelder** lösen erst aus, wenn mehrere verschiedene Melder innerhalb einer einstellbaren Zeit (Standard 120 s) melden – eine Katze oder ein Vorhang allein ist kein Alarm. Während der Eingangsverzögerung sind die Innen-Sensoren Mitläufer: Wer an den Bewegungsmeldern vorbei zum Panel geht, löst keinen Alarm aus.
+- **PIN** (verschlüsselt gespeichert), auf Wunsch auch zum Scharfschalten; Meldung nach Fehleingaben und Sperre der PIN-Eingabe für einige Minuten gegen Ausprobieren.
 - **Türschloss** (z. B. Nuki) schaltet beim Aufschließen unscharf, **Anwesenheit** (Personen, Handys) schaltet scharf, wenn der Letzte geht, und den Vollschutz unscharf, wenn jemand heimkommt.
 - **Benachrichtigungen** über Telegram, Pushover, E-Mail, WhatsApp (cmb), Signal (cmb) und Pushsafer im jeweils eigenen Format sowie an **jeden Messenger, der ioBroker-Benachrichtigungen unterstützt** (z. B. Gotify, Discord, ioBroker.pro-App, GSM-SMS) im Format des Benachrichtigungsmanagers; zusätzlich an den Benachrichtigungsmanager selbst; Alarmmeldung wiederholen bis quittiert; **Sprachausgabe** (z. B. Alexa, SayIt).
 - **Bei Alarm**: Lampen an oder blinkend (danach wieder wie vorher), Sirenen, beliebige Geräte über eine Aktionstabelle (z. B. Tür abschließen beim Scharfschalten, Rollläden runter, Kameraaufnahme).
 - **Sabotage-Prüfung**: Sensoren, die sich eine einstellbare Zahl Stunden nicht gemeldet haben, werden gemeldet (Batterie leer, Funkproblem).
 - **Anwesenheitssimulation** mit drei Planungsarten: *Dämmerung* (zufällige Zeiten um den Sonnenuntergang, Licht aus um eine feste Zeit, Freitag/Samstag später, kurze Gänge in Flur und Bad), *gelernt* (spielt einen echten Tag derselben Art aus deinem eigenen Schaltverhalten mit verschobenen Zeiten ab) und *kombiniert* (empfohlen).
-- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulation und Logbuch.
+- **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
+- **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
+- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulation und ein ausklappbares Logbuch.
 
 ## Unterschiede zum alarm-Adapter
 
@@ -76,6 +78,7 @@ sendTo('home-guard.0', 'disarm', { pin: '1234' });
 sendTo('home-guard.0', 'cancel', {});      // Ausgangsverzögerung abbrechen
 sendTo('home-guard.0', 'ack', {});         // Alarm quittieren
 sendTo('home-guard.0', 'panic', {});
+sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
 sendTo('home-guard.0', 'simulation', { enabled: true });
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
