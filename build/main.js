@@ -66,6 +66,7 @@ class HomeGuard extends utils.Adapter {
   log_ = [];
   luxDuskTs = 0;
   lastSimActive = false;
+  simRestoring = true;
   lastMinute = "";
   sabotageKnown = /* @__PURE__ */ new Set();
   learnSaveTimer;
@@ -1351,6 +1352,8 @@ class HomeGuard extends utils.Adapter {
     }
     const manual = !!((_a = await this.getStateAsync("simulation.enabled")) == null ? void 0 : _a.val);
     const want = !!this.config.simEnabled && this.simLamps.length > 0 && (manual || this.simWanted());
+    const quiet = this.simRestoring;
+    this.simRestoring = false;
     if (want === this.lastSimActive) {
       return;
     }
@@ -1358,6 +1361,9 @@ class HomeGuard extends utils.Adapter {
     if (want) {
       this.learner.reset();
       this.sim.start();
+      if (quiet) {
+        return;
+      }
       if (this.config.notifySim) {
         this.notifyAll(this.T.simStart);
       }

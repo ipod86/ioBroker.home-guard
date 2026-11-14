@@ -86,6 +86,7 @@ class HomeGuard extends utils.Adapter {
 	private log_: { ts: number; type: string; text: string }[] = [];
 	private luxDuskTs = 0;
 	private lastSimActive = false;
+	private simRestoring = true;
 	private lastMinute = '';
 	private sabotageKnown = new Set<string>();
 	private learnSaveTimer: ioBroker.Timeout | undefined;
@@ -1486,6 +1487,9 @@ class HomeGuard extends utils.Adapter {
 		}
 		const manual = !!(await this.getStateAsync('simulation.enabled'))?.val;
 		const want = !!this.config.simEnabled && this.simLamps.length > 0 && (manual || this.simWanted());
+		// first decision after a restart: a simulation that was running goes on without a new log entry or message
+		const quiet = this.simRestoring;
+		this.simRestoring = false;
 		if (want === this.lastSimActive) {
 			return;
 		}
@@ -1493,6 +1497,9 @@ class HomeGuard extends utils.Adapter {
 		if (want) {
 			this.learner.reset();
 			this.sim.start();
+			if (quiet) {
+				return;
+			}
 			if (this.config.notifySim) {
 				this.notifyAll(this.T.simStart);
 			}
