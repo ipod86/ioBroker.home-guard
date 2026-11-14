@@ -1113,12 +1113,23 @@ class HomeGuard extends utils.Adapter {
 	 * @param now current time
 	 */
 	private makePlan(now: number): PlanStep[] {
+		// the current evening (until 12:00 the one before) and the next one, so there is always something ahead
+		const first = eveningNoon(now);
+		return [...this.planOne(first, now), ...this.planOne(first + 24 * 3600000, now)].sort((a, b) => a.at - b.at);
+	}
+
+	/**
+	 * Plan of one evening
+	 *
+	 * @param noon 12:00 of the evening day
+	 * @param now current time
+	 */
+	private planOne(noon: number, now: number): PlanStep[] {
 		const c = this.config;
-		const noon = eveningNoon(now);
 		const sun = sunTimes(new Date(noon), this.lat, this.lon);
 		let sunset = sun ? sun.sunset : noon + 6 * 3600000;
 		// lux below the threshold today: dusk starts then (if earlier)
-		if (this.luxDuskTs && eveningKey(this.luxDuskTs) === eveningKey(now)) {
+		if (this.luxDuskTs && eveningKey(this.luxDuskTs) === eveningKey(noon) && eveningKey(noon) === eveningKey(now)) {
 			sunset = Math.min(sunset, this.luxDuskTs - num(c.simStartOffset, -30) * 60000);
 		}
 		return planEvening(

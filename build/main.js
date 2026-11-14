@@ -1043,11 +1043,20 @@ class HomeGuard extends utils.Adapter {
    * @param now current time
    */
   makePlan(now) {
+    const first = (0, import_simulation.eveningNoon)(now);
+    return [...this.planOne(first, now), ...this.planOne(first + 24 * 36e5, now)].sort((a, b) => a.at - b.at);
+  }
+  /**
+   * Plan of one evening
+   *
+   * @param noon 12:00 of the evening day
+   * @param now current time
+   */
+  planOne(noon, now) {
     const c = this.config;
-    const noon = (0, import_simulation.eveningNoon)(now);
     const sun = (0, import_sun.sunTimes)(new Date(noon), this.lat, this.lon);
     let sunset = sun ? sun.sunset : noon + 6 * 36e5;
-    if (this.luxDuskTs && (0, import_simulation.eveningKey)(this.luxDuskTs) === (0, import_simulation.eveningKey)(now)) {
+    if (this.luxDuskTs && (0, import_simulation.eveningKey)(this.luxDuskTs) === (0, import_simulation.eveningKey)(noon) && (0, import_simulation.eveningKey)(noon) === (0, import_simulation.eveningKey)(now)) {
       sunset = Math.min(sunset, this.luxDuskTs - num(c.simStartOffset, -30) * 6e4);
     }
     return (0, import_simulation.planEvening)(
