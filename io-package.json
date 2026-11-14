@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "internal: timer variable renamed (repochecker W5051); first release published automatically via GitHub (trusted publishing)",
+        "de": "intern: Timer-Variable umbenannt (Repochecker W5051); erste Version automatisch über GitHub (Trusted Publishing)",
+        "ru": "внутренняя: переменная таймера переименована (repochecker W5051); первая версия автоматически опубликована на GitHub (доверенная публикация)",
+        "pt": "interno: variável timer renomeada (repochecker W5051); primeira versão publicada automaticamente via GitHub",
+        "nl": "intern: de timervariabele hernoemd (repochecker W5051); eerste release wordt automatisch gepubliceerd via GitHub (trusted publishing)",
+        "fr": "interne : variable timer renommée (repochecker W5051) ; première version publiée automatiquement via GitHub (Trusted Publishing)",
+        "it": "interno: variabile timer rinominata (repochecker W5051); prima versione pubblicata automaticamente su GitHub",
+        "es": "internal: variable temporizador renombrada (repochecker W5051); primera versión publicada automáticamente en GitHub (publicación de confianza)",
+        "pl": "wewnętrzne: zmiana zmiennej timera (repochecker W5051); pierwsze wydanie publikowane automatycznie przez GitHub (zaufane publikowanie)",
+        "uk": "внутрішній: змінна таймера перейменована (repochecker W5051); перший випуск опублікований автоматично через GitHub (довірена публікація)",
+        "zh-cn": "内部：计时器变量已重命名（repochecker W5051）；首次通过 GitHub 自动发布（可信发布）"
+      },
       "0.1.0": {
         "en": "initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component (AURA 0.106.0+, vis-2 2.20.7+)",
         "de": "Erste Version: Alarmanlage mit Voll- und Nachtschutz, Präsenzsimulation (Dämmerung, gelernt, kombiniert) und Webkomponente (AURA 0.106.0+, vis-2 2.20.7+)",

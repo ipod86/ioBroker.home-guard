@@ -116,7 +116,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.1.1 (2026-11-14)
 * (ipod86) internal: timer variable renamed (repochecker W5051); first release published automatically via GitHub (trusted publishing)
 
 ### 0.1.0 (2026-11-14)
