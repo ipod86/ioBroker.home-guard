@@ -1,5 +1,1576 @@
 {
 	"i18n": true,
-	"type": "panel",
-	"items": {}
+	"type": "tabs",
+	"tabsStyle": {
+		"width": "calc(100% - 100px)"
+	},
+	"items": {
+		"tabGeneral": {
+			"type": "panel",
+			"label": "General",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Home Guard – alarm system & presence simulation",
+					"size": 4,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i1": {
+					"type": "staticText",
+					"text": "Both parts can be used on their own. Sensors, lamps and persons can be found automatically through functions (enums) or entered by hand.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"alarmEnabled": {
+					"type": "checkbox",
+					"label": "Alarm system active",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simEnabled": {
+					"type": "checkbox",
+					"label": "Presence simulation active",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"h2": {
+					"type": "header",
+					"text": "Modes",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i2": {
+					"type": "staticText",
+					"text": "Full protection: all sensors (doors, windows, motion). Perimeter protection: only doors and windows – you are at home. Night protection: like perimeter, automatically at night. 24 h sensors (smoke, water) always trigger.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"nightEnabled": {
+					"type": "checkbox",
+					"label": "Night protection automatically",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!data.alarmEnabled"
+				},
+				"nightStart": {
+					"type": "text",
+					"label": "Night protection from (HH:MM)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!data.alarmEnabled || !data.nightEnabled"
+				},
+				"nightEnd": {
+					"type": "text",
+					"label": "Night protection until (HH:MM)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!data.alarmEnabled || !data.nightEnabled"
+				},
+				"h3": {
+					"type": "header",
+					"text": "Logbook",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"logSize": {
+					"type": "number",
+					"label": "Entries in the logbook",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 10,
+					"max": 1000
+				}
+			}
+		},
+		"tabTriggers": {
+			"type": "panel",
+			"label": "Triggers",
+			"hidden": "!data.alarmEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Automatically through functions",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i1": {
+					"type": "staticText",
+					"text": "All states of the chosen function are monitored. Channels and devices bring their sensor states along. The name is taken from the description of the object, otherwise from its name.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"autoFull": {
+					"type": "checkbox",
+					"label": "Sensors for full protection (inside, motion)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"enumFull": {
+					"type": "selectSendTo",
+					"label": "Function full protection",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.autoFull"
+				},
+				"autoPerimeter": {
+					"type": "checkbox",
+					"label": "Sensors for perimeter protection (doors, windows)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"enumPerimeter": {
+					"type": "selectSendTo",
+					"label": "Function perimeter protection",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.autoPerimeter"
+				},
+				"autoFire": {
+					"type": "checkbox",
+					"label": "24 h sensors (smoke, water) – trigger always",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"enumFire": {
+					"type": "selectSendTo",
+					"label": "Function 24 h sensors",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.autoFire"
+				},
+				"h2": {
+					"type": "header",
+					"text": "By hand (also overrides automatically found sensors)",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"sensors": {
+					"type": "table",
+					"label": "",
+					"noDelete": false,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "6%",
+							"default": true
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "30%",
+							"filter": false
+						},
+						{
+							"type": "text",
+							"attr": "name",
+							"title": "Name (optional)",
+							"width": "20%",
+							"filter": false
+						},
+						{
+							"type": "select",
+							"attr": "circuit",
+							"title": "Circuit",
+							"width": "14%",
+							"default": "perimeter",
+							"options": [
+								{
+									"value": "perimeter",
+									"label": "Perimeter (doors, windows)"
+								},
+								{
+									"value": "interior",
+									"label": "Inside (full protection only)"
+								},
+								{
+									"value": "24h",
+									"label": "24 h (smoke, water)"
+								}
+							]
+						},
+						{
+							"type": "checkbox",
+							"attr": "delayed",
+							"title": "Entry delay",
+							"width": "10%"
+						},
+						{
+							"type": "checkbox",
+							"attr": "motion",
+							"title": "Motion detector",
+							"width": "10%"
+						},
+						{
+							"type": "checkbox",
+							"attr": "invert",
+							"title": "Inverted",
+							"width": "10%"
+						}
+					]
+				},
+				"h3": {
+					"type": "header",
+					"text": "False alarms",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"motionCount": {
+					"type": "number",
+					"label": "Motion detectors: alarm only from this many different detectors",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "1 = every detector at once. 2 or more: a cat or a curtain alone is no alarm.",
+					"min": 1,
+					"max": 10
+				},
+				"motionWindowSec": {
+					"type": "number",
+					"label": "… within seconds",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 10,
+					"max": 1800
+				},
+				"sabotageHours": {
+					"type": "number",
+					"label": "Report sensors without a message for hours (0 = off)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "e.g. empty battery or radio problem",
+					"min": 0,
+					"max": 720,
+					"newLine": true
+				}
+			}
+		},
+		"tabProcedure": {
+			"type": "panel",
+			"label": "Procedure & PIN",
+			"hidden": "!data.alarmEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Arming",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"exitDelayFull": {
+					"type": "number",
+					"label": "Exit delay full protection (s)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "Time to leave the house",
+					"min": 0,
+					"max": 600
+				},
+				"exitDelayPerimeter": {
+					"type": "number",
+					"label": "Exit delay perimeter protection (s)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 600
+				},
+				"armEarlyId": {
+					"type": "objectId",
+					"label": "Armed at once when this contact closes (e.g. front door)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "During the exit delay",
+					"newLine": true
+				},
+				"openCheck": {
+					"type": "select",
+					"label": "Open doors/windows when arming",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"options": [
+						{
+							"value": "warn",
+							"label": "Arm anyway and warn"
+						},
+						{
+							"value": "refuse",
+							"label": "Do not arm"
+						},
+						{
+							"value": "ignore",
+							"label": "Ignore"
+						}
+					],
+					"newLine": true
+				},
+				"h2": {
+					"type": "header",
+					"text": "Alarm",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"entryDelay": {
+					"type": "number",
+					"label": "Entry delay of the delayed sensors (s)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "Time to disarm after coming in",
+					"min": 0,
+					"max": 600
+				},
+				"alarmDuration": {
+					"type": "number",
+					"label": "Lamps and sirens run for (s, 0 = until acknowledged)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 3600
+				},
+				"h3": {
+					"type": "header",
+					"text": "PIN",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"pin": {
+					"type": "password",
+					"label": "PIN (empty = no PIN)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"repeat": false,
+					"visible": true
+				},
+				"pinForDisarmState": {
+					"type": "checkbox",
+					"label": "Disarming by data point only with the PIN",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "control.mode/control.off do not disarm then – only control.pin, the panel or the lock"
+				},
+				"pinForArm": {
+					"type": "checkbox",
+					"label": "Arming also needs the PIN",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"maxWrongPin": {
+					"type": "number",
+					"label": "Report after wrong entries",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 1,
+					"max": 20
+				}
+			}
+		},
+		"tabPresence": {
+			"type": "panel",
+			"label": "Disarm & presence",
+			"hidden": "!data.alarmEnabled && !data.simEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Door lock",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"lockEnabled": {
+					"type": "checkbox",
+					"label": "Disarm when the lock is opened",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"lockId": {
+					"type": "objectId",
+					"label": "State of the lock",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!data.lockEnabled"
+				},
+				"lockValues": {
+					"type": "text",
+					"label": "Values meaning \"unlocked/opened\"",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "Nuki lockState: 3 = unlocked, 5 = unlatched, 6 = unlocked (lock ’n’ go)",
+					"hidden": "!data.lockEnabled"
+				},
+				"h2": {
+					"type": "header",
+					"text": "Presence (persons, phones)",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i2": {
+					"type": "staticText",
+					"text": "A person counts as at home when the state is true (or > 0).",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"presenceAuto": {
+					"type": "checkbox",
+					"label": "Presence states through a function",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"enumPresence": {
+					"type": "selectSendTo",
+					"label": "Function presence",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.presenceAuto"
+				},
+				"presence": {
+					"type": "table",
+					"label": "Presence states by hand",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "60%"
+						},
+						{
+							"type": "text",
+							"attr": "name",
+							"title": "Name (optional)",
+							"width": "32%"
+						}
+					]
+				},
+				"presenceArm": {
+					"type": "select",
+					"label": "When nobody is at home",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"options": [
+						{
+							"value": "off",
+							"label": "Do nothing"
+						},
+						{
+							"value": "full",
+							"label": "Arm full protection"
+						},
+						{
+							"value": "perimeter",
+							"label": "Arm perimeter protection"
+						}
+					],
+					"hidden": "!data.alarmEnabled",
+					"newLine": true
+				},
+				"presenceDisarm": {
+					"type": "checkbox",
+					"label": "Disarm full protection when somebody comes home",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!data.alarmEnabled"
+				}
+			}
+		},
+		"tabNotify": {
+			"type": "panel",
+			"label": "Notifications",
+			"hidden": "!data.alarmEnabled && !data.simEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Messengers",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"notify": {
+					"type": "table",
+					"label": "",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "selectSendTo",
+							"attr": "instance",
+							"title": "Instance",
+							"width": "32%",
+							"command": "getMessengers",
+							"jsonData": "{}",
+							"manual": true,
+							"noTranslation": true
+						},
+						{
+							"type": "text",
+							"attr": "user",
+							"title": "User (optional)",
+							"width": "30%"
+						},
+						{
+							"type": "text",
+							"attr": "chatId",
+							"title": "Chat ID (optional)",
+							"width": "30%"
+						}
+					]
+				},
+				"testBtn": {
+					"type": "sendTo",
+					"label": "Send test message",
+					"command": "test",
+					"variant": "outlined",
+					"showProcess": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3,
+					"help": "Save the settings first"
+				},
+				"notificationManager": {
+					"type": "checkbox",
+					"label": "Alarm also to the ioBroker notifications (notification manager)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"h2": {
+					"type": "header",
+					"text": "What is reported",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"notifyAlarm": {
+					"type": "checkbox",
+					"label": "Alarm",
+					"xs": 12,
+					"sm": 12,
+					"md": 3,
+					"lg": 3,
+					"xl": 3
+				},
+				"notifyEntry": {
+					"type": "checkbox",
+					"label": "Entry delay started (silent alarm)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyArmed": {
+					"type": "checkbox",
+					"label": "Armed",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyDisarmed": {
+					"type": "checkbox",
+					"label": "Disarmed",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyAlarmEnd": {
+					"type": "checkbox",
+					"label": "Alarm ended / acknowledged",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyArmingFailed": {
+					"type": "checkbox",
+					"label": "Not armed because of open windows",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyOpenWarning": {
+					"type": "checkbox",
+					"label": "Armed with open windows",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyWrongPin": {
+					"type": "checkbox",
+					"label": "Wrong PIN",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifySabotage": {
+					"type": "checkbox",
+					"label": "Sensors without a message",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifySim": {
+					"type": "checkbox",
+					"label": "Presence simulation started/stopped",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"alarmRepeatMin": {
+					"type": "number",
+					"label": "Repeat the alarm message every minutes until acknowledged (0 = no)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 120,
+					"newLine": true
+				},
+				"h3": {
+					"type": "header",
+					"text": "Speech output",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"speechId": {
+					"type": "objectId",
+					"label": "State for speech (text is written)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "e.g. alexa2…speak, sayit.0.tts.text or your own text state"
+				},
+				"speechArming": {
+					"type": "checkbox",
+					"label": "Announce arming / open windows",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"speechEntry": {
+					"type": "checkbox",
+					"label": "Announce entry delay",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"speechAlarm": {
+					"type": "checkbox",
+					"label": "Announce alarm",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				}
+			}
+		},
+		"tabActions": {
+			"type": "panel",
+			"label": "Actions on alarm",
+			"hidden": "!data.alarmEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Lamps",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"lampsAuto": {
+					"type": "checkbox",
+					"label": "Lamps through a function",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"enumLamps": {
+					"type": "selectSendTo",
+					"label": "Function lamps",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.lampsAuto"
+				},
+				"lamps": {
+					"type": "table",
+					"label": "Lamps by hand",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "60%"
+						},
+						{
+							"type": "text",
+							"attr": "name",
+							"title": "Name (optional)",
+							"width": "32%"
+						}
+					]
+				},
+				"lampMode": {
+					"type": "select",
+					"label": "Lamps on alarm",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"options": [
+						{
+							"value": "blink",
+							"label": "Blink"
+						},
+						{
+							"value": "on",
+							"label": "Switch on"
+						}
+					],
+					"newLine": true
+				},
+				"blinkSec": {
+					"type": "number",
+					"label": "Blink interval (s)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0.5,
+					"max": 10,
+					"step": 0.5,
+					"hidden": "data.lampMode!=='blink'"
+				},
+				"lampsRestore": {
+					"type": "checkbox",
+					"label": "Lamps back as before afterwards",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"h2": {
+					"type": "header",
+					"text": "Sirens",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"sirens": {
+					"type": "table",
+					"label": "",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "52%"
+						},
+						{
+							"type": "text",
+							"attr": "valueOn",
+							"title": "Value on",
+							"width": "20%",
+							"default": "true"
+						},
+						{
+							"type": "text",
+							"attr": "valueOff",
+							"title": "Value off",
+							"width": "20%",
+							"default": "false"
+						}
+					]
+				},
+				"h3": {
+					"type": "header",
+					"text": "Switch devices on events",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i3": {
+					"type": "staticText",
+					"text": "e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"actions": {
+					"type": "table",
+					"label": "",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "select",
+							"attr": "event",
+							"title": "Event",
+							"width": "26%",
+							"default": "alarm",
+							"options": [
+								{
+									"value": "alarm",
+									"label": "Alarm"
+								},
+								{
+									"value": "entry",
+									"label": "Entry delay (silent alarm)"
+								},
+								{
+									"value": "alarmEnd",
+									"label": "Alarm ended"
+								},
+								{
+									"value": "armed",
+									"label": "Armed (any mode)"
+								},
+								{
+									"value": "armedFull",
+									"label": "Full protection armed"
+								},
+								{
+									"value": "armedPerimeter",
+									"label": "Perimeter protection armed"
+								},
+								{
+									"value": "armedNight",
+									"label": "Night protection armed"
+								},
+								{
+									"value": "arming",
+									"label": "Exit delay started"
+								},
+								{
+									"value": "disarmed",
+									"label": "Disarmed"
+								},
+								{
+									"value": "armingFailed",
+									"label": "Arming refused"
+								},
+								{
+									"value": "simStart",
+									"label": "Simulation started"
+								},
+								{
+									"value": "simStop",
+									"label": "Simulation stopped"
+								}
+							]
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "46%"
+						},
+						{
+							"type": "text",
+							"attr": "value",
+							"title": "Value",
+							"width": "20%",
+							"default": "true"
+						}
+					]
+				}
+			}
+		},
+		"tabSim": {
+			"type": "panel",
+			"label": "Presence simulation",
+			"hidden": "!data.simEnabled",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "When",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"simCoupling": {
+					"type": "select",
+					"label": "Runs automatically",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"help": "By hand at any time: state simulation.enabled",
+					"options": [
+						{
+							"value": "alarm",
+							"label": "When full protection is armed"
+						},
+						{
+							"value": "away",
+							"label": "When nobody is at home"
+						},
+						{
+							"value": "alarmOrAway",
+							"label": "Full protection or nobody at home"
+						},
+						{
+							"value": "manual",
+							"label": "Only by hand"
+						}
+					]
+				},
+				"simMode": {
+					"type": "select",
+					"label": "Way of switching",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"options": [
+						{
+							"value": "combined",
+							"label": "Combination: dusk + learned (recommended)"
+						},
+						{
+							"value": "dusk",
+							"label": "Only dusk with random times"
+						},
+						{
+							"value": "learned",
+							"label": "Only learned days"
+						}
+					]
+				},
+				"i1": {
+					"type": "staticText",
+					"text": "Learning: switching of the simulation lamps that did not come from Home Guard is stored per day. The simulation replays a whole real day of the same kind (weekday/weekend) with shifted times. Without learned days dusk is used.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"h2": {
+					"type": "header",
+					"text": "Lamps",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"simAuto": {
+					"type": "checkbox",
+					"label": "Lamps through a function (type evening)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"enumSimLamps": {
+					"type": "selectSendTo",
+					"label": "Function simulation lamps",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"command": "getEnums",
+					"jsonData": "{}",
+					"manual": true,
+					"noTranslation": true,
+					"hidden": "!data.simAuto"
+				},
+				"simLamps": {
+					"type": "table",
+					"label": "Lamps by hand",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "8%",
+							"default": true
+						},
+						{
+							"type": "objectId",
+							"attr": "id",
+							"title": "State",
+							"width": "44%"
+						},
+						{
+							"type": "text",
+							"attr": "name",
+							"title": "Name (optional)",
+							"width": "24%"
+						},
+						{
+							"type": "select",
+							"attr": "type",
+							"title": "Type",
+							"width": "24%",
+							"default": "evening",
+							"options": [
+								{
+									"value": "evening",
+									"label": "Evening (on for the evening)"
+								},
+								{
+									"value": "visit",
+									"label": "Short visits (hall, bath)"
+								},
+								{
+									"value": "bedtime",
+									"label": "Briefly at bedtime"
+								}
+							]
+						}
+					]
+				},
+				"h3": {
+					"type": "header",
+					"text": "Dusk",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"simStartOffset": {
+					"type": "number",
+					"label": "Start relative to sunset (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": -180,
+					"max": 180
+				},
+				"simStartRandom": {
+					"type": "number",
+					"label": "Random delay of the start up to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 120
+				},
+				"simLuxId": {
+					"type": "objectId",
+					"label": "Brightness sensor (optional)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"simLuxBelow": {
+					"type": "number",
+					"label": "Start earlier when below lux",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 10000,
+					"hidden": "!data.simLuxId"
+				},
+				"simEnd": {
+					"type": "text",
+					"label": "Lights out from (HH:MM)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"simEndRandom": {
+					"type": "number",
+					"label": "Random delay of lights out up to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 240
+				},
+				"simWeekendLater": {
+					"type": "number",
+					"label": "Friday/Saturday later by (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 240
+				},
+				"simVisits": {
+					"type": "number",
+					"label": "Short visits per evening",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 20,
+					"newLine": true
+				},
+				"simVisitMin": {
+					"type": "number",
+					"label": "Visit duration from (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 1,
+					"max": 120
+				},
+				"simVisitMax": {
+					"type": "number",
+					"label": "Visit duration to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 1,
+					"max": 240
+				},
+				"h4": {
+					"type": "header",
+					"text": "Learning",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"simLearnDays": {
+					"type": "number",
+					"label": "Learn the last days",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 3,
+					"max": 120
+				},
+				"simJitter": {
+					"type": "number",
+					"label": "Shift learned times randomly by up to ± (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 60
+				},
+				"simLearnDevicesOnly": {
+					"type": "checkbox",
+					"label": "Learn only switching by hand/devices (no scripts, scenes)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				}
+			}
+		},
+		"tabWidget": {
+			"type": "panel",
+			"label": "Dashboard",
+			"items": {
+				"h1": {
+					"type": "header",
+					"text": "Web component for AURA and vis-2",
+					"size": 4,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i1": {
+					"type": "staticText",
+					"text": "The adapter brings the web component \"Home Guard panel\": status, mode buttons, PIN keypad, open windows, simulation and logbook. In AURA and vis-2 it is in the list of web components after the installation.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"h2": {
+					"type": "header",
+					"text": "Data points",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"i2": {
+					"type": "staticText",
+					"text": "status.* – mode, phase, countdown, open contacts, last trigger, logbook (JSON). control.* – mode, buttons for full/perimeter/night/off, cancel, acknowledge, panic, control.pin. simulation.* – switch, plan of the evening, next step, learned days.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				},
+				"i3": {
+					"type": "staticText",
+					"text": "Scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "smaller",
+						"opacity": 0.8
+					}
+				}
+			}
+		}
+	}
 }

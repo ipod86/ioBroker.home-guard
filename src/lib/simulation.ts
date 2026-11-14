@@ -1,0 +1,313 @@
+// Presence simulation: plans an evening (dusk, learned days or both) and switches the lamps.
+// Learning: switching of the simulation lamps that did not come from the adapter is stored per day;
+// the simulation replays a whole real day of the same kind (weekday/weekend) with shifted times.
+
+export type SimMode = 'dusk' | 'learned' | 'combined';
+export type LampType = 'evening' | 'visit' | 'bedtime';
+
+export interface SimLamp {
+	id: string;
+	name: string;
+	type: LampType;
+}
+
+/** one learned switching: start in minutes after 12:00 of the evening day, duration in minutes */
+export interface Session {
+	id: string;
+	start: number;
+	dur: number;
+}
+
+export interface LearnedDay {
+	weekend: boolean;
+	sessions: Session[];
+}
+
+export interface Learned {
+	days: Record<string, LearnedDay>;
+}
+
+export interface SimOptions {
+	mode: SimMode;
+	startOffset: number; // min, relative to sunset
+	startRandom: number; // min
+	end: string; // HH:MM
+	endRandom: number; // min
+	weekendLater: number; // min
+	visits: number;
+	visitMin: number; // min
+	visitMax: number; // min
+	learnDays: number;
+	jitter: number; // min
+}
+
+export interface PlanStep {
+	at: number; // ms
+	id: string;
+	on: boolean;
+	why: string;
+}
+
+const MIN = 60000;
+
+/** the "evening day": switching after midnight still belongs to the evening before (until 12:00) */
+export function eveningKey(ts: number): string {
+	const d = new Date(ts - 12 * 3600000);
+	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** 12:00 local time of the evening day of ts */
+export function eveningNoon(ts: number): number {
+	const d = new Date(ts - 12 * 3600000);
+	return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0).getTime();
+}
+
+export function isWeekendEvening(ts: number): boolean {
+	// Friday and Saturday evenings are the late ones
+	const day = new Date(eveningNoon(ts)).getDay();
+	return day === 5 || day === 6;
+}
+
+function parseHm(hm: string, fallback: number): number {
+	const m = /^(\d{1,2}):(\d{2})$/.exec((hm || '').trim());
+	return m ? Number(m[1]) * 60 + Number(m[2]) : fallback;
+}
+
+export class Learner {
+	private onSince = new Map<string, number>();
+
+	constructor(public data: Learned = { days: {} }) {}
+
+	/** a lamp was switched by somebody else than the adapter */
+	record(id: string, on: boolean, ts: number): boolean {
+		if (on) {
+			if (!this.onSince.has(id)) {
+				this.onSince.set(id, ts);
+			}
+			return false;
+		}
+		const since = this.onSince.get(id);
+		this.onSince.delete(id);
+		if (since === undefined) {
+			return false;
+		}
+		const dur = Math.round((ts - since) / MIN);
+		if (dur < 1 || dur > 16 * 60) {
+			return false; // a flick of the switch or a lamp forgotten all day
+		}
+		const key = eveningKey(since);
+		const day = (this.data.days[key] = this.data.days[key] || { weekend: isWeekendEvening(since), sessions: [] });
+		day.sessions.push({ id, start: Math.round((since - eveningNoon(since)) / MIN), dur });
+		return true;
+	}
+
+	/** drop days older than the learning window */
+	prune(now: number, days: number): void {
+		const oldest = eveningKey(now - days * 86400000);
+		for (const k of Object.keys(this.data.days)) {
+			if (k < oldest) {
+				delete this.data.days[k];
+			}
+		}
+	}
+
+	/** forget the running "on" times (e.g. when the simulation starts) */
+	reset(): void {
+		this.onSince.clear();
+	}
+
+	/** learned days with sessions of the given lamps, same kind (weekday/weekend) preferred */
+	candidates(weekend: boolean, ids: Set<string>, today: string): LearnedDay[] {
+		const usable = Object.entries(this.data.days)
+			.filter(([k, d]) => k !== today && d.sessions.some(s => ids.has(s.id)))
+			.map(([, d]) => d);
+		const same = usable.filter(d => d.weekend === weekend);
+		return same.length ? same : usable;
+	}
+}
+
+/**
+ * The plan of one evening.
+ *
+ * @param noon 12:00 of the evening day
+ * @param sunset sunset of that day (ms)
+ * @param lamps the simulation lamps
+ * @param o options
+ * @param learner learned days
+ * @param rand random number generator 0..1 (injectable for tests)
+ * @returns the steps sorted by time
+ */
+export function planEvening(
+	noon: number,
+	sunset: number,
+	lamps: SimLamp[],
+	o: SimOptions,
+	learner: Learner,
+	rand: () => number = Math.random,
+): PlanStep[] {
+	const r = (a: number, b: number): number => a + rand() * (b - a);
+	const steps: PlanStep[] = [];
+	const weekend = isWeekendEvening(noon);
+	const today = eveningKey(noon);
+	const byType = (t: LampType): SimLamp[] => lamps.filter(l => l.type === t);
+
+	// learned day (for "learned" all lamps, for "combined" only visit and bedtime lamps)
+	let learned: LearnedDay | null = null;
+	if (o.mode !== 'dusk') {
+		const ids = new Set((o.mode === 'learned' ? lamps : lamps.filter(l => l.type !== 'evening')).map(l => l.id));
+		const cands = learner.candidates(weekend, ids, today);
+		if (cands.length) {
+			learned = cands[Math.floor(rand() * cands.length)];
+			for (const s of learned.sessions) {
+				if (!ids.has(s.id)) {
+					continue;
+				}
+				const at = noon + (s.start + r(-o.jitter, o.jitter)) * MIN;
+				const dur = Math.max(1, s.dur * r(0.8, 1.2));
+				steps.push({ at, id: s.id, on: true, why: 'learned' });
+				steps.push({ at: at + dur * MIN, id: s.id, on: false, why: 'learned' });
+			}
+		}
+	}
+
+	const duskNeeded = o.mode === 'dusk' || o.mode === 'combined' || !learned;
+	if (duskNeeded) {
+		const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
+		let endMin = parseHm(o.end, 22 * 60 + 30) + r(0, o.endRandom) + (weekend ? o.weekendLater : 0);
+		if (endMin < 12 * 60) {
+			endMin += 24 * 60; // e.g. 00:30
+		}
+		const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
+		// evening lamps on one after the other, off one after the other
+		for (const l of byType('evening')) {
+			steps.push({ at: start + r(0, 15) * MIN, id: l.id, on: true, why: 'dusk' });
+			steps.push({ at: end + r(0, 20) * MIN, id: l.id, on: false, why: 'dusk' });
+		}
+		// visits and bedtime only from dusk when nothing was learned for them
+		if (!learned || o.mode === 'dusk') {
+			const visitLamps = byType('visit');
+			if (visitLamps.length && end - start > 40 * MIN) {
+				for (let i = 0; i < o.visits; i++) {
+					const lamp = visitLamps[Math.floor(rand() * visitLamps.length)];
+					const at = r(start + 20 * MIN, end - 15 * MIN);
+					const dur = r(o.visitMin, Math.max(o.visitMin, o.visitMax));
+					steps.push({ at, id: lamp.id, on: true, why: 'visit' });
+					steps.push({ at: at + dur * MIN, id: lamp.id, on: false, why: 'visit' });
+				}
+			}
+			for (const l of byType('bedtime')) {
+				const at = end + r(1, 10) * MIN;
+				steps.push({ at, id: l.id, on: true, why: 'bedtime' });
+				steps.push({ at: at + r(3, 12) * MIN, id: l.id, on: false, why: 'bedtime' });
+			}
+		}
+	}
+	return steps.sort((a, b) => a.at - b.at);
+}
+
+export interface SimHost {
+	now(): number;
+	setTimer(fn: () => void, ms: number): unknown;
+	clearTimer(handle: unknown): void;
+	/** current value of a lamp (true = on) */
+	isOn(id: string): boolean;
+	switchLamp(id: string, on: boolean): void;
+	/** plan and next step for the status states */
+	publish(active: boolean, plan: PlanStep[], next: PlanStep | null): void;
+}
+
+/** Runs the plan of the current evening while the simulation is active */
+export class SimRunner {
+	active = false;
+	private timer: unknown = null;
+	private plan: PlanStep[] = [];
+	private ours = new Set<string>(); // lamps the simulation switched on
+
+	constructor(
+		private host: SimHost,
+		private makePlan: (now: number) => PlanStep[],
+	) {}
+
+	start(): void {
+		if (this.active) {
+			return;
+		}
+		this.active = true;
+		this.replan();
+	}
+
+	stop(): void {
+		if (!this.active) {
+			return;
+		}
+		this.active = false;
+		if (this.timer) {
+			this.host.clearTimer(this.timer);
+			this.timer = null;
+		}
+		for (const id of this.ours) {
+			this.host.switchLamp(id, false);
+		}
+		this.ours.clear();
+		this.plan = [];
+		this.host.publish(false, [], null);
+	}
+
+	/** new plan for the current evening; steps already due set the lamps as they should be now */
+	replan(): void {
+		if (!this.active) {
+			return;
+		}
+		const now = this.host.now();
+		const plan = this.makePlan(now);
+		const due = new Map<string, boolean>();
+		for (const s of plan) {
+			if (s.at <= now) {
+				due.set(s.id, s.on);
+			}
+		}
+		for (const [id, on] of due) {
+			this.apply(id, on);
+		}
+		this.plan = plan.filter(s => s.at > now);
+		this.schedule();
+	}
+
+	isOurs(id: string): boolean {
+		return this.ours.has(id);
+	}
+
+	private apply(id: string, on: boolean): void {
+		if (on) {
+			if (!this.host.isOn(id)) {
+				this.ours.add(id);
+				this.host.switchLamp(id, true);
+			}
+		} else if (this.ours.has(id)) {
+			this.ours.delete(id);
+			this.host.switchLamp(id, false);
+		}
+	}
+
+	private schedule(): void {
+		if (this.timer) {
+			this.host.clearTimer(this.timer);
+			this.timer = null;
+		}
+		const next = this.plan[0] || null;
+		this.host.publish(this.active, this.plan, next);
+		if (!next) {
+			return;
+		}
+		const wait = Math.max(0, Math.min(next.at - this.host.now(), 2 ** 31 - 1));
+		this.timer = this.host.setTimer(() => {
+			this.timer = null;
+			const now = this.host.now();
+			while (this.plan.length && this.plan[0].at <= now) {
+				const s = this.plan.shift()!;
+				this.apply(s.id, s.on);
+			}
+			this.schedule();
+		}, wait);
+	}
+}
