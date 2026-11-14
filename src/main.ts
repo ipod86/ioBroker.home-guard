@@ -69,7 +69,7 @@ class HomeGuard extends utils.Adapter {
 	private wrongPin = 0;
 	private log_: { ts: number; type: string; text: string }[] = [];
 	private luxDuskTs = 0;
-	private lastSimActive: boolean | null = null;
+	private lastSimActive = false;
 	private lastMinute = '';
 	private sabotageKnown = new Set<string>();
 	private learnSaveTimer: ioBroker.Timeout | undefined;

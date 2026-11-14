@@ -60,7 +60,7 @@ class HomeGuard extends utils.Adapter {
   wrongPin = 0;
   log_ = [];
   luxDuskTs = 0;
-  lastSimActive = null;
+  lastSimActive = false;
   lastMinute = "";
   sabotageKnown = /* @__PURE__ */ new Set();
   learnSaveTimer;
