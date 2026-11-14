@@ -39,15 +39,6 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, simulation, monitored sensors and a logbook to open.
 
-### Differences to the alarm adapter
-
-The [alarm adapter](https://github.com/misanorot/ioBroker.alarm) is a proven, larger alarm system. Home Guard takes a different focus:
-
-- sensors, lamps and persons come from **functions (enums)** – a new window contact or lamp in the function is picked up within seconds, without touching the settings or restarting;
-- **motion detector logic** against false alarms, **door lock and presence integration** built in;
-- a **learning presence simulation** in the same adapter, coupled with the alarm system (runs when armed, when nobody is at home, or by hand);
-- a ready **web component** for the dashboard.
-
 ### Requirements
 
 - Node.js 22 or newer, js-controller 6.0.11 or newer, admin 7.6.20 or newer
