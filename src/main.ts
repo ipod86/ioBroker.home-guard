@@ -87,6 +87,7 @@ class HomeGuard extends utils.Adapter {
 	private luxDuskTs = 0;
 	private lastSimActive = false;
 	private simRestoring = true;
+	private started = false;
 	private lastMinute = '';
 	private sabotageKnown = new Set<string>();
 	private learnSaveTimer: ioBroker.Timeout | undefined;
@@ -231,6 +232,7 @@ class HomeGuard extends utils.Adapter {
 
 		// every minute: night mode, sabotage (hourly), daily new simulation plan, learned days cleanup
 		this.minuteTimer = this.setInterval(() => void this.everyMinute(), 60000);
+		this.started = true;
 		await this.everyMinute();
 		await this.updateSimulation();
 		this.log.info(
@@ -1482,7 +1484,8 @@ class HomeGuard extends utils.Adapter {
 	 * Starts or stops the simulation as wanted
 	 */
 	private async updateSimulation(): Promise<void> {
-		if (!this.sim) {
+		// not before the start is complete: lamps and presence must be known
+		if (!this.sim || !this.started) {
 			return;
 		}
 		const manual = !!(await this.getStateAsync('simulation.enabled'))?.val;

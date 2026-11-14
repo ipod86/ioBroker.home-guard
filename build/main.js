@@ -67,6 +67,7 @@ class HomeGuard extends utils.Adapter {
   luxDuskTs = 0;
   lastSimActive = false;
   simRestoring = true;
+  started = false;
   lastMinute = "";
   sabotageKnown = /* @__PURE__ */ new Set();
   learnSaveTimer;
@@ -190,6 +191,7 @@ class HomeGuard extends utils.Adapter {
     }
     this.wrongPin = num((_i = await this.getStateAsync("status.wrongPin")) == null ? void 0 : _i.val, 0);
     this.minuteTimer = this.setInterval(() => void this.everyMinute(), 6e4);
+    this.started = true;
     await this.everyMinute();
     await this.updateSimulation();
     this.log.info(
@@ -1347,7 +1349,7 @@ class HomeGuard extends utils.Adapter {
    */
   async updateSimulation() {
     var _a;
-    if (!this.sim) {
+    if (!this.sim || !this.started) {
       return;
     }
     const manual = !!((_a = await this.getStateAsync("simulation.enabled")) == null ? void 0 : _a.val);
