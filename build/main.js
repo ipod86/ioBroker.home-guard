@@ -37,8 +37,7 @@ const MESSENGERS = [
   "discord",
   "matrix-org",
   "ntfy",
-  "pushsafer",
-  "notification-manager"
+  "pushsafer"
 ];
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 class HomeGuard extends utils.Adapter {

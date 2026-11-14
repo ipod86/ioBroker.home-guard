@@ -23,27 +23,29 @@
 			"ru": "Home Guard – сигнализация и имитация присутствия",
 			"pt": "Home Guard – Sistema de alarme e simulação de presença",
 			"nl": "Home Guard – Alarmsysteem & aanwezigheidssimulatie",
-			"fr": "Home Guard – Système d’alarme & simulation de présence",
+			"fr": "Home Guard – Système d'alarme et simulation de présence",
 			"it": "Home Guard – Sistema di allarme e simulazione di presenza",
 			"es": "Home Guard – Sistema de alarma y simulación de presencia",
 			"pl": "Home Guard – system alarmowy i symulacja obecności",
 			"uk": "Home Guard – сигналізація та імітація присутності",
-			"zh-cn": "Home Guard – 报警系统和存在模拟"
+			"zh-cn": "Home Guard – 报警系统与在家模拟"
 		},
 		"desc": {
-			"en": "Alarm system with full/perimeter/night protection, exit and entry delay, open window check, PIN, lock and presence integration, plus a presence simulation that can run on its own or together with the alarm system.",
-			"de": "Alarmanlage mit Voll-/Rand-/Nachtschutz, Ausgangs- und Eingangsverzögerung, Offenfensterkontrolle, PIN-, Schloss- und Anwesenheitsintegration sowie einer Anwesenheitssimulation, die alleine oder zusammen mit der Alarmanlage ablaufen kann.",
-			"ru": "Система сигнализации с полной/периметральной/ночной охраной, задержкой на вход и выход, проверкой открытых окон, интеграцией PIN-кода, блокировки и присутствия, а также имитацией присутствия, которая может работать сама по себе или вместе с системой охранной сигнализации.",
-			"pt": "Sistema de alarme com proteção total/perimetral/noturna, retardo de saída e entrada, verificação de janela aberta, PIN, fechadura e integração de presença, além de simulação de presença que pode ser executada isoladamente ou em conjunto com o sistema de alarme.",
-			"nl": "Alarmsysteem met volledige/perimeter-/nachtbeveiliging, in- en uitloopvertraging, open raamcontrole, PIN, slot en aanwezigheidsintegratie, plus een aanwezigheidssimulatie die zelfstandig of samen met het alarmsysteem kan draaien.",
-			"fr": "Système d'alarme avec protection complète/périmétrique/nuit, temporisation de sortie et d'entrée, contrôle de fenêtre ouverte, intégration de code PIN, de verrouillage et de présence, ainsi qu'une simulation de présence qui peut fonctionner seule ou avec le système d'alarme.",
-			"it": "Sistema di allarme con protezione totale/perimetrica/notturna, ritardo di uscita e ingresso, controllo di finestre aperte, PIN, integrazione di serratura e presenza, oltre a una simulazione di presenza che può essere eseguita da sola o insieme al sistema di allarme.",
-			"es": "Sistema de alarma con protección total/perimetral/nocturna, retardo de entrada y salida, control de ventana abierta, PIN, cerradura e integración de presencia, además de una simulación de presencia que puede ejecutarse sola o junto con el sistema de alarma.",
-			"pl": "System alarmowy z ochroną całodobową/obwodową/nocną, opóźnieniem wyjścia i wejścia, kontrolą otwartego okna, integracją kodu PIN, zamka i obecności oraz symulacją obecności, która może działać samodzielnie lub razem z systemem alarmowym.",
-			"uk": "Сигналізація з повним захистом/периметром/нічною охороною, затримкою на вихід і вхід, перевіркою відкритого вікна, інтеграцією PIN-коду, замка та присутності, а також імітацією присутності, яка може працювати окремо або разом із системою сигналізації.",
-			"zh-cn": "报警系统具有全面/周界/夜间保护、进出延迟、开窗检查、PIN 码、锁定和存在集成，以及可单独运行或与报警系统一起运行的存在模拟。"
+			"en": "Alarm system with full, perimeter and night protection, exit and entry delay, open window check, PIN, door lock and presence integration, plus a presence simulation that runs on its own or together with the alarm system.",
+			"de": "Alarmanlage mit Voll-, Hüll- und Nachtschutz, Ausgangs- und Eingangsverzögerung, Offen-Fenster-Prüfung, PIN, Türschloss- und Anwesenheitsanbindung sowie einer Anwesenheitssimulation, die allein oder zusammen mit der Alarmanlage läuft.",
+			"ru": "Сигнализация с полной охраной, охраной периметра и ночной охраной, задержкой на выход и вход, проверкой открытых окон, PIN, интеграцией дверного замка и присутствия, а также имитацией присутствия, которая работает отдельно или вместе с сигнализацией.",
+			"pt": "Sistema de alarme com proteção total, perimetral e noturna, atraso de saída e entrada, verificação de janelas abertas, PIN, integração de fechadura e presença, além de uma simulação de presença que funciona sozinha ou com o sistema de alarme.",
+			"nl": "Alarmsysteem met volledige, schil- en nachtbeveiliging, uitgangs- en ingangsvertraging, controle op open ramen, pincode, koppeling met deurslot en aanwezigheid, plus een aanwezigheidssimulatie die zelfstandig of samen met het alarmsysteem werkt.",
+			"fr": "Système d'alarme avec protection totale, périmétrique et de nuit, délais de sortie et d'entrée, contrôle des fenêtres ouvertes, code PIN, intégration de la serrure et de la présence, ainsi qu'une simulation de présence qui fonctionne seule ou avec le système d'alarme.",
+			"it": "Sistema d'allarme con protezione totale, perimetrale e notturna, ritardo di uscita e d'ingresso, controllo delle finestre aperte, PIN, integrazione di serratura e presenza, più una simulazione di presenza che funziona da sola o insieme al sistema d'allarme.",
+			"es": "Sistema de alarma con protección total, perimetral y nocturna, retardo de salida y entrada, control de ventanas abiertas, PIN, integración de cerradura y presencia, además de una simulación de presencia que funciona sola o junto con el sistema de alarma.",
+			"pl": "System alarmowy z ochroną pełną, obwodową i nocną, opóźnieniem wyjścia i wejścia, kontrolą otwartych okien, PIN-em, integracją zamka drzwi i obecności oraz symulacją obecności, która działa samodzielnie lub razem z systemem alarmowym.",
+			"uk": "Сигналізація з повною охороною, охороною периметра та нічною охороною, затримкою на вихід і вхід, перевіркою відчинених вікон, PIN, інтеграцією дверного замка та присутності, а також імітацією присутності, що працює окремо або разом із сигналізацією.",
+			"zh-cn": "报警系统，具备全面、周界和夜间保护、退出与进入延时、开窗检查、PIN、门锁与在家状态集成，另有可单独运行或与报警系统配合运行的在家模拟。"
 		},
-		"authors": ["ipod86 <david@graef.email>"],
+		"authors": [
+			"ipod86 <david@graef.email>"
+		],
 		"keywords": [
 			"alarm",
 			"alarm system",
@@ -86,7 +88,9 @@
 			}
 		],
 		"messagebox": true,
-		"webComponents": ["webcomponents/home-guard-panel.json"]
+		"webComponents": [
+			"webcomponents/home-guard-panel.json"
+		]
 	},
 	"native": {
 		"alarmEnabled": true,
@@ -760,8 +764,12 @@
 			"native": {}
 		}
 	],
-	"encryptedNative": ["pin"],
-	"protectedNative": ["pin"],
+	"encryptedNative": [
+		"pin"
+	],
+	"protectedNative": [
+		"pin"
+	],
 	"notifications": [
 		{
 			"scope": "home-guard",

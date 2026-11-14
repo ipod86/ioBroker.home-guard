@@ -36,7 +36,6 @@ const MESSENGERS = [
 	'matrix-org',
 	'ntfy',
 	'pushsafer',
-	'notification-manager',
 ];
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 

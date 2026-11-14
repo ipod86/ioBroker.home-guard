@@ -10,130 +10,102 @@
 
 **Tests:** ![Test and Release](https://github.com/ipod86/ioBroker.home-guard/workflows/Test%20and%20Release/badge.svg)
 
-## home-guard adapter for ioBroker
+## Home Guard adapter for ioBroker
 
-Alarm system with full/perimeter/night protection, exit and entry delay, open window check, PIN, lock and presence integration, plus a presence simulation that can run on its own or together with the alarm system.
+**Deutsche Anleitung: [README.de.md](README.de.md)**
 
-## Developer manual
-This section is intended for the developer. It can be deleted later.
+Home Guard is an alarm system and a presence simulation in one adapter. Both parts can be used on their own or together.
 
-### DISCLAIMER
+### Highlights
 
-Please make sure that you consider copyrights and trademarks when you use names or logos of a company and add a disclaimer to your README.
-You can check other adapters for examples or ask in the developer community. Using a name or logo of a company without permission may cause legal problems for you.
+- **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
+- **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
+- **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
+- **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm.
+- **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries.
+- **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
+- **Notifications** to Telegram, Pushover, WhatsApp, Signal, e-mail, Gotify, Discord, Matrix, ntfy, Pushsafer and to the ioBroker notification manager; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
+- **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
+- **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
+- **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day of the same kind that was learned from your own switching, with shifted times) and *combined* (recommended).
+- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, simulation and logbook.
 
-### Getting started
+### Differences to the alarm adapter
 
-You are almost done, only a few steps left:
-1. Create a new repository on GitHub with the name `ioBroker.home-guard`
-1. Initialize the current folder as a new git repository:  
-	```bash
-	git init -b main
-	git add .
-	git commit -m "Initial commit"
-	```
-1. Link your local repository with the one on GitHub:  
-	```bash
-	git remote add origin https://github.com/ipod86/ioBroker.home-guard
-	```
+The [alarm adapter](https://github.com/misanorot/ioBroker.alarm) is a proven, larger alarm system. Home Guard takes a different focus:
 
-1. Push all files to the GitHub repo:  
-	```bash
-	git push origin main
-	```
-1. Add a new secret under https://github.com/ipod86/ioBroker.home-guard/settings/secrets. It must be named `AUTO_MERGE_TOKEN` and contain a personal access token with push access to the repository, e.g. yours. You can create a new token under https://github.com/settings/tokens.
+- sensors, lamps and persons come from **functions (enums)** – a new window contact in the function is monitored without touching the settings;
+- **motion detector logic** against false alarms, **door lock and presence integration** built in;
+- a **learning presence simulation** in the same adapter, coupled with the alarm system (runs when armed, when nobody is at home, or by hand);
+- a ready **web component** for the dashboard.
 
-1. Head over to [src/main.ts](src/main.ts) and start programming!
+### Configuration
 
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
+1. **General** – switch the alarm system and the presence simulation on or off.
+2. **Triggers** – choose functions for perimeter (doors, windows), full protection (inside, motion) and 24 h sensors, or list sensors by hand (with *delayed*, *inverted* and *motion detector* flags).
+3. **Procedure & PIN** – exit and entry delays, front door contact for arming at once, open window check, alarm duration, PIN, night protection times.
+4. **Disarm & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
+5. **Notifications** – messenger instances, which events are reported, speech output state.
+6. **Actions on alarm** – lamps (function or list, on or blinking), sirens and an actions table for any event.
+7. **Presence simulation** – lamps with type *evening*, *visit* or *bedtime*, way of planning, start relative to sunset or below a lux value, lights out, learning.
+8. **Dashboard** – notes about the web component.
 
-### State Roles
-When creating state objects, it is important to use the correct role for the state. The role defines how the state should be interpreted by visualizations and other adapters. For a list of available roles and their meanings, please refer to the [state roles documentation](https://www.iobroker.net/#en/documentation/dev/stateroles.md).
+### States
 
-**Important:** Do not invent your own custom role names. If you need a role that is not part of the official list, please contact the ioBroker developer community for guidance and discussion about adding new roles.
+| State | Meaning |
+|---|---|
+| `status.mode` | `off`, `full`, `perimeter`, `night` |
+| `status.phase` | `disarmed`, `arming`, `armed`, `entry`, `alarm` |
+| `status.text` | status as text |
+| `status.armed`, `status.alarm`, `status.entry` | flags |
+| `status.countdown` | seconds of the running exit/entry delay |
+| `status.openContacts`, `status.openCount` | open doors/windows |
+| `status.readyFull`, `status.readyPerimeter` | arming possible without open contacts |
+| `status.lastTrigger`, `status.lastTriggerTime` | last sensor that triggered |
+| `status.wrongPin` | wrong PIN entries in a row |
+| `status.sabotage` | sensors without reports (JSON) |
+| `status.sensors` | monitored sensors (JSON) |
+| `status.presentCount`, `status.someoneHome` | presence |
+| `status.log` | logbook (JSON) |
+| `control.mode` | set the mode (`off`, `full`, `perimeter`, `night`) |
+| `control.full`, `control.perimeter`, `control.night`, `control.off` | buttons |
+| `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
+| `control.pin` | write the PIN to disarm |
+| `simulation.enabled` | switch the simulation on by hand |
+| `simulation.active` | simulation is running |
+| `simulation.next`, `simulation.plan` | next step and plan of the evening |
+| `simulation.learned`, `simulation.learnedDays` | learned days |
 
-### Scripts in `package.json`
-Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
-| Script name | Description |
-|-------------|-------------|
-| `build` | Compile the TypeScript sources. |
-| `watch` | Compile the TypeScript sources and watch for changes. |
-| `test:ts` | Executes the tests you defined in `*.test.ts` files. |
-| `test:package` | Ensures your `package.json` and `io-package.json` are valid. |
-| `test:integration` | Tests the adapter startup with an actual instance of ioBroker. |
-| `test` | Performs a minimal test run on package files and your tests. |
-| `check` | Performs a type-check on your code (without compiling anything). |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
-| `translate` | Translates texts in your adapter to all required languages, see [`@iobroker/adapter-dev`](https://github.com/ioBroker/adapter-dev#manage-translations) for more details. |
-| `release` | Creates a new release, see [`@alcalzone/release-script`](https://github.com/AlCalzone/release-script#usage) for more details. |
+If *Disarming by data point only with the PIN* is set, `control.mode` and `control.off` cannot disarm – only `control.pin`, the panel or the door lock.
 
-### Configuring the compilation
-The adapter template uses [esbuild](https://esbuild.github.io/) to compile TypeScript and/or React code. You can configure many compilation settings 
-either in `tsconfig.json` or by changing options for the build tasks. These options are described in detail in the
-[`@iobroker/adapter-dev` documentation](https://github.com/ioBroker/adapter-dev#compile-adapter-files).
+### Scripts (sendTo)
 
-### Writing tests
-When done right, testing code is invaluable, because it gives you the 
-confidence to change your code while knowing exactly if and when 
-something breaks. A good read on the topic of test-driven development 
-is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
-Although writing tests before the code might seem strange at first, but it has very 
-clear upsides.
-
-The template provides you with basic tests for the adapter startup and package files.
-It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Using GitHub Actions, you can enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. We **strongly recommend** that you do. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-Since you installed the release script, you can create a new
-release simply by calling:
-```bash
-npm run release
+```js
+sendTo('home-guard.0', 'arm', { mode: 'full' }, res => log(JSON.stringify(res))); // { ok, open: [...] }
+sendTo('home-guard.0', 'arm', { mode: 'perimeter', pin: '1234' });               // pin only when "arming also needs the PIN"
+sendTo('home-guard.0', 'disarm', { pin: '1234' });
+sendTo('home-guard.0', 'cancel', {});      // cancel the exit delay
+sendTo('home-guard.0', 'ack', {});         // acknowledge the alarm
+sendTo('home-guard.0', 'panic', {});
+sendTo('home-guard.0', 'simulation', { enabled: true });
+sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
-Additional command line options for the release script are explained in the
-[release-script documentation](https://github.com/AlCalzone/release-script#command-line).
 
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
+### Web component
 
-### Test the adapter manually on a local ioBroker installation
-In order to install the adapter locally without publishing, the following steps are recommended:
-1. Create a GitHub repository for your adapter if you haven't already
-1. Push your code to the GitHub repository
-1. Use the ioBroker Admin interface or command line to install the adapter from GitHub:
-	* **Via Admin UI**: Go to the "Adapters" tab, click on "Custom Install" (GitHub icon), and enter your repository URL:
-		```
-		https://github.com/ipod86/ioBroker.home-guard
-		```
-		You can also install from a specific branch by adding `#branchname` at the end:
-		```
-		https://github.com/ipod86/ioBroker.home-guard#dev
-		```
-	* **Via Command Line**: Install using the `iob` command:
-		```bash
-		iob url https://github.com/ipod86/ioBroker.home-guard
-		```
-		Or from a specific branch:
-		```bash
-		iob url https://github.com/ipod86/ioBroker.home-guard#dev
-		```
+After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, simulation switch and logbook.
 
-For later updates:
-1. Push your changes to GitHub
-1. Repeat the installation steps above (via Admin UI or `iob url` command) to update the adapter
+### Note
+
+Home Guard is a home automation helper, not a certified alarm system. It depends on ioBroker, the network and the sensors running.
 
 ## Changelog
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-
 ### **WORK IN PROGRESS**
-* (ipod86) initial release
+* (ipod86) initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component
 
 ## License
 MIT License
