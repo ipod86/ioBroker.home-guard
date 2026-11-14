@@ -193,6 +193,11 @@ class HomeGuardPanel extends IobWebComponent {
 		} catch {
 			this.info = null;
 		}
+		if (!this.info || this.info.error) {
+			// adapter not running yet: ask again on the next change
+			this.info = null;
+			this.infoFor = null;
+		}
 	}
 
 	/**
@@ -229,6 +234,9 @@ class HomeGuardPanel extends IobWebComponent {
 			return;
 		}
 		const a = b.dataset.a;
+		if (!this.info) {
+			await this.loadInfo();
+		}
 		const info = this.info || {};
 		this.msg = '';
 		if (a === 'mode') {
