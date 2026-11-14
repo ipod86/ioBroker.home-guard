@@ -82,7 +82,7 @@ sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 
 ## Web-Komponente
 
-Nach der Installation steht das „Home Guard Panel“ in AURA und vis-2 in der Liste der Web-Komponenten. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulationsschalter und Logbuch.
+Nach der Installation steht das „Home Guard Panel“ in AURA und vis-2 in der Liste der Web-Komponenten. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulationsschalter und Logbuch. **In AURA beim Widget „Klicks“ auf „Komponente“ stellen** (`wcClick: "component"`), sonst kommen die Tasten nicht an.
 
 ## Hinweis
 

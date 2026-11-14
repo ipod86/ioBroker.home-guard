@@ -93,7 +93,7 @@ sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 
 ### Web component
 
-After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, simulation switch and logbook.
+After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, simulation switch and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
 
 ### Note
 
