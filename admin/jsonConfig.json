@@ -52,7 +52,7 @@
 				},
 				"i2": {
 					"type": "staticText",
-					"text": "Full protection: all sensors (doors, windows, motion). Perimeter protection: only doors and windows – you are at home. Night protection: like perimeter, automatically at night. 24 h sensors (smoke, water) always trigger.",
+					"text": "Full protection: all sensors (outer doors, windows and inside). Perimeter protection: only outer doors and windows – you are at home. Night protection: like perimeter protection, armed automatically at night. Danger detectors (smoke, water, gas) report always.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -77,7 +77,7 @@
 				},
 				"nightEnabled": {
 					"type": "checkbox",
-					"label": "Night protection automatically",
+					"label": "Arm night protection automatically",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -117,7 +117,7 @@
 				},
 				"logSize": {
 					"type": "number",
-					"label": "Entries in the logbook",
+					"label": "Logbook: number of entries kept",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -162,7 +162,7 @@
 				},
 				"i1": {
 					"type": "staticText",
-					"text": "All states of the chosen function are monitored. Channels and devices bring their sensor states along. The name is taken from the description of the object, otherwise from its name.",
+					"text": "All states of the chosen function are monitored. If channels or devices are in the function, their sensor states are taken. The name comes from the description of the object, otherwise from its name.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -175,7 +175,7 @@
 				},
 				"autoFull": {
 					"type": "checkbox",
-					"label": "Sensors for full protection (inside, motion)",
+					"label": "Inside sensors (motion detectors) – full protection only",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -184,7 +184,7 @@
 				},
 				"enumFull": {
 					"type": "selectSendTo",
-					"label": "Function full protection",
+					"label": "Function inside sensors",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -198,7 +198,7 @@
 				},
 				"autoPerimeter": {
 					"type": "checkbox",
-					"label": "Sensors for perimeter protection (doors, windows)",
+					"label": "Perimeter sensors (outer doors, windows) – full, perimeter and night protection",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -208,7 +208,7 @@
 				},
 				"enumPerimeter": {
 					"type": "selectSendTo",
-					"label": "Function perimeter protection",
+					"label": "Function perimeter sensors",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -222,7 +222,7 @@
 				},
 				"autoFire": {
 					"type": "checkbox",
-					"label": "24 h sensors (smoke, water) – trigger always",
+					"label": "Danger detectors (smoke, water, gas) – report always, also when disarmed",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -232,7 +232,7 @@
 				},
 				"enumFire": {
 					"type": "selectSendTo",
-					"label": "Function 24 h sensors",
+					"label": "Function danger detectors",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -246,7 +246,7 @@
 				},
 				"hazardDefault": {
 					"type": "select",
-					"label": "Danger detectors of the function report",
+					"label": "Reaction of the danger detectors of the function",
 					"options": [
 						{
 							"value": "notify",
@@ -271,7 +271,7 @@
 				},
 				"h2": {
 					"type": "header",
-					"text": "By hand (also overrides automatically found sensors)",
+					"text": "Sensors by hand (a row overrides a sensor found through a function)",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -313,13 +313,13 @@
 						{
 							"type": "select",
 							"attr": "circuit",
-							"title": "Circuit",
+							"title": "Area",
 							"width": "12%",
 							"default": "perimeter",
 							"options": [
 								{
 									"value": "perimeter",
-									"label": "Perimeter (doors, windows)"
+									"label": "Perimeter (outer doors, windows)"
 								},
 								{
 									"value": "interior",
@@ -327,32 +327,32 @@
 								},
 								{
 									"value": "24h",
-									"label": "24 h (smoke, water)"
+									"label": "Danger detector (smoke, water, gas)"
 								}
 							]
 						},
 						{
 							"type": "checkbox",
 							"attr": "delayed",
-							"title": "Entry delay",
+							"title": "delayed",
 							"width": "9%"
 						},
 						{
 							"type": "checkbox",
 							"attr": "motion",
-							"title": "Motion detector",
+							"title": "motion detector",
 							"width": "9%"
 						},
 						{
 							"type": "checkbox",
 							"attr": "invert",
-							"title": "Inverted",
+							"title": "inverted",
 							"width": "8%"
 						},
 						{
 							"type": "select",
 							"attr": "hazard",
-							"title": "On danger (24 h)",
+							"title": "Reaction (danger detectors only)",
 							"width": "16%",
 							"default": "speech",
 							"options": [
@@ -372,9 +372,18 @@
 						}
 					]
 				},
+				"iSensors": {
+					"type": "staticText",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"text": "\"delayed\": entry delay instead of an immediate alarm (the door you come in through). \"inverted\": the sensor reports open as false."
+				},
 				"h3": {
 					"type": "header",
-					"text": "False alarms",
+					"text": "Avoid false alarms",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -396,7 +405,7 @@
 				},
 				"motionWindowSec": {
 					"type": "number",
-					"label": "… within seconds",
+					"label": "… within (s)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -405,9 +414,14 @@
 					"min": 10,
 					"max": 1800
 				},
+				"hMonitor": {
+					"type": "header",
+					"size": 5,
+					"text": "Monitoring"
+				},
 				"sabotageHours": {
 					"type": "number",
-					"label": "Report sensors without a message for hours (0 = off)",
+					"label": "Report sensors that have not reported for … hours (0 = off)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -466,7 +480,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"help": "During the exit delay",
+					"help": "Shortens the exit delay: as soon as the door is shut, the system is armed",
 					"newLine": true
 				},
 				"openCheck": {
@@ -505,19 +519,19 @@
 				},
 				"entryDelay": {
 					"type": "number",
-					"label": "Entry delay of the delayed sensors (s)",
+					"label": "Entry delay (s)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"help": "Time to disarm after coming in",
+					"help": "For sensors ticked \"delayed\" (e.g. front door): time to disarm after coming in",
 					"min": 0,
 					"max": 600
 				},
 				"alarmDuration": {
 					"type": "number",
-					"label": "Lamps and sirens run for (s, 0 = until acknowledged)",
+					"label": "Alarm duration for lamps and sirens (s, 0 = until acknowledged)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -549,7 +563,7 @@
 				},
 				"pinForDisarmState": {
 					"type": "checkbox",
-					"label": "Disarming by data point only with the PIN",
+					"label": "Disarm by state only with the PIN",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -559,7 +573,7 @@
 				},
 				"pinForArm": {
 					"type": "checkbox",
-					"label": "Arming also needs the PIN",
+					"label": "PIN also for arming",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -568,7 +582,7 @@
 				},
 				"maxWrongPin": {
 					"type": "number",
-					"label": "Report after wrong entries",
+					"label": "Report after so many wrong entries",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -592,7 +606,7 @@
 		},
 		"tabPresence": {
 			"type": "panel",
-			"label": "Disarm & presence",
+			"label": "Lock & presence",
 			"hidden": "!data.alarmEnabled && !data.simEnabled",
 			"items": {
 				"h1": {
@@ -607,7 +621,7 @@
 				},
 				"lockEnabled": {
 					"type": "checkbox",
-					"label": "Disarm when the lock is opened",
+					"label": "Disarm when the lock is unlocked",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -638,7 +652,7 @@
 				},
 				"h2": {
 					"type": "header",
-					"text": "Presence (persons, phones)",
+					"text": "Presence",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -734,6 +748,12 @@
 					],
 					"hidden": "!data.presenceEnabled"
 				},
+				"hRules": {
+					"type": "header",
+					"size": 5,
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled",
+					"text": "When leaving and coming home"
+				},
 				"presenceArm": {
 					"type": "select",
 					"label": "When nobody is at home",
@@ -756,7 +776,7 @@
 							"label": "Arm perimeter protection"
 						}
 					],
-					"hidden": "!data.presenceEnabled || (!data.alarmEnabled)",
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled",
 					"newLine": true
 				},
 				"presenceDisarm": {
@@ -767,7 +787,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"hidden": "!data.presenceEnabled || (!data.alarmEnabled)"
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled"
 				}
 			}
 		},
@@ -1021,12 +1041,12 @@
 		},
 		"tabActions": {
 			"type": "panel",
-			"label": "Actions on alarm",
+			"label": "Actions & test",
 			"hidden": "!data.alarmEnabled",
 			"items": {
 				"h1": {
 					"type": "header",
-					"text": "Lamps",
+					"text": "Lamps on alarm",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -1089,7 +1109,7 @@
 				},
 				"lampMode": {
 					"type": "select",
-					"label": "Lamps on alarm",
+					"label": "Behaviour",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -1131,7 +1151,7 @@
 				},
 				"h2": {
 					"type": "header",
-					"text": "Sirens",
+					"text": "Sirens on alarm",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -1449,7 +1469,7 @@
 				},
 				"simMode": {
 					"type": "select",
-					"label": "Way of switching",
+					"label": "Planning",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -1472,7 +1492,7 @@
 				},
 				"i1": {
 					"type": "staticText",
-					"text": "Learning: switching of the simulation lamps that did not come from Home Guard is stored per day. The simulation replays a whole real day of the same kind (weekday/weekend) with shifted times. Without learned days dusk is used.",
+					"text": "Learning: switching of the simulation lamps that did not come from Home Guard is stored per day. The simulation replays a whole real day with shifted times – the same weekday first, then the same kind of day (weekday/weekend). Without learned days dusk is used.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -1485,7 +1505,7 @@
 				},
 				"h2": {
 					"type": "header",
-					"text": "Lamps",
+					"text": "Lamps and devices",
 					"size": 5,
 					"xs": 12,
 					"sm": 12,
@@ -1612,7 +1632,7 @@
 				},
 				"iDevices": {
 					"type": "staticText",
-					"text": "Type \"TV / device\": only while the simulation runs. With \"Learn from\" (e.g. the real power state of the TV) it replays your real evenings; without, it runs a few times for a random time. For several steps (TV on, then a channel) use a scene of the scenes adapter or a script as the state. \"When the simulation ends\": automatic switches devices off and leaves lamps on (e.g. coming home). Entries in the table override the ones found through a function.",
+					"text": "Type \"TV / device\": only while the simulation runs. With \"Learn from\" (e.g. the real power state of the TV) it replays the real evenings; without, it runs a few times for a random time. For several steps (TV on, then a channel) use a scene of the scenes adapter or a script as the state. \"When the simulation ends\": automatic switches devices off and leaves lamps on (e.g. coming home). Entries in the table override the ones found through a function.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -1787,6 +1807,11 @@
 					"min": 0,
 					"max": 240
 				},
+				"hVisits": {
+					"type": "header",
+					"size": 5,
+					"text": "Short visits"
+				},
 				"simVisits": {
 					"type": "number",
 					"label": "Short visits per evening",
@@ -1833,7 +1858,7 @@
 				},
 				"simLearnDays": {
 					"type": "number",
-					"label": "Learn the last days",
+					"label": "Keep learned days (number)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
