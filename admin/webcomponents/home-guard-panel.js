@@ -52,7 +52,7 @@ hr { width: 100%; border: 0; border-top: 1px solid var(--iob-divider); margin: 0
 .btns { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 2cqmin; }
 button { font: inherit; color: inherit; cursor: pointer; border: 2px solid var(--hg-btn-line, rgba(127,127,127,.6)); background: var(--hg-fill, rgba(127,127,127,.15)); border-radius: var(--iob-border-radius, 4px); padding: 2.5cqmin 1cqmin; display: flex; flex-direction: column; align-items: center; gap: 1cqmin; }
 button svg { width: 7cqmin; height: 7cqmin; fill: currentColor; }
-button.on { background: var(--iob-primary, #1976d2); color: var(--iob-primary-contrast, #fff); border-color: transparent; }
+button.on { background: var(--iob-primary, #1976d2); color: #fff; font-weight: 600; border: 2px solid var(--iob-primary, #1976d2); }
 button.wide { flex-direction: row; justify-content: center; font-weight: 600; }
 button.warn { background: var(--iob-warning, #ed6c02); color: #1f1400; border-color: transparent; }
 button.err { background: var(--iob-error, #d32f2f); color: #fff; border-color: transparent; }
@@ -70,7 +70,7 @@ button:disabled { opacity: .5; cursor: default; }
 .sw.on { background: var(--iob-primary, #1976d2); }
 .sw.on::after { left: 5.6cqmin; }
 .small { font-size: .82em; opacity: .85; }
-.log { overflow: auto; flex: 1; min-height: 0; }
+.log { overflow: auto; flex: 0 1 auto; min-height: 0; }
 .log div { display: flex; gap: 2cqmin; font-size: .85em; padding: .2em 0; border-bottom: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .log div:last-child { border-bottom: none; }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
