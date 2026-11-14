@@ -32,7 +32,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
-- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, simulation and a logbook to open.
+- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, simulation, monitored sensors and a logbook to open.
 
 ### Differences to the alarm adapter
 
@@ -69,12 +69,14 @@ The [alarm adapter](https://github.com/misanorot/ioBroker.alarm) is a proven, la
 | `status.wrongPin` | wrong PIN entries in a row |
 | `status.sabotage` | sensors without reports (JSON) |
 | `status.sensors` | monitored sensors (JSON) |
-| `status.presentCount`, `status.someoneHome` | presence |
+| `status.presentCount`, `status.someoneHome` | persons at home, someone at home |
+| `status.present` | persons and whether they are at home (JSON) – several states of one person (GPS, ping) count as one |
 | `status.log` | logbook (JSON) |
 | `control.mode` | set the mode (`off`, `full`, `perimeter`, `night`) |
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | buttons |
 | `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
 | `control.pin` | write the PIN to disarm |
+| `control.autoArm` | automatic arming/disarming by presence on/off (also a switch in the panel) |
 | `simulation.enabled` | switch the simulation on by hand |
 | `simulation.active` | simulation is running |
 | `simulation.next`, `simulation.plan` | next step and plan of the evening |

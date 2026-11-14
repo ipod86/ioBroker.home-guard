@@ -21,7 +21,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Lernfenster**: Lernen und Nachspielen nur bei Dunkelheit (ab kurz vor Sonnenuntergang bis Sonnenaufgang), zwischen zwei Uhrzeiten oder immer.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
-- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, Simulation und ein ausklappbares Logbuch.
+- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Simulation, überwachte Sensoren und ein ausklappbares Logbuch.
 
 ## Unterschiede zum alarm-Adapter
 
@@ -58,12 +58,14 @@ Der [alarm-Adapter](https://github.com/misanorot/ioBroker.alarm) ist eine bewäh
 | `status.wrongPin` | falsche PIN-Eingaben in Folge |
 | `status.sabotage` | Sensoren ohne Meldung (JSON) |
 | `status.sensors` | überwachte Sensoren (JSON) |
-| `status.presentCount`, `status.someoneHome` | Anwesenheit |
+| `status.presentCount`, `status.someoneHome` | Personen zu Hause, jemand zu Hause |
+| `status.present` | Personen und ob sie zu Hause sind (JSON) – mehrere Datenpunkte einer Person (GPS, Ping) zählen als eine |
 | `status.log` | Logbuch (JSON) |
 | `control.mode` | Modus setzen (`off`, `full`, `perimeter`, `night`) |
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | Tasten |
 | `control.cancel`, `control.ack`, `control.panic` | Scharfschalten abbrechen, Alarm quittieren, Panikalarm |
 | `control.pin` | PIN schreiben zum Unscharfschalten |
+| `control.autoArm` | Automatisch scharf/unscharf über Anwesenheit ein/aus (auch als Schalter im Panel) |
 | `simulation.enabled` | Simulation von Hand einschalten |
 | `simulation.active` | Simulation läuft |
 | `simulation.next`, `simulation.plan` | nächster Schritt und Plan des Abends |
