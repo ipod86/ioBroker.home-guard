@@ -95,7 +95,7 @@ button:disabled { opacity: .5; cursor: default; }
 .box { border: 1px solid var(--hg-line, rgba(127,127,127,.35)); border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 2.5cqmin 3cqmin; }
 .lbl { font-size: .8em; color: var(--iob-text-secondary, inherit); opacity: .85; margin-bottom: 1cqmin; }
 .chips { display: flex; flex-wrap: wrap; gap: 1.5cqmin; }
-.chip { background: var(--iob-warning, #ed6c02); color: #fff; border-radius: 99px; padding: .2em .7em; font-size: .85em; }
+.chip { background: var(--iob-warning, #ed6c02); color: #1f1400; border-radius: 99px; padding: .2em .7em; font-size: .85em; }
 .ok { color: var(--iob-success, #2e7d32); }
 .row { display: flex; align-items: center; gap: 3cqmin; }
 .row .grow { flex: 1; min-width: 0; }
