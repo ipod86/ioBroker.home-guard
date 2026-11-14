@@ -57,7 +57,8 @@ const T = {
       message: "Befehl"
     },
     via: (s) => s ? ` (${s})` : "",
-    test: "\u{1F9EA} Testnachricht von Home Guard"
+    test: "\u{1F9EA} Testnachricht von Home Guard",
+    onOff: ["aus", "an"]
   },
   en: {
     mode: { off: "Off", full: "Full protection", perimeter: "Perimeter protection", night: "Night protection" },
@@ -88,7 +89,8 @@ const T = {
       message: "command"
     },
     via: (s) => s ? ` (${s})` : "",
-    test: "\u{1F9EA} Test message from Home Guard"
+    test: "\u{1F9EA} Test message from Home Guard",
+    onOff: ["off", "on"]
   }
 };
 function texts(lang) {

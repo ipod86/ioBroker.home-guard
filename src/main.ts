@@ -1199,7 +1199,7 @@ class HomeGuard extends utils.Adapter {
 		await this.setStateChangedAsync('simulation.active', active, true);
 		await this.setStateChangedAsync(
 			'simulation.next',
-			next ? `${fmt(next.at)} ${name(next.id)} ${next.on ? 'an/on' : 'aus/off'}` : '',
+			next ? `${fmt(next.at)} ${name(next.id)} ${this.T.onOff[next.on ? 1 : 0]}` : '',
 			true,
 		);
 		await this.setStateChangedAsync(

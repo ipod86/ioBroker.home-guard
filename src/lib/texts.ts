@@ -39,6 +39,7 @@ const T = {
 		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Testnachricht von Home Guard',
+		onOff: ['aus', 'an'],
 	},
 	en: {
 		mode: { off: 'Off', full: 'Full protection', perimeter: 'Perimeter protection', night: 'Night protection' },
@@ -70,6 +71,7 @@ const T = {
 		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Test message from Home Guard',
+		onOff: ['off', 'on'],
 	},
 };
 

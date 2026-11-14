@@ -44,7 +44,7 @@ hr { width: 100%; border: 0; border-top: 1px solid var(--iob-divider); margin: 0
 .head .sub { opacity: .9; font-size: .9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .head .cd { font-size: 2.2em; font-weight: 700; font-variant-numeric: tabular-nums; }
 .disarmed { background: var(--iob-success, #2e7d32); }
-.arming, .entry { background: var(--iob-warning, #ed6c02); }
+.arming, .entry { background: var(--iob-warning, #ed6c02); color: #1f1400; }
 .armed { background: var(--iob-primary, #1976d2); }
 .alarm { background: var(--iob-error, #d32f2f); animation: pulse 1s infinite; }
 .entry { animation: pulse 1.4s infinite; }
@@ -54,7 +54,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 1px solid var(-
 button svg { width: 7cqmin; height: 7cqmin; fill: currentColor; }
 button.on { background: var(--iob-primary, #1976d2); color: var(--iob-primary-contrast, #fff); border-color: transparent; }
 button.wide { flex-direction: row; justify-content: center; font-weight: 600; }
-button.warn { background: var(--iob-warning, #ed6c02); color: #fff; border-color: transparent; }
+button.warn { background: var(--iob-warning, #ed6c02); color: #1f1400; border-color: transparent; }
 button.err { background: var(--iob-error, #d32f2f); color: #fff; border-color: transparent; }
 button:disabled { opacity: .5; cursor: default; }
 .box { border: 1px solid var(--iob-divider, rgba(127,127,127,.3)); border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 2.5cqmin 3cqmin; }
@@ -65,7 +65,7 @@ button:disabled { opacity: .5; cursor: default; }
 .row { display: flex; align-items: center; gap: 3cqmin; }
 .row .grow { flex: 1; min-width: 0; }
 .row svg { width: 6cqmin; height: 6cqmin; fill: currentColor; flex: none; }
-.sw { width: 11cqmin; height: 6cqmin; border-radius: 99px; background: var(--iob-divider, rgba(127,127,127,.4)); position: relative; border: 0; padding: 0; flex: none; }
+.sw { width: 11cqmin; height: 6cqmin; border-radius: 99px; background: rgba(127,127,127,.45); position: relative; border: 1px solid rgba(127,127,127,.6); padding: 0; flex: none; }
 .sw::after { content: ''; position: absolute; top: .6cqmin; left: .6cqmin; width: 4.8cqmin; height: 4.8cqmin; border-radius: 50%; background: #fff; transition: left .2s; }
 .sw.on { background: var(--iob-primary, #1976d2); }
 .sw.on::after { left: 5.6cqmin; }
