@@ -121,7 +121,7 @@
 	"Report sensors without a message for hours (0 = off)": "Sensoren zonder bericht melden na … uur (0 = uit)",
 	"Runs automatically": "Loopt automatisch",
 	"Save the settings first": "Sla eerst de instellingen op",
-	"Scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).": "Scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).",
+	"Scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).": "In scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).",
 	"Send test message": "Testbericht versturen",
 	"Sensors for full protection (inside, motion)": "Sensoren voor volledige beveiliging (binnen, beweging)",
 	"Sensors for perimeter protection (doors, windows)": "Sensoren voor schilbeveiliging (deuren, ramen)",

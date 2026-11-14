@@ -10,6 +10,7 @@
   "homepage": "https://github.com/ipod86/ioBroker.home-guard",
   "license": "MIT",
   "keywords": [
+    "ioBroker",
     "alarm",
     "alarm system",
     "Alarmanlage",
@@ -40,9 +41,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/testing": "^6.3.2",
     "@tsconfig/node22": "^22.0.7",
-    "@types/chai": "^4.3.20",
     "@types/iobroker": "npm:@iobroker/types@^7.2.5",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.20.5",
     "rimraf": "^6.1.4",
     "source-map-support": "^0.5.21",

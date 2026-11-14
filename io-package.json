@@ -84,7 +84,7 @@
 		],
 		"globalDependencies": [
 			{
-				"admin": ">=7.0.23"
+				"admin": ">=7.6.20"
 			}
 		],
 		"messagebox": true,
@@ -775,23 +775,59 @@
 			"scope": "home-guard",
 			"name": {
 				"en": "Home Guard",
-				"de": "Home Guard"
+				"de": "Home Guard",
+				"ru": "Home Guard",
+				"pt": "Home Guard",
+				"nl": "Home Guard",
+				"fr": "Home Guard",
+				"it": "Home Guard",
+				"es": "Home Guard",
+				"pl": "Home Guard",
+				"uk": "Home Guard",
+				"zh-cn": "Home Guard"
 			},
 			"description": {
 				"en": "Alarm system",
-				"de": "Alarmanlage"
+				"de": "Alarmanlage",
+				"ru": "Сигнализация",
+				"pt": "Sistema de alarme",
+				"nl": "Alarmsysteem",
+				"fr": "Système d'alarme",
+				"it": "Sistema d'allarme",
+				"es": "Sistema de alarma",
+				"pl": "System alarmowy",
+				"uk": "Сигналізація",
+				"zh-cn": "报警系统"
 			},
 			"categories": [
 				{
 					"category": "alarm",
 					"name": {
 						"en": "Alarm",
-						"de": "Alarm"
+						"de": "Alarm",
+						"ru": "Тревога",
+						"pt": "Alarme",
+						"nl": "Alarm",
+						"fr": "Alarme",
+						"it": "Allarme",
+						"es": "Alarma",
+						"pl": "Alarm",
+						"uk": "Тривога",
+						"zh-cn": "报警"
 					},
 					"severity": "alert",
 					"description": {
 						"en": "The alarm system triggered",
-						"de": "Die Alarmanlage hat ausgelöst"
+						"de": "Die Alarmanlage hat ausgelöst",
+						"ru": "Сработала сигнализация",
+						"pt": "O sistema de alarme disparou",
+						"nl": "Het alarmsysteem is afgegaan",
+						"fr": "Le système d'alarme s'est déclenché",
+						"it": "Il sistema d'allarme è scattato",
+						"es": "El sistema de alarma se ha disparado",
+						"pl": "System alarmowy został wyzwolony",
+						"uk": "Спрацювала сигналізація",
+						"zh-cn": "报警系统已触发"
 					},
 					"regex": [],
 					"limit": 10
