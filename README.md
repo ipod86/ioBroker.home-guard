@@ -34,7 +34,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 The [alarm adapter](https://github.com/misanorot/ioBroker.alarm) is a proven, larger alarm system. Home Guard takes a different focus:
 
-- sensors, lamps and persons come from **functions (enums)** – a new window contact in the function is monitored without touching the settings;
+- sensors, lamps and persons come from **functions (enums)** – a new window contact or lamp in the function is picked up within seconds, without touching the settings or restarting;
 - **motion detector logic** against false alarms, **door lock and presence integration** built in;
 - a **learning presence simulation** in the same adapter, coupled with the alarm system (runs when armed, when nobody is at home, or by hand);
 - a ready **web component** for the dashboard.

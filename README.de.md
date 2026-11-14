@@ -23,7 +23,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 
 Der [alarm-Adapter](https://github.com/misanorot/ioBroker.alarm) ist eine bewährte, größere Alarmanlage. Home Guard setzt andere Schwerpunkte:
 
-- Sensoren, Lampen und Personen kommen aus **Funktionen (Aufzählungen)** – ein neuer Fensterkontakt in der Funktion wird ohne Änderung der Einstellungen überwacht;
+- Sensoren, Lampen und Personen kommen aus **Funktionen (Aufzählungen)** – ein neuer Fensterkontakt oder eine neue Lampe in der Funktion wird innerhalb von Sekunden übernommen, ohne Einstellungen zu ändern oder neu zu starten;
 - **Bewegungsmelder-Logik** gegen Fehlalarme, **Türschloss- und Anwesenheitsanbindung** eingebaut;
 - eine **lernende Anwesenheitssimulation** im selben Adapter, gekoppelt an die Alarmanlage (läuft bei scharf, wenn niemand zu Hause ist, oder von Hand);
 - eine fertige **Web-Komponente** fürs Dashboard.
