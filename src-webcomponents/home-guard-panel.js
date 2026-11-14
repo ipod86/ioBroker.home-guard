@@ -28,9 +28,8 @@ const TXT = {
 		lastTrigger: 'Ausgelöst durch',
 		chooseInstance: 'Bitte eine Home-Guard-Instanz wählen',
 		logbook: 'Logbuch',
-		home: 'Zu Hause',
-		away: 'Weg',
-		nobody: 'Niemand zu Hause',
+		present: 'Anwesend',
+		nobody: '– niemand',
 		auto: 'Automatisch scharf/unscharf',
 		sensors: 'Überwachte Sensoren',
 		circuit: { perimeter: 'Hülle', interior: 'Innen', '24h': '24 h' },
@@ -54,9 +53,8 @@ const TXT = {
 		lastTrigger: 'Triggered by',
 		chooseInstance: 'Please choose a Home Guard instance',
 		logbook: 'Logbook',
-		home: 'At home',
-		away: 'Away',
-		nobody: 'Nobody at home',
+		present: 'Present',
+		nobody: '– nobody',
 		auto: 'Automatic arming',
 		sensors: 'Monitored sensors',
 		circuit: { perimeter: 'Perimeter', interior: 'Inside', '24h': '24 h' },
@@ -393,16 +391,14 @@ class HomeGuardPanel extends IobWebComponent {
 		if (showPersons || showAuto) {
 			html += '<div class="box">';
 			if (showPersons) {
-				const home = persons.filter(p => p.home);
-				const away = persons.filter(p => !p.home);
-				html += `<div class="persons">${
-					home.length
-						? `<span class="lbl2">${esc(t.home)}</span>${home.map(p => `<span class="pers on"><i></i>${esc(p.name)}</span>`).join('')}`
+				// "Present" and the names - the colour of the dot says who is at home
+				const shown = s.persons === 'all' ? persons : persons.filter(p => p.home);
+				html += `<div class="persons"><span class="lbl2">${esc(t.present)}</span>${
+					shown.length
+						? shown
+								.map(p => `<span class="pers${p.home ? ' on' : ''}"><i></i>${esc(p.name)}</span>`)
+								.join('')
 						: `<span class="lbl2">${esc(t.nobody)}</span>`
-				}${
-					s.persons === 'all' && away.length
-						? `<span class="lbl2 gap">${esc(t.away)}</span>${away.map(p => `<span class="pers"><i></i>${esc(p.name)}</span>`).join('')}`
-						: ''
 				}</div>`;
 			}
 			if (showAuto) {
