@@ -60,7 +60,7 @@
   ],
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "build-adapter ts",
+    "build": "build-adapter ts && npm run build:wc",
     "watch": "build-adapter ts --watch",
     "prebuild:ts": "rimraf build",
     "build:ts": "build-adapter ts",
@@ -72,7 +72,8 @@
     "check": "tsc --noEmit",
     "lint": "eslint -c eslint.config.mjs .",
     "translate": "translate-adapter",
-    "release": "release-script"
+    "release": "release-script",
+    "build:wc": "cd src-webcomponents && npm ci --no-audit --no-fund && npm run build"
   },
   "bugs": {
     "url": "https://github.com/ipod86/ioBroker.home-guard/issues"

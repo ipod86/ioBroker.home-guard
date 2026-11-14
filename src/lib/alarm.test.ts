@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 import { AlarmEngine, isOpenValue, type AlarmEvent, type AlarmHost, type AlarmStatus, type SensorDef } from './alarm';
 
-/** fake host with a manual clock */
+/**
+ * Fake host with a manual clock
+ *
+ * @param opts options to override
+ */
 function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 	engine: AlarmEngine;
 	events: AlarmEvent[];

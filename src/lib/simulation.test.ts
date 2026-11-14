@@ -35,6 +35,11 @@ const opts: SimOptions = {
 const noon = new Date(2026, 10, 18, 12, 0, 0).getTime();
 const sunset = new Date(2026, 10, 18, 16, 40, 0).getTime();
 
+/**
+ * Repeatable random numbers
+ *
+ * @param seed start value
+ */
 function seeded(seed = 1): () => number {
 	let s = seed;
 	return () => {

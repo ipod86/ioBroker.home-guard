@@ -85,7 +85,8 @@
 				"admin": ">=7.0.23"
 			}
 		],
-		"messagebox": true
+		"messagebox": true,
+		"webComponents": ["webcomponents/home-guard-panel.json"]
 	},
 	"native": {
 		"alarmEnabled": true,
