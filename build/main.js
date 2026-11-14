@@ -57,6 +57,7 @@ class HomeGuard extends utils.Adapter {
   blinkOn = false;
   repeatTimer;
   minuteTimer;
+  rescanTimer;
   wrongPin = 0;
   log_ = [];
   luxDuskTs = 0;
@@ -75,6 +76,7 @@ class HomeGuard extends utils.Adapter {
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("message", this.onMessage.bind(this));
+    this.on("objectChange", this.onObjectChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
   // ======================================================================
@@ -140,6 +142,9 @@ class HomeGuard extends utils.Adapter {
     }
     await this.subscribeStatesAsync("control.*");
     await this.subscribeStatesAsync("simulation.enabled");
+    if (this.watchedEnums().length) {
+      await this.subscribeForeignObjectsAsync("enum.functions.*");
+    }
     const lastMode = (_f = await this.getStateAsync("status.mode")) == null ? void 0 : _f.val;
     if (c.alarmEnabled && MODES.includes(lastMode) && lastMode !== "off") {
       this.alarm.restore(lastMode);
@@ -175,6 +180,9 @@ class HomeGuard extends utils.Adapter {
       }
       if (this.learnSaveTimer) {
         this.clearTimeout(this.learnSaveTimer);
+      }
+      if (this.rescanTimer) {
+        this.clearTimeout(this.rescanTimer);
       }
       callback();
     } catch {
@@ -237,6 +245,84 @@ class HomeGuard extends utils.Adapter {
       return name[this.T === (0, import_texts.texts)("de") ? "de" : "en"] || name.en || id;
     }
     return name || id;
+  }
+  /**
+   * The functions (enums) the settings use for automatic discovery
+   */
+  watchedEnums() {
+    const c = this.config;
+    return [
+      c.autoFull && c.enumFull,
+      c.autoPerimeter && c.enumPerimeter,
+      c.autoFire && c.enumFire,
+      c.presenceAuto && c.enumPresence,
+      c.simAuto && c.enumSimLamps,
+      c.lampsAuto && c.enumLamps
+    ].filter((e) => typeof e === "string" && e.length > 0);
+  }
+  /**
+   * A function (enum) changed: collect sensors, persons and lamps again a few seconds later
+   *
+   * @param id object ID
+   */
+  onObjectChange(id) {
+    if (!this.watchedEnums().includes(id)) {
+      return;
+    }
+    if (this.rescanTimer) {
+      this.clearTimeout(this.rescanTimer);
+    }
+    this.rescanTimer = this.setTimeout(() => {
+      this.rescanTimer = void 0;
+      void this.rescan(id);
+    }, 3e3);
+  }
+  /**
+   * all foreign states the adapter listens to
+   */
+  foreignIds() {
+    const c = this.config;
+    return new Set(
+      [
+        ...this.sensorIds,
+        ...this.presenceIds,
+        ...this.simLamps.map((l) => l.id),
+        c.lockEnabled ? c.lockId : "",
+        c.armEarlyId,
+        c.simLuxId
+      ].filter(Boolean)
+    );
+  }
+  /**
+   * Collects sensors, persons and lamps again after a function changed
+   *
+   * @param enumId the changed function
+   */
+  async rescan(enumId) {
+    try {
+      const before = this.foreignIds();
+      const wasHome = this.someoneHome();
+      await this.setupSensors();
+      this.presenceVals.clear();
+      await this.setupPresence();
+      this.simLampVals.clear();
+      await this.setupSimLamps();
+      if (this.alarm.status().phase !== "alarm") {
+        await this.setupLamps();
+      }
+      const after = this.foreignIds();
+      for (const id of before) {
+        if (!after.has(id)) {
+          await this.unsubscribeForeignStatesAsync(id);
+        }
+      }
+      this.log.info(
+        `${enumId} changed: ${this.sensorIds.size} sensors, ${this.presenceIds.length} presence states, ${this.simLamps.length} simulation lamps, ${this.lampOuts.length} alarm lamps`
+      );
+      await this.onPresence(wasHome, this.someoneHome());
+    } catch (e) {
+      this.log.warn(`Rescan after ${enumId} failed: ${e.message}`);
+    }
   }
   /**
    * Collects the sensors from functions and the table

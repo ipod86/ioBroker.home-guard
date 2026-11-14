@@ -66,6 +66,7 @@ class HomeGuard extends utils.Adapter {
 	private blinkOn = false;
 	private repeatTimer: ioBroker.Interval | undefined;
 	private minuteTimer: ioBroker.Interval | undefined;
+	private rescanTimer: ioBroker.Timeout | undefined;
 	private wrongPin = 0;
 	private log_: { ts: number; type: string; text: string }[] = [];
 	private luxDuskTs = 0;
@@ -85,6 +86,7 @@ class HomeGuard extends utils.Adapter {
 		this.on('ready', this.onReady.bind(this));
 		this.on('stateChange', this.onStateChange.bind(this));
 		this.on('message', this.onMessage.bind(this));
+		this.on('objectChange', this.onObjectChange.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
 
@@ -157,6 +159,10 @@ class HomeGuard extends utils.Adapter {
 		}
 		await this.subscribeStatesAsync('control.*');
 		await this.subscribeStatesAsync('simulation.enabled');
+		// new or removed members of the functions are picked up without a restart
+		if (this.watchedEnums().length) {
+			await this.subscribeForeignObjectsAsync('enum.functions.*');
+		}
 
 		// back to the mode of the last run (no exit delay, no notification)
 		const lastMode = (await this.getStateAsync('status.mode'))?.val as Mode;
@@ -196,6 +202,9 @@ class HomeGuard extends utils.Adapter {
 			}
 			if (this.learnSaveTimer) {
 				this.clearTimeout(this.learnSaveTimer);
+			}
+			if (this.rescanTimer) {
+				this.clearTimeout(this.rescanTimer);
 			}
 			callback();
 		} catch {
@@ -266,6 +275,88 @@ class HomeGuard extends utils.Adapter {
 			);
 		}
 		return (name as string) || id;
+	}
+
+	/**
+	 * The functions (enums) the settings use for automatic discovery
+	 */
+	private watchedEnums(): string[] {
+		const c = this.config;
+		return [
+			c.autoFull && c.enumFull,
+			c.autoPerimeter && c.enumPerimeter,
+			c.autoFire && c.enumFire,
+			c.presenceAuto && c.enumPresence,
+			c.simAuto && c.enumSimLamps,
+			c.lampsAuto && c.enumLamps,
+		].filter((e): e is string => typeof e === 'string' && e.length > 0);
+	}
+
+	/**
+	 * A function (enum) changed: collect sensors, persons and lamps again a few seconds later
+	 *
+	 * @param id object ID
+	 */
+	private onObjectChange(id: string): void {
+		if (!this.watchedEnums().includes(id)) {
+			return;
+		}
+		if (this.rescanTimer) {
+			this.clearTimeout(this.rescanTimer);
+		}
+		this.rescanTimer = this.setTimeout(() => {
+			this.rescanTimer = undefined;
+			void this.rescan(id);
+		}, 3000);
+	}
+
+	/**
+	 * all foreign states the adapter listens to
+	 */
+	private foreignIds(): Set<string> {
+		const c = this.config;
+		return new Set(
+			[
+				...this.sensorIds,
+				...this.presenceIds,
+				...this.simLamps.map(l => l.id),
+				c.lockEnabled ? c.lockId : '',
+				c.armEarlyId,
+				c.simLuxId,
+			].filter(Boolean),
+		);
+	}
+
+	/**
+	 * Collects sensors, persons and lamps again after a function changed
+	 *
+	 * @param enumId the changed function
+	 */
+	private async rescan(enumId: string): Promise<void> {
+		try {
+			const before = this.foreignIds();
+			const wasHome = this.someoneHome();
+			await this.setupSensors();
+			this.presenceVals.clear();
+			await this.setupPresence();
+			this.simLampVals.clear();
+			await this.setupSimLamps();
+			if (this.alarm.status().phase !== 'alarm') {
+				await this.setupLamps();
+			}
+			const after = this.foreignIds();
+			for (const id of before) {
+				if (!after.has(id)) {
+					await this.unsubscribeForeignStatesAsync(id);
+				}
+			}
+			this.log.info(
+				`${enumId} changed: ${this.sensorIds.size} sensors, ${this.presenceIds.length} presence states, ${this.simLamps.length} simulation lamps, ${this.lampOuts.length} alarm lamps`,
+			);
+			await this.onPresence(wasHome, this.someoneHome());
+		} catch (e) {
+			this.log.warn(`Rescan after ${enumId} failed: ${(e as Error).message}`);
+		}
 	}
 
 	/**
