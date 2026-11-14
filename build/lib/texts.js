@@ -44,6 +44,8 @@ const T = {
     sabotage: (list) => `\u{1F50B} Keine Meldung mehr von: ${list}`,
     simStart: "\u{1F4A1} Anwesenheitssimulation gestartet",
     simStop: "\u{1F4A1} Anwesenheitssimulation beendet",
+    title: "Alarmanlage",
+    alarmWord: "Alarm",
     by: {
       pin: "PIN",
       state: "Datenpunkt",
@@ -76,6 +78,8 @@ const T = {
     sabotage: (list) => `\u{1F50B} No more reports from: ${list}`,
     simStart: "\u{1F4A1} Presence simulation started",
     simStop: "\u{1F4A1} Presence simulation stopped",
+    title: "Alarm system",
+    alarmWord: "Alarm",
     by: {
       pin: "PIN",
       state: "state",

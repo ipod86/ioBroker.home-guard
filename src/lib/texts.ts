@@ -25,6 +25,8 @@ const T = {
 		sabotage: (list: string) => `🔋 Keine Meldung mehr von: ${list}`,
 		simStart: '💡 Anwesenheitssimulation gestartet',
 		simStop: '💡 Anwesenheitssimulation beendet',
+		title: 'Alarmanlage',
+		alarmWord: 'Alarm',
 		by: {
 			pin: 'PIN',
 			state: 'Datenpunkt',
@@ -57,6 +59,8 @@ const T = {
 		sabotage: (list: string) => `🔋 No more reports from: ${list}`,
 		simStart: '💡 Presence simulation started',
 		simStop: '💡 Presence simulation stopped',
+		title: 'Alarm system',
+		alarmWord: 'Alarm',
 		by: {
 			pin: 'PIN',
 			state: 'state',

@@ -25,18 +25,19 @@ import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
-const MESSENGERS = [
-	'telegram',
-	'pushover',
-	'whatsapp-cmb',
-	'signal-cmb',
-	'email',
-	'gotify',
-	'discord',
-	'matrix-org',
-	'ntfy',
-	'pushsafer',
-];
+/**
+ * Messengers whose "send" command is known: they get the short text in their own format. Every other instance whose
+ * adapter declares common.supportedMessages.notifications gets the standard "sendNotification" of the notification
+ * manager and formats it itself (gotify, discord, iot, gsmsms, ...).
+ */
+const SEND_FORMAT: Record<string, (text: string) => Record<string, unknown>> = {
+	telegram: text => ({ text }),
+	pushover: text => ({ message: text, title: 'Home Guard' }),
+	email: text => ({ text, subject: `Home Guard: ${text.substring(0, 60)}` }),
+	'whatsapp-cmb': text => ({ text }),
+	'signal-cmb': text => ({ text }),
+	pushsafer: text => ({ message: text, title: 'Home Guard' }),
+};
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 
 interface LampOut {
@@ -811,9 +812,16 @@ class HomeGuard extends utils.Adapter {
 					startkey: 'system.adapter.',
 					endkey: 'system.adapter.香',
 				});
+				// like the notification manager: every adapter that can receive notifications, plus the known ones
 				const list = inst.rows
+					.filter(
+						r =>
+							!!(r.value?.common as { supportedMessages?: { notifications?: boolean } } | undefined)
+								?.supportedMessages?.notifications ||
+							r.id.replace('system.adapter.', '').replace(/\.\d+$/, '') in SEND_FORMAT,
+					)
 					.map(r => r.id.replace('system.adapter.', ''))
-					.filter(id => MESSENGERS.includes(id.replace(/\.\d+$/, '')))
+					.filter(id => id !== this.namespace)
 					.map(id => ({ value: id, label: id }));
 				return reply(list);
 			}
@@ -927,7 +935,7 @@ class HomeGuard extends utils.Adapter {
 		this.addLog(e, text);
 		this.log.info(text);
 		if (notify) {
-			this.notifyAll(text);
+			this.notifyAll(text, false, e === 'alarm' || e === 'entry' || e === 'sabotage');
 		}
 		if (speech && c.speechId) {
 			await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, '').trim());
@@ -944,7 +952,7 @@ class HomeGuard extends utils.Adapter {
 		this.stopRepeat();
 		const min = num(this.config.alarmRepeatMin, 0);
 		if (min > 0 && this.config.notifyAlarm) {
-			this.repeatTimer = this.setInterval(() => this.notifyAll(text), min * 60000);
+			this.repeatTimer = this.setInterval(() => this.notifyAll(text, false, true), min * 60000);
 		}
 	}
 
@@ -963,36 +971,78 @@ class HomeGuard extends utils.Adapter {
 	 *
 	 * @param text message text
 	 * @param test true for the test message of the settings
+	 * @param alert true for alarms: severity "alert" for messengers that get the notification format
 	 */
-	private notifyAll(text: string, test = false): void {
+	private notifyAll(text: string, test = false, alert = false): void {
 		for (const row of this.config.notify || []) {
 			if (!row?.instance || row.enabled === false) {
 				continue;
 			}
-			const inst = row.instance;
-			const adapter = inst.replace(/\.\d+$/, '');
-			let payload: Record<string, unknown>;
-			if (adapter === 'pushover') {
-				payload = { message: text, title: 'Home Guard' };
-			} else if (adapter === 'email') {
-				payload = { text, subject: `Home Guard: ${text.substring(0, 60)}` };
-			} else {
-				payload = { text };
-			}
-			if (row.user) {
-				payload.user = row.user;
-			}
-			if (row.chatId) {
-				payload.chatId = row.chatId;
-			}
-			try {
-				this.sendTo(inst, 'send', payload);
-			} catch (err) {
-				this.log.warn(`Notification to ${inst} failed: ${(err as Error).message}`);
-			}
+			void this.notifyOne(row, text, alert);
 		}
 		if (test) {
 			this.log.info('Test notification sent');
+		}
+	}
+
+	/**
+	 * Sends a text to one messenger instance: known ones with "send", the others like the notification manager
+	 *
+	 * @param row row of the notification table
+	 * @param row.instance messenger instance
+	 * @param row.user optional user
+	 * @param row.chatId optional chat ID
+	 * @param text message
+	 * @param alert true for alarms (severity "alert")
+	 */
+	private async notifyOne(
+		row: { instance: string; user?: string; chatId?: string },
+		text: string,
+		alert: boolean,
+	): Promise<void> {
+		const inst = row.instance;
+		const format = SEND_FORMAT[inst.replace(/\.\d+$/, '')];
+		try {
+			if (format) {
+				const payload = format(text);
+				if (row.user) {
+					payload.user = row.user;
+				}
+				if (row.chatId) {
+					payload.chatId = row.chatId;
+				}
+				this.sendTo(inst, 'send', payload);
+				return;
+			}
+			const obj = await this.getForeignObjectAsync(`system.adapter.${inst}`);
+			const supports = (obj?.common as { supportedMessages?: { notifications?: boolean } } | undefined)
+				?.supportedMessages?.notifications;
+			if (!supports) {
+				// unknown adapter without notification support: try the usual "send" fields
+				this.sendTo(inst, 'send', { text, message: text, title: 'Home Guard' });
+				return;
+			}
+			// the format of the notification manager (LocalizedNotification); the messenger builds its own text
+			const res = (await this.sendToAsync(
+				inst,
+				'sendNotification',
+				{
+					host: `system.host.${this.host}`,
+					scope: { name: 'Home Guard', description: this.T.title },
+					category: {
+						name: alert ? this.T.alarmWord : this.T.title,
+						description: '',
+						severity: alert ? 'alert' : 'notify',
+						instances: { [this.namespace]: { messages: [{ message: text, ts: Date.now() }] } },
+					},
+				},
+				{ timeout: 10000 },
+			)) as { sent?: boolean } | undefined;
+			if (!res || res.sent !== true) {
+				this.log.warn(`${inst} did not confirm the notification`);
+			}
+		} catch (err) {
+			this.log.warn(`Notification to ${inst} failed: ${(err as Error).message}`);
 		}
 	}
 

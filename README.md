@@ -24,7 +24,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm.
 - **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries.
 - **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
-- **Notifications** to Telegram, Pushover, WhatsApp, Signal, e-mail, Gotify, Discord, Matrix, ntfy, Pushsafer and to the ioBroker notification manager; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
+- **Notifications** to Telegram, Pushover, e-mail, WhatsApp (cmb), Signal (cmb) and Pushsafer in their own format, and to **every messenger that supports ioBroker notifications** (e.g. Gotify, Discord, ioBroker.pro app, GSM-SMS) in the format of the notification manager; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day of the same kind that was learned from your own switching, with shifted times) and *combined* (recommended).

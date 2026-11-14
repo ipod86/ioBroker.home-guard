@@ -27,18 +27,14 @@ var import_simulation = require("./lib/simulation");
 var import_sun = require("./lib/sun");
 var import_texts = require("./lib/texts");
 const MODES = ["off", "full", "perimeter", "night"];
-const MESSENGERS = [
-  "telegram",
-  "pushover",
-  "whatsapp-cmb",
-  "signal-cmb",
-  "email",
-  "gotify",
-  "discord",
-  "matrix-org",
-  "ntfy",
-  "pushsafer"
-];
+const SEND_FORMAT = {
+  telegram: (text) => ({ text }),
+  pushover: (text) => ({ message: text, title: "Home Guard" }),
+  email: (text) => ({ text, subject: `Home Guard: ${text.substring(0, 60)}` }),
+  "whatsapp-cmb": (text) => ({ text }),
+  "signal-cmb": (text) => ({ text }),
+  pushsafer: (text) => ({ message: text, title: "Home Guard" })
+};
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 class HomeGuard extends utils.Adapter {
   T = (0, import_texts.texts)("en");
@@ -758,7 +754,12 @@ class HomeGuard extends utils.Adapter {
           startkey: "system.adapter.",
           endkey: "system.adapter.\u9999"
         });
-        const list = inst.rows.map((r) => r.id.replace("system.adapter.", "")).filter((id) => MESSENGERS.includes(id.replace(/\.\d+$/, ""))).map((id) => ({ value: id, label: id }));
+        const list = inst.rows.filter(
+          (r) => {
+            var _a2, _b, _c;
+            return !!((_c = (_b = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b.supportedMessages) == null ? void 0 : _c.notifications) || r.id.replace("system.adapter.", "").replace(/\.\d+$/, "") in SEND_FORMAT;
+          }
+        ).map((r) => r.id.replace("system.adapter.", "")).filter((id) => id !== this.namespace).map((id) => ({ value: id, label: id }));
         return reply(list);
       }
       case "test":
@@ -869,7 +870,7 @@ class HomeGuard extends utils.Adapter {
     this.addLog(e, text);
     this.log.info(text);
     if (notify) {
-      this.notifyAll(text);
+      this.notifyAll(text, false, e === "alarm" || e === "entry" || e === "sabotage");
     }
     if (speech && c.speechId) {
       await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim());
@@ -885,7 +886,7 @@ class HomeGuard extends utils.Adapter {
     this.stopRepeat();
     const min = num(this.config.alarmRepeatMin, 0);
     if (min > 0 && this.config.notifyAlarm) {
-      this.repeatTimer = this.setInterval(() => this.notifyAll(text), min * 6e4);
+      this.repeatTimer = this.setInterval(() => this.notifyAll(text, false, true), min * 6e4);
     }
   }
   /**
@@ -902,36 +903,71 @@ class HomeGuard extends utils.Adapter {
    *
    * @param text message text
    * @param test true for the test message of the settings
+   * @param alert true for alarms: severity "alert" for messengers that get the notification format
    */
-  notifyAll(text, test = false) {
+  notifyAll(text, test = false, alert = false) {
     for (const row of this.config.notify || []) {
       if (!(row == null ? void 0 : row.instance) || row.enabled === false) {
         continue;
       }
-      const inst = row.instance;
-      const adapter = inst.replace(/\.\d+$/, "");
-      let payload;
-      if (adapter === "pushover") {
-        payload = { message: text, title: "Home Guard" };
-      } else if (adapter === "email") {
-        payload = { text, subject: `Home Guard: ${text.substring(0, 60)}` };
-      } else {
-        payload = { text };
-      }
-      if (row.user) {
-        payload.user = row.user;
-      }
-      if (row.chatId) {
-        payload.chatId = row.chatId;
-      }
-      try {
-        this.sendTo(inst, "send", payload);
-      } catch (err) {
-        this.log.warn(`Notification to ${inst} failed: ${err.message}`);
-      }
+      void this.notifyOne(row, text, alert);
     }
     if (test) {
       this.log.info("Test notification sent");
+    }
+  }
+  /**
+   * Sends a text to one messenger instance: known ones with "send", the others like the notification manager
+   *
+   * @param row row of the notification table
+   * @param row.instance messenger instance
+   * @param row.user optional user
+   * @param row.chatId optional chat ID
+   * @param text message
+   * @param alert true for alarms (severity "alert")
+   */
+  async notifyOne(row, text, alert) {
+    var _a, _b;
+    const inst = row.instance;
+    const format = SEND_FORMAT[inst.replace(/\.\d+$/, "")];
+    try {
+      if (format) {
+        const payload = format(text);
+        if (row.user) {
+          payload.user = row.user;
+        }
+        if (row.chatId) {
+          payload.chatId = row.chatId;
+        }
+        this.sendTo(inst, "send", payload);
+        return;
+      }
+      const obj = await this.getForeignObjectAsync(`system.adapter.${inst}`);
+      const supports = (_b = (_a = obj == null ? void 0 : obj.common) == null ? void 0 : _a.supportedMessages) == null ? void 0 : _b.notifications;
+      if (!supports) {
+        this.sendTo(inst, "send", { text, message: text, title: "Home Guard" });
+        return;
+      }
+      const res = await this.sendToAsync(
+        inst,
+        "sendNotification",
+        {
+          host: `system.host.${this.host}`,
+          scope: { name: "Home Guard", description: this.T.title },
+          category: {
+            name: alert ? this.T.alarmWord : this.T.title,
+            description: "",
+            severity: alert ? "alert" : "notify",
+            instances: { [this.namespace]: { messages: [{ message: text, ts: Date.now() }] } }
+          }
+        },
+        { timeout: 1e4 }
+      );
+      if (!res || res.sent !== true) {
+        this.log.warn(`${inst} did not confirm the notification`);
+      }
+    } catch (err) {
+      this.log.warn(`Notification to ${inst} failed: ${err.message}`);
     }
   }
   /**
