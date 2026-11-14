@@ -569,7 +569,13 @@ class HomeGuard extends utils.Adapter {
 				lamps.delete(row.id);
 				continue;
 			}
-			lamps.set(row.id, { id: row.id, name: await this.nameOf(row.id, row.name), type: row.type || 'evening' });
+			lamps.set(row.id, {
+				id: row.id,
+				name: await this.nameOf(row.id, row.name),
+				type: row.type || 'evening',
+				valueOn: row.valueOn ? String(row.valueOn) : undefined,
+				valueOff: row.valueOff ? String(row.valueOff) : undefined,
+			});
 		}
 		this.simLamps = [...lamps.values()];
 		for (const l of this.simLamps) {
@@ -1564,9 +1570,11 @@ class HomeGuard extends utils.Adapter {
 	private makeEveningPlan(now: number): PlanStep[] {
 		const lamps = this.simLamps.filter(l => l.type === 'evening');
 		const first = eveningNoon(now);
-		return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 3600000, now, lamps, true)].sort(
-			(a, b) => a.at - b.at,
-		);
+		// switching on and off can be chosen separately (e.g. on automatically, off by hand)
+		const c = this.config;
+		return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 3600000, now, lamps, true)]
+			.filter(st => (st.on ? c.eveningLightOn !== false : c.eveningLightOff !== false))
+			.sort((a, b) => a.at - b.at);
 	}
 
 	/** @returns the evening light is switched on and has lamps */
@@ -1649,6 +1657,8 @@ class HomeGuard extends utils.Adapter {
 				visitMax: num(c.simVisitMax, 15),
 				learnDays: num(c.simLearnDays, 28),
 				jitter: num(c.simJitter, 15),
+				deviceMin: clamp(num(c.simDeviceMin, 60), 5, 600),
+				deviceMax: clamp(num(c.simDeviceMax, 180), 5, 600),
 				learnFilter: ts => this.inLearnWindow(ts),
 			},
 			this.learner,
@@ -1682,7 +1692,10 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private async switchLamp(id: string, on: boolean): Promise<void> {
 		const { on: vOn, off } = await this.onOffValues(id);
-		await this.setForeignStateAsync(id, on ? vOn : off, false);
+		// own values of the row (e.g. a scene for the TV), otherwise true/false or maximum/0
+		const lamp = this.simLamps.find(l => l.id === id);
+		const own = on ? lamp?.valueOn : lamp?.valueOff;
+		await this.setForeignStateAsync(id, own ? this.parseValue(own) : on ? vOn : off, false);
 	}
 
 	/**

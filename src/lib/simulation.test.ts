@@ -244,3 +244,27 @@ describe('learn filter and evening light', () => {
 		expect(log.length).to.equal(3); // stopping switches nothing
 	});
 });
+
+describe('devices in the simulation', () => {
+	it('a TV runs once in the evening between dusk and lights out, also in learned mode', () => {
+		const withTv: SimLamp[] = [...lamps, { id: 'tv', name: 'TV', type: 'device', valueOn: 'true' }];
+		for (const mode of ['dusk', 'learned', 'combined'] as const) {
+			const plan = planEvening(
+				noon,
+				sunset,
+				withTv,
+				{ ...opts, mode, deviceMin: 60, deviceMax: 120 },
+				new Learner(),
+				seeded(4),
+			);
+			const on = plan.filter(s => s.id === 'tv' && s.on);
+			const off = plan.filter(s => s.id === 'tv' && !s.on);
+			expect(on.length).to.equal(1);
+			const dur = (off[0].at - on[0].at) / MIN;
+			expect(dur).to.be.within(60, 120);
+			expect(on[0].at).to.be.at.least(sunset - 30 * MIN);
+			const offMin = new Date(off[0].at).getHours() * 60 + new Date(off[0].at).getMinutes();
+			expect(offMin).to.be.at.most(22 * 60 + 31);
+		}
+	});
+});

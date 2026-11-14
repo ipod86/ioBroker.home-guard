@@ -186,7 +186,11 @@
 		"simLearnWindow": "dark",
 		"simLearnDarkOffset": 30,
 		"simLearnFrom": "15:00",
-		"simLearnTo": "02:00"
+		"simLearnTo": "02:00",
+		"eveningLightOn": true,
+		"eveningLightOff": true,
+		"simDeviceMin": 60,
+		"simDeviceMax": 180
 	},
 	"objects": [],
 	"instanceObjects": [

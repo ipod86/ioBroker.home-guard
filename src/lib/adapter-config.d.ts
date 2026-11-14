@@ -51,8 +51,11 @@ export interface SimLampRow {
 	enabled: boolean;
 	id: string;
 	name: string;
-	/** evening = on for the evening, visit = short visits, bedtime = briefly at bedtime */
-	type: 'evening' | 'visit' | 'bedtime';
+	/** evening = on for the evening, visit = short visits, bedtime = briefly at bedtime, device = TV/radio */
+	type: 'evening' | 'visit' | 'bedtime' | 'device';
+	/** own value for on / off (optional) */
+	valueOn?: string;
+	valueOff?: string;
 }
 
 declare global {
@@ -94,6 +97,10 @@ declare global {
 			testActions: boolean;
 			testDuration: number;
 			eveningLight: boolean;
+			eveningLightOn: boolean;
+			eveningLightOff: boolean;
+			simDeviceMin: number;
+			simDeviceMax: number;
 			simLearnWindow: 'all' | 'dark' | 'times';
 			simLearnDarkOffset: number;
 			simLearnFrom: string;

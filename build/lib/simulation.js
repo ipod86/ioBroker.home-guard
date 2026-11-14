@@ -113,6 +113,7 @@ class Learner {
   }
 }
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
+  var _a, _b;
   const r = (a, b) => a + rand() * (b - a);
   const steps = [];
   const weekend = isWeekendEvening(noon);
@@ -120,7 +121,9 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
   const byType = (t) => lamps.filter((l) => l.type === t);
   let learned = null;
   if (o.mode !== "dusk") {
-    const ids = new Set((o.mode === "learned" ? lamps : lamps.filter((l) => l.type !== "evening")).map((l) => l.id));
+    const ids = new Set(
+      (o.mode === "learned" ? lamps : lamps.filter((l) => l.type !== "evening")).filter((l) => l.type !== "device").map((l) => l.id)
+    );
     const cands = learner.candidates(weekend, ids, today);
     if (cands.length) {
       learned = cands[Math.floor(rand() * cands.length)];
@@ -166,6 +169,23 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
         steps.push({ at, id: l.id, on: true, why: "bedtime" });
         steps.push({ at: at + r(3, 12) * MIN, id: l.id, on: false, why: "bedtime" });
       }
+    }
+  }
+  const devices = byType("device");
+  if (devices.length) {
+    const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
+    let endMin = parseHm(o.end, 22 * 60 + 30) + (weekend ? o.weekendLater : 0);
+    if (endMin < 12 * 60) {
+      endMin += 24 * 60;
+    }
+    const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
+    const dMin = Math.max(5, (_a = o.deviceMin) != null ? _a : 60);
+    const dMax = Math.max(dMin, (_b = o.deviceMax) != null ? _b : 180);
+    for (const d of devices) {
+      const dur = Math.min(r(dMin, dMax), (end - start) / MIN);
+      const on = r(start, Math.max(start, end - dur * MIN));
+      steps.push({ at: on, id: d.id, on: true, why: "device" });
+      steps.push({ at: on + dur * MIN, id: d.id, on: false, why: "device" });
     }
   }
   return steps.sort((a, b) => a.at - b.at);

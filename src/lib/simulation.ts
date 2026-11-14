@@ -3,12 +3,16 @@
 // the simulation replays a whole real day of the same kind (weekday/weekend) with shifted times.
 
 export type SimMode = 'dusk' | 'learned' | 'combined';
-export type LampType = 'evening' | 'visit' | 'bedtime';
+export type LampType = 'evening' | 'visit' | 'bedtime' | 'device';
 
 export interface SimLamp {
 	id: string;
 	name: string;
 	type: LampType;
+	/** optional own value for "on" (e.g. a scene or a TV channel), otherwise true / the maximum */
+	valueOn?: string;
+	/** optional own value for "off", otherwise false / 0 */
+	valueOff?: string;
 }
 
 /** one learned switching: start in minutes after 12:00 of the evening day, duration in minutes */
@@ -39,6 +43,9 @@ export interface SimOptions {
 	visitMax: number; // min
 	learnDays: number;
 	jitter: number; // min
+	/** devices (TV, radio): running time in the evening from ... to ... minutes */
+	deviceMin?: number;
+	deviceMax?: number;
 	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
 	learnFilter?: (ts: number) => boolean;
 }
@@ -200,7 +207,11 @@ export function planEvening(
 	// learned day (for "learned" all lamps, for "combined" only visit and bedtime lamps)
 	let learned: LearnedDay | null = null;
 	if (o.mode !== 'dusk') {
-		const ids = new Set((o.mode === 'learned' ? lamps : lamps.filter(l => l.type !== 'evening')).map(l => l.id));
+		const ids = new Set(
+			(o.mode === 'learned' ? lamps : lamps.filter(l => l.type !== 'evening'))
+				.filter(l => l.type !== 'device')
+				.map(l => l.id),
+		);
 		const cands = learner.candidates(weekend, ids, today);
 		if (cands.length) {
 			learned = cands[Math.floor(rand() * cands.length)];
@@ -249,6 +260,24 @@ export function planEvening(
 				steps.push({ at, id: l.id, on: true, why: 'bedtime' });
 				steps.push({ at: at + r(3, 12) * MIN, id: l.id, on: false, why: 'bedtime' });
 			}
+		}
+	}
+	// devices (TV, radio): once in the evening for a random time, between dusk and lights out
+	const devices = byType('device');
+	if (devices.length) {
+		const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
+		let endMin = parseHm(o.end, 22 * 60 + 30) + (weekend ? o.weekendLater : 0);
+		if (endMin < 12 * 60) {
+			endMin += 24 * 60;
+		}
+		const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
+		const dMin = Math.max(5, o.deviceMin ?? 60);
+		const dMax = Math.max(dMin, o.deviceMax ?? 180);
+		for (const d of devices) {
+			const dur = Math.min(r(dMin, dMax), (end - start) / MIN);
+			const on = r(start, Math.max(start, end - dur * MIN));
+			steps.push({ at: on, id: d.id, on: true, why: 'device' });
+			steps.push({ at: on + dur * MIN, id: d.id, on: false, why: 'device' });
 		}
 	}
 	return steps.sort((a, b) => a.at - b.at);
