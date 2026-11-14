@@ -125,7 +125,7 @@
 		"maxWrongPin": 3,
 		"lockEnabled": false,
 		"lockId": "",
-		"lockValues": "3,5,6",
+		"lockValues": "true",
 		"presenceAuto": false,
 		"enumPresence": "",
 		"presence": [],
@@ -191,7 +191,10 @@
 		"eveningLightOff": true,
 		"simDeviceMin": 60,
 		"simDeviceMax": 180,
-		"simDeviceCount": 1
+		"simDeviceCount": 1,
+		"hazardDefault": "speech",
+		"notifyHazard": true,
+		"presenceEnabled": false
 	},
 	"objects": [],
 	"instanceObjects": [

@@ -131,7 +131,13 @@ class AlarmEngine {
    */
   triggered(s) {
     if (s.circuit === "24h") {
-      this.alarm(s);
+      if (s.hazard === "alarm") {
+        this.alarm(s);
+      } else {
+        this.lastTrigger = s.name;
+        this.lastTriggerTime = this.host.now();
+        this.host.event("hazard", { mode: this.mode, sensor: s });
+      }
       return;
     }
     if (this.phase !== "armed" && this.phase !== "entry") {

@@ -50,16 +50,6 @@
 					"lg": 4,
 					"xl": 4
 				},
-				"h2": {
-					"type": "header",
-					"text": "Modes",
-					"size": 5,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
 				"i2": {
 					"type": "staticText",
 					"text": "Full protection: all sensors (doors, windows, motion). Perimeter protection: only doors and windows – you are at home. Night protection: like perimeter, automatically at night. 24 h sensors (smoke, water) always trigger.",
@@ -71,7 +61,19 @@
 					"style": {
 						"fontSize": "smaller",
 						"opacity": 0.8
-					}
+					},
+					"hidden": "!data.alarmEnabled"
+				},
+				"h2": {
+					"type": "header",
+					"text": "Night protection",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"hidden": "!data.alarmEnabled"
 				},
 				"nightEnabled": {
 					"type": "checkbox",
@@ -123,6 +125,23 @@
 					"xl": 4,
 					"min": 10,
 					"max": 1000
+				},
+				"hDoc": {
+					"type": "header",
+					"text": "Documentation",
+					"size": 5
+				},
+				"docLink": {
+					"type": "staticLink",
+					"label": "README: web component for AURA and vis-2, states and script commands",
+					"href": "https://github.com/ipod86/ioBroker.home-guard/blob/main/README.md",
+					"button": true,
+					"variant": "outlined",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 6,
+					"xl": 6
 				}
 			}
 		},
@@ -225,6 +244,31 @@
 					"noTranslation": true,
 					"hidden": "!data.autoFire"
 				},
+				"hazardDefault": {
+					"type": "select",
+					"label": "Danger detectors of the function report",
+					"options": [
+						{
+							"value": "notify",
+							"label": "message only"
+						},
+						{
+							"value": "speech",
+							"label": "message and speech output"
+						},
+						{
+							"value": "alarm",
+							"label": "full alarm (sirens, lamps, actions)"
+						}
+					],
+					"default": "speech",
+					"hidden": "!data.autoFire",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
 				"h2": {
 					"type": "header",
 					"text": "By hand (also overrides automatically found sensors)",
@@ -249,28 +293,28 @@
 							"type": "checkbox",
 							"attr": "enabled",
 							"title": "Active",
-							"width": "6%",
+							"width": "5%",
 							"default": true
 						},
 						{
 							"type": "objectId",
 							"attr": "id",
 							"title": "State",
-							"width": "30%",
+							"width": "26%",
 							"filter": false
 						},
 						{
 							"type": "text",
 							"attr": "name",
 							"title": "Name (optional)",
-							"width": "20%",
+							"width": "15%",
 							"filter": false
 						},
 						{
 							"type": "select",
 							"attr": "circuit",
 							"title": "Circuit",
-							"width": "14%",
+							"width": "12%",
 							"default": "perimeter",
 							"options": [
 								{
@@ -291,19 +335,40 @@
 							"type": "checkbox",
 							"attr": "delayed",
 							"title": "Entry delay",
-							"width": "10%"
+							"width": "9%"
 						},
 						{
 							"type": "checkbox",
 							"attr": "motion",
 							"title": "Motion detector",
-							"width": "10%"
+							"width": "9%"
 						},
 						{
 							"type": "checkbox",
 							"attr": "invert",
 							"title": "Inverted",
-							"width": "10%"
+							"width": "8%"
+						},
+						{
+							"type": "select",
+							"attr": "hazard",
+							"title": "On danger (24 h)",
+							"width": "16%",
+							"default": "speech",
+							"options": [
+								{
+									"value": "notify",
+									"label": "message only"
+								},
+								{
+									"value": "speech",
+									"label": "message and speech output"
+								},
+								{
+									"value": "alarm",
+									"label": "full alarm (sirens, lamps, actions)"
+								}
+							]
 						}
 					]
 				},
@@ -557,7 +622,8 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"hidden": "!data.lockEnabled"
+					"hidden": "!data.lockEnabled",
+					"help": "e.g. Nuki, Danalock, Homematic or any lock with an open/closed state"
 				},
 				"lockValues": {
 					"type": "text",
@@ -567,7 +633,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"help": "Nuki lockState: 3 = unlocked, 5 = unlatched, 6 = unlocked (lock ’n’ go)",
+					"help": "true for locks that only know open/closed – Nuki lockState: 3,5,6 (3 = unlocked, 5 = unlatched, 6 = unlocked lock ’n’ go)",
 					"hidden": "!data.lockEnabled"
 				},
 				"h2": {
@@ -580,6 +646,15 @@
 					"lg": 12,
 					"xl": 12
 				},
+				"presenceEnabled": {
+					"type": "checkbox",
+					"label": "Use presence (persons, phones)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
 				"i2": {
 					"type": "staticText",
 					"text": "A person counts as at home when the state is true (or > 0).",
@@ -591,7 +666,8 @@
 					"style": {
 						"fontSize": "smaller",
 						"opacity": 0.8
-					}
+					},
+					"hidden": "!data.presenceEnabled"
 				},
 				"presenceAuto": {
 					"type": "checkbox",
@@ -600,7 +676,8 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.presenceEnabled"
 				},
 				"enumPresence": {
 					"type": "selectSendTo",
@@ -614,7 +691,7 @@
 					"jsonData": "{}",
 					"manual": true,
 					"noTranslation": true,
-					"hidden": "!data.presenceAuto"
+					"hidden": "!data.presenceEnabled || (!data.presenceAuto)"
 				},
 				"iPersons": {
 					"type": "staticText",
@@ -623,7 +700,8 @@
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
-					"xl": 12
+					"xl": 12,
+					"hidden": "!data.presenceEnabled"
 				},
 				"presence": {
 					"type": "table",
@@ -653,7 +731,8 @@
 							"title": "Person",
 							"width": "32%"
 						}
-					]
+					],
+					"hidden": "!data.presenceEnabled"
 				},
 				"presenceArm": {
 					"type": "select",
@@ -677,7 +756,7 @@
 							"label": "Arm perimeter protection"
 						}
 					],
-					"hidden": "!data.alarmEnabled",
+					"hidden": "!data.presenceEnabled || (!data.alarmEnabled)",
 					"newLine": true
 				},
 				"presenceDisarm": {
@@ -688,7 +767,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"hidden": "!data.alarmEnabled"
+					"hidden": "!data.presenceEnabled || (!data.alarmEnabled)"
 				}
 			}
 		},
@@ -791,6 +870,16 @@
 				"notifyEntry": {
 					"type": "checkbox",
 					"label": "Entry delay started (silent alarm)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"notifyHazard": {
+					"type": "checkbox",
+					"label": "Danger detector triggered (smoke, water, gas)",
+					"default": true,
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -1193,6 +1282,10 @@
 								{
 									"value": "sabotage",
 									"label": "Sensors without a message"
+								},
+								{
+									"value": "hazard",
+									"label": "Danger detector triggered"
 								}
 							]
 						},
@@ -1828,71 +1921,6 @@
 					"md": 3,
 					"lg": 2,
 					"xl": 2
-				}
-			}
-		},
-		"tabWidget": {
-			"type": "panel",
-			"label": "Dashboard",
-			"items": {
-				"h1": {
-					"type": "header",
-					"text": "Web component for AURA and vis-2",
-					"size": 4,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
-				"i1": {
-					"type": "staticText",
-					"text": "The adapter brings the web component \"Home Guard panel\": status, mode buttons, PIN keypad, open windows, simulation and logbook. In AURA and vis-2 it is in the list of web components after the installation.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "smaller",
-						"opacity": 0.8
-					}
-				},
-				"h2": {
-					"type": "header",
-					"text": "Data points",
-					"size": 5,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
-				"i2": {
-					"type": "staticText",
-					"text": "status.* – mode, phase, countdown, open contacts, last trigger, logbook (JSON). control.* – mode, buttons for full/perimeter/night/off, cancel, acknowledge, panic, control.pin. simulation.* – switch, plan of the evening, next step, learned days.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "smaller",
-						"opacity": 0.8
-					}
-				},
-				"i3": {
-					"type": "staticText",
-					"text": "Scripts: sendTo(\"home-guard.0\", \"arm\", {mode: \"full\"}), sendTo(\"home-guard.0\", \"disarm\", {pin: \"1234\"}), sendTo(\"home-guard.0\", \"status\", {}, cb).",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "smaller",
-						"opacity": 0.8
-					}
 				}
 			}
 		}

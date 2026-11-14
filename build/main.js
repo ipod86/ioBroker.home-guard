@@ -306,7 +306,7 @@ class HomeGuard extends utils.Adapter {
       c.autoFull && c.enumFull,
       c.autoPerimeter && c.enumPerimeter,
       c.autoFire && c.enumFire,
-      c.presenceAuto && c.enumPresence,
+      c.presenceEnabled && c.presenceAuto && c.enumPresence,
       c.simAuto && c.enumSimLamps,
       c.lampsAuto && c.enumLamps
     ].filter((e) => typeof e === "string" && e.length > 0);
@@ -393,7 +393,8 @@ class HomeGuard extends utils.Adapter {
       const o = await this.getForeignObjectAsync(id);
       const role = String(((_a2 = o == null ? void 0 : o.common) == null ? void 0 : _a2.role) || "");
       const motion = /motion|presence/i.test(role) || /BWM|Bewegung|motion/i.test(id);
-      found.set(id, { id, name: await this.nameOf(id), circuit, delayed: false, invert: false, motion });
+      const hazard = circuit === "24h" ? c.hazardDefault || "speech" : void 0;
+      found.set(id, { id, name: await this.nameOf(id), circuit, delayed: false, invert: false, motion, hazard });
     };
     if (c.autoFull) {
       for (const id of await this.enumStates(c.enumFull)) {
@@ -425,7 +426,8 @@ class HomeGuard extends utils.Adapter {
         circuit: row.circuit || "perimeter",
         delayed: !!row.delayed,
         invert: !!row.invert,
-        motion: !!row.motion
+        motion: !!row.motion,
+        hazard: (row.circuit || "perimeter") === "24h" ? row.hazard || c.hazardDefault || "speech" : void 0
       });
     }
     const list = [...found.values()];
@@ -452,6 +454,11 @@ class HomeGuard extends utils.Adapter {
     const c = this.config;
     const ids = /* @__PURE__ */ new Set();
     this.personOf.clear();
+    if (!c.presenceEnabled) {
+      this.presenceIds = [];
+      await this.publishPresence();
+      return;
+    }
     if (c.presenceAuto) {
       (await this.enumStates(c.enumPresence)).forEach((id) => ids.add(id));
     }
@@ -949,11 +956,11 @@ class HomeGuard extends utils.Adapter {
    * @param info details
    */
   async onAlarmEvent(e, info) {
-    var _a;
+    var _a, _b, _c;
     const c = this.config;
     const names = (info.sensors || []).map((s) => s.name).join(", ");
     const textIn = (T) => {
-      var _a2, _b, _c;
+      var _a2, _b2, _c2, _d;
       switch (e) {
         case "armedFull":
         case "armedPerimeter":
@@ -973,13 +980,15 @@ class HomeGuard extends utils.Adapter {
         case "entry":
           return T.entry(((_a2 = info.sensor) == null ? void 0 : _a2.name) || "", num(c.entryDelay, 30));
         case "alarm":
-          return info.panic ? T.panic(((_b = info.sensor) == null ? void 0 : _b.name) || "") : T.alarm(((_c = info.sensor) == null ? void 0 : _c.name) || "");
+          return info.panic ? T.panic(((_b2 = info.sensor) == null ? void 0 : _b2.name) || "") : T.alarm(((_c2 = info.sensor) == null ? void 0 : _c2.name) || "");
         case "alarmEnd":
           return T.alarmEnd(this.src(info.source, T));
         case "wrongPin":
           return T.wrongPin(this.wrongPin);
         case "sabotage":
           return T.sabotage(names);
+        case "hazard":
+          return T.hazard(((_d = info.sensor) == null ? void 0 : _d.name) || "");
       }
       return "";
     };
@@ -1034,6 +1043,19 @@ class HomeGuard extends utils.Adapter {
       case "sabotage":
         notify = c.notifySabotage;
         break;
+      case "hazard":
+        notify = c.notifyHazard !== false;
+        speech = ((_b = info.sensor) == null ? void 0 : _b.hazard) === "speech";
+        await this.setStateAsync("status.lastTrigger", ((_c = info.sensor) == null ? void 0 : _c.name) || "", true);
+        await this.setStateAsync("status.lastTriggerTime", Date.now(), true);
+        if (c.notificationManager) {
+          try {
+            await this.registerNotification("home-guard", "alarm", text);
+          } catch (err) {
+            this.log.debug(`Notification manager: ${err.message}`);
+          }
+        }
+        break;
     }
     if (e === "disarmed") {
       this.stopRepeat();
@@ -1041,7 +1063,7 @@ class HomeGuard extends utils.Adapter {
     this.addLog(e, text);
     this.log.info(textIn((0, import_texts.texts)("en")));
     if (notify) {
-      this.notifyAll(text, false, e === "alarm" || e === "entry" || e === "sabotage");
+      this.notifyAll(text, false, e === "alarm" || e === "entry" || e === "sabotage" || e === "hazard");
     }
     if (speech && c.speechId) {
       await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim());

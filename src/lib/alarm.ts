@@ -18,7 +18,8 @@ export type AlarmEvent =
 	| 'alarm'
 	| 'alarmEnd'
 	| 'wrongPin'
-	| 'sabotage';
+	| 'sabotage'
+	| 'hazard';
 
 export interface SensorDef {
 	id: string;
@@ -27,6 +28,8 @@ export interface SensorDef {
 	delayed: boolean;
 	invert: boolean;
 	motion: boolean;
+	/** 24 h sensors: only a message, message and speech, or a full alarm (sirens, lamps, actions) */
+	hazard?: 'notify' | 'speech' | 'alarm';
 }
 
 export interface AlarmOptions {
@@ -209,7 +212,14 @@ export class AlarmEngine {
 	 */
 	private triggered(s: SensorDef): void {
 		if (s.circuit === '24h') {
-			this.alarm(s);
+			// danger detectors (smoke, water, gas): a full alarm only when set so, otherwise a danger message
+			if (s.hazard === 'alarm') {
+				this.alarm(s);
+			} else {
+				this.lastTrigger = s.name;
+				this.lastTriggerTime = this.host.now();
+				this.host.event('hazard', { mode: this.mode, sensor: s });
+			}
 			return;
 		}
 		if (this.phase !== 'armed' && this.phase !== 'entry') {

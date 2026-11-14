@@ -352,7 +352,7 @@ class HomeGuard extends utils.Adapter {
 			c.autoFull && c.enumFull,
 			c.autoPerimeter && c.enumPerimeter,
 			c.autoFire && c.enumFire,
-			c.presenceAuto && c.enumPresence,
+			c.presenceEnabled && c.presenceAuto && c.enumPresence,
 			c.simAuto && c.enumSimLamps,
 			c.lampsAuto && c.enumLamps,
 		].filter((e): e is string => typeof e === 'string' && e.length > 0);
@@ -441,7 +441,8 @@ class HomeGuard extends utils.Adapter {
 			const o = await this.getForeignObjectAsync(id);
 			const role = String(o?.common?.role || '');
 			const motion = /motion|presence/i.test(role) || /BWM|Bewegung|motion/i.test(id);
-			found.set(id, { id, name: await this.nameOf(id), circuit, delayed: false, invert: false, motion });
+			const hazard = circuit === '24h' ? c.hazardDefault || 'speech' : undefined;
+			found.set(id, { id, name: await this.nameOf(id), circuit, delayed: false, invert: false, motion, hazard });
 		};
 		if (c.autoFull) {
 			for (const id of await this.enumStates(c.enumFull)) {
@@ -475,6 +476,7 @@ class HomeGuard extends utils.Adapter {
 				delayed: !!row.delayed,
 				invert: !!row.invert,
 				motion: !!row.motion,
+				hazard: (row.circuit || 'perimeter') === '24h' ? row.hazard || c.hazardDefault || 'speech' : undefined,
 			});
 		}
 		const list = [...found.values()];
@@ -501,6 +503,11 @@ class HomeGuard extends utils.Adapter {
 		const c = this.config;
 		const ids = new Set<string>();
 		this.personOf.clear();
+		if (!c.presenceEnabled) {
+			this.presenceIds = [];
+			await this.publishPresence();
+			return;
+		}
 		if (c.presenceAuto) {
 			(await this.enumStates(c.enumPresence)).forEach(id => ids.add(id));
 		}
@@ -1079,6 +1086,8 @@ class HomeGuard extends utils.Adapter {
 					return T.wrongPin(this.wrongPin);
 				case 'sabotage':
 					return T.sabotage(names);
+				case 'hazard':
+					return T.hazard(info.sensor?.name || '');
 			}
 			return '';
 		};
@@ -1133,6 +1142,20 @@ class HomeGuard extends utils.Adapter {
 			case 'sabotage':
 				notify = c.notifySabotage;
 				break;
+			case 'hazard':
+				// danger detectors: message (and speech) per sensor, no sirens - those only with "full alarm"
+				notify = c.notifyHazard !== false;
+				speech = info.sensor?.hazard === 'speech';
+				await this.setStateAsync('status.lastTrigger', info.sensor?.name || '', true);
+				await this.setStateAsync('status.lastTriggerTime', Date.now(), true);
+				if (c.notificationManager) {
+					try {
+						await this.registerNotification('home-guard', 'alarm', text);
+					} catch (err) {
+						this.log.debug(`Notification manager: ${(err as Error).message}`);
+					}
+				}
+				break;
 		}
 		if (e === 'disarmed') {
 			this.stopRepeat();
@@ -1140,7 +1163,7 @@ class HomeGuard extends utils.Adapter {
 		this.addLog(e, text);
 		this.log.info(textIn(texts('en')));
 		if (notify) {
-			this.notifyAll(text, false, e === 'alarm' || e === 'entry' || e === 'sabotage');
+			this.notifyAll(text, false, e === 'alarm' || e === 'entry' || e === 'sabotage' || e === 'hazard');
 		}
 		if (speech && c.speechId) {
 			await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, '').trim());

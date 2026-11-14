@@ -51,9 +51,26 @@ function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 		{ id: 'win', name: 'Küchenfenster', circuit: 'perimeter', delayed: false, invert: false, motion: false },
 		{ id: 'pir1', name: 'BWM Flur', circuit: 'interior', delayed: false, invert: false, motion: true },
 		{ id: 'pir2', name: 'BWM Wohnzimmer', circuit: 'interior', delayed: false, invert: false, motion: true },
-		{ id: 'smoke', name: 'Rauchmelder', circuit: '24h', delayed: false, invert: false, motion: false },
+		{
+			id: 'smoke',
+			name: 'Rauchmelder',
+			circuit: '24h',
+			delayed: false,
+			invert: false,
+			motion: false,
+			hazard: 'alarm',
+		},
+		{
+			id: 'water',
+			name: 'Wassermelder',
+			circuit: '24h',
+			delayed: false,
+			invert: false,
+			motion: false,
+			hazard: 'notify',
+		},
 	];
-	engine.setSensors(sensors, { door: false, win: 0, pir1: false, pir2: false, smoke: false });
+	engine.setSensors(sensors, { door: false, win: 0, pir1: false, pir2: false, smoke: false, water: false });
 	const tick = (sec: number): void => {
 		const end = now + sec * 1000;
 		for (;;) {
@@ -227,5 +244,14 @@ describe('AlarmEngine', () => {
 		expect(t.events).to.deep.equal([]);
 		t.engine.ack('state');
 		expect(t.status().phase).to.equal('armed');
+	});
+
+	it('a danger detector set to message only reports without alarm, also when disarmed', () => {
+		const t = setup();
+		t.engine.sensorChanged('water', true);
+		expect(t.events).to.deep.equal(['hazard']);
+		expect(t.status().phase).to.equal('disarmed');
+		expect(t.outputs).to.deep.equal([]);
+		expect(t.status().lastTrigger).to.equal('Wassermelder');
 	});
 });

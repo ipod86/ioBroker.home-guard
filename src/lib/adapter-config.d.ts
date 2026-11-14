@@ -13,6 +13,8 @@ export interface SensorRow {
 	invert: boolean;
 	/** motion detector: counts for the "several sensors" rule */
 	motion: boolean;
+	/** 24 h sensors: message only, message and speech, or full alarm */
+	hazard?: 'notify' | 'speech' | 'alarm';
 }
 
 /** A plain state ID with an optional name */
@@ -101,6 +103,9 @@ declare global {
 			testActions: boolean;
 			testDuration: number;
 			eveningLight: boolean;
+			hazardDefault: 'notify' | 'speech' | 'alarm';
+			notifyHazard: boolean;
+			presenceEnabled: boolean;
 			eveningLightOn: boolean;
 			eveningLightOff: boolean;
 			simDeviceMin: number;
