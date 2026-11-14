@@ -117,6 +117,11 @@ class HomeGuard extends utils.Adapter {
 		const sys = await this.getForeignObjectAsync('system.config');
 		const lang = sys?.common?.language || 'en';
 		this.T = texts(lang);
+
+		// state of the last run - read first: setting up the sensors already writes the status (still "off")
+		const lastMode = (await this.getStateAsync('status.mode'))?.val as Mode;
+		const lastAlarm = (await this.getStateAsync('status.alarm'))?.val === true;
+		const trigger = String((await this.getStateAsync('status.lastTrigger'))?.val || '');
 		this.lat = Number(sys?.common?.latitude) || 51;
 		this.lon = Number(sys?.common?.longitude) || 10;
 
@@ -209,11 +214,8 @@ class HomeGuard extends utils.Adapter {
 		}
 
 		// back to the mode of the last run (no exit delay, no notification)
-		const lastMode = (await this.getStateAsync('status.mode'))?.val as Mode;
-		const lastAlarm = (await this.getStateAsync('status.alarm'))?.val === true;
 		if (lastAlarm && MODES.includes(lastMode)) {
 			// restarted during an alarm: it stays until acknowledged; sirens off, they would never stop otherwise
-			const trigger = String((await this.getStateAsync('status.lastTrigger'))?.val || '');
 			this.alarm.restore(lastMode);
 			this.alarm.restoreAlarm(lastMode, trigger);
 			await this.sirens(false);

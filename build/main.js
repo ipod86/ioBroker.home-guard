@@ -95,10 +95,13 @@ class HomeGuard extends utils.Adapter {
     const sys = await this.getForeignObjectAsync("system.config");
     const lang = ((_a = sys == null ? void 0 : sys.common) == null ? void 0 : _a.language) || "en";
     this.T = (0, import_texts.texts)(lang);
-    this.lat = Number((_b = sys == null ? void 0 : sys.common) == null ? void 0 : _b.latitude) || 51;
-    this.lon = Number((_c = sys == null ? void 0 : sys.common) == null ? void 0 : _c.longitude) || 10;
-    this.log_ = this.parseJson((_d = await this.getStateAsync("status.log")) == null ? void 0 : _d.val, []);
-    const learned = this.parseJson((_e = await this.getStateAsync("simulation.learned")) == null ? void 0 : _e.val, { days: {} });
+    const lastMode = (_b = await this.getStateAsync("status.mode")) == null ? void 0 : _b.val;
+    const lastAlarm = ((_c = await this.getStateAsync("status.alarm")) == null ? void 0 : _c.val) === true;
+    const trigger = String(((_d = await this.getStateAsync("status.lastTrigger")) == null ? void 0 : _d.val) || "");
+    this.lat = Number((_e = sys == null ? void 0 : sys.common) == null ? void 0 : _e.latitude) || 51;
+    this.lon = Number((_f = sys == null ? void 0 : sys.common) == null ? void 0 : _f.longitude) || 10;
+    this.log_ = this.parseJson((_g = await this.getStateAsync("status.log")) == null ? void 0 : _g.val, []);
+    const learned = this.parseJson((_h = await this.getStateAsync("simulation.learned")) == null ? void 0 : _h.val, { days: {} });
     this.learner = new import_simulation.Learner(learned && learned.days ? learned : { days: {} });
     this.alarm = new import_alarm.AlarmEngine(
       {
@@ -173,10 +176,7 @@ class HomeGuard extends utils.Adapter {
     if ((auto == null ? void 0 : auto.val) == null) {
       await this.setStateAsync("control.autoArm", true, true);
     }
-    const lastMode = (_f = await this.getStateAsync("status.mode")) == null ? void 0 : _f.val;
-    const lastAlarm = ((_g = await this.getStateAsync("status.alarm")) == null ? void 0 : _g.val) === true;
     if (lastAlarm && MODES.includes(lastMode)) {
-      const trigger = String(((_h = await this.getStateAsync("status.lastTrigger")) == null ? void 0 : _h.val) || "");
       this.alarm.restore(lastMode);
       this.alarm.restoreAlarm(lastMode, trigger);
       await this.sirens(false);
