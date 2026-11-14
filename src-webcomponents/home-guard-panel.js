@@ -71,7 +71,7 @@ const parse = (v, d) => {
 const STYLE = `
 :host { display: block; width: 100%; height: 100%; container-type: size; }
 * { box-sizing: border-box; }
-.wrap { --hg-fill: color-mix(in srgb, var(--iob-text, #888) 12%, transparent); --hg-line: color-mix(in srgb, var(--iob-text, #888) 22%, transparent); --hg-btn-line: color-mix(in srgb, var(--iob-text, #888) 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
+.wrap { --hg-fill: color-mix(in srgb, currentColor 12%, transparent); --hg-line: color-mix(in srgb, currentColor 22%, transparent); --hg-btn-line: color-mix(in srgb, currentColor 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
 .head { border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 4cqmin; display: flex; align-items: center; justify-content: center; gap: 4cqmin; color: #fff; transition: background .3s; }
 .head svg { width: 14cqmin; height: 14cqmin; fill: currentColor; flex: none; }
 .head .t { flex: 0 1 auto; min-width: 0; text-align: center; }
@@ -93,7 +93,7 @@ button.warn { background: var(--iob-warning, #ed6c02); color: #1f1400; border-co
 button.err { background: var(--iob-error, #d32f2f); color: #fff; border-color: transparent; }
 button:disabled { opacity: .5; cursor: default; }
 .box { border: 1px solid var(--hg-line, rgba(127,127,127,.35)); border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 2.5cqmin 3cqmin; }
-.lbl { font-size: .8em; color: var(--iob-text-secondary, inherit); opacity: .85; margin-bottom: 1cqmin; }
+.lbl { font-size: .8em; opacity: .85; margin-bottom: 1cqmin; }
 .chips { display: flex; flex-wrap: wrap; gap: 1.5cqmin; }
 .chip { background: var(--iob-warning, #ed6c02); color: #1f1400; border-radius: 99px; padding: .2em .7em; font-size: .85em; }
 .ok { color: var(--iob-success, #2e7d32); }
@@ -110,7 +110,7 @@ button:disabled { opacity: .5; cursor: default; }
 .log div:last-child { border-bottom: none; }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
-.pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: var(--iob-text, inherit); display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
+.pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
 .pad .dots { text-align: center; font-size: 2em; letter-spacing: .3em; min-height: 1.3em; }
 .pad .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqmin; flex: 1; }
 .pad .keys button { font-size: 1.5em; justify-content: center; }
