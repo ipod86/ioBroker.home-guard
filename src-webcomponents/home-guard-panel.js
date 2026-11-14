@@ -634,9 +634,11 @@ class HomeGuardPanel extends IobWebComponent {
 		const t = this.t;
 		const s = this.settings;
 		// draw only when all values and the answer of the adapter are there - otherwise the panel builds up in jumps
-		if (!this._ready && !this.editMode && this.socket) {
+		if (!this._ready && !this.editMode) {
 			const complete =
-				this.getStateIds(s).every(id => this.states[id] !== undefined) && (this.info || this.infoFor === null);
+				!!this.socket &&
+				this.getStateIds(s).every(id => this.states[id] !== undefined) &&
+				(this.info || this.infoFor === null);
 			if (!complete) {
 				if (!this._readyTimer) {
 					this._readyTimer = setTimeout(() => {
