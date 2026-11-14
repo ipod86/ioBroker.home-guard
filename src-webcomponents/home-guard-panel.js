@@ -72,9 +72,9 @@ const STYLE = `
 :host { display: block; width: 100%; height: 100%; container-type: size; }
 * { box-sizing: border-box; }
 .wrap { --hg-fill: color-mix(in srgb, var(--iob-text, #888) 12%, transparent); --hg-line: color-mix(in srgb, var(--iob-text, #888) 22%, transparent); --hg-btn-line: color-mix(in srgb, var(--iob-text, #888) 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
-.head { border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 4cqmin; display: flex; align-items: center; gap: 4cqmin; color: #fff; transition: background .3s; }
+.head { border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 4cqmin; display: flex; align-items: center; justify-content: center; gap: 4cqmin; color: #fff; transition: background .3s; }
 .head svg { width: 14cqmin; height: 14cqmin; fill: currentColor; flex: none; }
-.head .t { flex: 1; min-width: 0; }
+.head .t { flex: 0 1 auto; min-width: 0; text-align: center; }
 .head .big { font-size: 1.6em; font-weight: 600; line-height: 1.1; }
 .head .sub { opacity: .9; font-size: .9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .head .cd { font-size: 2.2em; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -107,8 +107,9 @@ button:disabled { opacity: .5; cursor: default; }
 .small { font-size: .82em; opacity: .85; }
 .log { overflow: auto; flex: 1; min-height: 0; }
 .log div { display: flex; gap: 2cqmin; font-size: .85em; padding: .2em 0; border-bottom: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
+.log div:last-child { border-bottom: none; }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
-.msg { color: var(--iob-error, #d32f2f); font-size: .9em; min-height: 1em; }
+.msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
 .pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: var(--iob-text, inherit); display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
 .pad .dots { text-align: center; font-size: 2em; letter-spacing: .3em; min-height: 1.3em; }
 .pad .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqmin; flex: 1; }
@@ -318,7 +319,7 @@ class HomeGuardPanel extends IobWebComponent {
 		let html = `<style>${STYLE}</style><div class="wrap" style="position:relative">`;
 		html += `<div class="head ${phase}">${ICON[mode === 'off' ? 'shield' : mode] || ICON.shield}<div class="t"><div class="big">${esc(
 			t.phase[phase] || phase,
-		)}</div><div class="sub">${sub}</div></div>${cd > 0 && (phase === 'arming' || phase === 'entry') ? `<div class="cd">${cd}</div>` : ''}</div>`;
+		)}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${cd > 0 && (phase === 'arming' || phase === 'entry') ? `<div class="cd">${cd}</div>` : ''}</div>`;
 		if (phase === 'arming') {
 			html += `<button class="wide warn" data-a="cancel">${esc(t.cancel)}</button>`;
 		} else if (phase === 'alarm') {
@@ -331,7 +332,9 @@ class HomeGuardPanel extends IobWebComponent {
 				})
 				.join('')}</div>`;
 		}
-		html += `<div class="msg">${esc(this.msg)}</div>`;
+		if (this.msg) {
+			html += `<div class="msg">${esc(this.msg)}</div>`;
+		}
 		if (s.open !== false) {
 			html += `<div class="box"><div class="lbl">${esc(t.open)}</div>${
 				open.length
