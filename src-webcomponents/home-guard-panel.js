@@ -499,6 +499,9 @@ class HomeGuardPanel extends IobWebComponent {
 			this.info = null;
 			this.infoFor = null;
 		}
+		if (!this._ready) {
+			this.render();
+		}
 	}
 
 	/**
@@ -630,6 +633,22 @@ class HomeGuardPanel extends IobWebComponent {
 		void this.loadInfo();
 		const t = this.t;
 		const s = this.settings;
+		// draw only when all values and the answer of the adapter are there - otherwise the panel builds up in jumps
+		if (!this._ready && !this.editMode && this.socket) {
+			const complete =
+				this.getStateIds(s).every(id => this.states[id] !== undefined) && (this.info || this.infoFor === null);
+			if (!complete) {
+				if (!this._readyTimer) {
+					this._readyTimer = setTimeout(() => {
+						this._ready = true;
+						this.render();
+					}, 2500);
+				}
+				return;
+			}
+			this._ready = true;
+			clearTimeout(this._readyTimer);
+		}
 		if (!this.settings.instance && !this.socket) {
 			this.shadowRoot.innerHTML = `<style>${STYLE}</style><div class="wrap center">${esc(t.chooseInstance)}</div>`;
 			return;
