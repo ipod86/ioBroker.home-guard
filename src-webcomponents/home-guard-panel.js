@@ -139,7 +139,7 @@ button:disabled { opacity: .5; cursor: default; }
 .row.sep { margin-top: 2cqmin; padding-top: 2cqmin; border-top: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
-.pad { position: absolute; inset: 0; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
+.pad { position: absolute; inset: 0; min-height: 100%; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
 .pad .dots { text-align: center; font-size: 2em; letter-spacing: .3em; min-height: 1.3em; }
 .pad .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqmin; flex: 1; }
 .pad .keys button { font-size: 1.5em; justify-content: center; }
@@ -471,7 +471,14 @@ class HomeGuardPanel extends IobWebComponent {
 				)}<button data-a="close">✕</button><button data-a="key" data-k="0">0</button><button data-a="del">⌫</button></div><button class="wide on" data-a="ok">OK</button></div>`;
 		}
 		html += '</div>';
+		// keep the scroll position when redrawing; the PIN keypad is always shown from the top
+		const before = this.shadowRoot.querySelector('.wrap');
+		const top = before ? before.scrollTop : 0;
 		this.shadowRoot.innerHTML = html;
+		const wrap = this.shadowRoot.querySelector('.wrap');
+		if (wrap) {
+			wrap.scrollTop = this.pad ? 0 : top;
+		}
 	}
 }
 
