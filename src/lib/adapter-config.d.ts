@@ -93,6 +93,11 @@ declare global {
 			testSirens: boolean;
 			testActions: boolean;
 			testDuration: number;
+			eveningLight: boolean;
+			simLearnWindow: 'all' | 'dark' | 'times';
+			simLearnDarkOffset: number;
+			simLearnFrom: string;
+			simLearnTo: string;
 			// disarm and presence
 			lockEnabled: boolean;
 			lockId: string;

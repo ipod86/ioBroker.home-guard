@@ -39,6 +39,8 @@ export interface SimOptions {
 	visitMax: number; // min
 	learnDays: number;
 	jitter: number; // min
+	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
+	learnFilter?: (ts: number) => boolean;
 }
 
 export interface PlanStep {
@@ -206,6 +208,9 @@ export function planEvening(
 				if (!ids.has(s.id)) {
 					continue;
 				}
+				if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
+					continue;
+				}
 				const at = noon + (s.start + r(-o.jitter, o.jitter)) * MIN;
 				const dur = Math.max(1, s.dur * r(0.8, 1.2));
 				steps.push({ at, id: s.id, on: true, why: 'learned' });
@@ -260,6 +265,17 @@ export interface SimHost {
 	publish(active: boolean, plan: PlanStep[], next: PlanStep | null): void;
 }
 
+export interface RunnerOptions {
+	/**
+	 * true: every step is carried out, whoever switched the lamp before (evening light: on at dusk even if switched
+	 * off by hand the evening before, off at night even if switched on by hand). false (simulation): only lamps that
+	 * were off are switched on, and only those are switched off again.
+	 */
+	force?: boolean;
+	/** true: steps already due when starting are carried out (simulation); false: only steps from now on */
+	catchUp?: boolean;
+}
+
 /** Runs the plan of the current evening while the simulation is active */
 export class SimRunner {
 	active = false;
@@ -272,10 +288,12 @@ export class SimRunner {
 	 *
 	 * @param host timers and lamps
 	 * @param makePlan builds the plan of the current evening
+	 * @param opts force switching, catch up on due steps
 	 */
 	constructor(
 		private host: SimHost,
 		private makePlan: (now: number) => PlanStep[],
+		private opts: RunnerOptions = { force: false, catchUp: true },
 	) {}
 
 	/**
@@ -301,8 +319,10 @@ export class SimRunner {
 			this.host.clearTimer(this.timer);
 			this.timer = null;
 		}
-		for (const id of this.ours) {
-			this.host.switchLamp(id, false);
+		if (!this.opts.force) {
+			for (const id of this.ours) {
+				this.host.switchLamp(id, false);
+			}
 		}
 		this.ours.clear();
 		this.plan = [];
@@ -316,14 +336,16 @@ export class SimRunner {
 		}
 		const now = this.host.now();
 		const plan = this.makePlan(now);
-		const due = new Map<string, boolean>();
-		for (const s of plan) {
-			if (s.at <= now) {
-				due.set(s.id, s.on);
+		if (this.opts.catchUp !== false) {
+			const due = new Map<string, boolean>();
+			for (const s of plan) {
+				if (s.at <= now) {
+					due.set(s.id, s.on);
+				}
 			}
-		}
-		for (const [id, on] of due) {
-			this.apply(id, on);
+			for (const [id, on] of due) {
+				this.apply(id, on);
+			}
 		}
 		this.plan = plan.filter(s => s.at > now);
 		this.schedule();
@@ -345,6 +367,12 @@ export class SimRunner {
 	 * @param on on or off
 	 */
 	private apply(id: string, on: boolean): void {
+		if (this.opts.force) {
+			if (this.host.isOn(id) !== on) {
+				this.host.switchLamp(id, on);
+			}
+			return;
+		}
 		if (on) {
 			if (!this.host.isOn(id)) {
 				this.ours.add(id);

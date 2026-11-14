@@ -1465,6 +1465,29 @@
 						}
 					]
 				},
+				"hEvening": {
+					"type": "header",
+					"text": "Evening light",
+					"size": 5
+				},
+				"iEvening": {
+					"type": "staticText",
+					"text": "Switches the lamps of type \"evening\" every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"eveningLight": {
+					"type": "checkbox",
+					"label": "Evening light every evening, also when somebody is at home",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 8,
+					"xl": 8
+				},
 				"h3": {
 					"type": "header",
 					"text": "Dusk",
@@ -1625,6 +1648,66 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4
+				},
+				"simLearnWindow": {
+					"type": "select",
+					"label": "Learn and replay only",
+					"options": [
+						{
+							"value": "dark",
+							"label": "when it is dark (from before sunset to sunrise)"
+						},
+						{
+							"value": "times",
+							"label": "between two times"
+						},
+						{
+							"value": "all",
+							"label": "always (the whole day)"
+						}
+					],
+					"default": "dark",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"simLearnDarkOffset": {
+					"type": "number",
+					"label": "Dark from … minutes before sunset",
+					"min": 0,
+					"max": 180,
+					"default": 30,
+					"hidden": "data.simLearnWindow !== 'dark'",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simLearnFrom": {
+					"type": "text",
+					"label": "From (HH:MM)",
+					"default": "15:00",
+					"hidden": "data.simLearnWindow !== 'times'",
+					"xs": 12,
+					"sm": 12,
+					"md": 3,
+					"lg": 2,
+					"xl": 2
+				},
+				"simLearnTo": {
+					"type": "text",
+					"label": "To (HH:MM)",
+					"default": "02:00",
+					"hidden": "data.simLearnWindow !== 'times'",
+					"xs": 12,
+					"sm": 12,
+					"md": 3,
+					"lg": 2,
+					"xl": 2
 				}
 			}
 		},

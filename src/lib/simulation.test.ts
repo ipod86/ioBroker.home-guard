@@ -178,3 +178,69 @@ describe('SimRunner', () => {
 		expect(log).to.deep.equal(['wz:true', 'flur:true', 'flur:false', 'wz:false']);
 	});
 });
+
+describe('learn filter and evening light', () => {
+	it('learned switching outside the filter is not replayed', () => {
+		const l = new Learner();
+		const day = new Date(2026, 10, 11, 12).getTime();
+		l.record('flur', true, day + 1 * 60 * MIN); // 13:00, broad daylight
+		l.record('flur', false, day + (1 * 60 + 5) * MIN);
+		l.record('flur', true, day + 9 * 60 * MIN); // 21:00
+		l.record('flur', false, day + (9 * 60 + 5) * MIN);
+		const dark = (ts: number): boolean => new Date(ts).getHours() >= 16 || new Date(ts).getHours() < 7;
+		const plan = planEvening(
+			noon,
+			sunset,
+			lamps,
+			{ ...opts, mode: 'learned', jitter: 0, learnFilter: dark },
+			l,
+			seeded(2),
+		);
+		const flur = plan.filter(s => s.id === 'flur' && s.on && s.why === 'learned');
+		expect(flur.length).to.equal(1);
+		expect(new Date(flur[0].at).getHours()).to.equal(21);
+	});
+
+	it('forced runner: on even if switched off by hand, off even if switched on by hand, no catching up', () => {
+		let now = noon + 4 * 60 * MIN; // 16:00
+		const lampState: Record<string, boolean> = { wz: false, ess: true };
+		const log: string[] = [];
+		const timers: { at: number; fn: () => void }[] = [];
+		const plan: PlanStep[] = [
+			{ at: noon + 3 * 60 * MIN, id: 'ess', on: true, why: 'dusk' }, // already due: not caught up
+			{ at: noon + 5 * 60 * MIN, id: 'wz', on: true, why: 'dusk' },
+			{ at: noon + 11 * 60 * MIN, id: 'wz', on: false, why: 'dusk' },
+			{ at: noon + 11 * 60 * MIN, id: 'ess', on: false, why: 'dusk' },
+		];
+		const runner = new SimRunner(
+			{
+				now: () => now,
+				setTimer: (fn, ms) => {
+					timers.push({ at: now + ms, fn });
+					return timers.length;
+				},
+				clearTimer: () => undefined,
+				isOn: id => lampState[id],
+				switchLamp: (id, on) => {
+					lampState[id] = on;
+					log.push(`${id}:${on}`);
+				},
+				publish: () => undefined,
+			},
+			() => plan,
+			{ force: true, catchUp: false },
+		);
+		runner.start();
+		expect(log).to.deep.equal([]);
+		const run = (): void => {
+			const t = timers.shift()!;
+			now = t.at;
+			t.fn();
+		};
+		run(); // 17:00 wz on
+		run(); // 23:00 both off - ess was on by hand
+		expect(log).to.deep.equal(['wz:true', 'wz:false', 'ess:false']);
+		runner.stop();
+		expect(log.length).to.equal(3); // stopping switches nothing
+	});
+});

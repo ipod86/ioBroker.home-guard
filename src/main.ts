@@ -56,6 +56,8 @@ class HomeGuard extends utils.Adapter {
 	private lon = 10;
 	private alarm!: AlarmEngine;
 	private sim!: SimRunner;
+	private evening!: SimRunner;
+	private eveningLogged = '';
 	private learner = new Learner();
 	private sensorIds = new Set<string>();
 	private presenceIds: string[] = [];
@@ -153,11 +155,32 @@ class HomeGuard extends utils.Adapter {
 			},
 			now => this.makePlan(now),
 		);
+		// evening light: the evening lamps every evening, also when somebody is at home - forced, no catching up
+		// after a restart (a lamp switched off by hand this evening must not come on again)
+		this.evening = new SimRunner(
+			{
+				now: () => Date.now(),
+				setTimer: (fn, ms) => this.setTimeout(fn, ms),
+				clearTimer: h => this.clearTimeout(h as ioBroker.Timeout),
+				isOn: id => this.simLampVals.get(id) || false,
+				switchLamp: (id, on) => void this.switchLamp(id, on),
+				publish: (active, plan, next) => {
+					const text = active && next ? `${new Date(next.at).toLocaleString()} ${next.on ? 'on' : 'off'}` : '';
+					if (text && text !== this.eveningLogged) {
+						this.eveningLogged = text;
+						this.log.debug(`Evening light: next step ${text} (${plan.length} steps planned)`);
+					}
+				},
+			},
+			now => this.makeEveningPlan(now),
+			{ force: true, catchUp: false },
+		);
 
 		await this.setupSensors();
 		await this.setupPresence();
 		await this.setupSimLamps();
 		await this.setupLamps();
+		this.updateEvening();
 
 		if (c.lockEnabled && c.lockId) {
 			await this.subscribeForeignStatesAsync(c.lockId);
@@ -360,6 +383,7 @@ class HomeGuard extends utils.Adapter {
 			await this.setupPresence();
 			this.simLampVals.clear();
 			await this.setupSimLamps();
+			this.updateEvening();
 			if (this.alarm.status().phase !== 'alarm') {
 				await this.setupLamps();
 			}
@@ -581,8 +605,16 @@ class HomeGuard extends utils.Adapter {
 				c.simLearnDevicesOnly !== false
 					? LEARN_IGNORE.test(from)
 					: from.startsWith(`system.adapter.${this.namespace}`);
-			if (before !== on && !this.sim.active && !ignored && state.ack !== false) {
-				if (this.learner.record(id, on, state.ts || Date.now())) {
+			const ts = state.ts || Date.now();
+			// switching on outside the learning window is not learned (switching off ends only what was learned)
+			if (
+				before !== on &&
+				!this.sim.active &&
+				!ignored &&
+				state.ack !== false &&
+				(!on || this.inLearnWindow(ts))
+			) {
+				if (this.learner.record(id, on, ts)) {
 					this.saveLearnedSoon();
 				}
 			}
@@ -1406,9 +1438,74 @@ class HomeGuard extends utils.Adapter {
 	 * @param now current time
 	 */
 	private makePlan(now: number): PlanStep[] {
+		// with the evening light, the evening lamps belong to it and not to the simulation
+		const lamps = this.eveningOn() ? this.simLamps.filter(l => l.type !== 'evening') : this.simLamps;
 		// the current evening (until 12:00 the one before) and the next one, so there is always something ahead
 		const first = eveningNoon(now);
-		return [...this.planOne(first, now), ...this.planOne(first + 24 * 3600000, now)].sort((a, b) => a.at - b.at);
+		return [...this.planOne(first, now, lamps), ...this.planOne(first + 24 * 3600000, now, lamps)].sort(
+			(a, b) => a.at - b.at,
+		);
+	}
+
+	/**
+	 * Plan of the evening light: only the evening lamps, at dusk on and at "lights out" off
+	 *
+	 * @param now current time
+	 */
+	private makeEveningPlan(now: number): PlanStep[] {
+		const lamps = this.simLamps.filter(l => l.type === 'evening');
+		const first = eveningNoon(now);
+		return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 3600000, now, lamps, true)].sort(
+			(a, b) => a.at - b.at,
+		);
+	}
+
+	/** @returns the evening light is switched on and has lamps */
+	private eveningOn(): boolean {
+		return !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some(l => l.type === 'evening');
+	}
+
+	/** Starts, re-plans or stops the evening light after the settings or the lamps changed */
+	private updateEvening(): void {
+		if (this.eveningOn()) {
+			const lamps = this.simLamps.filter(l => l.type === 'evening').length;
+			this.log.info(`Evening light active for ${lamps} lamps`);
+			if (this.evening.active) {
+				this.evening.replan();
+			} else {
+				this.evening.start();
+			}
+		} else {
+			this.evening.stop();
+		}
+	}
+
+	/**
+	 * Is a time inside the learning window (always, only when dark, or between two times)?
+	 *
+	 * @param ts time in ms
+	 */
+	private inLearnWindow(ts: number): boolean {
+		const c = this.config;
+		const d = new Date(ts);
+		if (c.simLearnWindow === 'times') {
+			const m = d.getHours() * 60 + d.getMinutes();
+			const hm = (v: string, f: number): number => {
+				const x = /^(\d{1,2}):(\d{2})$/.exec(String(v || '').trim());
+				return x ? Number(x[1]) * 60 + Number(x[2]) : f;
+			};
+			const from = hm(c.simLearnFrom, 15 * 60);
+			const to = hm(c.simLearnTo, 2 * 60);
+			return from <= to ? m >= from && m < to : m >= from || m < to;
+		}
+		if (c.simLearnWindow === 'dark') {
+			const sun = sunTimes(d, this.lat, this.lon);
+			if (!sun) {
+				return true;
+			}
+			return ts >= sun.sunset - num(c.simLearnDarkOffset, 30) * 60000 || ts < sun.sunrise;
+		}
+		return true;
 	}
 
 	/**
@@ -1416,8 +1513,10 @@ class HomeGuard extends utils.Adapter {
 	 *
 	 * @param noon 12:00 of the evening day
 	 * @param now current time
+	 * @param lamps lamps of this plan
+	 * @param eveningLight true: plan of the evening light (dusk only, no visits)
 	 */
-	private planOne(noon: number, now: number): PlanStep[] {
+	private planOne(noon: number, now: number, lamps: SimLamp[], eveningLight = false): PlanStep[] {
 		const c = this.config;
 		const sun = sunTimes(new Date(noon), this.lat, this.lon);
 		let sunset = sun ? sun.sunset : noon + 6 * 3600000;
@@ -1428,19 +1527,20 @@ class HomeGuard extends utils.Adapter {
 		return planEvening(
 			noon,
 			sunset,
-			this.simLamps,
+			lamps,
 			{
-				mode: c.simMode || 'dusk',
+				mode: eveningLight ? 'dusk' : c.simMode || 'dusk',
 				startOffset: num(c.simStartOffset, -30),
 				startRandom: num(c.simStartRandom, 20),
 				end: c.simEnd || '22:30',
 				endRandom: num(c.simEndRandom, 60),
 				weekendLater: num(c.simWeekendLater, 45),
-				visits: num(c.simVisits, 4),
+				visits: eveningLight ? 0 : num(c.simVisits, 4),
 				visitMin: num(c.simVisitMin, 2),
 				visitMax: num(c.simVisitMax, 15),
 				learnDays: num(c.simLearnDays, 28),
 				jitter: num(c.simJitter, 15),
+				learnFilter: ts => this.inLearnWindow(ts),
 			},
 			this.learner,
 		);
@@ -1461,6 +1561,7 @@ class HomeGuard extends utils.Adapter {
 		if (lux < c.simLuxBelow && hour >= 14 && (!this.luxDuskTs || eveningKey(this.luxDuskTs) !== eveningKey(now))) {
 			this.luxDuskTs = now;
 			this.sim.replan();
+			this.evening.replan();
 		}
 	}
 
@@ -1543,6 +1644,7 @@ class HomeGuard extends utils.Adapter {
 		if (hm === '12:05') {
 			this.learner.prune(Date.now(), num(c.simLearnDays, 28));
 			this.sim.replan();
+			this.evening.replan();
 		}
 		if (now.getMinutes() === 7 || this.sabotageKnown.size === 0) {
 			await this.checkSabotage();

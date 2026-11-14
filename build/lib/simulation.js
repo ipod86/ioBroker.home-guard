@@ -128,6 +128,9 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
         if (!ids.has(s.id)) {
           continue;
         }
+        if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
+          continue;
+        }
         const at = noon + (s.start + r(-o.jitter, o.jitter)) * MIN;
         const dur = Math.max(1, s.dur * r(0.8, 1.2));
         steps.push({ at, id: s.id, on: true, why: "learned" });
@@ -174,10 +177,12 @@ class SimRunner {
    *
    * @param host timers and lamps
    * @param makePlan builds the plan of the current evening
+   * @param opts force switching, catch up on due steps
    */
-  constructor(host, makePlan) {
+  constructor(host, makePlan, opts = { force: false, catchUp: true }) {
     this.host = host;
     this.makePlan = makePlan;
+    this.opts = opts;
   }
   active = false;
   timer = null;
@@ -205,8 +210,10 @@ class SimRunner {
       this.host.clearTimer(this.timer);
       this.timer = null;
     }
-    for (const id of this.ours) {
-      this.host.switchLamp(id, false);
+    if (!this.opts.force) {
+      for (const id of this.ours) {
+        this.host.switchLamp(id, false);
+      }
     }
     this.ours.clear();
     this.plan = [];
@@ -219,14 +226,16 @@ class SimRunner {
     }
     const now = this.host.now();
     const plan = this.makePlan(now);
-    const due = /* @__PURE__ */ new Map();
-    for (const s of plan) {
-      if (s.at <= now) {
-        due.set(s.id, s.on);
+    if (this.opts.catchUp !== false) {
+      const due = /* @__PURE__ */ new Map();
+      for (const s of plan) {
+        if (s.at <= now) {
+          due.set(s.id, s.on);
+        }
       }
-    }
-    for (const [id, on] of due) {
-      this.apply(id, on);
+      for (const [id, on] of due) {
+        this.apply(id, on);
+      }
     }
     this.plan = plan.filter((s) => s.at > now);
     this.schedule();
@@ -246,6 +255,12 @@ class SimRunner {
    * @param on on or off
    */
   apply(id, on) {
+    if (this.opts.force) {
+      if (this.host.isOn(id) !== on) {
+        this.host.switchLamp(id, on);
+      }
+      return;
+    }
     if (on) {
       if (!this.host.isOn(id)) {
         this.ours.add(id);

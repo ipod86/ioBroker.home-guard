@@ -176,7 +176,12 @@
 		"testLamps": true,
 		"testSirens": false,
 		"testActions": false,
-		"testDuration": 15
+		"testDuration": 15,
+		"eveningLight": false,
+		"simLearnWindow": "dark",
+		"simLearnDarkOffset": 30,
+		"simLearnFrom": "15:00",
+		"simLearnTo": "02:00"
 	},
 	"objects": [],
 	"instanceObjects": [
