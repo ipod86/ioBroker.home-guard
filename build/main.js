@@ -272,7 +272,7 @@ class HomeGuard extends utils.Adapter {
     }
     const o = await this.getForeignObjectAsync(id);
     const desc = (o == null ? void 0 : o.common) && typeof o.common.desc === "string" ? o.common.desc : "";
-    if (desc) {
+    if (desc && !/^(manuell erzeugt|manually created)$/i.test(desc.trim())) {
       return desc;
     }
     const name = (_a = o == null ? void 0 : o.common) == null ? void 0 : _a.name;

@@ -315,7 +315,8 @@ class HomeGuard extends utils.Adapter {
 			o?.common && typeof (o.common as { desc?: unknown }).desc === 'string'
 				? (o.common as { desc: string }).desc
 				: '';
-		if (desc) {
+		// "Manuell erzeugt" / "Manually created" is what ioBroker writes into states created by hand - no name
+		if (desc && !/^(manuell erzeugt|manually created)$/i.test(desc.trim())) {
 			return desc;
 		}
 		const name = o?.common?.name;
