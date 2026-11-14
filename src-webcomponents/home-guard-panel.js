@@ -71,7 +71,7 @@ const parse = (v, d) => {
 const STYLE = `
 :host { display: block; width: 100%; height: 100%; container-type: size; }
 * { box-sizing: border-box; }
-.wrap { --hg-fill: color-mix(in srgb, var(--iob-text, #888) 12%, transparent); --hg-line: color-mix(in srgb, var(--iob-text, #888) 22%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
+.wrap { --hg-fill: color-mix(in srgb, var(--iob-text, #888) 12%, transparent); --hg-line: color-mix(in srgb, var(--iob-text, #888) 22%, transparent); --hg-btn-line: color-mix(in srgb, var(--iob-text, #888) 55%, transparent); height: 100%; display: flex; flex-direction: column; gap: 3cqmin; padding: 3cqmin; overflow: hidden; font-size: clamp(11px, 3.6cqmin, 18px); }
 .head { border-radius: calc(var(--iob-border-radius, 4px) * 2); padding: 4cqmin; display: flex; align-items: center; gap: 4cqmin; color: #fff; transition: background .3s; }
 .head svg { width: 14cqmin; height: 14cqmin; fill: currentColor; flex: none; }
 .head .t { flex: 1; min-width: 0; }
@@ -85,7 +85,7 @@ const STYLE = `
 .entry { animation: pulse 1.4s infinite; }
 @keyframes pulse { 50% { filter: brightness(1.35); } }
 .btns { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 2cqmin; }
-button { font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--hg-line, rgba(127,127,127,.35)); background: var(--hg-fill, rgba(127,127,127,.15)); border-radius: var(--iob-border-radius, 4px); padding: 2.5cqmin 1cqmin; display: flex; flex-direction: column; align-items: center; gap: 1cqmin; }
+button { font: inherit; color: inherit; cursor: pointer; border: 2px solid var(--hg-btn-line, rgba(127,127,127,.6)); background: var(--hg-fill, rgba(127,127,127,.15)); border-radius: var(--iob-border-radius, 4px); padding: 2.5cqmin 1cqmin; display: flex; flex-direction: column; align-items: center; gap: 1cqmin; }
 button svg { width: 7cqmin; height: 7cqmin; fill: currentColor; }
 button.on { background: var(--iob-primary, #1976d2); color: var(--iob-primary-contrast, #fff); border-color: transparent; }
 button.wide { flex-direction: row; justify-content: center; font-weight: 600; }
