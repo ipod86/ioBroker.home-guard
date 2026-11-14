@@ -356,7 +356,7 @@ class HomeGuardPanel extends IobWebComponent {
 				: phase === 'disarmed'
 					? ''
 					: esc(t.mode[mode] || mode);
-		let html = `<style>${STYLE}</style><div class="wrap" style="position:relative">`;
+		let html = `<style>${STYLE}</style><div class="wrap" style="position:relative${this.pad ? ';overflow:hidden' : ''}">`;
 		html += `<div class="head ${phase}">${ICON[mode === 'off' ? 'shield' : mode] || ICON.shield}<div class="t"><div class="big">${esc(
 			t.phase[phase] || phase,
 		)}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${cd > 0 && (phase === 'arming' || phase === 'entry') ? `<div class="cd">${cd}</div>` : ''}</div>`;
