@@ -150,7 +150,7 @@
 	"Morning light": "Ранкове світло",
 	"Morning light every morning": "Ранкове світло кожного ранку",
 	"Morning light every morning, also when somebody is at home": "Ранкове світло щоранку, навіть якщо хтось удома",
-	"Morning light: on dark mornings the morning lamps go on at wake-up time and off again when it is light.": "Morning light: on dark mornings the morning lamps go on at wake-up time and off again when it is light.",
+	"Morning light: on dark mornings the morning lamps go on at wake-up time and off again when it is light.": "Ранкове світло: темними ранками ранкові лампи вмикаються в час пробудження і знову вимикаються, коли стає світло.",
 	"Motion detectors: alarm only from this many different detectors": "Датчики руху: тривога лише починаючи з такої кількості різних датчиків",
 	"Name (optional)": "Ім'я (необов'язково)",
 	"Needed for special cases: tick \"delayed\" for the door you come in through – you then get the entry delay to disarm instead of an immediate alarm. \"Inverted\" is for sensors that report false when open. A row here overrides the same sensor from a function.": "Необхідно в особливих випадках: позначте «затримка» біля дверей, через які ви входите – тоді ви отримаєте затримку на вхід для зняття охорони замість негайного тривоги. «Перевернутий» для датчиків, які повідомляють помилку, коли вони відкриті. Рядок тут замінює той самий датчик із функції.",
