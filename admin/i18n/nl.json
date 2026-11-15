@@ -60,7 +60,6 @@
 	"Door lock": "Deurslot",
 	"Duration (s)": "Duur (s)",
 	"Duration (s, empty = alarm duration)": "Duur (s, leeg = alarmduur)",
-	"Dusk": "Schemering",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "bijv. alexa2…speak, sayit.0.tts.text of een eigen tekststatus",
 	"e.g. empty battery or radio problem": "bijv. lege batterij of radioprobleem",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "bijv. deur vergrendelen bij inschakelen, rolluiken omlaag, camera-opname bij alarm. Waarden: true, false, getallen of tekst.",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "Uiterlijk uit om (UU:MM, leeg = nee)",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "bijv. als jullie het huis verlaten; in het weekend later zoals de opstaantijd",
 	"Off as soon as brightness above (lux, 0 = no)": "Uit zodra lichter dan (lux, 0 = nee)",
-	"Brightness sensor from the dusk section": "Lichtsensor uit het gedeelte schemering"
+	"Evening (evening light and simulation)": "Avond (avondlicht en simulatie)",
+	"Morning (morning light and simulation)": "Ochtend (ochtendlicht en simulatie)",
+	"Brightness sensor from the evening section": "Lichtsensor uit het gedeelte avond"
 }

@@ -60,7 +60,6 @@
 	"Door lock": "门锁",
 	"Duration (s)": "持续时间（秒）",
 	"Duration (s, empty = alarm duration)": "时长（秒，空 = 报警时长）",
-	"Dusk": "黄昏",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "例如 alexa2…speak、sayit.0.tts.text 或您自己的文本状态",
 	"e.g. empty battery or radio problem": "例如电池耗尽或无线问题",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "例如布防时锁门、放下卷帘、报警时摄像头录像。值：true、false、数字或文本。",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "最晚关闭时间（HH:MM，空 = 不使用）",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "例如出门时；周末与起床时间一样推迟",
 	"Off as soon as brightness above (lux, 0 = no)": "亮度高于该值时关闭（勒克斯，0 = 不使用）",
-	"Brightness sensor from the dusk section": "黄昏部分的亮度传感器"
+	"Evening (evening light and simulation)": "傍晚（傍晚灯光和模拟）",
+	"Morning (morning light and simulation)": "早晨（早晨灯光和模拟）",
+	"Brightness sensor from the evening section": "傍晚部分的亮度传感器"
 }

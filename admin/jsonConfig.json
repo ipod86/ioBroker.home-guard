@@ -1814,7 +1814,7 @@
 				},
 				"hEvening": {
 					"type": "header",
-					"text": "Evening light",
+					"text": "Evening (evening light and simulation)",
 					"size": 5
 				},
 				"iEvening": {
@@ -1835,9 +1835,92 @@
 					"lg": 8,
 					"xl": 8
 				},
+				"simStartOffset": {
+					"type": "number",
+					"label": "Start relative to sunset (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": -180,
+					"max": 180,
+					"hidden": "!data.eveningLight && !data.simEnabled",
+					"newLine": true
+				},
+				"simStartRandom": {
+					"type": "number",
+					"label": "Random delay of the start up to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 120,
+					"hidden": "!data.eveningLight && !data.simEnabled"
+				},
+				"simLuxId": {
+					"type": "objectId",
+					"label": "Brightness sensor (optional)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true,
+					"hidden": "(!data.eveningLight && !data.simEnabled) && (!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning))))"
+				},
+				"simLuxBelow": {
+					"type": "number",
+					"label": "Start earlier when below lux",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 10000,
+					"hidden": "!data.simLuxId || (!data.eveningLight && !data.simEnabled)"
+				},
+				"simEnd": {
+					"type": "text",
+					"label": "Lights out from (HH:MM)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true,
+					"hidden": "!data.eveningLight && !data.simEnabled"
+				},
+				"simEndRandom": {
+					"type": "number",
+					"label": "Random delay of lights out up to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 240,
+					"hidden": "!data.eveningLight && !data.simEnabled"
+				},
+				"simWeekendLater": {
+					"type": "number",
+					"label": "Friday/Saturday later by (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 240,
+					"hidden": "!data.eveningLight && !data.simEnabled"
+				},
 				"hMorning": {
 					"type": "header",
-					"text": "Morning light",
+					"text": "Morning (morning light and simulation)",
 					"size": 5
 				},
 				"iMorning": {
@@ -1867,7 +1950,8 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"newLine": true
+					"newLine": true,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simWakeRandom": {
 					"type": "number",
@@ -1879,7 +1963,8 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simWakeWeekendLater": {
 					"type": "number",
@@ -1891,7 +1976,8 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simMorningOffOffset": {
 					"type": "number",
@@ -1904,7 +1990,8 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simMorningOffRandom": {
 					"type": "number",
@@ -1916,7 +2003,8 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simMorningOffTime": {
 					"type": "text",
@@ -1927,105 +2015,21 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"simMorningLuxAbove": {
 					"type": "number",
 					"label": "Off as soon as brightness above (lux, 0 = no)",
-					"help": "Brightness sensor from the dusk section",
+					"help": "Brightness sensor from the evening section",
 					"default": 0,
 					"min": 0,
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
-				},
-				"h3": {
-					"type": "header",
-					"text": "Dusk",
-					"size": 5,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
-				"simStartOffset": {
-					"type": "number",
-					"label": "Start relative to sunset (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
 					"xl": 4,
-					"min": -180,
-					"max": 180
-				},
-				"simStartRandom": {
-					"type": "number",
-					"label": "Random delay of the start up to (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 120
-				},
-				"simLuxId": {
-					"type": "objectId",
-					"label": "Brightness sensor (optional)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"newLine": true
-				},
-				"simLuxBelow": {
-					"type": "number",
-					"label": "Start earlier when below lux",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 10000,
-					"hidden": "!data.simLuxId"
-				},
-				"simEnd": {
-					"type": "text",
-					"label": "Lights out from (HH:MM)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"newLine": true
-				},
-				"simEndRandom": {
-					"type": "number",
-					"label": "Random delay of lights out up to (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 240
-				},
-				"simWeekendLater": {
-					"type": "number",
-					"label": "Friday/Saturday later by (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 240
+					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
 				},
 				"hVisits": {
 					"type": "header",

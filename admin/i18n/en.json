@@ -60,7 +60,6 @@
 	"Door lock": "Door lock",
 	"Duration (s)": "Duration (s)",
 	"Duration (s, empty = alarm duration)": "Duration (s, empty = alarm duration)",
-	"Dusk": "Dusk",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "e.g. alexa2…speak, sayit.0.tts.text or your own text state",
 	"e.g. empty battery or radio problem": "e.g. empty battery or radio problem",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "Off at the latest at (HH:MM, empty = no)",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "e.g. when you leave the house; later on the weekend like the wake-up time",
 	"Off as soon as brightness above (lux, 0 = no)": "Off as soon as brightness above (lux, 0 = no)",
-	"Brightness sensor from the dusk section": "Brightness sensor from the dusk section"
+	"Evening (evening light and simulation)": "Evening (evening light and simulation)",
+	"Morning (morning light and simulation)": "Morning (morning light and simulation)",
+	"Brightness sensor from the evening section": "Brightness sensor from the evening section"
 }

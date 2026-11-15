@@ -60,7 +60,6 @@
 	"Door lock": "Дверний замок",
 	"Duration (s)": "Тривалість (с)",
 	"Duration (s, empty = alarm duration)": "Тривалість (с, порожньо = тривалість тривоги)",
-	"Dusk": "Сутінки",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "напр. alexa2…speak, sayit.0.tts.text або власний текстовий стан",
 	"e.g. empty battery or radio problem": "напр. розряджена батарея або проблема радіозв'язку",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "напр. замкнути двері під час постановки на охорону, опустити ролети, запис камери під час тривоги. Значення: true, false, числа або текст.",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "Вимкнути не пізніше (ГГ:ХХ, порожньо = ні)",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "наприклад, коли ви виходите з дому; у вихідні пізніше, як час підйому",
 	"Off as soon as brightness above (lux, 0 = no)": "Вимкнути, щойно світліше за (люкс, 0 = ні)",
-	"Brightness sensor from the dusk section": "Датчик освітленості з розділу «Сутінки»"
+	"Evening (evening light and simulation)": "Вечір (вечірнє світло та імітація)",
+	"Morning (morning light and simulation)": "Ранок (ранкове світло та імітація)",
+	"Brightness sensor from the evening section": "Датчик освітленості з розділу «Вечір»"
 }

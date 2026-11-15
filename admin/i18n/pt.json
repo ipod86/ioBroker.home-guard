@@ -60,7 +60,6 @@
 	"Door lock": "Fechadura da porta",
 	"Duration (s)": "Duração (s)",
 	"Duration (s, empty = alarm duration)": "Duração (s, vazio = duração do alarme)",
-	"Dusk": "Crepúsculo",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "p. ex. alexa2…speak, sayit.0.tts.text ou um estado de texto próprio",
 	"e.g. empty battery or radio problem": "p. ex. bateria vazia ou problema de rádio",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "p. ex. trancar a porta ao ativar, baixar estores, gravação da câmara em caso de alarme. Valores: true, false, números ou texto.",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "Desligar o mais tardar às (HH:MM, vazio = não)",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "p. ex. quando sai de casa; ao fim de semana mais tarde, como a hora de acordar",
 	"Off as soon as brightness above (lux, 0 = no)": "Desligar quando mais claro que (lux, 0 = não)",
-	"Brightness sensor from the dusk section": "Sensor de luminosidade da secção crepúsculo"
+	"Evening (evening light and simulation)": "Noite (luz da noite e simulação)",
+	"Morning (morning light and simulation)": "Manhã (luz da manhã e simulação)",
+	"Brightness sensor from the evening section": "Sensor de luminosidade da secção noite"
 }

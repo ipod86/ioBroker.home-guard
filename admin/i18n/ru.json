@@ -60,7 +60,6 @@
 	"Door lock": "Дверной замок",
 	"Duration (s)": "Длительность (с)",
 	"Duration (s, empty = alarm duration)": "Длительность (с, пусто = длительность тревоги)",
-	"Dusk": "Сумерки",
 	"e.g. alexa2…speak, sayit.0.tts.text or your own text state": "напр. alexa2…speak, sayit.0.tts.text или собственное текстовое состояние",
 	"e.g. empty battery or radio problem": "напр. разряженная батарея или проблема радиосвязи",
 	"e.g. lock the door when armed, roller shutters down, camera recording on alarm. Values: true, false, numbers or text.": "напр. запереть дверь при постановке на охрану, опустить рольставни, запись камеры при тревоге. Значения: true, false, числа или текст.",
@@ -238,5 +237,7 @@
 	"Off at the latest at (HH:MM, empty = no)": "Выключить не позднее (ЧЧ:ММ, пусто = нет)",
 	"e.g. when you leave the house; later on the weekend like the wake-up time": "например, когда вы выходите из дома; в выходные позже, как время подъёма",
 	"Off as soon as brightness above (lux, 0 = no)": "Выключить, когда светлее (люкс, 0 = нет)",
-	"Brightness sensor from the dusk section": "Датчик освещённости из раздела «Сумерки»"
+	"Evening (evening light and simulation)": "Вечер (вечерний свет и имитация)",
+	"Morning (morning light and simulation)": "Утро (утренний свет и имитация)",
+	"Brightness sensor from the evening section": "Датчик освещённости из раздела «Вечер»"
 }
