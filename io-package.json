@@ -201,8 +201,6 @@
     "simLearnDarkOffset": 30,
     "simLearnFrom": "15:00",
     "simLearnTo": "02:00",
-    "eveningLightOn": true,
-    "eveningLightOff": true,
     "simDeviceMin": 60,
     "simDeviceMax": 180,
     "simDeviceCount": 1,
@@ -210,8 +208,6 @@
     "notifyHazard": true,
     "presenceEnabled": false,
     "morningLight": false,
-    "morningLightOn": true,
-    "morningLightOff": true,
     "simWake": "06:30",
     "simWakeRandom": 20,
     "simWakeWeekendLater": 60,
@@ -1051,21 +1047,96 @@
       "native": {}
     },
     {
-      "_id": "control.eveningLight",
+      "_id": "control.eveningOn",
       "type": "state",
       "common": {
         "name": {
-          "en": "Evening light on",
-          "de": "Abendlicht eingeschaltet",
-          "ru": "Вечерний свет включён",
-          "pt": "Luz da noite ligada",
-          "nl": "Avondverlichting ingeschakeld",
-          "fr": "Éclairage du soir activé",
-          "it": "Luce serale attiva",
-          "es": "Luz de la tarde activada",
-          "pl": "Światło wieczorne włączone",
-          "uk": "Вечірнє світло увімкнено",
-          "zh-cn": "傍晚灯光已开启"
+          "en": "Evening: switch on automatically",
+          "de": "Abends automatisch an",
+          "ru": "Вечером: включать автоматически",
+          "pt": "À noite: ligar automaticamente",
+          "nl": "'s Avonds automatisch aan",
+          "fr": "Le soir : allumer automatiquement",
+          "it": "Sera: accendere automaticamente",
+          "es": "Por la tarde: encender automáticamente",
+          "pl": "Wieczorem: włączaj automatycznie",
+          "uk": "Увечері: вмикати автоматично",
+          "zh-cn": "傍晚：自动开启"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.eveningOff",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Evening: switch off automatically",
+          "de": "Abends automatisch aus",
+          "ru": "Вечером: выключать автоматически",
+          "pt": "À noite: desligar automaticamente",
+          "nl": "'s Avonds automatisch uit",
+          "fr": "Le soir : éteindre automatiquement",
+          "it": "Sera: spegnere automaticamente",
+          "es": "Por la tarde: apagar automáticamente",
+          "pl": "Wieczorem: wyłączaj automatycznie",
+          "uk": "Увечері: вимикати автоматично",
+          "zh-cn": "傍晚：自动关闭"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.morningOn",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Morning: switch on automatically",
+          "de": "Morgens automatisch an",
+          "ru": "Утром: включать автоматически",
+          "pt": "De manhã: ligar automaticamente",
+          "nl": "'s Ochtends automatisch aan",
+          "fr": "Le matin : allumer automatiquement",
+          "it": "Mattina: accendere automaticamente",
+          "es": "Por la mañana: encender automáticamente",
+          "pl": "Rano: włączaj automatycznie",
+          "uk": "Вранці: вмикати автоматично",
+          "zh-cn": "早晨：自动开启"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.morningOff",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Morning: switch off automatically",
+          "de": "Morgens automatisch aus",
+          "ru": "Утром: выключать автоматически",
+          "pt": "De manhã: desligar automaticamente",
+          "nl": "'s Ochtends automatisch uit",
+          "fr": "Le matin : éteindre automatiquement",
+          "it": "Mattina: spegnere automaticamente",
+          "es": "Por la mañana: apagar automáticamente",
+          "pl": "Rano: wyłączaj automatycznie",
+          "uk": "Вранці: вимикати автоматично",
+          "zh-cn": "早晨：自动关闭"
         },
         "type": "boolean",
         "role": "switch.enable",
@@ -1092,31 +1163,6 @@
           "uk": "Імітація присутності",
           "zh-cn": "在家模拟"
         }
-      },
-      "native": {}
-    },
-    {
-      "_id": "simulation.enabled",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Simulation switched on by hand",
-          "de": "Simulation von Hand eingeschaltet",
-          "ru": "Имитация включена вручную",
-          "pt": "Simulação ligada à mão",
-          "nl": "Simulatie met de hand ingeschakeld",
-          "fr": "Simulation activée à la main",
-          "it": "Simulazione attivata a mano",
-          "es": "Simulación activada a mano",
-          "pl": "Symulacja włączona ręcznie",
-          "uk": "Імітацію ввімкнено вручну",
-          "zh-cn": "手动开启模拟"
-        },
-        "type": "boolean",
-        "role": "switch.enable",
-        "read": true,
-        "write": true,
-        "def": false
       },
       "native": {}
     },

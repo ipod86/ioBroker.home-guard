@@ -35,6 +35,13 @@ const SEND_FORMAT = {
   "signal-cmb": (text) => ({ text }),
   pushsafer: (text) => ({ message: text, title: "Home Guard" })
 };
+const LIGHT_SWITCHES = ["eveningOn", "eveningOff", "morningOn", "morningOff"];
+const LIGHT_CONFIG = {
+  eveningOn: "eveningLightOn",
+  eveningOff: "eveningLightOff",
+  morningOn: "morningLightOn",
+  morningOff: "morningLightOff"
+};
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 class HomeGuard extends utils.Adapter {
   T = (0, import_texts.texts)("en");
@@ -56,8 +63,13 @@ class HomeGuard extends utils.Adapter {
   learnFrom = /* @__PURE__ */ new Map();
   // learn source state -> simulation lamp
   learnFromVals = /* @__PURE__ */ new Map();
-  eveningSwitch = true;
-  // control.eveningLight
+  /** switches of the evening and morning light (control.eveningOn …), all on for a new instance */
+  lightSw = {
+    eveningOn: true,
+    eveningOff: true,
+    morningOn: true,
+    morningOff: true
+  };
   stopOff = /* @__PURE__ */ new Map();
   // simulation lamp -> switch off when the simulation ends
   lampOuts = [];
@@ -175,10 +187,15 @@ class HomeGuard extends utils.Adapter {
     await this.setupPresence();
     await this.setupSimLamps();
     await this.setupLamps();
-    const eve = await this.getStateAsync("control.eveningLight");
-    this.eveningSwitch = (eve == null ? void 0 : eve.val) !== false;
-    if ((eve == null ? void 0 : eve.val) == null) {
-      await this.setStateAsync("control.eveningLight", true, true);
+    for (const k of LIGHT_SWITCHES) {
+      const st = await this.getStateAsync(`control.${k}`);
+      if ((st == null ? void 0 : st.val) == null) {
+        const old = c[LIGHT_CONFIG[k]];
+        this.lightSw[k] = old !== false;
+        await this.setStateAsync(`control.${k}`, this.lightSw[k], true);
+      } else {
+        this.lightSw[k] = st.val !== false;
+      }
     }
     this.updateEvening();
     if (c.lockEnabled && c.lockId) {
@@ -191,7 +208,6 @@ class HomeGuard extends utils.Adapter {
       await this.subscribeForeignStatesAsync(c.simLuxId);
     }
     await this.subscribeStatesAsync("control.*");
-    await this.subscribeStatesAsync("simulation.enabled");
     if (this.watchedEnums().length) {
       await this.subscribeForeignObjectsAsync("enum.functions.*");
     }
@@ -740,13 +756,20 @@ class HomeGuard extends utils.Adapter {
         this.alarm.reportOn = !!val;
         await this.setStateAsync("control.report", this.alarm.reportOn, true);
         return;
-      case "control.eveningLight": {
-        const was = this.eveningSwitch;
-        this.eveningSwitch = !!val;
-        await this.setStateAsync("control.eveningLight", this.eveningSwitch, true);
-        if (was !== this.eveningSwitch) {
-          this.addLog("eveningLight", this.eveningSwitch ? this.T.eveningOn : this.T.eveningOff);
-          this.updateEvening(this.eveningSwitch);
+      case "control.eveningOn":
+      case "control.eveningOff":
+      case "control.morningOn":
+      case "control.morningOff": {
+        const k = rel.slice("control.".length);
+        const was = this.lightSw[k];
+        this.lightSw[k] = !!val;
+        await this.setStateAsync(rel, this.lightSw[k], true);
+        if (was !== this.lightSw[k]) {
+          this.addLog(
+            "light",
+            `\u{1F4A1} ${this.T.lightSwitch[k]}: ${this.lightSw[k] ? this.T.switchedOn : this.T.switchedOff}`
+          );
+          this.updateEvening(this.lightSw[k] && k.endsWith("On"));
           if (this.sim.active) {
             this.sim.replan();
           }
@@ -757,10 +780,6 @@ class HomeGuard extends utils.Adapter {
         this.autoArm = !!val;
         await this.setStateAsync("control.autoArm", this.autoArm, true);
         this.addLog("autoArm", this.autoArm ? this.T.autoOn : this.T.autoOff);
-        return;
-      case "simulation.enabled":
-        await this.setStateAsync("simulation.enabled", !!val, true);
-        await this.updateSimulation();
         return;
       default:
         if (c.alarmEnabled === false) {
@@ -869,7 +888,6 @@ class HomeGuard extends utils.Adapter {
    * @param obj the message
    */
   async onMessage(obj) {
-    var _a;
     if (!obj || !obj.command) {
       return;
     }
@@ -919,10 +937,6 @@ class HomeGuard extends utils.Adapter {
       case "panic":
         this.alarm.panic(this.T.by.panic);
         return reply({ ok: true });
-      case "simulation":
-        await this.setStateAsync("simulation.enabled", !!msg.enabled, true);
-        await this.updateSimulation();
-        return reply({ ok: true, active: this.sim.active });
       case "status":
         return reply({
           ...this.alarm.status(),
@@ -932,16 +946,17 @@ class HomeGuard extends utils.Adapter {
           pinLength: c.pin ? String(c.pin).length : 0,
           autoArmAvailable: !!c.alarmEnabled && this.presenceIds.length > 0 && (!!c.presenceArm && c.presenceArm !== "off" || !!c.presenceDisarm),
           simActive: this.sim.active,
-          eveningAvailable: !!c.simEnabled && (!!c.eveningLight || !!c.morningLight) && this.simLamps.some((l) => l.type === "evening" || l.type === "morning"),
-          simEnabled: !!((_a = await this.getStateAsync("simulation.enabled")) == null ? void 0 : _a.val),
+          // which light switches the panel shows: only for an evening/morning light that is set up
+          eveningAvailable: !!c.simEnabled && !!c.eveningLight && this.simLamps.some((l) => l.type === "evening"),
+          morningAvailable: !!c.simEnabled && !!c.morningLight && this.simLamps.some((l) => l.type === "morning"),
           texts: { mode: this.T.mode, phase: this.T.phase },
           log: this.log_.slice(0, 20)
         });
       case "getEnums": {
         const enums = await this.getForeignObjectsAsync("enum.functions.*", "enum");
         const list = Object.entries(enums).filter(([id]) => id.split(".").length === 3).map(([id, o]) => {
-          var _a2;
-          const n = (_a2 = o.common) == null ? void 0 : _a2.name;
+          var _a;
+          const n = (_a = o.common) == null ? void 0 : _a.name;
           const name = typeof n === "object" ? n[this.sysLang] || n.en : n;
           return { value: id, label: `${name || id} (${id})` };
         });
@@ -954,8 +969,8 @@ class HomeGuard extends utils.Adapter {
         });
         const list = inst.rows.filter(
           (r) => {
-            var _a2, _b, _c;
-            return !!((_c = (_b = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b.supportedMessages) == null ? void 0 : _c.notifications) || r.id.replace("system.adapter.", "").replace(/\.\d+$/, "") in SEND_FORMAT;
+            var _a, _b, _c;
+            return !!((_c = (_b = (_a = r.value) == null ? void 0 : _a.common) == null ? void 0 : _b.supportedMessages) == null ? void 0 : _c.notifications) || r.id.replace("system.adapter.", "").replace(/\.\d+$/, "") in SEND_FORMAT;
           }
         ).map((r) => r.id.replace("system.adapter.", "")).filter((id) => id !== this.namespace).map((id) => ({ value: id, label: id }));
         return reply(list);
@@ -1503,12 +1518,10 @@ class HomeGuard extends utils.Adapter {
    * Starts or stops the simulation as wanted
    */
   async updateSimulation() {
-    var _a;
     if (!this.sim || !this.started) {
       return;
     }
-    const manual = !!((_a = await this.getStateAsync("simulation.enabled")) == null ? void 0 : _a.val);
-    const want = !!this.config.simEnabled && this.simLamps.length > 0 && (manual || this.simWanted());
+    const want = !!this.config.simEnabled && this.simLamps.length > 0 && this.simWanted();
     const quiet = this.simRestoring;
     this.simRestoring = false;
     if (want === this.lastSimActive) {
@@ -1555,23 +1568,22 @@ class HomeGuard extends utils.Adapter {
    * @param now current time
    */
   makeEveningPlan(now) {
-    const c = this.config;
     const lamps = this.simLamps.filter(
       (l) => l.type === "evening" && this.eveningOn() || l.type === "morning" && this.morningOn()
     );
     const type = new Map(lamps.map((l) => [l.id, l.type]));
     const first = (0, import_simulation.eveningNoon)(now);
     return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 36e5, now, lamps, true)].filter(
-      (st) => type.get(st.id) === "morning" ? st.on ? c.morningLightOn !== false : c.morningLightOff !== false : st.on ? c.eveningLightOn !== false : c.eveningLightOff !== false
+      (st) => type.get(st.id) === "morning" ? st.on ? this.lightSw.morningOn : this.lightSw.morningOff : st.on ? this.lightSw.eveningOn : this.lightSw.eveningOff
     ).sort((a, b) => a.at - b.at);
   }
   /** @returns the evening light is switched on and has lamps */
   eveningOn() {
-    return this.eveningSwitch && !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some((l) => l.type === "evening");
+    return (this.lightSw.eveningOn || this.lightSw.eveningOff) && !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some((l) => l.type === "evening");
   }
   /** @returns the morning light is switched on and has lamps */
   morningOn() {
-    return this.eveningSwitch && !!this.config.simEnabled && !!this.config.morningLight && this.simLamps.some((l) => l.type === "morning");
+    return (this.lightSw.morningOn || this.lightSw.morningOff) && !!this.config.simEnabled && !!this.config.morningLight && this.simLamps.some((l) => l.type === "morning");
   }
   /**
    * Starts, re-plans or stops the evening and morning light after the settings or the lamps changed
@@ -1585,7 +1597,7 @@ class HomeGuard extends utils.Adapter {
       ).length;
       this.log.info(`Evening/morning light active for ${lamps} lamps`);
       if (this.evening.active) {
-        this.evening.replan();
+        this.evening.replan(catchUp);
       } else {
         this.evening.start(catchUp);
       }

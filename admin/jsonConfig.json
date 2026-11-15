@@ -1547,7 +1547,6 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"help": "By hand at any time: state simulation.enabled",
 					"options": [
 						{
 							"value": "alarm",
@@ -1802,29 +1801,6 @@
 					"lg": 8,
 					"xl": 8
 				},
-				"eveningLightOn": {
-					"type": "checkbox",
-					"label": "Switch on in the evening",
-					"default": true,
-					"hidden": "!data.eveningLight",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"newLine": true
-				},
-				"eveningLightOff": {
-					"type": "checkbox",
-					"label": "Switch off at lights out",
-					"default": true,
-					"hidden": "!data.eveningLight",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
-				},
 				"hMorning": {
 					"type": "header",
 					"text": "Morning light",
@@ -1847,29 +1823,6 @@
 					"md": 12,
 					"lg": 8,
 					"xl": 8
-				},
-				"morningLightOn": {
-					"type": "checkbox",
-					"label": "Switch on in the morning",
-					"default": true,
-					"hidden": "!data.morningLight",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"newLine": true
-				},
-				"morningLightOff": {
-					"type": "checkbox",
-					"label": "Switch off after sunrise",
-					"default": true,
-					"hidden": "!data.morningLight",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
 				},
 				"simWake": {
 					"type": "text",
@@ -2068,8 +2021,14 @@
 					"label": "Choose learned day",
 					"help": "Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.",
 					"options": [
-						{ "label": "Weekday/weekend", "value": "kind" },
-						{ "label": "Same day of the week", "value": "weekday" }
+						{
+							"label": "Weekday/weekend",
+							"value": "kind"
+						},
+						{
+							"label": "Same day of the week",
+							"value": "weekday"
+						}
 					],
 					"xs": 12,
 					"sm": 12,

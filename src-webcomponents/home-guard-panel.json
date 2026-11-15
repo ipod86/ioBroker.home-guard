@@ -16,17 +16,17 @@
 		"zh-cn": "Home Guard 面板"
 	},
 	"description": {
-		"en": "Alarm system: status, arming, PIN keypad, open windows, presence simulation and logbook",
-		"de": "Alarmanlage: Status, Scharfschalten, PIN-Ziffernfeld, offene Fenster, Anwesenheitssimulation und Logbuch",
-		"ru": "Сигнализация: статус, постановка на охрану, PIN-клавиатура, открытые окна, имитация присутствия и журнал",
-		"pt": "Sistema de alarme: estado, ativação, teclado PIN, janelas abertas, simulação de presença e registo",
-		"nl": "Alarmsysteem: status, inschakelen, pincodetoetsenbord, open ramen, aanwezigheidssimulatie en logboek",
-		"fr": "Système d'alarme : état, armement, clavier PIN, fenêtres ouvertes, simulation de présence et journal",
-		"it": "Sistema d'allarme: stato, inserimento, tastierino PIN, finestre aperte, simulazione di presenza e registro",
-		"es": "Sistema de alarma: estado, armado, teclado PIN, ventanas abiertas, simulación de presencia y registro",
-		"pl": "System alarmowy: stan, uzbrajanie, klawiatura PIN, otwarte okna, symulacja obecności i dziennik",
-		"uk": "Сигналізація: стан, постановка на охорону, PIN-клавіатура, відчинені вікна, імітація присутності та журнал",
-		"zh-cn": "报警系统：状态、布防、PIN 键盘、打开的窗户、在家模拟和日志"
+		"en": "Alarm system: status, arming, PIN keypad, open windows, evening/morning light and logbook",
+		"de": "Alarmanlage: Status, Scharfschalten, PIN-Ziffernfeld, offene Fenster, Abend-/Morgenlicht und Logbuch",
+		"ru": "Сигнализация: статус, постановка на охрану, PIN-клавиатура, открытые окна, вечерний/утренний свет и журнал",
+		"pt": "Sistema de alarme: estado, ativação, teclado PIN, janelas abertas, luz da noite/manhã e registo",
+		"nl": "Alarmsysteem: status, inschakelen, pincodetoetsenbord, open ramen, avond-/ochtendlicht en logboek",
+		"fr": "Système d'alarme : état, armement, clavier PIN, fenêtres ouvertes, éclairage du soir/matin et journal",
+		"it": "Sistema d'allarme: stato, inserimento, tastierino PIN, finestre aperte, luce serale/mattutina e registro",
+		"es": "Sistema de alarma: estado, armado, teclado PIN, ventanas abiertas, luz de tarde/mañana y registro",
+		"pl": "System alarmowy: stan, uzbrajanie, klawiatura PIN, otwarte okna, światło wieczorne/poranne i dziennik",
+		"uk": "Сигналізація: стан, постановка на охорону, PIN-клавіатура, відчинені вікна, вечірнє/ранкове світло та журнал",
+		"zh-cn": "报警系统：状态、布防、PIN 键盘、打开的窗户、傍晚/早晨灯光和日志"
 	},
 	"icon": "../home-guard.png",
 	"module": "home-guard-panel.js",
@@ -89,20 +89,20 @@
 				},
 				"default": true
 			},
-			"sim": {
+			"light": {
 				"type": "checkbox",
 				"label": {
-					"en": "Show presence simulation",
-					"de": "Anwesenheitssimulation zeigen",
-					"ru": "Показывать имитацию присутствия",
-					"pt": "Mostrar simulação de presença",
-					"nl": "Aanwezigheidssimulatie tonen",
-					"fr": "Afficher la simulation de présence",
-					"it": "Mostrare simulazione di presenza",
-					"es": "Mostrar simulación de presencia",
-					"pl": "Pokaż symulację obecności",
-					"uk": "Показувати імітацію присутності",
-					"zh-cn": "显示在家模拟"
+					"en": "Switches for evening/morning light",
+					"de": "Schalter für Abend-/Morgenlicht",
+					"ru": "Переключатели вечернего/утреннего света",
+					"pt": "Interruptores da luz da noite/manhã",
+					"nl": "Schakelaars voor avond-/ochtendlicht",
+					"fr": "Interrupteurs éclairage du soir/matin",
+					"it": "Interruttori luce serale/mattutina",
+					"es": "Interruptores de luz de tarde/mañana",
+					"pl": "Przełączniki światła wieczornego/porannego",
+					"uk": "Перемикачі вечірнього/ранкового світла",
+					"zh-cn": "傍晚/早晨灯光开关"
 				},
 				"default": true
 			},

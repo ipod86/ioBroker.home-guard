@@ -49,8 +49,14 @@ const T = {
     title: "Alarmanlage",
     autoOn: "\u{1F916} Automatisch scharf/unscharf \xFCber Anwesenheit eingeschaltet",
     autoOff: "\u270B Automatisch scharf/unscharf \xFCber Anwesenheit ausgeschaltet",
-    eveningOn: "\u{1F306} Abendlicht eingeschaltet",
-    eveningOff: "\u{1F319} Abendlicht ausgeschaltet",
+    lightSwitch: {
+      eveningOn: "Abends automatisch an",
+      eveningOff: "Abends automatisch aus",
+      morningOn: "Morgens automatisch an",
+      morningOff: "Morgens automatisch aus"
+    },
+    switchedOn: "eingeschaltet",
+    switchedOff: "ausgeschaltet",
     testPrefix: "\u{1F9EA} TEST \u2013 ",
     testTrigger: "Testausl\xF6ser",
     testEnd: "\u{1F9EA} Test beendet",
@@ -102,8 +108,14 @@ const T = {
     title: "Alarm system",
     autoOn: "\u{1F916} Automatic arming by presence switched on",
     autoOff: "\u270B Automatic arming by presence switched off",
-    eveningOn: "\u{1F306} Evening light switched on",
-    eveningOff: "\u{1F319} Evening light switched off",
+    lightSwitch: {
+      eveningOn: "Evening: switch on automatically",
+      eveningOff: "Evening: switch off automatically",
+      morningOn: "Morning: switch on automatically",
+      morningOff: "Morning: switch off automatically"
+    },
+    switchedOn: "switched on",
+    switchedOff: "switched off",
     testPrefix: "\u{1F9EA} TEST \u2013 ",
     testTrigger: "test trigger",
     testEnd: "\u{1F9EA} Test finished",

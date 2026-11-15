@@ -108,8 +108,6 @@ declare global {
 			testDuration: number;
 			eveningLight: boolean;
 			morningLight: boolean;
-			morningLightOn: boolean;
-			morningLightOff: boolean;
 			simWake: string;
 			simWakeRandom: number;
 			simWakeWeekendLater: number;
@@ -120,8 +118,6 @@ declare global {
 			hazardDefault: 'notify' | 'speech' | 'alarm';
 			notifyHazard: boolean;
 			presenceEnabled: boolean;
-			eveningLightOn: boolean;
-			eveningLightOff: boolean;
 			simDeviceMin: number;
 			simDeviceMax: number;
 			simDeviceCount: number;

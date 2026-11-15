@@ -19,7 +19,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Bei Alarm**: Lampen an oder blinkend (danach wieder wie vorher), Sirenen, beliebige Geräte über eine Aktionstabelle (z. B. Tür abschließen beim Scharfschalten, Rollläden runter, Kameraaufnahme).
 - **Sabotage-Prüfung**: Sensoren, die sich eine einstellbare Zahl Stunden nicht gemeldet haben, werden gemeldet (Batterie leer, Funkproblem).
 - **Anwesenheitssimulation** mit drei Planungsarten: *Dämmerung* (zufällige Zeiten um den Sonnenuntergang, Licht aus um eine feste Zeit, Freitag/Samstag später, kurze Gänge in Flur und Bad), *gelernt* (spielt einen echten Tag aus deinem eigenen Schaltverhalten mit verschobenen Zeiten ab – für einen Werktagsabend irgendeinen Werktag, fürs Wochenende irgendeinen Freitag/Samstag; wahlweise denselben Wochentag, wenn mindestens 3 davon gelernt sind) und *kombiniert* (empfohlen).
-- **Abendlicht**: die Lampen vom Typ „Abend“ jeden Abend, auch wenn jemand zu Hause ist – bei Dämmerung alle an (auch die am Vorabend von Hand ausgeschalteten), bei „Licht aus“ alle aus (auch die von Hand eingeschalteten). Kurze Gänge, Zubettgehen und Gelerntes nur, solange die Simulation läuft. Ein- und Ausschalten sind getrennt wählbar (z. B. automatisch an, von Hand aus).
+- **Abendlicht**: die Lampen vom Typ „Abend“ jeden Abend, auch wenn jemand zu Hause ist – bei Dämmerung alle an (auch die am Vorabend von Hand ausgeschalteten), bei „Licht aus“ alle aus (auch die von Hand eingeschalteten). Kurze Gänge, Zubettgehen und Gelerntes nur, solange die Simulation läuft. Ein- und Ausschalten lassen sich jederzeit getrennt ein- oder ausschalten (z. B. automatisch an, von Hand aus) – über `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` oder die Schalter im Panel.
 - **Fernseher und andere Geräte** in der Simulation (Typ „Fernseher/Gerät“), nur während die Simulation läuft: Mit „Lernen von“ (z. B. dem echten Ein-Zustand des Fernsehers) werden deine echten Abende nachgespielt, auch mehrmals am Abend; ohne läuft es eine einstellbare Anzahl Male für eine zufällige Zeit. Ein eigener Wert für an und aus lässt eine Szene des Szenen-Adapters oder ein Skript mehrere Schritte übernehmen (Fernseher an, dann Sender).
 - **Wenn die Simulation endet** (z. B. beim Heimkommen): je Eintrag automatisch (Geräte wie der Fernseher aus, Lampen bleiben an), ausschalten oder anlassen. Einträge in den Tabellen überschreiben die über eine Funktion gefundenen.
 - **Lernfenster**: Lernen und Nachspielen nur bei Dunkelheit (ab kurz vor Sonnenuntergang bis Sonnenaufgang), zwischen zwei Uhrzeiten oder immer.
@@ -29,7 +29,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Morgenlicht**: Lampen vom Typ „Morgens“ zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
-- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Simulation, überwachte Sensoren und ein ausklappbares Logbuch.
+- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
 ## Voraussetzungen
 
@@ -70,9 +70,9 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 | `control.cancel`, `control.ack`, `control.panic` | Scharfschalten abbrechen, Alarm quittieren, Panikalarm |
 | `control.pin` | PIN schreiben zum Unscharfschalten |
 | `control.report` | Melde-Sensoren ein/aus |
-| `control.eveningLight` | Abend-/Morgenlicht ein/aus (auch als Schalter im Panel; abends eingeschaltet gehen die Lampen sofort an) |
+| `control.eveningOn` / `control.eveningOff` | Abendlicht: automatisch an / aus (auch als Schalter im Panel; „an“ abends eingeschaltet: die Lampen gehen sofort an) |
+| `control.morningOn` / `control.morningOff` | Morgenlicht: automatisch an / aus |
 | `control.autoArm` | Automatisch scharf/unscharf über Anwesenheit ein/aus (auch als Schalter im Panel) |
-| `simulation.enabled` | Simulation von Hand einschalten |
 | `simulation.active` | Simulation läuft |
 | `simulation.next`, `simulation.plan` | nächster Schritt und Plan des Abends |
 | `simulation.learned`, `simulation.learnedDays` | gelernte Tage |
@@ -89,13 +89,12 @@ sendTo('home-guard.0', 'cancel', {});      // Ausgangsverzögerung abbrechen
 sendTo('home-guard.0', 'ack', {});         // Alarm quittieren
 sendTo('home-guard.0', 'panic', {});
 sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
-sendTo('home-guard.0', 'simulation', { enabled: true });
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
 
 ## Web-Komponente
 
-Nach der Installation steht das „Home Guard Panel“ in AURA und vis-2 in der Liste der Web-Komponenten. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Anwesenheitssimulation (Anzeige), Abendlicht-Schalter und Logbuch. **In AURA beim Widget „Klicks“ auf „Komponente“ stellen** (`wcClick: "component"`), sonst kommen die Tasten nicht an.
+Nach der Installation steht das „Home Guard Panel“ in AURA und vis-2 in der Liste der Web-Komponenten. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Schalter für Abend-/Morgenlicht (nur wenn eingerichtet) und Logbuch. **In AURA beim Widget „Klicks“ auf „Komponente“ stellen** (`wcClick: "component"`), sonst kommen die Tasten nicht an.
 
 ## Hinweis
 

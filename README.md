@@ -30,7 +30,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day learned from your own switching, with shifted times – any weekday for a weekday evening, any Friday/Saturday for the weekend; optionally the same day of the week when at least 3 of them are learned) and *combined* (recommended).
-- **Evening light**: the lamps of type "evening" every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be chosen separately (e.g. on automatically, off by hand).
+- **Evening light**: the lamps of type "evening" every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be turned on or off separately at any time (e.g. on automatically, off by hand) – with `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` or the switches in the panel.
 - **TV and other devices** in the simulation (type "TV / device"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
 - **When the simulation ends** (e.g. coming home): per entry automatic (devices like the TV off, lamps stay on), switch off or leave on. Entries in the tables override the ones found through a function.
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
@@ -40,7 +40,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Morning light**: lamps of type "morning" on at wake-up time (later on the weekend) and off after sunrise – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
-- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, simulation, monitored sensors and a logbook to open.
+- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
 
 ### Requirements
 
@@ -81,9 +81,9 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 | `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
 | `control.pin` | write the PIN to disarm |
 | `control.report` | report-only sensors on/off |
-| `control.eveningLight` | evening/morning light on/off (also a switch in the panel; switched on in the evening, the lamps go on at once) |
+| `control.eveningOn` / `control.eveningOff` | evening light: switch on / off automatically (also switches in the panel; "on" switched on in the evening: the lamps go on at once) |
+| `control.morningOn` / `control.morningOff` | morning light: switch on / off automatically |
 | `control.autoArm` | automatic arming/disarming by presence on/off (also a switch in the panel) |
-| `simulation.enabled` | switch the simulation on by hand |
 | `simulation.active` | simulation is running |
 | `simulation.next`, `simulation.plan` | next step and plan of the evening |
 | `simulation.learned`, `simulation.learnedDays` | learned days |
@@ -100,13 +100,12 @@ sendTo('home-guard.0', 'cancel', {});      // cancel the exit delay
 sendTo('home-guard.0', 'ack', {});         // acknowledge the alarm
 sendTo('home-guard.0', 'panic', {});
 sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
-sendTo('home-guard.0', 'simulation', { enabled: true });
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
 
 ### Web component
 
-After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, presence simulation (status), evening light switch and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
+After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, switches for the evening/morning light (only when set up) and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
 
 ### Note
 
@@ -118,7 +117,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) panel: the switch now turns the evening light on/off (`control.eveningLight`); the simulation is only shown, it runs with the alarm system
+* (ipod86) evening/morning light: switching on and off as states (`control.eveningOn` …) and switches in the panel, only shown when set up; the simulation runs only coupled (alarm system/nobody at home), the manual switch `simulation.enabled` was removed
 * (ipod86) learned simulation: choose the learned day by weekday/weekend (default, more variety) or by the same day of the week (only with at least 3 of them)
 
 ### 0.1.1 (2026-11-14)

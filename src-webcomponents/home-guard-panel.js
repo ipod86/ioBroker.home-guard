@@ -1,4 +1,4 @@
-/* Home Guard panel: status, arming, PIN keypad, open windows, presence simulation, logbook.
+/* Home Guard panel: status, arming, PIN keypad, open windows, evening/morning light switches, logbook.
    It reads the states of the instance and changes things only through the adapter (sendTo):
    the PIN goes straight to the adapter and is never written to a state. */
 import { IobWebComponent, defineWebComponent } from '@iobroker/web-components/element';
@@ -18,7 +18,10 @@ const TXT = {
 		ack: 'Quittieren',
 		allClosed: 'Alle Fenster und Türen zu',
 		open: 'Offen',
-		evening: 'Abendlicht',
+		eveningOn: 'Abends automatisch an',
+		eveningOff: 'Abends automatisch aus',
+		morningOn: 'Morgens automatisch an',
+		morningOff: 'Morgens automatisch aus',
 		sim: 'Anwesenheitssimulation',
 		simOn: 'läuft',
 		simOff: 'aus',
@@ -44,7 +47,10 @@ const TXT = {
 		ack: 'Acknowledge',
 		allClosed: 'All windows and doors closed',
 		open: 'Open',
-		evening: 'Evening light',
+		eveningOn: 'Evening: on automatically',
+		eveningOff: 'Evening: off automatically',
+		morningOn: 'Morning: on automatically',
+		morningOff: 'Morning: off automatically',
 		sim: 'Presence simulation',
 		simOn: 'running',
 		simOff: 'off',
@@ -70,7 +76,10 @@ const TXT = {
 		ack: 'Acquitter',
 		allClosed: 'Toutes les portes et fenêtres fermées',
 		open: 'Ouvert',
-		evening: 'Éclairage du soir',
+		eveningOn: 'Soir : allumer auto.',
+		eveningOff: 'Soir : éteindre auto.',
+		morningOn: 'Matin : allumer auto.',
+		morningOff: 'Matin : éteindre auto.',
 		sim: 'Simulation de présence',
 		simOn: 'en cours',
 		simOff: 'arrêtée',
@@ -102,7 +111,10 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas las puertas y ventanas cerradas',
 		open: 'Abierto',
-		evening: 'Luz de la tarde',
+		eveningOn: 'Tarde: encender auto.',
+		eveningOff: 'Tarde: apagar auto.',
+		morningOn: 'Mañana: encender auto.',
+		morningOff: 'Mañana: apagar auto.',
 		sim: 'Simulación de presencia',
 		simOn: 'en marcha',
 		simOff: 'apagada',
@@ -134,7 +146,10 @@ const TXT = {
 		ack: 'Conferma',
 		allClosed: 'Tutte le porte e finestre chiuse',
 		open: 'Aperto',
-		evening: 'Luce serale',
+		eveningOn: 'Sera: accendi auto',
+		eveningOff: 'Sera: spegni auto',
+		morningOn: 'Mattina: accendi auto',
+		morningOff: 'Mattina: spegni auto',
 		sim: 'Simulazione di presenza',
 		simOn: 'in corso',
 		simOff: 'spenta',
@@ -166,7 +181,10 @@ const TXT = {
 		ack: 'Bevestigen',
 		allClosed: 'Alle deuren en ramen dicht',
 		open: 'Open',
-		evening: 'Avondverlichting',
+		eveningOn: "'s Avonds automatisch aan",
+		eveningOff: "'s Avonds automatisch uit",
+		morningOn: "'s Ochtends automatisch aan",
+		morningOff: "'s Ochtends automatisch uit",
 		sim: 'Aanwezigheidssimulatie',
 		simOn: 'loopt',
 		simOff: 'uit',
@@ -198,7 +216,10 @@ const TXT = {
 		ack: 'Potwierdź',
 		allClosed: 'Wszystkie drzwi i okna zamknięte',
 		open: 'Otwarte',
-		evening: 'Światło wieczorne',
+		eveningOn: 'Wieczorem auto. wł.',
+		eveningOff: 'Wieczorem auto. wył.',
+		morningOn: 'Rano auto. wł.',
+		morningOff: 'Rano auto. wył.',
 		sim: 'Symulacja obecności',
 		simOn: 'działa',
 		simOff: 'wył.',
@@ -230,7 +251,10 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas as portas e janelas fechadas',
 		open: 'Aberto',
-		evening: 'Luz da noite',
+		eveningOn: 'Noite: ligar auto.',
+		eveningOff: 'Noite: desligar auto.',
+		morningOn: 'Manhã: ligar auto.',
+		morningOff: 'Manhã: desligar auto.',
 		sim: 'Simulação de presença',
 		simOn: 'em curso',
 		simOff: 'desligada',
@@ -262,7 +286,10 @@ const TXT = {
 		ack: 'Подтвердить',
 		allClosed: 'Все двери и окна закрыты',
 		open: 'Открыто',
-		evening: 'Вечерний свет',
+		eveningOn: 'Вечером авто вкл.',
+		eveningOff: 'Вечером авто выкл.',
+		morningOn: 'Утром авто вкл.',
+		morningOff: 'Утром авто выкл.',
 		sim: 'Имитация присутствия',
 		simOn: 'работает',
 		simOff: 'выкл.',
@@ -294,7 +321,10 @@ const TXT = {
 		ack: 'Підтвердити',
 		allClosed: 'Усі двері та вікна зачинені',
 		open: 'Відчинено',
-		evening: 'Вечірнє світло',
+		eveningOn: 'Увечері авто увімк.',
+		eveningOff: 'Увечері авто вимк.',
+		morningOn: 'Вранці авто увімк.',
+		morningOff: 'Вранці авто вимк.',
 		sim: 'Імітація присутності',
 		simOn: 'працює',
 		simOff: 'вимк.',
@@ -320,7 +350,10 @@ const TXT = {
 		ack: '确认',
 		allClosed: '所有门窗已关闭',
 		open: '打开',
-		evening: '傍晚灯光',
+		eveningOn: '傍晚自动开',
+		eveningOff: '傍晚自动关',
+		morningOn: '早晨自动开',
+		morningOff: '早晨自动关',
 		sim: '在家模拟',
 		simOn: '运行中',
 		simOff: '关闭',
@@ -475,12 +508,13 @@ class HomeGuardPanel extends IobWebComponent {
 			`${i}.status.openContacts`,
 			`${i}.status.lastTrigger`,
 			`${i}.status.log`,
-			`${i}.simulation.active`,
-			`${i}.simulation.next`,
 			`${i}.status.present`,
 			`${i}.status.sensors`,
 			`${i}.control.autoArm`,
-			`${i}.control.eveningLight`,
+			`${i}.control.eveningOn`,
+			`${i}.control.eveningOff`,
+			`${i}.control.morningOn`,
+			`${i}.control.morningOff`,
 		];
 	}
 
@@ -567,8 +601,9 @@ class HomeGuardPanel extends IobWebComponent {
 			await this.send('cancel', {});
 		} else if (a === 'ack') {
 			await this.send('ack', {});
-		} else if (a === 'evening') {
-			await this.setState(`${this.inst}.control.eveningLight`, this.val('control.eveningLight') === false);
+		} else if (a === 'light') {
+			const k = b.dataset.k;
+			await this.setState(`${this.inst}.control.${k}`, this.val(`control.${k}`) === false);
 		} else if (a === 'auto') {
 			await this.setState(`${this.inst}.control.autoArm`, this.val('control.autoArm') === false);
 		} else if (a === 'sensors') {
@@ -733,23 +768,22 @@ class HomeGuardPanel extends IobWebComponent {
 			}
 			html += '</div>';
 		}
-		if (s.sim !== false) {
-			// the simulation runs with the alarm system - shown only; the switch is for the evening light
-			const active = !!this.val('simulation.active');
-			const next = this.val('simulation.next') || '';
-			const showEvening =
-				(!this.info || this.info.eveningAvailable !== false) &&
-				this.val('control.eveningLight') !== null &&
-				this.val('control.eveningLight') !== undefined;
-			html += `<div class="box"><div class="row">${ICON.bulb}<div class="grow"><div>${esc(t.sim)}: <b>${esc(
-				active ? t.simOn : t.simOff,
-			)}</b></div>${active && next ? `<div class="small">${esc(t.next)}: ${esc(next)}</div>` : ''}</div></div>`;
-			if (showEvening) {
-				html += `<div class="row sep"><div class="grow">${esc(t.evening)}</div><button class="sw ${
-					this.val('control.eveningLight') !== false ? 'on' : ''
-				}" data-a="evening" aria-label="${esc(t.evening)}"></button></div>`;
+		// switches of the evening and morning light - only for what is set up in the instance
+		if (s.light !== false && this.info) {
+			const keys = [
+				...(this.info.eveningAvailable ? ['eveningOn', 'eveningOff'] : []),
+				...(this.info.morningAvailable ? ['morningOn', 'morningOff'] : []),
+			].filter(k => this.val(`control.${k}`) !== null && this.val(`control.${k}`) !== undefined);
+			if (keys.length) {
+				html += `<div class="box">${keys
+					.map(
+						(k, n) =>
+							`<div class="row${n ? ' sep' : ''}"><div class="grow">${esc(
+								t[k],
+							)}</div><button class="sw ${this.val(`control.${k}`) !== false ? 'on' : ''}" data-a="light" data-k="${k}" aria-label="${esc(t[k])}"></button></div>`,
+					)
+					.join('')}</div>`;
 			}
-			html += '</div>';
 		}
 		const sensors = parse(this.val('status.sensors'), []);
 		if (s.sensors !== false && sensors.length) {
