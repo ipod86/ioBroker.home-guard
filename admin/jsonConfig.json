@@ -1812,6 +1812,166 @@
 					"lg": 4,
 					"xl": 4
 				},
+				"hVisits": {
+					"type": "header",
+					"size": 5,
+					"text": "Short visits"
+				},
+				"simVisits": {
+					"type": "number",
+					"label": "Short visits per evening",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 20,
+					"newLine": true
+				},
+				"simVisitMin": {
+					"type": "number",
+					"label": "Visit duration from (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 1,
+					"max": 120
+				},
+				"simVisitMax": {
+					"type": "number",
+					"label": "Visit duration to (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 1,
+					"max": 240
+				},
+				"h4": {
+					"type": "header",
+					"text": "Learning",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"simLearnDays": {
+					"type": "number",
+					"label": "Keep learned days (number)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 3,
+					"max": 120
+				},
+				"simJitter": {
+					"type": "number",
+					"label": "Shift learned times randomly by up to ± (min)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"min": 0,
+					"max": 60
+				},
+				"simLearnPick": {
+					"type": "select",
+					"label": "Choose learned day",
+					"help": "Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.",
+					"options": [
+						{
+							"label": "Weekday/weekend",
+							"value": "kind"
+						},
+						{
+							"label": "Same day of the week",
+							"value": "weekday"
+						}
+					],
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simLearnDevicesOnly": {
+					"type": "checkbox",
+					"label": "Learn only switching by hand/devices (no scripts, scenes)",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simLearnWindow": {
+					"type": "select",
+					"label": "Learn and replay only",
+					"options": [
+						{
+							"value": "dark",
+							"label": "when it is dark (from before sunset to sunrise)"
+						},
+						{
+							"value": "times",
+							"label": "between two times"
+						},
+						{
+							"value": "all",
+							"label": "always (the whole day)"
+						}
+					],
+					"default": "dark",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"newLine": true
+				},
+				"simLearnDarkOffset": {
+					"type": "number",
+					"label": "Dark from … minutes before sunset",
+					"min": 0,
+					"max": 180,
+					"default": 30,
+					"hidden": "data.simLearnWindow !== 'dark'",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simLearnFrom": {
+					"type": "text",
+					"label": "From (HH:MM)",
+					"default": "15:00",
+					"hidden": "data.simLearnWindow !== 'times'",
+					"xs": 12,
+					"sm": 12,
+					"md": 3,
+					"lg": 2,
+					"xl": 2
+				},
+				"simLearnTo": {
+					"type": "text",
+					"label": "To (HH:MM)",
+					"default": "02:00",
+					"hidden": "data.simLearnWindow !== 'times'",
+					"xs": 12,
+					"sm": 12,
+					"md": 3,
+					"lg": 2,
+					"xl": 2
+				},
 				"hEvening": {
 					"type": "header",
 					"text": "Evening (evening light and simulation)",
@@ -2030,166 +2190,6 @@
 					"lg": 4,
 					"xl": 4,
 					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
-				},
-				"hVisits": {
-					"type": "header",
-					"size": 5,
-					"text": "Short visits"
-				},
-				"simVisits": {
-					"type": "number",
-					"label": "Short visits per evening",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 20,
-					"newLine": true
-				},
-				"simVisitMin": {
-					"type": "number",
-					"label": "Visit duration from (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 1,
-					"max": 120
-				},
-				"simVisitMax": {
-					"type": "number",
-					"label": "Visit duration to (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 1,
-					"max": 240
-				},
-				"h4": {
-					"type": "header",
-					"text": "Learning",
-					"size": 5,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
-				"simLearnDays": {
-					"type": "number",
-					"label": "Keep learned days (number)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 3,
-					"max": 120
-				},
-				"simJitter": {
-					"type": "number",
-					"label": "Shift learned times randomly by up to ± (min)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"min": 0,
-					"max": 60
-				},
-				"simLearnPick": {
-					"type": "select",
-					"label": "Choose learned day",
-					"help": "Weekday/weekend: any learned weekday for a weekday evening (Sun–Thu), any Friday/Saturday for the weekend. Same day of the week: a Thursday for a Thursday when at least 3 are learned.",
-					"options": [
-						{
-							"label": "Weekday/weekend",
-							"value": "kind"
-						},
-						{
-							"label": "Same day of the week",
-							"value": "weekday"
-						}
-					],
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
-				},
-				"simLearnDevicesOnly": {
-					"type": "checkbox",
-					"label": "Learn only switching by hand/devices (no scripts, scenes)",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
-				},
-				"simLearnWindow": {
-					"type": "select",
-					"label": "Learn and replay only",
-					"options": [
-						{
-							"value": "dark",
-							"label": "when it is dark (from before sunset to sunrise)"
-						},
-						{
-							"value": "times",
-							"label": "between two times"
-						},
-						{
-							"value": "all",
-							"label": "always (the whole day)"
-						}
-					],
-					"default": "dark",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4,
-					"newLine": true
-				},
-				"simLearnDarkOffset": {
-					"type": "number",
-					"label": "Dark from … minutes before sunset",
-					"min": 0,
-					"max": 180,
-					"default": 30,
-					"hidden": "data.simLearnWindow !== 'dark'",
-					"xs": 12,
-					"sm": 12,
-					"md": 6,
-					"lg": 4,
-					"xl": 4
-				},
-				"simLearnFrom": {
-					"type": "text",
-					"label": "From (HH:MM)",
-					"default": "15:00",
-					"hidden": "data.simLearnWindow !== 'times'",
-					"xs": 12,
-					"sm": 12,
-					"md": 3,
-					"lg": 2,
-					"xl": 2
-				},
-				"simLearnTo": {
-					"type": "text",
-					"label": "To (HH:MM)",
-					"default": "02:00",
-					"hidden": "data.simLearnWindow !== 'times'",
-					"xs": 12,
-					"sm": 12,
-					"md": 3,
-					"lg": 2,
-					"xl": 2
 				}
 			}
 		}
