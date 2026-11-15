@@ -232,5 +232,11 @@
 	"Morning": "Ochtend",
 	"Bedtime": "Bedtijd",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "Schakelt elke avond de lampen van het type \"avond\", ook als er iemand thuis is: bij schemering ALLE aan (ook die de avond ervoor met de hand uitgezet zijn), bij \"licht uit\" ALLE uit (ook die met de hand aangezet zijn). Tijden zoals bij schemering ingesteld. Korte bezoeken, slapengaan en geleerde schakelingen alleen tijdens de simulatie – zo gaat 's nachts niet vanzelf het wc-licht aan als er iemand thuis is.",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampen van het type \"ochtend\": aan bij het opstaan, kort na zonsopgang uit – alleen als het nog donker is. Zonder ochtendlicht alleen tijdens de simulatie; met ochtendlicht elke ochtend, ook als er iemand thuis is."
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampen van het type \"ochtend\": aan bij het opstaan, kort na zonsopgang uit – alleen als het nog donker is. Zonder ochtendlicht alleen tijdens de simulatie; met ochtendlicht elke ochtend, ook als er iemand thuis is.",
+	"Off: minutes after sunrise": "Uit: minuten na zonsopkomst",
+	"Off: random delay up to (min)": "Uit: willekeurige vertraging tot (min)",
+	"Off at the latest at (HH:MM, empty = no)": "Uiterlijk uit om (UU:MM, leeg = nee)",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "bijv. als jullie het huis verlaten; in het weekend later zoals de opstaantijd",
+	"Off as soon as brightness above (lux, 0 = no)": "Uit zodra lichter dan (lux, 0 = nee)",
+	"Brightness sensor from the dusk section": "Lichtsensor uit het gedeelte schemering"
 }

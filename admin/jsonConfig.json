@@ -1893,6 +1893,54 @@
 					"lg": 4,
 					"xl": 4
 				},
+				"simMorningOffOffset": {
+					"type": "number",
+					"label": "Off: minutes after sunrise",
+					"default": 5,
+					"min": -120,
+					"max": 240,
+					"newLine": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simMorningOffRandom": {
+					"type": "number",
+					"label": "Off: random delay up to (min)",
+					"default": 25,
+					"min": 0,
+					"max": 120,
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simMorningOffTime": {
+					"type": "text",
+					"label": "Off at the latest at (HH:MM, empty = no)",
+					"help": "e.g. when you leave the house; later on the weekend like the wake-up time",
+					"default": "",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"simMorningLuxAbove": {
+					"type": "number",
+					"label": "Off as soon as brightness above (lux, 0 = no)",
+					"help": "Brightness sensor from the dusk section",
+					"default": 0,
+					"min": 0,
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
 				"h3": {
 					"type": "header",
 					"text": "Dusk",

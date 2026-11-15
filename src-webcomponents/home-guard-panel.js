@@ -18,6 +18,9 @@ const TXT = {
 		ack: 'Quittieren',
 		allClosed: 'Alle Fenster und Türen zu',
 		open: 'Offen',
+		morning: 'Morgenlicht',
+		auton: 'an',
+		autoff: 'aus',
 		eveningOn: 'Abends automatisch an',
 		eveningOff: 'Abends automatisch aus',
 		morningOn: 'Morgens automatisch an',
@@ -47,6 +50,9 @@ const TXT = {
 		ack: 'Acknowledge',
 		allClosed: 'All windows and doors closed',
 		open: 'Open',
+		morning: 'Morning light',
+		auton: 'on',
+		autoff: 'off',
 		eveningOn: 'Evening: on automatically',
 		eveningOff: 'Evening: off automatically',
 		morningOn: 'Morning: on automatically',
@@ -76,6 +82,9 @@ const TXT = {
 		ack: 'Acquitter',
 		allClosed: 'Toutes les portes et fenêtres fermées',
 		open: 'Ouvert',
+		morning: 'Éclairage du matin',
+		auton: 'allumer',
+		autoff: 'éteindre',
 		eveningOn: 'Soir : allumer auto.',
 		eveningOff: 'Soir : éteindre auto.',
 		morningOn: 'Matin : allumer auto.',
@@ -111,6 +120,9 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas las puertas y ventanas cerradas',
 		open: 'Abierto',
+		morning: 'Luz de la mañana',
+		auton: 'enc.',
+		autoff: 'apag.',
 		eveningOn: 'Tarde: encender auto.',
 		eveningOff: 'Tarde: apagar auto.',
 		morningOn: 'Mañana: encender auto.',
@@ -146,6 +158,9 @@ const TXT = {
 		ack: 'Conferma',
 		allClosed: 'Tutte le porte e finestre chiuse',
 		open: 'Aperto',
+		morning: 'Luce mattutina',
+		auton: 'acc.',
+		autoff: 'spegn.',
 		eveningOn: 'Sera: accendi auto',
 		eveningOff: 'Sera: spegni auto',
 		morningOn: 'Mattina: accendi auto',
@@ -181,6 +196,9 @@ const TXT = {
 		ack: 'Bevestigen',
 		allClosed: 'Alle deuren en ramen dicht',
 		open: 'Open',
+		morning: 'Ochtendlicht',
+		auton: 'aan',
+		autoff: 'uit',
 		eveningOn: "'s Avonds automatisch aan",
 		eveningOff: "'s Avonds automatisch uit",
 		morningOn: "'s Ochtends automatisch aan",
@@ -216,6 +234,9 @@ const TXT = {
 		ack: 'Potwierdź',
 		allClosed: 'Wszystkie drzwi i okna zamknięte',
 		open: 'Otwarte',
+		morning: 'Światło poranne',
+		auton: 'wł.',
+		autoff: 'wył.',
 		eveningOn: 'Wieczorem auto. wł.',
 		eveningOff: 'Wieczorem auto. wył.',
 		morningOn: 'Rano auto. wł.',
@@ -251,6 +272,9 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas as portas e janelas fechadas',
 		open: 'Aberto',
+		morning: 'Luz da manhã',
+		auton: 'ligar',
+		autoff: 'desl.',
 		eveningOn: 'Noite: ligar auto.',
 		eveningOff: 'Noite: desligar auto.',
 		morningOn: 'Manhã: ligar auto.',
@@ -286,6 +310,9 @@ const TXT = {
 		ack: 'Подтвердить',
 		allClosed: 'Все двери и окна закрыты',
 		open: 'Открыто',
+		morning: 'Утренний свет',
+		auton: 'вкл.',
+		autoff: 'выкл.',
 		eveningOn: 'Вечером авто вкл.',
 		eveningOff: 'Вечером авто выкл.',
 		morningOn: 'Утром авто вкл.',
@@ -321,6 +348,9 @@ const TXT = {
 		ack: 'Підтвердити',
 		allClosed: 'Усі двері та вікна зачинені',
 		open: 'Відчинено',
+		morning: 'Ранкове світло',
+		auton: 'увімк.',
+		autoff: 'вимк.',
 		eveningOn: 'Увечері авто увімк.',
 		eveningOff: 'Увечері авто вимк.',
 		morningOn: 'Вранці авто увімк.',
@@ -350,6 +380,9 @@ const TXT = {
 		ack: '确认',
 		allClosed: '所有门窗已关闭',
 		open: '打开',
+		morning: '早晨灯光',
+		auton: '开',
+		autoff: '关',
 		eveningOn: '傍晚自动开',
 		eveningOff: '傍晚自动关',
 		morningOn: '早晨自动开',
@@ -448,6 +481,7 @@ button:disabled { opacity: .5; cursor: default; }
 .pers i { width: 2.2cqmin; height: 2.2cqmin; border-radius: 50%; background: rgba(127,127,127,.6); display: inline-block; }
 .pers.on i { background: var(--iob-success, #2e7d32); }
 .pers.warn i { background: var(--iob-warning, #ed6c02); }
+.lightrow .lbl2 { margin-left: 2cqmin; }
 .row.sep { margin-top: 2cqmin; padding-top: 2cqmin; border-top: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
@@ -768,19 +802,22 @@ class HomeGuardPanel extends IobWebComponent {
 			}
 			html += '</div>';
 		}
-		// switches of the evening and morning light - only for what is set up in the instance
+		// switches of the evening and morning light - "on" and "off" side by side, only for what is set up
 		if (s.light !== false && this.info) {
-			const keys = [
-				...(this.info.eveningAvailable ? ['eveningOn', 'eveningOff'] : []),
-				...(this.info.morningAvailable ? ['morningOn', 'morningOff'] : []),
-			].filter(k => this.val(`control.${k}`) !== null && this.val(`control.${k}`) !== undefined);
-			if (keys.length) {
-				html += `<div class="box">${keys
+			const has = k => this.val(`control.${k}`) !== null && this.val(`control.${k}`) !== undefined;
+			const sw = k =>
+				`<span class="lbl2">${esc(t[k.endsWith('On') ? 'auton' : 'autoff'])}</span><button class="sw ${
+					this.val(`control.${k}`) !== false ? 'on' : ''
+				}" data-a="light" data-k="${k}" aria-label="${esc(t[k])}"></button>`;
+			const rows = [
+				this.info.eveningAvailable && has('eveningOn') ? ['evening', 'eveningOn', 'eveningOff'] : null,
+				this.info.morningAvailable && has('morningOn') ? ['morning', 'morningOn', 'morningOff'] : null,
+			].filter(Boolean);
+			if (rows.length) {
+				html += `<div class="box">${rows
 					.map(
-						(k, n) =>
-							`<div class="row${n ? ' sep' : ''}"><div class="grow">${esc(
-								t[k],
-							)}</div><button class="sw ${this.val(`control.${k}`) !== false ? 'on' : ''}" data-a="light" data-k="${k}" aria-label="${esc(t[k])}"></button></div>`,
+						([name, on, off], n) =>
+							`<div class="row lightrow${n ? ' sep' : ''}"><div class="grow">${esc(t[name])}</div>${sw(on)}${sw(off)}</div>`,
 					)
 					.join('')}</div>`;
 			}

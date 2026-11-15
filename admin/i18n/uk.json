@@ -232,5 +232,11 @@
 	"Morning": "Ранок",
 	"Bedtime": "Перед сном",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "Щовечора перемикає лампи типу «вечір», навіть якщо хтось удома: у сутінки вмикає ВСІ (і вимкнені вручну напередодні), під час «відбою» вимикає ВСІ (і ввімкнені вручну). Час як у налаштуваннях сутінків. Короткі відвідування, відхід до сну та навчене — лише під час імітації, щоб уночі світло в туалеті не вмикалося саме, коли хтось удома.",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Лампи типу «ранок»: вмикаються під час підйому, вимикаються невдовзі після сходу сонця – лише якщо ще темно. Без ранкового світла лише під час імітації; з ним щоранку, навіть якщо хтось удома."
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Лампи типу «ранок»: вмикаються під час підйому, вимикаються невдовзі після сходу сонця – лише якщо ще темно. Без ранкового світла лише під час імітації; з ним щоранку, навіть якщо хтось удома.",
+	"Off: minutes after sunrise": "Вимк.: хвилин після сходу сонця",
+	"Off: random delay up to (min)": "Вимк.: випадкова затримка до (хв)",
+	"Off at the latest at (HH:MM, empty = no)": "Вимкнути не пізніше (ГГ:ХХ, порожньо = ні)",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "наприклад, коли ви виходите з дому; у вихідні пізніше, як час підйому",
+	"Off as soon as brightness above (lux, 0 = no)": "Вимкнути, щойно світліше за (люкс, 0 = ні)",
+	"Brightness sensor from the dusk section": "Датчик освітленості з розділу «Сутінки»"
 }

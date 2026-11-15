@@ -131,7 +131,7 @@ class Learner {
   }
 }
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e, _f;
   const r = (a, b) => a + rand() * (b - a);
   const steps = [];
   const weekend = isWeekendEvening(noon);
@@ -221,7 +221,18 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
     const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, (_e = o.wakeRandom) != null ? _e : 20) * MIN;
     for (const m of mornings) {
       const on = wake + r(0, 10) * MIN;
-      const off = o.sunriseNext + r(5, 30) * MIN;
+      const rnd = () => {
+        var _a2;
+        return r(0, (_a2 = o.morningOffRandom) != null ? _a2 : 25) * MIN;
+      };
+      let off = o.sunriseNext + ((_f = o.morningOffOffset) != null ? _f : 5) * MIN + rnd();
+      const offTime = o.morningOffTime ? parseHm(o.morningOffTime, -1) : -1;
+      if (offTime >= 0) {
+        off = Math.min(off, noon + (offTime + later + 12 * 60) * MIN + rnd());
+      }
+      if (o.morningBright && o.morningBright > noon) {
+        off = Math.min(off, o.morningBright);
+      }
       if (off - on >= 10 * MIN) {
         steps.push({ at: on, id: m.id, on: true, why: "morning" });
         steps.push({ at: off, id: m.id, on: false, why: "morning" });

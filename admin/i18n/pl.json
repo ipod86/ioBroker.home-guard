@@ -232,5 +232,11 @@
 	"Morning": "Rano",
 	"Bedtime": "Pora snu",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "Każdego wieczoru przełącza lampy typu „wieczór”, także gdy ktoś jest w domu: o zmierzchu WSZYSTKIE włączone (także wyłączone ręcznie poprzedniego wieczoru), przy „zgaszeniu świateł” WSZYSTKIE wyłączone (także włączone ręcznie). Godziny jak w ustawieniach zmierzchu. Krótkie wizyty, pójście spać i wyuczone przełączenia tylko podczas symulacji – dzięki temu w nocy światło w toalecie nie włączy się samo, gdy ktoś jest w domu.",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampy typu „rano”: włączane o porze wstawania, wyłączane tuż po wschodzie słońca – tylko gdy jest jeszcze ciemno. Bez światła porannego tylko podczas symulacji; z nim każdego ranka, także gdy ktoś jest w domu."
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampy typu „rano”: włączane o porze wstawania, wyłączane tuż po wschodzie słońca – tylko gdy jest jeszcze ciemno. Bez światła porannego tylko podczas symulacji; z nim każdego ranka, także gdy ktoś jest w domu.",
+	"Off: minutes after sunrise": "Wył.: minut po wschodzie słońca",
+	"Off: random delay up to (min)": "Wył.: losowe opóźnienie do (min)",
+	"Off at the latest at (HH:MM, empty = no)": "Wyłącz najpóźniej o (GG:MM, puste = nie)",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "np. gdy wychodzicie z domu; w weekend później, jak pora wstawania",
+	"Off as soon as brightness above (lux, 0 = no)": "Wyłącz, gdy jaśniej niż (luks, 0 = nie)",
+	"Brightness sensor from the dusk section": "Czujnik jasności z sekcji zmierzch"
 }

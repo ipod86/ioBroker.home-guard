@@ -116,6 +116,10 @@ declare global {
 			simWake: string;
 			simWakeRandom: number;
 			simWakeWeekendLater: number;
+			simMorningOffOffset: number;
+			simMorningOffRandom: number;
+			simMorningOffTime: string;
+			simMorningLuxAbove: number;
 			reportWhen: 'armed' | 'always';
 			notifyReport: boolean;
 			autoReport: boolean;

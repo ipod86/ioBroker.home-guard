@@ -449,4 +449,19 @@ describe('morning', () => {
 		);
 		expect(plan.filter(s => s.id === 'kueche')).to.deep.equal([]);
 	});
+	it('morning lamps off: own offset after sunrise, at the latest at a set time, or when it became bright', () => {
+		const sunriseThu = new Date(2026, 10, 19, 7, 50).getTime();
+		const base = { ...opts, wake: '06:00', wakeRandom: 0, sunriseNext: sunriseThu, morningOffRandom: 0 };
+		const offAt = (o: Record<string, unknown>): string => {
+			const st = planEvening(noon, sunset, kitchen, { ...base, ...o }, new Learner(), seeded(1)).find(
+				s => s.id === 'kueche' && !s.on,
+			);
+			return st ? new Date(st.at).toTimeString().slice(0, 5) : '-';
+		};
+		expect(offAt({ morningOffOffset: 20 })).to.equal('08:10');
+		expect(offAt({ morningOffOffset: 20, morningOffTime: '07:15' })).to.equal('07:15');
+		expect(offAt({ morningOffOffset: 20, morningBright: new Date(2026, 10, 19, 7, 30).getTime() })).to.equal(
+			'07:30',
+		);
+	});
 });

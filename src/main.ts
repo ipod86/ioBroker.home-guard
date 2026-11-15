@@ -129,6 +129,7 @@ class HomeGuard extends utils.Adapter {
 	private sirenTimers: (ioBroker.Timeout | undefined)[] = [];
 	private log_: { ts: number; type: string; text: string }[] = [];
 	private luxDuskTs = 0;
+	private luxBrightTs = 0; // it became bright this morning (lux sensor): morning lamps off
 	private lastSimActive = false;
 	private simRestoring = true;
 	private started = false;
@@ -1923,6 +1924,13 @@ class HomeGuard extends utils.Adapter {
 				wakeRandom: clamp(num(c.simWakeRandom, 20), 0, 120),
 				wakeWeekendLater: clamp(num(c.simWakeWeekendLater, 60), 0, 240),
 				sunriseNext: next ? next.sunrise : undefined,
+				morningOffOffset: clamp(num(c.simMorningOffOffset, 5), -120, 240),
+				morningOffRandom: clamp(num(c.simMorningOffRandom, 25), 0, 120),
+				morningOffTime: c.simMorningOffTime || '',
+				morningBright:
+					this.luxBrightTs && eveningKey(this.luxBrightTs) === eveningKey(noon)
+						? this.luxBrightTs
+						: undefined,
 				learnFilter: ts => this.inLearnWindow(ts),
 			},
 			this.learner,
@@ -1936,11 +1944,35 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private onLux(lux: number): void {
 		const c = this.config;
-		if (isNaN(lux) || !c.simLuxBelow) {
+		if (isNaN(lux)) {
 			return;
 		}
 		const now = Date.now();
 		const hour = new Date(now).getHours();
+		// morning: bright enough outside - the morning lamps go off (once per morning)
+		const above = num(c.simMorningLuxAbove, 0);
+		if (
+			above > 0 &&
+			lux > above &&
+			hour >= 4 &&
+			hour < 12 &&
+			(!this.luxBrightTs || new Date(this.luxBrightTs).toDateString() !== new Date(now).toDateString())
+		) {
+			this.luxBrightTs = now;
+			const automatic = (this.morningOn() && this.lightSw.morningOff) || this.sim.active;
+			if (automatic) {
+				for (const id of new Set(this.simLamps.filter(l => l.type === 'morning').map(l => l.id))) {
+					if (this.simLampVals.get(id)) {
+						void this.switchLamp(id, false);
+					}
+				}
+			}
+			this.sim.replan();
+			this.evening.replan();
+		}
+		if (!c.simLuxBelow) {
+			return;
+		}
 		if (lux < c.simLuxBelow && hour >= 14 && (!this.luxDuskTs || eveningKey(this.luxDuskTs) !== eveningKey(now))) {
 			this.luxDuskTs = now;
 			this.sim.replan();

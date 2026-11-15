@@ -232,5 +232,11 @@
 	"Morning": "Mañana",
 	"Bedtime": "Hora de dormir",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "Conmuta cada tarde las lámparas de tipo «noche», también si hay alguien en casa: al anochecer TODAS encendidas (también las apagadas a mano la tarde anterior), en «apagar luces» TODAS apagadas (también las encendidas a mano). Horas como en crepúsculo. Visitas cortas, acostarse y lo aprendido solo durante la simulación – así no se enciende sola la luz del baño por la noche si hay alguien en casa.",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lámparas de tipo «mañana»: encendidas a la hora de levantarse, apagadas poco después del amanecer – solo si aún está oscuro. Sin luz de la mañana solo durante la simulación; con ella cada mañana, también si hay alguien en casa."
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lámparas de tipo «mañana»: encendidas a la hora de levantarse, apagadas poco después del amanecer – solo si aún está oscuro. Sin luz de la mañana solo durante la simulación; con ella cada mañana, también si hay alguien en casa.",
+	"Off: minutes after sunrise": "Apagar: minutos tras el amanecer",
+	"Off: random delay up to (min)": "Apagar: retraso aleatorio hasta (min)",
+	"Off at the latest at (HH:MM, empty = no)": "Apagar a más tardar a las (HH:MM, vacío = no)",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "p. ej. cuando salís de casa; el fin de semana más tarde, como la hora de levantarse",
+	"Off as soon as brightness above (lux, 0 = no)": "Apagar en cuanto haya más de (lux, 0 = no)",
+	"Brightness sensor from the dusk section": "Sensor de luminosidad de la sección crepúsculo"
 }

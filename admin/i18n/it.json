@@ -232,5 +232,11 @@
 	"Morning": "Mattina",
 	"Bedtime": "Ora di dormire",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "Commuta ogni sera le lampade di tipo «sera», anche se qualcuno è in casa: al crepuscolo TUTTE accese (anche quelle spente a mano la sera prima), a «luci spente» TUTTE spente (anche quelle accese a mano). Orari come impostati nel crepuscolo. Visite brevi, andare a letto e appreso solo durante la simulazione – così di notte la luce del bagno non si accende da sola se qualcuno è in casa.",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampade di tipo «mattina»: accese all'ora della sveglia, spente poco dopo l'alba – solo se è ancora buio. Senza luce del mattino solo durante la simulazione; con essa ogni mattina, anche se qualcuno è in casa."
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "Lampade di tipo «mattina»: accese all'ora della sveglia, spente poco dopo l'alba – solo se è ancora buio. Senza luce del mattino solo durante la simulazione; con essa ogni mattina, anche se qualcuno è in casa.",
+	"Off: minutes after sunrise": "Spento: minuti dopo l'alba",
+	"Off: random delay up to (min)": "Spento: ritardo casuale fino a (min)",
+	"Off at the latest at (HH:MM, empty = no)": "Spento al più tardi alle (HH:MM, vuoto = no)",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "ad es. quando uscite di casa; nel fine settimana più tardi come l'ora di sveglia",
+	"Off as soon as brightness above (lux, 0 = no)": "Spento appena più luminoso di (lux, 0 = no)",
+	"Brightness sensor from the dusk section": "Sensore di luminosità dalla sezione crepuscolo"
 }

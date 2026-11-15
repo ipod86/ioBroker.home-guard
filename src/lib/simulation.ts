@@ -62,6 +62,13 @@ export interface SimOptions {
 	wakeWeekendLater?: number; // min, Saturday and Sunday morning
 	/** sunrise of the next morning (ms) - without it no morning is planned */
 	sunriseNext?: number;
+	/** morning lamps off: minutes after sunrise plus a random delay (default 5 + 0..25) */
+	morningOffOffset?: number;
+	morningOffRandom?: number;
+	/** morning lamps off at the latest at this time (HH:MM, e.g. when leaving the house; later on the weekend) */
+	morningOffTime?: string;
+	/** it became bright this morning (lux sensor): morning lamps off then at the latest */
+	morningBright?: number;
 	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
 	learnFilter?: (ts: number) => boolean;
 }
@@ -328,7 +335,15 @@ export function planEvening(
 		const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, o.wakeRandom ?? 20) * MIN;
 		for (const m of mornings) {
 			const on = wake + r(0, 10) * MIN;
-			const off = o.sunriseNext + r(5, 30) * MIN;
+			const rnd = (): number => r(0, o.morningOffRandom ?? 25) * MIN;
+			let off = o.sunriseNext + (o.morningOffOffset ?? 5) * MIN + rnd();
+			const offTime = o.morningOffTime ? parseHm(o.morningOffTime, -1) : -1;
+			if (offTime >= 0) {
+				off = Math.min(off, noon + (offTime + later + 12 * 60) * MIN + rnd());
+			}
+			if (o.morningBright && o.morningBright > noon) {
+				off = Math.min(off, o.morningBright);
+			}
 			if (off - on >= 10 * MIN) {
 				steps.push({ at: on, id: m.id, on: true, why: 'morning' });
 				steps.push({ at: off, id: m.id, on: false, why: 'morning' });

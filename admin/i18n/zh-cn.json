@@ -232,5 +232,11 @@
 	"Morning": "早晨",
 	"Bedtime": "就寝",
 	"Switches the evening lamps (function \"evening light\" or \"Evening\" ticked in the table) every evening, also when somebody is at home: at dusk ALL of them on (also those switched off by hand the evening before), at \"lights out\" ALL of them off (also those switched on by hand). Times as set under dusk. Short visits, bedtime and learned switching only run while the simulation runs – so nobody at home is surprised by the toilet light at night.": "每晚切换“晚间”类型的灯，即使有人在家：黄昏时全部开启（包括前一晚手动关闭的），到“关灯时间”全部关闭（包括手动开启的）。时间按黄昏设置。短暂进出、睡前和学习的开关仅在模拟运行时执行——这样有人在家时，夜里厕所灯不会自己亮。",
-	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "“早晨”类型的灯：起床时开启，日出后不久关闭——仅在天还黑时。未开启早晨照明时仅在模拟期间运行；开启后每天早晨运行，即使有人在家。"
+	"Morning lamps (function \"morning light\" or \"Morning\" ticked in the table): on at wake-up time, off a little after sunrise – only when it is still dark. Without the morning light they run only while the simulation runs; with it every morning, also when somebody is at home.": "“早晨”类型的灯：起床时开启，日出后不久关闭——仅在天还黑时。未开启早晨照明时仅在模拟期间运行；开启后每天早晨运行，即使有人在家。",
+	"Off: minutes after sunrise": "关：日出后分钟数",
+	"Off: random delay up to (min)": "关：随机延迟最多（分钟）",
+	"Off at the latest at (HH:MM, empty = no)": "最晚关闭时间（HH:MM，空 = 不使用）",
+	"e.g. when you leave the house; later on the weekend like the wake-up time": "例如出门时；周末与起床时间一样推迟",
+	"Off as soon as brightness above (lux, 0 = no)": "亮度高于该值时关闭（勒克斯，0 = 不使用）",
+	"Brightness sensor from the dusk section": "黄昏部分的亮度传感器"
 }
