@@ -1156,14 +1156,10 @@ class HomeGuard extends utils.Adapter {
       out.wizHasSpeaker = true;
       lines.push(`${de ? "Lautsprecher" : "Speaker"}: ${speaker}`);
     }
-    const isState = (r, re) => {
-      var _a2, _b2;
-      return !r.id.startsWith(`${this.namespace}.`) && re.test(`${r.id} ${String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || "")}`);
-    };
     const siren = view.rows.find(
       (r) => {
-        var _a2, _b2;
-        return isState(r, /siren|sirene|switch\.alarm/i) && ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.write) !== false;
+        var _a2, _b2, _c, _d;
+        return !r.id.startsWith(`${this.namespace}.`) && ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.write) !== false && (/^(switch\.alarm|switch\.siren|level\.siren)/.test(String(((_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.role) || "")) || /^(siren|sirene|alarm_?siren)$/i.test(r.id.split(".").pop() || ""));
       }
     );
     if (siren && !(this.config.sirens || []).some((r) => r && r.id)) {

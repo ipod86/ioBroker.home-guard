@@ -121,7 +121,7 @@ export function bestEnum(kind: ScanKind, enums: EnumInfo[]): { id: string; name:
 		const share = e.roles.length ? count / e.roles.length : 0;
 		const score = (nameFit ? 3 : 0) + count + share * 5;
 		if (!best || score > best.score) {
-			best = { id: e.id, name: e.name, count: rule.role ? count : e.roles.length, score };
+			best = { id: e.id, name: e.name, count: rule.role && count ? count : e.roles.length, score };
 		}
 	}
 	return best ? { id: best.id, name: best.name, count: best.count } : null;

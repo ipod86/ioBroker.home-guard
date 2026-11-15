@@ -1293,10 +1293,14 @@ class HomeGuard extends utils.Adapter {
 			out.wizHasSpeaker = true;
 			lines.push(`${de ? 'Lautsprecher' : 'Speaker'}: ${speaker}`);
 		}
-		const isState = (r: (typeof view.rows)[number], re: RegExp): boolean =>
-			!r.id.startsWith(`${this.namespace}.`) && re.test(`${r.id} ${String(r.value?.common?.role || '')}`);
+		// a real siren: role of a siren/alarm switch, or a writable state that is called "siren" itself
+		// (not settings of other devices such as the acoustic alarm of a water detector)
 		const siren = view.rows.find(
-			r => isState(r, /siren|sirene|switch\.alarm/i) && r.value?.common?.write !== false,
+			r =>
+				!r.id.startsWith(`${this.namespace}.`) &&
+				r.value?.common?.write !== false &&
+				(/^(switch\.alarm|switch\.siren|level\.siren)/.test(String(r.value?.common?.role || '')) ||
+					/^(siren|sirene|alarm_?siren)$/i.test(r.id.split('.').pop() || '')),
 		);
 		if (siren && !(this.config.sirens || []).some(r => r && r.id)) {
 			out.wizHasSiren = true;
