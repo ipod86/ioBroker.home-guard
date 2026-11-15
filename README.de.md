@@ -44,8 +44,24 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 4. **Entschärfen & Anwesenheit** – Zustand des Türschlosses und die Werte für „aufgeschlossen“ (Nuki: 3, 5, 6), Anwesenheits-Datenpunkte und was passiert, wenn alle gehen oder jemand heimkommt.
 5. **Benachrichtigungen** – Messenger-Instanzen, welche Ereignisse gemeldet werden, Datenpunkt für Sprachausgabe.
 6. **Aktionen bei Alarm** – Lampen (Funktion oder Liste, an oder blinkend), Sirenen und eine Aktionstabelle für beliebige Ereignisse.
-7. **Anwesenheitssimulation** – Lampen mit Typ *Abend*, *kurzer Gang* oder *kurz beim Zubettgehen*, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
-8. **Dashboard** – Hinweise zur Web-Komponente.
+7. **Anwesenheitssimulation** – Lampen mit Typ *Abend*, *Morgens*, *kurze Gänge*, *Zubettgehen* oder *Fernseher/Gerät*, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
+
+### Funktion oder Tabelle – was wie eingerichtet wird
+
+Vieles lässt sich über eine **Funktion** (Aufzählung) einbinden – jeder Datenpunkt der Funktion wird genommen, neue Mitglieder werden ohne Neustart übernommen. Manche Einstellungen gibt es nur je Eintrag; diese Dinge müssen **von Hand in die Tabelle** eingetragen werden (mit der Datenpunkt-ID). Ein Tabelleneintrag überschreibt denselben Datenpunkt aus einer Funktion.
+
+| Was | Über eine Funktion | Nur in der Tabelle |
+|---|---|---|
+| Sensoren – Außenhaut, innen, Gefahrenmelder, nur melden | ✓ je eine Funktion | *verzögert* (Eingangsverzögerung), *invertiert*, *Bewegungsmelder*, was ein Gefahrenmelder tut (Nachricht / Sprache / Alarm) |
+| Anwesenheit (wer ist zu Hause) | ✓ | ein gemeinsamer Name für mehrere Datenpunkte einer Person (z. B. GPS und Ping) – ohne Namen gilt der Objektname |
+| Lampen bei Alarm | ✓ | – |
+| Sirenen | – | ✓ (Modus *jeder Alarm / nur Vollschutz / nur Hüll-/Nachtschutz* und Dauer je Sirene) |
+| Simulationslampen vom Typ **Abend** | ✓ (immer Typ *Abend*) | – |
+| Simulationslampen vom Typ **Morgens**, **kurze Gänge**, **Zubettgehen** | – | ✓ |
+| **Fernseher / Gerät** in der Simulation | – | ✓ (eigene Werte für an/aus, *Lernen von*, was beim Ende der Simulation passiert) |
+| Aktionen (Tür abschließen, Rollläden, Kamera …) | – | ✓ |
+
+Beispiel: Flur- und Badlicht für kurze Gänge während der Simulation kommen mit Typ *kurze Gänge* in die Tabelle *Simulationslampen*; sie gehören nicht in die Funktion der Abendlampen, sonst wären sie den ganzen Abend an.
 
 ## Datenpunkte
 

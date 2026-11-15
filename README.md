@@ -55,8 +55,24 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 4. **Disarm & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
 5. **Notifications** – messenger instances, which events are reported, speech output state.
 6. **Actions on alarm** – lamps (function or list, on or blinking), sirens and an actions table for any event.
-7. **Presence simulation** – lamps with type *evening*, *visit* or *bedtime*, way of planning, start relative to sunset or below a lux value, lights out, learning.
-8. **Dashboard** – notes about the web component.
+7. **Presence simulation** – lamps with type *evening*, *morning*, *visit*, *bedtime* or *TV/device*, way of planning, start relative to sunset or below a lux value, lights out, learning.
+
+### Function or table – what can be set up how
+
+Many things can be picked up through a **function** (enum) – every state that is a member of the function is used, and new members are picked up without a restart. Some settings only exist per entry, so these things must be **entered by hand in the table** (with the state ID). An entry in a table overrides the same state found through a function.
+
+| What | Through a function | Only in the table |
+|---|---|---|
+| Sensors – perimeter, inside, danger detector, report-only | ✓ one function each | *delayed* (entry delay), *inverted*, *motion detector*, what a danger detector does (message / speech / alarm) |
+| Presence (who is at home) | ✓ | one name for several states of one person (e.g. GPS and ping) – without a name the object name is used |
+| Lamps on alarm | ✓ | – |
+| Sirens | – | ✓ (mode *every alarm / full only / perimeter–night only* and duration per siren) |
+| Simulation lamps of type **evening** | ✓ (always type *evening*) | – |
+| Simulation lamps of type **morning**, **visit**, **bedtime** | – | ✓ |
+| **TV / device** in the simulation | – | ✓ (own values for on/off, *learn from*, what happens when the simulation ends) |
+| Actions (lock the door, shutters, camera …) | – | ✓ |
+
+Example: the hall and bathroom lights for short visits during the simulation are entered in the table *Simulation lamps* with type *visit*; they are not part of the function of the evening lamps, otherwise they would be on all evening.
 
 ### States
 
