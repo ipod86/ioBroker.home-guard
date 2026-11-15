@@ -21,83 +21,99 @@
 					"options": [
 						{
 							"value": 0,
-							"label": "1. Welcome"
+							"label": "Welcome"
 						},
 						{
 							"value": 1,
-							"label": "2. What do you want to use?"
+							"label": "What do you want to use?"
 						},
 						{
 							"value": 2,
-							"label": "3. What do you have?"
+							"label": "What do you have?"
 						},
 						{
 							"value": 3,
-							"label": "4. How it works"
+							"label": "How it works",
+							"hidden": "data.wizStep !== 3 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 4,
-							"label": "5. Alarm system: outer skin"
+							"label": "Alarm system: outer skin",
+							"hidden": "data.wizStep !== 4 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 5,
-							"label": "6. Alarm system: inside"
+							"label": "Alarm system: inside",
+							"hidden": "data.wizStep !== 5 && !(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
 						},
 						{
 							"value": 6,
-							"label": "7. Alarm system: danger & emergency"
+							"label": "Alarm system: danger & emergency",
+							"hidden": "data.wizStep !== 6 && !(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						{
 							"value": 7,
-							"label": "8. Alarm system: report only"
+							"label": "Alarm system: report only",
+							"hidden": "data.wizStep !== 7 && !(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
 						{
 							"value": 8,
-							"label": "9. Alarm system: single sensors & exceptions"
+							"label": "Alarm system: single sensors & exceptions",
+							"hidden": "data.wizStep !== 8 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 9,
-							"label": "10. Alarm system: times"
+							"label": "Alarm system: times",
+							"hidden": "data.wizStep !== 9 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 10,
-							"label": "11. Alarm system: at night"
+							"label": "Alarm system: at night",
+							"hidden": "data.wizStep !== 10 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 11,
-							"label": "12. Who lives here?"
+							"label": "Who lives here?",
+							"hidden": "data.wizStep !== 11 && !((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
 						},
 						{
 							"value": 12,
-							"label": "13. Alarm system: switching on and off"
+							"label": "Alarm system: switching on and off",
+							"hidden": "data.wizStep !== 12 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 13,
-							"label": "14. Alarm system: messages"
+							"label": "Alarm system: messages",
+							"hidden": "data.wizStep !== 13 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 14,
-							"label": "15. Alarm system: on alarm"
+							"label": "Alarm system: on alarm",
+							"hidden": "data.wizStep !== 14 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 15,
-							"label": "16. Simulation: when and how"
+							"label": "Simulation: when and how",
+							"hidden": "data.wizStep !== 15 && !(data.simEnabled)"
 						},
 						{
 							"value": 16,
-							"label": "17. Light: evening"
+							"label": "Light: evening",
+							"hidden": "data.wizStep !== 16 && !(data.eveningLight || data.simEnabled)"
 						},
 						{
 							"value": 17,
-							"label": "18. Light: morning"
+							"label": "Light: morning",
+							"hidden": "data.wizStep !== 17 && !((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
 						},
 						{
 							"value": 18,
-							"label": "19. Light: lamps"
+							"label": "Light: lamps",
+							"hidden": "data.wizStep !== 18 && !((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
 						{
 							"value": 19,
-							"label": "20. Check"
+							"label": "Check"
 						}
 					]
 				},
