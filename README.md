@@ -21,6 +21,9 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 ### Highlights
 
 - **Setup assistant**: a new instance starts with a guided setup. First it asks what you want to use (alarm system, presence simulation, evening and morning light) and what you already have (door and window contacts, motion and smoke detectors, siren, door lock, presence detection, speaker …) – *Search automatically* looks through your ioBroker and ticks what it finds. After that only the pages that fit your answers follow: one topic each, explained in plain words, with suggested times and a check at the end ("no messenger", "no door delayed" …). If you know your way around, skip it with one tick.
+
+  <img src="https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/wizard_flow_en.png" alt="Flow of the setup assistant" width="700">
+
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
 - **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.

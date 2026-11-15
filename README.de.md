@@ -10,6 +10,9 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 ## Highlights
 
 - **Einrichtungsassistent**: Eine neue Instanz startet mit einer geführten Einrichtung. Zuerst fragt er, was du nutzen möchtest (Alarmanlage, Anwesenheitssimulation, Abend- und Morgenlicht) und was es bei dir schon gibt (Tür- und Fensterkontakte, Bewegungs- und Rauchmelder, Sirene, Türschloss, Anwesenheitserkennung, Lautsprecher …) – *Automatisch suchen* durchsucht dein ioBroker und hakt das Gefundene gleich an. Danach kommen nur die Seiten, die zu deinen Antworten passen: jede mit einem Thema, in einfachen Worten erklärt, mit Vorschlägen für die Zeiten und einer Prüfung am Ende („kein Messenger“, „keine Tür verzögert“ …). Wer sich auskennt, überspringt ihn mit einem Haken.
+
+  <img src="https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/wizard_flow_de.png" alt="Ablauf des Einrichtungsassistenten" width="700">
+
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). 24-h-Sensoren (Rauch, Wasser) lösen immer aus.
 - **Ausgangsverzögerung** je Modus, **sofort scharf**, wenn die Haustür zufällt, **Eingangsverzögerung** (stiller Alarm) für verzögerte Sensoren wie die Haustür.
 - **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern oder ignorieren. Gekippte Fenster (Wert 1) zählen als offen.
