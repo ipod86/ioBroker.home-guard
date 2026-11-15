@@ -20,7 +20,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Sabotage-Prüfung**: Sensoren, die sich eine einstellbare Zahl Stunden nicht gemeldet haben, werden gemeldet (Batterie leer, Funkproblem).
 - **Anwesenheitssimulation** mit drei Planungsarten: *Dämmerung* (zufällige Zeiten um den Sonnenuntergang, Licht aus um eine feste Zeit, Freitag/Samstag später, kurze Gänge in Flur und Bad), *gelernt* (spielt einen echten Tag aus deinem eigenen Schaltverhalten mit verschobenen Zeiten ab – für einen Werktagsabend irgendeinen Werktag, fürs Wochenende irgendeinen Freitag/Samstag; wahlweise denselben Wochentag, wenn mindestens 3 davon gelernt sind) und *kombiniert* (empfohlen).
 - **Abendlicht**: die Abendlampen jeden Abend, auch wenn jemand zu Hause ist – bei Dämmerung alle an (auch die am Vorabend von Hand ausgeschalteten), bei „Licht aus“ alle aus (auch die von Hand eingeschalteten). Kurze Gänge, Zubettgehen und Gelerntes nur, solange die Simulation läuft. Ein- und Ausschalten lassen sich jederzeit getrennt ein- oder ausschalten (z. B. automatisch an, von Hand aus) – über `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` oder die Schalter im Panel.
-- **Fernseher und andere Geräte** in der Simulation (Typ „Fernseher/Gerät“), nur während die Simulation läuft: Mit „Lernen von“ (z. B. dem echten Ein-Zustand des Fernsehers) werden deine echten Abende nachgespielt, auch mehrmals am Abend; ohne läuft es eine einstellbare Anzahl Male für eine zufällige Zeit. Ein eigener Wert für an und aus lässt eine Szene des Szenen-Adapters oder ein Skript mehrere Schritte übernehmen (Fernseher an, dann Sender).
+- **Fernseher und andere Geräte, Szenen oder Skripte** in der Simulation (Typ „Gerät / Szene / Skript“), nur während die Simulation läuft: Mit „Lernen von“ (z. B. dem echten Ein-Zustand des Fernsehers) werden deine echten Abende nachgespielt, auch mehrmals am Abend; ohne läuft es eine einstellbare Anzahl Male für eine zufällige Zeit. Ein eigener Wert für an und aus lässt eine Szene des Szenen-Adapters oder ein Skript mehrere Schritte übernehmen (Fernseher an, dann Sender).
 - **Wenn die Simulation endet** (z. B. beim Heimkommen): je Eintrag automatisch (Geräte wie der Fernseher aus, Lampen bleiben an), ausschalten oder anlassen. Einträge in den Tabellen überschreiben die über eine Funktion gefundenen.
 - **Lernfenster**: Lernen und Nachspielen nur bei Dunkelheit (ab kurz vor Sonnenuntergang bis Sonnenaufgang), zwischen zwei Uhrzeiten oder immer.
 - **Gefahrenmelder** (Rauch, Wasser, Gas – 24-h-Sensoren) melden immer, auch unscharf; je Sensor: nur Nachricht, Nachricht und Sprachausgabe oder voller Alarm mit Sirenen, Lampen und Aktionen. Eigenes Ereignis „Gefahrenmelder“ für die Aktionstabelle (z. B. Wasserventil schließen).
@@ -46,7 +46,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 4. **Entschärfen & Anwesenheit** – Zustand des Türschlosses und die Werte für „aufgeschlossen“ (Nuki: 3, 5, 6), Anwesenheits-Datenpunkte und was passiert, wenn alle gehen oder jemand heimkommt.
 5. **Benachrichtigungen** – Messenger-Instanzen, welche Ereignisse gemeldet werden, Datenpunkt für Sprachausgabe.
 6. **Aktionen bei Alarm** – Lampen (Funktion oder Liste, an oder blinkend), Sirenen und eine Aktionstabelle für beliebige Ereignisse.
-7. **Anwesenheitssimulation** – Funktionen für Abend- und Morgenlampen, eine Lampentabelle mit den Rollen *Abend*, *Morgens*, *Kurze Gänge*, *Zubettgehen* (mehrere je Lampe) und Fernseher/Geräte, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
+7. **Anwesenheitssimulation** – Funktionen für Abend- und Morgenlampen, eine Lampentabelle mit den Rollen *Abend*, *Morgens*, *Kurze Gänge*, *Zubettgehen* (mehrere je Lampe) und Geräte/Szenen/Skripte, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
 
 ### Funktion oder Tabelle – was wie eingerichtet wird
 
@@ -61,7 +61,7 @@ Vieles lässt sich über eine **Funktion** (Aufzählung) einbinden – jeder Dat
 | **Abendlampen** | ✓ Funktion *Abendlicht* | ✓ Haken *Abend* |
 | **Morgenlampen** | ✓ Funktion *Morgenlicht* (darf dieselbe Funktion sein) | ✓ Haken *Morgens* |
 | Lampen für **kurze Gänge** und **Zubettgehen** | – | ✓ Haken *Kurze Gänge* / *Zubettgehen* |
-| **Fernseher / Gerät** in der Simulation | – | ✓ (eigene Werte für an/aus, *Lernen von*, was beim Ende der Simulation passiert) |
+| **Gerät / Szene / Skript** in der Simulation | – | ✓ (eigene Werte für an/aus, *Lernen von*, was beim Ende der Simulation passiert) |
 | Aktionen (Tür abschließen, Rollläden, Kamera …) | – | ✓ |
 
 Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche als Abend- und Morgenlampe). Beispiel: Flur- und Badlicht für kurze Gänge während der Simulation kommen mit Haken *Kurze Gänge* in die Tabelle; sie gehören nicht in die Funktion der Abendlampen, sonst wären sie den ganzen Abend an.

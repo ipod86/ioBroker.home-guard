@@ -27,11 +27,11 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out.
 - **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
 - **Notifications** to Telegram, Pushover, e-mail, WhatsApp (cmb), Signal (cmb) and Pushsafer in their own format, and to **every messenger that supports ioBroker notifications** (e.g. Gotify, Discord, ioBroker.pro app, GSM-SMS) in the format of the notification manager; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
-- **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
+- **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any states through an actions table – devices, scenes, scripts (e.g. outdoor lights on, lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day learned from your own switching, with shifted times – any weekday for a weekday evening, any Friday/Saturday for the weekend; optionally the same day of the week when at least 3 of them are learned) and *combined* (recommended).
 - **Evening light**: the evening lamps every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be turned on or off separately at any time (e.g. on automatically, off by hand) – with `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` or the switches in the panel.
-- **TV and other devices** in the simulation (type "TV / device"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
+- **TV and other devices, scenes or scripts** in the simulation (type "Device / scene / script"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
 - **When the simulation ends** (e.g. coming home): per entry automatic (devices like the TV off, lamps stay on), switch off or leave on. Entries in the tables override the ones found through a function.
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Danger detectors** (smoke, water, gas – 24 h sensors) report always, also when disarmed; per sensor: message only, message and speech output, or a full alarm with sirens, lamps and actions. Own event "danger detector" for the actions table (e.g. close a water valve).
@@ -72,7 +72,7 @@ Many things can be picked up through a **function** (enum) – every state that 
 | **Evening lamps** | ✓ function *evening light* | ✓ tick *Evening* |
 | **Morning lamps** | ✓ function *morning light* (may be the same function) | ✓ tick *Morning* |
 | Lamps for **short visits** and **bedtime** | – | ✓ tick *Short visits* / *Bedtime* |
-| **TV / device** in the simulation | – | ✓ (own values for on/off, *learn from*, what happens when the simulation ends) |
+| **Device / scene / script** in the simulation | – | ✓ (own values for on/off, *learn from*, what happens when the simulation ends) |
 | Actions (lock the door, shutters, camera …) | – | ✓ |
 
 A lamp in the table can have several roles at once (e.g. the kitchen as evening and morning lamp). Example: the hall and bathroom lights for short visits during the simulation are entered in the table with *Short visits* ticked; they are not part of the function of the evening lamps, otherwise they would be on all evening.
@@ -134,12 +134,13 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
 * (ipod86) setup assistant: guided first setup with automatic search for functions, lock and messenger, suggested times and a final check; the other tabs appear when it is finished
+* (ipod86) simulation: the type "TV / device" is now called "Device / scene / script" – any state can be switched while simulating
 * (ipod86) settings: evening and morning each have their own section (times, brightness); shown only when the evening/morning light or the simulation uses them
 * (ipod86) morning light off: own offset after sunrise, latest time, brightness sensor; panel shows "on" and "off" side by side for evening and morning light
 * (ipod86) simulation lamps: own function for the morning light; in the table a lamp has roles (evening, morning, short visits, bedtime – several at once) instead of one type; older tables are converted automatically
--->
-### **WORK IN PROGRESS**
 * (ipod86) evening/morning light: switching on and off as states (`control.eveningOn` …) and switches in the panel, only shown when set up; the simulation runs only coupled (alarm system/nobody at home), the manual switch `simulation.enabled` was removed
 * (ipod86) learned simulation: choose the learned day by weekday/weekend (default, more variety) or by the same day of the week (only with at least 3 of them)
 
