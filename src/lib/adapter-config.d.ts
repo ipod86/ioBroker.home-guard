@@ -57,8 +57,13 @@ export interface SimLampRow {
 	enabled: boolean;
 	id: string;
 	name: string;
-	/** evening = on for the evening, visit = short visits, bedtime = briefly at bedtime, device = TV/radio */
-	type: 'evening' | 'visit' | 'bedtime' | 'device' | 'morning';
+	/** lamp (roles below) or device = TV/radio; old configurations: the role itself (migrated at the start) */
+	type: 'lamp' | 'device' | 'evening' | 'visit' | 'bedtime' | 'morning';
+	/** roles of a lamp: on for the evening, morning, short visits, briefly at bedtime - several at once */
+	evening?: boolean;
+	morning?: boolean;
+	visit?: boolean;
+	bedtime?: boolean;
 	/** own value for on / off (optional) */
 	valueOn?: string;
 	valueOff?: string;
@@ -165,6 +170,7 @@ declare global {
 			simCoupling: 'manual' | 'alarm' | 'away' | 'alarmOrAway';
 			simAuto: boolean;
 			enumSimLamps: string;
+			enumMorningLamps: string;
 			simLamps: SimLampRow[];
 			simMode: 'dusk' | 'learned' | 'combined';
 			simStartOffset: number;

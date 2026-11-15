@@ -30,14 +30,14 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any devices through an actions table (e.g. lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day learned from your own switching, with shifted times – any weekday for a weekday evening, any Friday/Saturday for the weekend; optionally the same day of the week when at least 3 of them are learned) and *combined* (recommended).
-- **Evening light**: the lamps of type "evening" every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be turned on or off separately at any time (e.g. on automatically, off by hand) – with `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` or the switches in the panel.
+- **Evening light**: the evening lamps every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be turned on or off separately at any time (e.g. on automatically, off by hand) – with `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` or the switches in the panel.
 - **TV and other devices** in the simulation (type "TV / device"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
 - **When the simulation ends** (e.g. coming home): per entry automatic (devices like the TV off, lamps stay on), switch off or leave on. Entries in the tables override the ones found through a function.
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Danger detectors** (smoke, water, gas – 24 h sensors) report always, also when disarmed; per sensor: message only, message and speech output, or a full alarm with sirens, lamps and actions. Own event "danger detector" for the actions table (e.g. close a water valve).
 - **Report-only sensors** (garden gate, letter box, shed): a message instead of an alarm, only while armed or always; switchable at any time with `control.report`.
 - **Sirens per mode**: every alarm, full protection only (outside siren) or perimeter/night only (inside siren), each with its own duration.
-- **Morning light**: lamps of type "morning" on at wake-up time (later on the weekend) and off after sunrise – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
+- **Morning light**: the morning lamps on at wake-up time (later on the weekend) and off after sunrise – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
@@ -55,7 +55,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 4. **Disarm & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
 5. **Notifications** – messenger instances, which events are reported, speech output state.
 6. **Actions on alarm** – lamps (function or list, on or blinking), sirens and an actions table for any event.
-7. **Presence simulation** – lamps with type *evening*, *morning*, *visit*, *bedtime* or *TV/device*, way of planning, start relative to sunset or below a lux value, lights out, learning.
+7. **Presence simulation** – functions for evening and morning lamps, a table of lamps with the roles *evening*, *morning*, *short visits*, *bedtime* (several per lamp) and TVs/devices, way of planning, start relative to sunset or below a lux value, lights out, learning.
 
 ### Function or table – what can be set up how
 
@@ -67,12 +67,13 @@ Many things can be picked up through a **function** (enum) – every state that 
 | Presence (who is at home) | ✓ | one name for several states of one person (e.g. GPS and ping) – without a name the object name is used |
 | Lamps on alarm | ✓ | – |
 | Sirens | – | ✓ (mode *every alarm / full only / perimeter–night only* and duration per siren) |
-| Simulation lamps of type **evening** | ✓ (always type *evening*) | – |
-| Simulation lamps of type **morning**, **visit**, **bedtime** | – | ✓ |
+| **Evening lamps** | ✓ function *evening light* | ✓ tick *Evening* |
+| **Morning lamps** | ✓ function *morning light* (may be the same function) | ✓ tick *Morning* |
+| Lamps for **short visits** and **bedtime** | – | ✓ tick *Short visits* / *Bedtime* |
 | **TV / device** in the simulation | – | ✓ (own values for on/off, *learn from*, what happens when the simulation ends) |
 | Actions (lock the door, shutters, camera …) | – | ✓ |
 
-Example: the hall and bathroom lights for short visits during the simulation are entered in the table *Simulation lamps* with type *visit*; they are not part of the function of the evening lamps, otherwise they would be on all evening.
+A lamp in the table can have several roles at once (e.g. the kitchen as evening and morning lamp). Example: the hall and bathroom lights for short visits during the simulation are entered in the table with *Short visits* ticked; they are not part of the function of the evening lamps, otherwise they would be on all evening.
 
 ### States
 
@@ -131,6 +132,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
+* (ipod86) simulation lamps: own function for the morning light; in the table a lamp has roles (evening, morning, short visits, bedtime – several at once) instead of one type; older tables are converted automatically
 -->
 ### **WORK IN PROGRESS**
 * (ipod86) evening/morning light: switching on and off as states (`control.eveningOn` …) and switches in the panel, only shown when set up; the simulation runs only coupled (alarm system/nobody at home), the manual switch `simulation.enabled` was removed

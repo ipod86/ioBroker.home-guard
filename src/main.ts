@@ -18,9 +18,11 @@ import {
 	eveningNoon,
 	planEvening,
 	type Learned,
+	type LampType,
 	type PlanStep,
 	type SimLamp,
 } from './lib/simulation';
+import type { SimLampRow } from './lib/adapter-config';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
 
@@ -47,6 +49,27 @@ const LIGHT_CONFIG: Record<LightSwitch, string> = {
 	morningOn: 'morningLightOn',
 	morningOff: 'morningLightOff',
 };
+/**
+ * roles of a row of the lamp table
+ *
+ * @param row table row
+ */
+function rowRoles(row: SimLampRow): Set<LampType> {
+	if (row.type === 'device') {
+		return new Set<LampType>(['device']);
+	}
+	if (row.type && row.type !== 'lamp') {
+		return new Set<LampType>([row.type]); // not migrated yet
+	}
+	const roles = new Set<LampType>();
+	for (const r of ['evening', 'morning', 'visit', 'bedtime'] as const) {
+		if (row[r]) {
+			roles.add(r);
+		}
+	}
+	return roles;
+}
+
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 
 interface LampOut {
@@ -141,6 +164,10 @@ class HomeGuard extends utils.Adapter {
 		const lang = sys?.common?.language || 'en';
 		this.sysLang = lang;
 		this.T = texts(lang);
+		// lamp table of an older version (one type per row): turned into roles, the instance restarts with it
+		if (await this.migrateSimLamps()) {
+			return;
+		}
 
 		// state of the last run - read first: setting up the sensors already writes the status (still "off")
 		const lastMode = (await this.getStateAsync('status.mode'))?.val as Mode;
@@ -390,6 +417,7 @@ class HomeGuard extends utils.Adapter {
 			c.autoReport && c.enumReport,
 			c.presenceEnabled && c.presenceAuto && c.enumPresence,
 			c.simAuto && c.enumSimLamps,
+			c.simAuto && c.enumMorningLamps,
 			c.lampsAuto && c.enumLamps,
 		].filter((e): e is string => typeof e === 'string' && e.length > 0);
 	}
@@ -608,19 +636,57 @@ class HomeGuard extends utils.Adapter {
 	}
 
 	/**
+	 * Older versions had one type per lamp row; now a lamp has roles (evening, morning, visit, bedtime)
+	 *
+	 * @returns true when the configuration was changed (the instance restarts)
+	 */
+	private async migrateSimLamps(): Promise<boolean> {
+		const rows = this.config.simLamps || [];
+		if (!rows.some(r => r && r.type && r.type !== 'lamp' && r.type !== 'device')) {
+			return false;
+		}
+		const simLamps = rows.map(r => {
+			if (!r || !r.type || r.type === 'lamp' || r.type === 'device') {
+				return r;
+			}
+			const role = r.type;
+			return {
+				...r,
+				type: 'lamp' as const,
+				evening: role === 'evening',
+				morning: role === 'morning',
+				visit: role === 'visit',
+				bedtime: role === 'bedtime',
+			};
+		});
+		this.log.info('Simulation lamps: the type of each row became roles (evening, morning, visits, bedtime)');
+		await this.extendForeignObjectAsync(`system.adapter.${this.namespace}`, { native: { simLamps } });
+		return true;
+	}
+
+	/**
 	 * Collects the lamps of the presence simulation
 	 */
 	private async setupSimLamps(): Promise<void> {
 		const c = this.config;
-		const lamps = new Map<string, SimLamp>();
+		// per state: its roles (a lamp can be evening and morning lamp) and the settings of its table row
+		const lamps = new Map<string, { name: string; roles: Set<LampType>; row?: SimLampRow }>();
 		this.learnFrom.clear();
 		this.learnFromVals.clear();
 		this.stopOff.clear();
 		if (c.simAuto) {
-			for (const id of await this.enumStates(c.enumSimLamps)) {
-				lamps.set(id, { id, name: await this.nameOf(id), type: 'evening' });
+			for (const [enumId, role] of [
+				[c.enumSimLamps, 'evening'],
+				[c.enumMorningLamps, 'morning'],
+			] as [string, LampType][]) {
+				for (const id of await this.enumStates(enumId)) {
+					const l = lamps.get(id) ?? { name: await this.nameOf(id), roles: new Set<LampType>() };
+					l.roles.add(role);
+					lamps.set(id, l);
+				}
 			}
 		}
+		// a table row replaces what the functions found for the same state
 		for (const row of c.simLamps || []) {
 			if (!row?.id) {
 				continue;
@@ -629,14 +695,7 @@ class HomeGuard extends utils.Adapter {
 				lamps.delete(row.id);
 				continue;
 			}
-			lamps.set(row.id, {
-				id: row.id,
-				name: await this.nameOf(row.id, row.name),
-				type: row.type || 'evening',
-				valueOn: row.valueOn ? String(row.valueOn) : undefined,
-				valueOff: row.valueOff ? String(row.valueOff) : undefined,
-				learn: !!row.learnFrom,
-			});
+			lamps.set(row.id, { name: await this.nameOf(row.id, row.name), roles: rowRoles(row), row });
 			if (row.learnFrom) {
 				this.learnFrom.set(String(row.learnFrom), row.id);
 			}
@@ -644,10 +703,23 @@ class HomeGuard extends utils.Adapter {
 				this.stopOff.set(row.id, row.stopOff === 'off');
 			}
 		}
-		this.simLamps = [...lamps.values()];
-		for (const l of this.simLamps) {
-			this.simLampVals.set(l.id, isOpenValue((await this.getForeignStateAsync(l.id))?.val));
-			await this.subscribeForeignStatesAsync(l.id);
+		// one entry per role - the plans work per type
+		this.simLamps = [];
+		for (const [id, l] of lamps) {
+			for (const type of l.roles) {
+				this.simLamps.push({
+					id,
+					name: l.name,
+					type,
+					valueOn: l.row?.valueOn ? String(l.row.valueOn) : undefined,
+					valueOff: l.row?.valueOff ? String(l.row.valueOff) : undefined,
+					learn: !!l.row?.learnFrom,
+				});
+			}
+		}
+		for (const id of lamps.keys()) {
+			this.simLampVals.set(id, isOpenValue((await this.getForeignStateAsync(id))?.val));
+			await this.subscribeForeignStatesAsync(id);
 		}
 		for (const src of this.learnFrom.keys()) {
 			this.learnFromVals.set(src, isOpenValue((await this.getForeignStateAsync(src))?.val));
@@ -1725,23 +1797,19 @@ class HomeGuard extends utils.Adapter {
 	 * @param now current time
 	 */
 	private makeEveningPlan(now: number): PlanStep[] {
-		const lamps = this.simLamps.filter(
-			l => (l.type === 'evening' && this.eveningOn()) || (l.type === 'morning' && this.morningOn()),
-		);
-		const type = new Map(lamps.map(l => [l.id, l.type]));
 		const first = eveningNoon(now);
-		// switching on and off can be chosen separately for evening and morning (e.g. on automatically, off by hand)
-		return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 3600000, now, lamps, true)]
-			.filter(st =>
-				type.get(st.id) === 'morning'
-					? st.on
-						? this.lightSw.morningOn
-						: this.lightSw.morningOff
-					: st.on
-						? this.lightSw.eveningOn
-						: this.lightSw.eveningOff,
-			)
-			.sort((a, b) => a.at - b.at);
+		// evening and morning planned on their own: one lamp can be both, and each has its own switches
+		const part = (type: LampType, on: boolean, off: boolean): PlanStep[] => {
+			const lamps = this.simLamps.filter(l => l.type === type);
+			return [
+				...this.planOne(first, now, lamps, true),
+				...this.planOne(first + 24 * 3600000, now, lamps, true),
+			].filter(st => (st.on ? on : off));
+		};
+		return [
+			...(this.eveningOn() ? part('evening', this.lightSw.eveningOn, this.lightSw.eveningOff) : []),
+			...(this.morningOn() ? part('morning', this.lightSw.morningOn, this.lightSw.morningOff) : []),
+		].sort((a, b) => a.at - b.at);
 	}
 
 	/** @returns the evening light is switched on and has lamps */

@@ -42,6 +42,21 @@ const LIGHT_CONFIG = {
   morningOn: "morningLightOn",
   morningOff: "morningLightOff"
 };
+function rowRoles(row) {
+  if (row.type === "device") {
+    return /* @__PURE__ */ new Set(["device"]);
+  }
+  if (row.type && row.type !== "lamp") {
+    return /* @__PURE__ */ new Set([row.type]);
+  }
+  const roles = /* @__PURE__ */ new Set();
+  for (const r of ["evening", "morning", "visit", "bedtime"]) {
+    if (row[r]) {
+      roles.add(r);
+    }
+  }
+  return roles;
+}
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 class HomeGuard extends utils.Adapter {
   T = (0, import_texts.texts)("en");
@@ -119,6 +134,9 @@ class HomeGuard extends utils.Adapter {
     const lang = ((_a = sys == null ? void 0 : sys.common) == null ? void 0 : _a.language) || "en";
     this.sysLang = lang;
     this.T = (0, import_texts.texts)(lang);
+    if (await this.migrateSimLamps()) {
+      return;
+    }
     const lastMode = (_b = await this.getStateAsync("status.mode")) == null ? void 0 : _b.val;
     const lastAlarm = ((_c = await this.getStateAsync("status.alarm")) == null ? void 0 : _c.val) === true;
     const trigger = String(((_d = await this.getStateAsync("status.lastTrigger")) == null ? void 0 : _d.val) || "");
@@ -339,6 +357,7 @@ class HomeGuard extends utils.Adapter {
       c.autoReport && c.enumReport,
       c.presenceEnabled && c.presenceAuto && c.enumPresence,
       c.simAuto && c.enumSimLamps,
+      c.simAuto && c.enumMorningLamps,
       c.lampsAuto && c.enumLamps
     ].filter((e) => typeof e === "string" && e.length > 0);
   }
@@ -544,18 +563,53 @@ class HomeGuard extends utils.Adapter {
     return stripped || name;
   }
   /**
+   * Older versions had one type per lamp row; now a lamp has roles (evening, morning, visit, bedtime)
+   *
+   * @returns true when the configuration was changed (the instance restarts)
+   */
+  async migrateSimLamps() {
+    const rows = this.config.simLamps || [];
+    if (!rows.some((r) => r && r.type && r.type !== "lamp" && r.type !== "device")) {
+      return false;
+    }
+    const simLamps = rows.map((r) => {
+      if (!r || !r.type || r.type === "lamp" || r.type === "device") {
+        return r;
+      }
+      const role = r.type;
+      return {
+        ...r,
+        type: "lamp",
+        evening: role === "evening",
+        morning: role === "morning",
+        visit: role === "visit",
+        bedtime: role === "bedtime"
+      };
+    });
+    this.log.info("Simulation lamps: the type of each row became roles (evening, morning, visits, bedtime)");
+    await this.extendForeignObjectAsync(`system.adapter.${this.namespace}`, { native: { simLamps } });
+    return true;
+  }
+  /**
    * Collects the lamps of the presence simulation
    */
   async setupSimLamps() {
-    var _a, _b;
+    var _a, _b, _c, _d, _e, _f;
     const c = this.config;
     const lamps = /* @__PURE__ */ new Map();
     this.learnFrom.clear();
     this.learnFromVals.clear();
     this.stopOff.clear();
     if (c.simAuto) {
-      for (const id of await this.enumStates(c.enumSimLamps)) {
-        lamps.set(id, { id, name: await this.nameOf(id), type: "evening" });
+      for (const [enumId, role] of [
+        [c.enumSimLamps, "evening"],
+        [c.enumMorningLamps, "morning"]
+      ]) {
+        for (const id of await this.enumStates(enumId)) {
+          const l = (_a = lamps.get(id)) != null ? _a : { name: await this.nameOf(id), roles: /* @__PURE__ */ new Set() };
+          l.roles.add(role);
+          lamps.set(id, l);
+        }
       }
     }
     for (const row of c.simLamps || []) {
@@ -566,14 +620,7 @@ class HomeGuard extends utils.Adapter {
         lamps.delete(row.id);
         continue;
       }
-      lamps.set(row.id, {
-        id: row.id,
-        name: await this.nameOf(row.id, row.name),
-        type: row.type || "evening",
-        valueOn: row.valueOn ? String(row.valueOn) : void 0,
-        valueOff: row.valueOff ? String(row.valueOff) : void 0,
-        learn: !!row.learnFrom
-      });
+      lamps.set(row.id, { name: await this.nameOf(row.id, row.name), roles: rowRoles(row), row });
       if (row.learnFrom) {
         this.learnFrom.set(String(row.learnFrom), row.id);
       }
@@ -581,13 +628,25 @@ class HomeGuard extends utils.Adapter {
         this.stopOff.set(row.id, row.stopOff === "off");
       }
     }
-    this.simLamps = [...lamps.values()];
-    for (const l of this.simLamps) {
-      this.simLampVals.set(l.id, (0, import_alarm.isOpenValue)((_a = await this.getForeignStateAsync(l.id)) == null ? void 0 : _a.val));
-      await this.subscribeForeignStatesAsync(l.id);
+    this.simLamps = [];
+    for (const [id, l] of lamps) {
+      for (const type of l.roles) {
+        this.simLamps.push({
+          id,
+          name: l.name,
+          type,
+          valueOn: ((_b = l.row) == null ? void 0 : _b.valueOn) ? String(l.row.valueOn) : void 0,
+          valueOff: ((_c = l.row) == null ? void 0 : _c.valueOff) ? String(l.row.valueOff) : void 0,
+          learn: !!((_d = l.row) == null ? void 0 : _d.learnFrom)
+        });
+      }
+    }
+    for (const id of lamps.keys()) {
+      this.simLampVals.set(id, (0, import_alarm.isOpenValue)((_e = await this.getForeignStateAsync(id)) == null ? void 0 : _e.val));
+      await this.subscribeForeignStatesAsync(id);
     }
     for (const src of this.learnFrom.keys()) {
-      this.learnFromVals.set(src, (0, import_alarm.isOpenValue)((_b = await this.getForeignStateAsync(src)) == null ? void 0 : _b.val));
+      this.learnFromVals.set(src, (0, import_alarm.isOpenValue)((_f = await this.getForeignStateAsync(src)) == null ? void 0 : _f.val));
       await this.subscribeForeignStatesAsync(src);
     }
   }
@@ -1568,14 +1627,18 @@ class HomeGuard extends utils.Adapter {
    * @param now current time
    */
   makeEveningPlan(now) {
-    const lamps = this.simLamps.filter(
-      (l) => l.type === "evening" && this.eveningOn() || l.type === "morning" && this.morningOn()
-    );
-    const type = new Map(lamps.map((l) => [l.id, l.type]));
     const first = (0, import_simulation.eveningNoon)(now);
-    return [...this.planOne(first, now, lamps, true), ...this.planOne(first + 24 * 36e5, now, lamps, true)].filter(
-      (st) => type.get(st.id) === "morning" ? st.on ? this.lightSw.morningOn : this.lightSw.morningOff : st.on ? this.lightSw.eveningOn : this.lightSw.eveningOff
-    ).sort((a, b) => a.at - b.at);
+    const part = (type, on, off) => {
+      const lamps = this.simLamps.filter((l) => l.type === type);
+      return [
+        ...this.planOne(first, now, lamps, true),
+        ...this.planOne(first + 24 * 36e5, now, lamps, true)
+      ].filter((st) => st.on ? on : off);
+    };
+    return [
+      ...this.eveningOn() ? part("evening", this.lightSw.eveningOn, this.lightSw.eveningOff) : [],
+      ...this.morningOn() ? part("morning", this.lightSw.morningOn, this.lightSw.morningOff) : []
+    ].sort((a, b) => a.at - b.at);
   }
   /** @returns the evening light is switched on and has lamps */
   eveningOn() {

@@ -172,6 +172,7 @@
     "simCoupling": "alarm",
     "simAuto": false,
     "enumSimLamps": "",
+    "enumMorningLamps": "",
     "simLamps": [],
     "simMode": "combined",
     "simStartOffset": -30,
