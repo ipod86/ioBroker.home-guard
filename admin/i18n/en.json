@@ -419,5 +419,6 @@
 	"Light: evening": "Light: evening",
 	"Light: morning": "Light: morning",
 	"Light: lamps": "Light: lamps",
-	"Check": "Check"
+	"Check": "Check",
+	"Only the pages that fit your answers are listed. Missing something? Change \"What do you want to use?\" or \"What do you have?\".": "Only the pages that fit your answers are listed. Missing something? Change \"What do you want to use?\" or \"What do you have?\"."
 }

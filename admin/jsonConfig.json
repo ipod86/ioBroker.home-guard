@@ -18,6 +18,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
+					"help": "Only the pages that fit your answers are listed. Missing something? Change \"What do you want to use?\" or \"What do you have?\".",
 					"options": [
 						{
 							"value": 0,

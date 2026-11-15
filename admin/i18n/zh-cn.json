@@ -209,6 +209,7 @@
 	"One row per thing. Examples for the event \"Alarm\": outdoor lights or a socket on, roller shutters up, start a camera recording, the radio loud. With a second row and the event \"Alarm ended\" you switch it back. Other events, e.g. \"Full protection armed\": lock the door or roller shutters down. Value: true = on, false = off, a number for roller shutters or dimmers (e.g. 0 or 100). Scenes and scripts work too: the state of the scene, or for a script javascript.0.scriptEnabled.<name> with true.": "每件事一行。 “警报”事件的示例：室外灯或插座打开、卷帘打开、开始摄像头录制、收音机声音很大。使用第二行和“警报结束”事件，您可以将其切换回来。其他事件，例如“全面保护武装”：锁上门或卷帘窗。值：true = 打开，false = 关闭，卷帘或调光器的数字（例如 0 或 100）。场景和脚本也可以工作：场景的状态，或者脚本的 javascript.0.scriptEnabled.<name> 为 true。",
 	"Only dusk with random times": "仅黄昏，时间随机",
 	"Only learned days": "仅学习的天",
+	"Only the pages that fit your answers are listed. Missing something? Change \"What do you want to use?\" or \"What do you have?\".": "仅列出适合您答案的页面。缺少什么吗？更改“您想使用什么？”或“你有什么？”。",
 	"Open doors/windows when arming": "布防时打开的门/窗",
 	"Optional, may stay empty: the door contact of the front door. As soon as you close it behind you, the system is on at once – no waiting for the exit delay.": "可选，可留空：前门的门触点。一旦您将其关闭，系统就会立即启动 – 无需等待退出延迟。",
 	"Optional: e.g. when you leave the house – then the lamps go off at the latest at this time (at the weekend later, like the wake-up time).": "可选：例如当你离开家时——那么灯最晚在这个时候熄灭（在周末晚些时候，比如起床时间）。",
