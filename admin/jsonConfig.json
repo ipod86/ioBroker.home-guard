@@ -85,6 +85,30 @@
 							"lg": 12,
 							"xl": 12
 						},
+						"wizDone": {
+							"type": "checkbox",
+							"label": "I know ioBroker and set it up without the assistant – show all settings now",
+							"help": "All tabs appear at once. The assistant stays here and can be used at any time.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w0skip": {
+							"type": "staticText",
+							"text": "All tabs are shown – choose them at the top. Do not forget \"Save\" at the bottom.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.wizDone",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
 						"w0q": {
 							"type": "header",
 							"text": "What do you want to use?",
@@ -148,6 +172,34 @@
 								"color": "#e67e22",
 								"fontWeight": "bold"
 							}
+						},
+						"w0g": {
+							"type": "header",
+							"text": "Words you will meet",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w0g1": {
+							"type": "staticText",
+							"text": "Armed / disarmed: the alarm system is switched on / off. There are three ways of being armed: Full protection – nobody is at home, doors, windows and motion detectors are watched. Perimeter protection – you are at home, only doors and windows are watched, you can move around freely inside. Night protection – like perimeter protection, but switched on by itself at night.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w0g2": {
+							"type": "staticText",
+							"text": "State: one single value in ioBroker, e.g. \"kitchen window open\" or \"living room lamp on\". You pick it with the button next to the field from the object list. Function: a group of states in ioBroker (Objects → Enumerations → Functions), e.g. \"Windows\" with all window contacts. If you have no such groups, simply put the devices into the tables \"by hand\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
 						}
 					}
 				},
@@ -187,7 +239,7 @@
 						},
 						"w1t": {
 							"type": "staticText",
-							"text": "The easiest way is a function (enum) of ioBroker – e.g. \"Windows\" with all window contacts. Everything in the function is monitored, and sensors you add to it later are picked up by themselves. Press \"Search automatically\": Home Guard looks through your functions and fills in suitable ones (only empty fields are filled).",
+							"text": "The easiest way is a function (enum) of ioBroker – e.g. \"Windows\" with all window contacts. Everything in the function is monitored, and sensors you add to it later are picked up by themselves. Press \"Search automatically\": Home Guard looks through your functions and fills in suitable ones – also lamps, presence and a door lock for the later steps. Only empty fields are filled; it takes about 15 seconds.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -443,7 +495,7 @@
 								}
 							],
 							"default": "armed",
-							"help": "Switch on/off at any time without a restart: state control.report",
+							"help": "Suggestion: only when armed.",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -464,7 +516,7 @@
 						},
 						"w1et": {
 							"type": "staticText",
-							"text": "Needed for special cases: tick \"delayed\" for the door you come in through – you then get the entry delay to disarm instead of an immediate alarm. \"Inverted\" is for sensors that report false when open. A row here overrides the same sensor from a function.",
+							"text": "For sensors without a function, and for the front door: add a row for the door you come in through and tick \"delayed\". Then opening it does not raise the alarm at once – you have the entry delay (next step) to switch the alarm system off. Tick \"inverted\" only if a sensor reports the wrong way round (shows \"closed\" when it is open). A row here overrides the same sensor from a function.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -532,12 +584,6 @@
 									"type": "checkbox",
 									"attr": "delayed",
 									"title": "delayed",
-									"width": "9%"
-								},
-								{
-									"type": "checkbox",
-									"attr": "motion",
-									"title": "motion detector",
 									"width": "9%"
 								},
 								{
@@ -679,7 +725,7 @@
 							"xl": 4,
 							"min": 0,
 							"max": 3600,
-							"help": "How long lamps blink and sirens sound. Suggestion: 180 s (many local rules allow 3 minutes).",
+							"help": "How long lamps blink and sirens sound. 0 = until somebody switches the alarm off. Suggestion: 180 s (many local rules allow 3 minutes).",
 							"hidden": "!data.alarmEnabled"
 						},
 						"openCheck": {
@@ -715,7 +761,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Optional: as soon as this contact closes (e.g. the front door behind you), protection is armed at once – no waiting.",
+							"help": "Optional, may stay empty: the door contact of the front door. As soon as you close it behind you, the system is armed at once – no waiting for the exit delay.",
 							"hidden": "!data.alarmEnabled"
 						},
 						"w2n": {
@@ -731,7 +777,7 @@
 						},
 						"w2nt": {
 							"type": "staticText",
-							"text": "At night only doors and windows are monitored – you can move around inside. It can be armed by itself at set times.",
+							"text": "At night only doors and windows are monitored – you can move around inside. If you tick it, it is switched on and off by itself at the times below.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -798,7 +844,7 @@
 						},
 						"w3h": {
 							"type": "header",
-							"text": "How do you disarm?",
+							"text": "How do you switch the alarm system off?",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
@@ -809,7 +855,7 @@
 						},
 						"w3t": {
 							"type": "staticText",
-							"text": "Choose one or more ways. Most comfortable is the door lock: unlocking the front door disarms. A PIN protects the panel and the states.",
+							"text": "Choose one or more ways. Most comfortable is a smart door lock (e.g. Nuki): unlocking the front door switches the alarm system off. Otherwise you switch it off in the panel (e.g. on the wall tablet or the phone) – a PIN makes sure only you can do that. The search in step 2 may already have filled in your lock.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -846,7 +892,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Values that mean \"unlocked\". Nuki: 3, 5, 6 – a simple switch: true",
+							"help": "Values that mean \"unlocked\". Nuki: 3, 5, 6 (the search fills them in) – a simple switch: true",
 							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.lockEnabled)"
 						},
 						"pin": {
@@ -885,13 +931,42 @@
 						},
 						"w3pt": {
 							"type": "staticText",
-							"text": "With presence states (phone in the Wi-Fi, GPS, …) Home Guard knows when everybody has left. It can then arm by itself, start the simulation and disarm when somebody comes home.",
+							"text": "If ioBroker already knows who is at home (e.g. through the phone in the Wi-Fi or GPS – adapters such as ping, iCloud or Life360), Home Guard can use it: when everybody has left, it can switch the alarm system on and start the simulation, and switch it off again when somebody comes home. For each person you need a state that is true while they are at home. Press \"Search automatically\" – it looks for a function such as \"Presence\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
 							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+						},
+						"w3scan": {
+							"type": "sendTo",
+							"label": "Search automatically",
+							"command": "wizardScan",
+							"jsonData": "{\"enumPerimeter\": \"${data.enumPerimeter}\", \"enumFull\": \"${data.enumFull}\", \"enumFire\": \"${data.enumFire}\", \"enumReport\": \"${data.enumReport}\", \"enumLamps\": \"${data.enumLamps}\", \"enumSimLamps\": \"${data.enumSimLamps}\", \"enumMorningLamps\": \"${data.enumMorningLamps}\", \"enumPresence\": \"${data.enumPresence}\", \"lockId\": \"${data.lockId}\"}",
+							"useNative": true,
+							"variant": "contained",
+							"showProcess": true,
+							"timeout": 120000,
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+						},
+						"wizScanInfo": {
+							"type": "text",
+							"label": "Result of the search",
+							"readOnly": true,
+							"minRows": 2,
+							"maxRows": 8,
+							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.wizScanInfo)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
 						},
 						"presenceEnabled": {
 							"type": "checkbox",
@@ -929,7 +1004,7 @@
 						},
 						"iPersons": {
 							"type": "staticText",
-							"text": "Several states of one person (e.g. GPS and ping) get the same name: the person counts as at home when one of them says so. States of the function can be named here too. Without a name, the object name without endings like _GPS or _Ping is used.",
+							"text": "Several states of one person (e.g. GPS and Wi-Fi) get the same name in the column \"Person\" – the person counts as at home when one of them says so.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -990,7 +1065,7 @@
 									"label": "Arm perimeter protection"
 								}
 							],
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled || !data.alarmEnabled)",
+							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.presenceEnabled)",
 							"help": "Suggestion: full protection – nobody is at home."
 						},
 						"presenceDisarm": {
@@ -1001,7 +1076,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled || !data.alarmEnabled)"
+							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.presenceEnabled)"
 						}
 					}
 				},
@@ -1041,7 +1116,7 @@
 						},
 						"w4t": {
 							"type": "staticText",
-							"text": "Choose a messenger instance – Telegram, Pushover, WhatsApp, e-mail … It must already be installed and set up in ioBroker. User and chat ID are optional; empty sends to everybody of the instance. After saving, \"Send test message\" checks it.",
+							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker; the search in step 2 fills in the first one it finds. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1196,7 +1271,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "A state that speaks the text written to it, e.g. alexa2.0.Echo-Devices.<id>.Commands.speak",
+							"help": "Optional, may stay empty: a speaker that reads text aloud – e.g. for Alexa the state \"speak\" of the Echo (alexa2.0.Echo-Devices.<id>.Commands.speak).",
 							"hidden": "!data.alarmEnabled"
 						}
 					}
@@ -1237,7 +1312,7 @@
 						},
 						"w5t": {
 							"type": "staticText",
-							"text": "Lamps on or blinking make the alarm visible from outside and chase intruders away; afterwards they go back as they were.",
+							"text": "Lamps on or blinking make the alarm visible from outside and chase intruders away; afterwards they go back as they were. Take a function with your lamps (the search may have found one) or put single lamps into the table.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1333,7 +1408,7 @@
 						},
 						"w5st": {
 							"type": "staticText",
-							"text": "A siren is any state that is switched on with true. Per siren: on every alarm, only in full protection (outside siren) or only in perimeter/night protection (inside siren), each with its own duration.",
+							"text": "Optional. A siren can be a smart siren, a smoke detector with a siren or a socket with a horn. Leave \"Value on/off\" empty when it is simply switched on and off. \"Runs on\": an outside siren best only in full protection, so it does not wake the neighbours when you are at home.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1422,7 +1497,7 @@
 						},
 						"w5xt": {
 							"type": "staticText",
-							"text": "Each row writes a value into any state when something happens. Event \"Alarm\" for example: outdoor lights or a socket on (true), roller shutters up (0 or 100), a scene of the scenes adapter (true), a script (javascript.0.scriptEnabled.<script> = true starts it), a camera recording, the radio loud. With \"Alarm ended\" you switch it back. Other events: armed, disarmed, exit delay … – e.g. lock the door or roller shutters down when arming.",
+							"text": "Optional. Here you can switch anything else when something happens – one row per thing. Examples for the event \"Alarm\": outdoor lights or a socket on, roller shutters up, start a camera recording, the radio loud. With a second row and the event \"Alarm ended\" you switch it back. Other events, e.g. \"Full protection armed\": lock the door or roller shutters down. Value: true = on, false = off, a number for roller shutters or dimmers (e.g. 0 or 100). Scenes and scripts work too: the state of the scene, or for a script javascript.0.scriptEnabled.<name> with true.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1673,7 +1748,7 @@
 									"label": "Only learned days"
 								}
 							],
-							"help": "Recommended: combined – evening lamps around dusk, everything else replays your real evenings.",
+							"help": "Recommended: combination. \"Learned\" means: Home Guard notes on normal days when you switch which lamp, and replays that – it needs a few days for it. Until then it uses random times.",
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
 						},
 						"w7def": {
@@ -1726,7 +1801,7 @@
 							"min": 0,
 							"max": 120,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
-							"help": "Suggestion: 20 min."
+							"help": "So the lamps do not go on at exactly the same minute every day. Suggestion: 20 min."
 						},
 						"simEnd": {
 							"type": "text",
@@ -1763,7 +1838,7 @@
 							"min": 0,
 							"max": 240,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
-							"help": "Suggestion: 45 min."
+							"help": "On Friday and Saturday evening the lights go out this much later. Suggestion: 45 min."
 						},
 						"simLuxId": {
 							"type": "objectId",
@@ -1786,7 +1861,8 @@
 							"xl": 4,
 							"min": 0,
 							"max": 10000,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simLuxId || (!data.eveningLight && !data.simEnabled))"
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simLuxId || (!data.eveningLight && !data.simEnabled))",
+							"help": "Lux = brightness. Around dusk outdoor sensors show about 50–200 lux."
 						},
 						"w7m": {
 							"type": "header",
@@ -1823,7 +1899,7 @@
 							"lg": 4,
 							"xl": 4,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
-							"help": "Suggestion: 20 min."
+							"help": "So the lamps do not go on at exactly the same minute every morning. Suggestion: 20 min."
 						},
 						"simWakeWeekendLater": {
 							"type": "number",
@@ -1851,12 +1927,12 @@
 							"lg": 4,
 							"xl": 4,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
-							"help": "Suggestion: 5 min."
+							"help": "In the morning the lamps go off this long after sunrise. Suggestion: 5 min."
 						},
 						"simMorningOffTime": {
 							"type": "text",
 							"label": "Off at the latest at (HH:MM, empty = no)",
-							"help": "e.g. when you leave the house; later on the weekend like the wake-up time",
+							"help": "Optional: e.g. when you leave the house – then the lamps go off at the latest at this time (at the weekend later, like the wake-up time).",
 							"default": "",
 							"xs": 12,
 							"sm": 12,
@@ -1868,7 +1944,7 @@
 						"simMorningLuxAbove": {
 							"type": "number",
 							"label": "Off as soon as brightness above (lux, 0 = no)",
-							"help": "Brightness sensor from the evening section",
+							"help": "Only with the brightness sensor above. 0 = not used.",
 							"default": 0,
 							"min": 0,
 							"xs": 12,
@@ -1916,7 +1992,7 @@
 						},
 						"w7lt": {
 							"type": "staticText",
-							"text": "Each lamp gets one or more roles (ticks in the table): Evening – on from dusk to bedtime (evening light and simulation). Morning – on at wake-up time (morning light and simulation). Short visits – hall or bathroom briefly, only during the simulation. Bedtime – briefly on at lights out, only during the simulation. Evening and morning lamps can simply come from a function; all others go into the table.",
+							"text": "Each lamp gets one or more roles (ticks in the table): Evening – on from dusk to bedtime (evening light and simulation). Morning – on at wake-up time (morning light and simulation). Short visits – hall or bathroom briefly, only during the simulation. Bedtime – briefly on at lights out, only during the simulation. Evening and morning lamps can simply come from a function (the search may already have found them); all others go into the table.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1926,13 +2002,42 @@
 						},
 						"w7dt": {
 							"type": "staticText",
-							"text": "Type \"Device / scene / script\": any state that is switched only while the simulation runs – TV, radio, a socket, a scene (e.g. TV on, then a channel) or a script (javascript.0.scriptEnabled.…). Best with \"Learn from\" its real power state, then your real evenings are replayed. With \"Value on\" and \"Value off\" you can write other values than true/false.",
+							"text": "Type \"Device / scene / script\": any state that is switched only while the simulation runs – TV, radio, a socket, a scene (e.g. TV on, then a channel) or a script (javascript.0.scriptEnabled.…). Best with \"Learn from\" its real power state, then your real evenings are replayed.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
+						},
+						"w7scan": {
+							"type": "sendTo",
+							"label": "Search automatically",
+							"command": "wizardScan",
+							"jsonData": "{\"enumPerimeter\": \"${data.enumPerimeter}\", \"enumFull\": \"${data.enumFull}\", \"enumFire\": \"${data.enumFire}\", \"enumReport\": \"${data.enumReport}\", \"enumLamps\": \"${data.enumLamps}\", \"enumSimLamps\": \"${data.enumSimLamps}\", \"enumMorningLamps\": \"${data.enumMorningLamps}\", \"enumPresence\": \"${data.enumPresence}\", \"lockId\": \"${data.lockId}\"}",
+							"useNative": true,
+							"variant": "contained",
+							"showProcess": true,
+							"timeout": 120000,
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+						},
+						"wizScanInfo": {
+							"type": "text",
+							"label": "Result of the search",
+							"readOnly": true,
+							"minRows": 2,
+							"maxRows": 8,
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.wizScanInfo)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
 						},
 						"simAuto": {
 							"type": "checkbox",
@@ -1971,6 +2076,20 @@
 							"manual": true,
 							"noTranslation": true,
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto)"
+						},
+						"w7tt": {
+							"type": "staticText",
+							"text": "In the table: \"Value on/off\" only if the lamp needs other values than on/off (e.g. a dimmer: 80). \"Learn from\" only if the switching state does not show whether the lamp is really on – then choose the state that does.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
 						},
 						"simLamps": {
 							"type": "table",
@@ -2265,9 +2384,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8save": {
+						"w8dt": {
 							"type": "staticText",
-							"text": "Now press \"Save\" at the bottom of the page. Home Guard restarts with the new settings.",
+							"text": "Tick this box once you are done – then all other tabs with every detail setting appear. Then save.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2278,6 +2397,15 @@
 							"type": "checkbox",
 							"label": "Setup finished – show all settings",
 							"help": "Shows the other tabs with every option (learning, siren modes, actions, test alarm …). The assistant stays available here.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w8save": {
+							"type": "staticText",
+							"text": "Now press \"Save\" at the bottom of the page. Home Guard restarts with the new settings.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
