@@ -338,6 +338,39 @@ describe('devices: count, learning, end of the simulation', () => {
 		expect(log).to.deep.equal(['wz:true', 'tv:true', 'tv:false']);
 		now += 1;
 	});
+
+	it('evening light without catching up - unless it is switched on by hand', () => {
+		const now = noon + 7 * 60 * MIN;
+		const make = (): { runner: SimRunner; log: string[] } => {
+			const state: Record<string, boolean> = { wz: false };
+			const log: string[] = [];
+			const runner = new SimRunner(
+				{
+					now: () => now,
+					setTimer: () => 1,
+					clearTimer: () => undefined,
+					isOn: id => state[id],
+					switchLamp: (id, on) => {
+						state[id] = on;
+						log.push(`${id}:${on}`);
+					},
+					publish: () => undefined,
+				},
+				() => [
+					{ at: noon + 6 * 60 * MIN, id: 'wz', on: true, why: 'dusk' },
+					{ at: noon + 11 * 60 * MIN, id: 'wz', on: false, why: 'dusk' },
+				],
+				{ force: true, catchUp: false },
+			);
+			return { runner, log };
+		};
+		const restart = make();
+		restart.runner.start(); // after a restart: nothing switched
+		expect(restart.log).to.deep.equal([]);
+		const byHand = make();
+		byHand.runner.start(true); // switched on by hand at 19:00: the lamp goes on at once
+		expect(byHand.log).to.deep.equal(['wz:true']);
+	});
 });
 
 describe('learned days: same weekday first', () => {

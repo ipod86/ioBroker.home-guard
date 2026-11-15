@@ -69,6 +69,7 @@ class HomeGuard extends utils.Adapter {
 	private simLampVals = new Map<string, boolean>();
 	private learnFrom = new Map<string, string>(); // learn source state -> simulation lamp
 	private learnFromVals = new Map<string, boolean>();
+	private eveningSwitch = true; // control.eveningLight
 	private stopOff = new Map<string, boolean>(); // simulation lamp -> switch off when the simulation ends
 	private lampOuts: LampOut[] = [];
 	private blinkTimer: ioBroker.Interval | undefined;
@@ -200,6 +201,12 @@ class HomeGuard extends utils.Adapter {
 		await this.setupPresence();
 		await this.setupSimLamps();
 		await this.setupLamps();
+		// evening light switch (e.g. from the panel): switch of the last run, on for a new instance
+		const eve = await this.getStateAsync('control.eveningLight');
+		this.eveningSwitch = eve?.val !== false;
+		if (eve?.val == null) {
+			await this.setStateAsync('control.eveningLight', true, true);
+		}
 		this.updateEvening();
 
 		if (c.lockEnabled && c.lockId) {
@@ -814,6 +821,21 @@ class HomeGuard extends utils.Adapter {
 				this.alarm.reportOn = !!val;
 				await this.setStateAsync('control.report', this.alarm.reportOn, true);
 				return;
+			case 'control.eveningLight': {
+				const was = this.eveningSwitch;
+				this.eveningSwitch = !!val;
+				await this.setStateAsync('control.eveningLight', this.eveningSwitch, true);
+				if (was !== this.eveningSwitch) {
+					this.addLog('eveningLight', this.eveningSwitch ? this.T.eveningOn : this.T.eveningOff);
+					// switched on by hand: lamps that should be on now go on at once
+					this.updateEvening(this.eveningSwitch);
+					// the evening lamps belong to the simulation again (or no longer)
+					if (this.sim.active) {
+						this.sim.replan();
+					}
+				}
+				return;
+			}
 			case 'control.autoArm':
 				this.autoArm = !!val;
 				await this.setStateAsync('control.autoArm', this.autoArm, true);
@@ -1002,6 +1024,10 @@ class HomeGuard extends utils.Adapter {
 						this.presenceIds.length > 0 &&
 						((!!c.presenceArm && c.presenceArm !== 'off') || !!c.presenceDisarm),
 					simActive: this.sim.active,
+					eveningAvailable:
+						!!c.simEnabled &&
+						(!!c.eveningLight || !!c.morningLight) &&
+						this.simLamps.some(l => l.type === 'evening' || l.type === 'morning'),
 					simEnabled: !!(await this.getStateAsync('simulation.enabled'))?.val,
 					texts: { mode: this.T.mode, phase: this.T.phase },
 					log: this.log_.slice(0, 20),
@@ -1703,16 +1729,30 @@ class HomeGuard extends utils.Adapter {
 
 	/** @returns the evening light is switched on and has lamps */
 	private eveningOn(): boolean {
-		return !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some(l => l.type === 'evening');
+		return (
+			this.eveningSwitch &&
+			!!this.config.simEnabled &&
+			!!this.config.eveningLight &&
+			this.simLamps.some(l => l.type === 'evening')
+		);
 	}
 
 	/** @returns the morning light is switched on and has lamps */
 	private morningOn(): boolean {
-		return !!this.config.simEnabled && !!this.config.morningLight && this.simLamps.some(l => l.type === 'morning');
+		return (
+			this.eveningSwitch &&
+			!!this.config.simEnabled &&
+			!!this.config.morningLight &&
+			this.simLamps.some(l => l.type === 'morning')
+		);
 	}
 
-	/** Starts, re-plans or stops the evening and morning light after the settings or the lamps changed */
-	private updateEvening(): void {
+	/**
+	 * Starts, re-plans or stops the evening and morning light after the settings or the lamps changed
+	 *
+	 * @param catchUp switched on by hand: lamps that should be on now go on at once
+	 */
+	private updateEvening(catchUp = false): void {
 		if (this.eveningOn() || this.morningOn()) {
 			const lamps = this.simLamps.filter(
 				l => (l.type === 'evening' && this.eveningOn()) || (l.type === 'morning' && this.morningOn()),
@@ -1721,7 +1761,7 @@ class HomeGuard extends utils.Adapter {
 			if (this.evening.active) {
 				this.evening.replan();
 			} else {
-				this.evening.start();
+				this.evening.start(catchUp);
 			}
 		} else {
 			this.evening.stop();

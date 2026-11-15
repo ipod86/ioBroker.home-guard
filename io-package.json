@@ -1051,6 +1051,31 @@
       "native": {}
     },
     {
+      "_id": "control.eveningLight",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Evening light on",
+          "de": "Abendlicht eingeschaltet",
+          "ru": "Вечерний свет включён",
+          "pt": "Luz da noite ligada",
+          "nl": "Avondverlichting ingeschakeld",
+          "fr": "Éclairage du soir activé",
+          "it": "Luce serale attiva",
+          "es": "Luz de la tarde activada",
+          "pl": "Światło wieczorne włączone",
+          "uk": "Вечірнє світло увімкнено",
+          "zh-cn": "傍晚灯光已开启"
+        },
+        "type": "boolean",
+        "role": "switch.enable",
+        "read": true,
+        "write": true,
+        "def": true
+      },
+      "native": {}
+    },
+    {
       "_id": "simulation",
       "type": "channel",
       "common": {

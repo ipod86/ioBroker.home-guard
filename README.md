@@ -81,6 +81,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 | `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
 | `control.pin` | write the PIN to disarm |
 | `control.report` | report-only sensors on/off |
+| `control.eveningLight` | evening/morning light on/off (also a switch in the panel; switched on in the evening, the lamps go on at once) |
 | `control.autoArm` | automatic arming/disarming by presence on/off (also a switch in the panel) |
 | `simulation.enabled` | switch the simulation on by hand |
 | `simulation.active` | simulation is running |
@@ -105,7 +106,7 @@ sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 
 ### Web component
 
-After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, simulation switch and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
+After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, presence simulation (status), evening light switch and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
 
 ### Note
 
@@ -117,6 +118,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) panel: the switch now turns the evening light on/off (`control.eveningLight`); the simulation is only shown, it runs with the alarm system
 * (ipod86) learned simulation: choose the learned day by weekday/weekend (default, more variety) or by the same day of the week (only with at least 3 of them)
 
 ### 0.1.1 (2026-11-14)

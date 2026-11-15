@@ -18,6 +18,7 @@ const TXT = {
 		ack: 'Quittieren',
 		allClosed: 'Alle Fenster und Türen zu',
 		open: 'Offen',
+		evening: 'Abendlicht',
 		sim: 'Anwesenheitssimulation',
 		simOn: 'läuft',
 		simOff: 'aus',
@@ -43,6 +44,7 @@ const TXT = {
 		ack: 'Acknowledge',
 		allClosed: 'All windows and doors closed',
 		open: 'Open',
+		evening: 'Evening light',
 		sim: 'Presence simulation',
 		simOn: 'running',
 		simOff: 'off',
@@ -68,6 +70,7 @@ const TXT = {
 		ack: 'Acquitter',
 		allClosed: 'Toutes les portes et fenêtres fermées',
 		open: 'Ouvert',
+		evening: 'Éclairage du soir',
 		sim: 'Simulation de présence',
 		simOn: 'en cours',
 		simOff: 'arrêtée',
@@ -99,6 +102,7 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas las puertas y ventanas cerradas',
 		open: 'Abierto',
+		evening: 'Luz de la tarde',
 		sim: 'Simulación de presencia',
 		simOn: 'en marcha',
 		simOff: 'apagada',
@@ -130,6 +134,7 @@ const TXT = {
 		ack: 'Conferma',
 		allClosed: 'Tutte le porte e finestre chiuse',
 		open: 'Aperto',
+		evening: 'Luce serale',
 		sim: 'Simulazione di presenza',
 		simOn: 'in corso',
 		simOff: 'spenta',
@@ -161,6 +166,7 @@ const TXT = {
 		ack: 'Bevestigen',
 		allClosed: 'Alle deuren en ramen dicht',
 		open: 'Open',
+		evening: 'Avondverlichting',
 		sim: 'Aanwezigheidssimulatie',
 		simOn: 'loopt',
 		simOff: 'uit',
@@ -192,6 +198,7 @@ const TXT = {
 		ack: 'Potwierdź',
 		allClosed: 'Wszystkie drzwi i okna zamknięte',
 		open: 'Otwarte',
+		evening: 'Światło wieczorne',
 		sim: 'Symulacja obecności',
 		simOn: 'działa',
 		simOff: 'wył.',
@@ -223,6 +230,7 @@ const TXT = {
 		ack: 'Confirmar',
 		allClosed: 'Todas as portas e janelas fechadas',
 		open: 'Aberto',
+		evening: 'Luz da noite',
 		sim: 'Simulação de presença',
 		simOn: 'em curso',
 		simOff: 'desligada',
@@ -254,6 +262,7 @@ const TXT = {
 		ack: 'Подтвердить',
 		allClosed: 'Все двери и окна закрыты',
 		open: 'Открыто',
+		evening: 'Вечерний свет',
 		sim: 'Имитация присутствия',
 		simOn: 'работает',
 		simOff: 'выкл.',
@@ -285,6 +294,7 @@ const TXT = {
 		ack: 'Підтвердити',
 		allClosed: 'Усі двері та вікна зачинені',
 		open: 'Відчинено',
+		evening: 'Вечірнє світло',
 		sim: 'Імітація присутності',
 		simOn: 'працює',
 		simOff: 'вимк.',
@@ -310,6 +320,7 @@ const TXT = {
 		ack: '确认',
 		allClosed: '所有门窗已关闭',
 		open: '打开',
+		evening: '傍晚灯光',
 		sim: '在家模拟',
 		simOn: '运行中',
 		simOff: '关闭',
@@ -464,12 +475,12 @@ class HomeGuardPanel extends IobWebComponent {
 			`${i}.status.openContacts`,
 			`${i}.status.lastTrigger`,
 			`${i}.status.log`,
-			`${i}.simulation.enabled`,
 			`${i}.simulation.active`,
 			`${i}.simulation.next`,
 			`${i}.status.present`,
 			`${i}.status.sensors`,
 			`${i}.control.autoArm`,
+			`${i}.control.eveningLight`,
 		];
 	}
 
@@ -556,8 +567,8 @@ class HomeGuardPanel extends IobWebComponent {
 			await this.send('cancel', {});
 		} else if (a === 'ack') {
 			await this.send('ack', {});
-		} else if (a === 'sim') {
-			await this.setState(`${this.inst}.simulation.enabled`, !this.val('simulation.enabled'));
+		} else if (a === 'evening') {
+			await this.setState(`${this.inst}.control.eveningLight`, this.val('control.eveningLight') === false);
 		} else if (a === 'auto') {
 			await this.setState(`${this.inst}.control.autoArm`, this.val('control.autoArm') === false);
 		} else if (a === 'sensors') {
@@ -723,13 +734,22 @@ class HomeGuardPanel extends IobWebComponent {
 			html += '</div>';
 		}
 		if (s.sim !== false) {
+			// the simulation runs with the alarm system - shown only; the switch is for the evening light
 			const active = !!this.val('simulation.active');
 			const next = this.val('simulation.next') || '';
-			html += `<div class="box row">${ICON.bulb}<div class="grow"><div>${esc(t.sim)}: <b>${esc(
+			const showEvening =
+				(!this.info || this.info.eveningAvailable !== false) &&
+				this.val('control.eveningLight') !== null &&
+				this.val('control.eveningLight') !== undefined;
+			html += `<div class="box"><div class="row">${ICON.bulb}<div class="grow"><div>${esc(t.sim)}: <b>${esc(
 				active ? t.simOn : t.simOff,
-			)}</b></div>${active && next ? `<div class="small">${esc(t.next)}: ${esc(next)}</div>` : ''}</div><button class="sw ${
-				this.val('simulation.enabled') ? 'on' : ''
-			}" data-a="sim" aria-label="${esc(t.sim)}"></button></div>`;
+			)}</b></div>${active && next ? `<div class="small">${esc(t.next)}: ${esc(next)}</div>` : ''}</div></div>`;
+			if (showEvening) {
+				html += `<div class="row sep"><div class="grow">${esc(t.evening)}</div><button class="sw ${
+					this.val('control.eveningLight') !== false ? 'on' : ''
+				}" data-a="evening" aria-label="${esc(t.evening)}"></button></div>`;
+			}
+			html += '</div>';
 		}
 		const sensors = parse(this.val('status.sensors'), []);
 		if (s.sensors !== false && sensors.length) {

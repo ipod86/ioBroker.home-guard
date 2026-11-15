@@ -384,13 +384,15 @@ export class SimRunner {
 
 	/**
 	 * Starts the simulation
+	 *
+	 * @param catchUp carry out the steps already due this time (e.g. evening light switched on by hand at 20:00)
 	 */
-	start(): void {
+	start(catchUp?: boolean): void {
 		if (this.active) {
 			return;
 		}
 		this.active = true;
-		this.replan();
+		this.replan(catchUp);
 	}
 
 	/**
@@ -417,14 +419,18 @@ export class SimRunner {
 		this.host.publish(false, [], null);
 	}
 
-	/** new plan for the current evening; steps already due set the lamps as they should be now */
-	replan(): void {
+	/**
+	 * new plan for the current evening; steps already due set the lamps as they should be now
+	 *
+	 * @param catchUp carry out the steps already due (default: as set in the options)
+	 */
+	replan(catchUp?: boolean): void {
 		if (!this.active) {
 			return;
 		}
 		const now = this.host.now();
 		const plan = this.makePlan(now);
-		if (this.opts.catchUp !== false) {
+		if (catchUp ?? this.opts.catchUp !== false) {
 			const due = new Map<string, boolean>();
 			for (const s of plan) {
 				if (s.at <= now) {
