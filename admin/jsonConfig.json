@@ -11,7 +11,7 @@
 			"items": {
 				"wizStep": {
 					"type": "select",
-					"label": "Step",
+					"label": "Page",
 					"default": 0,
 					"xs": 12,
 					"sm": 12,
@@ -29,35 +29,75 @@
 						},
 						{
 							"value": 2,
-							"label": "3. Sensors"
+							"label": "3. What do you have?"
 						},
 						{
 							"value": 3,
-							"label": "4. Times"
+							"label": "4. How it works"
 						},
 						{
 							"value": 4,
-							"label": "5. Disarming & persons"
+							"label": "5. Alarm system: outer skin"
 						},
 						{
 							"value": 5,
-							"label": "6. Notifications"
+							"label": "6. Alarm system: inside"
 						},
 						{
 							"value": 6,
-							"label": "7. On alarm"
+							"label": "7. Alarm system: danger & emergency"
 						},
 						{
 							"value": 7,
-							"label": "8. Evening, morning & simulation"
+							"label": "8. Alarm system: report only"
 						},
 						{
 							"value": 8,
-							"label": "9. Lamps & devices"
+							"label": "9. Alarm system: single sensors & exceptions"
 						},
 						{
 							"value": 9,
-							"label": "10. Check"
+							"label": "10. Alarm system: times"
+						},
+						{
+							"value": 10,
+							"label": "11. Alarm system: at night"
+						},
+						{
+							"value": 11,
+							"label": "12. Who lives here?"
+						},
+						{
+							"value": 12,
+							"label": "13. Alarm system: switching on and off"
+						},
+						{
+							"value": 13,
+							"label": "14. Alarm system: messages"
+						},
+						{
+							"value": 14,
+							"label": "15. Alarm system: on alarm"
+						},
+						{
+							"value": 15,
+							"label": "16. Simulation: when and how"
+						},
+						{
+							"value": 16,
+							"label": "17. Light: evening"
+						},
+						{
+							"value": 17,
+							"label": "18. Light: morning"
+						},
+						{
+							"value": 18,
+							"label": "19. Light: lamps"
+						},
+						{
+							"value": 19,
+							"label": "20. Check"
 						}
 					]
 				},
@@ -82,7 +122,7 @@
 						},
 						"w0t": {
 							"type": "staticText",
-							"text": "This assistant guides you through the setup step by step. Answer the questions on each page and go on with \"Next\". Steps you do not need are skipped. At the end you get a check of everything and save with the button \"Save\" at the bottom of the page. All answers are the normal settings of the adapter – you can come back here at any time.",
+							"text": "This assistant guides you through the setup page by page. First you say what you want to use and what you already have – after that you only get the pages that fit. At the end everything is checked and you save with \"Save\" at the bottom of the page. All answers are the normal settings of the adapter – you can come back here at any time.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -99,9 +139,18 @@
 							"lg": 12,
 							"xl": 12
 						},
+						"w0at": {
+							"type": "staticText",
+							"text": "Yes: simply go on with \"Next\" at the bottom.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"wizDone": {
 							"type": "checkbox",
-							"label": "I know ioBroker and set it up without the assistant – show all settings now",
+							"label": "No – I know ioBroker and set it up myself: show all settings now",
 							"help": "All tabs appear at once. The assistant stays here and can be used at any time.",
 							"xs": 12,
 							"sm": 12,
@@ -125,7 +174,7 @@
 						},
 						"w0g": {
 							"type": "header",
-							"text": "Words you will meet",
+							"text": "Two words you will meet",
 							"size": 5,
 							"xs": 12,
 							"sm": 12,
@@ -153,7 +202,7 @@
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"w0q": {
+						"w1h": {
 							"type": "header",
 							"text": "What do you want to use?",
 							"size": 4,
@@ -163,9 +212,9 @@
 							"lg": 12,
 							"xl": 12
 						},
-						"w0qt": {
+						"w1t": {
 							"type": "staticText",
-							"text": "Tick what you want. Only the questions for it follow – everything else is skipped. You can change it later at any time.",
+							"text": "Tick what you want. Only the pages for it follow – everything else is skipped. You can change it later at any time.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -210,9 +259,9 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"help": "Every morning: chosen lamps on at wake-up time and off after sunrise – only while it is still dark."
+							"help": "Every morning: chosen lamps on at wake-up time and off when it is light – only while it is still dark."
 						},
-						"w0n": {
+						"w1n": {
 							"type": "staticText",
 							"text": "Nothing ticked yet – tick at least one part to go on.",
 							"xs": 12,
@@ -220,7 +269,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "data.alarmEnabled || data.simEnabled || data.eveningLight || data.morningLight",
+							"hidden": "data.alarmEnabled || (data.simEnabled || data.eveningLight || data.morningLight)",
 							"style": {
 								"color": "#e67e22",
 								"fontWeight": "bold"
@@ -237,80 +286,26 @@
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip2": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "data.alarmEnabled",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa2_0": {
-							"type": "staticText",
-							"text": "Alarm system",
-							"style": {
-								"fontSize": "0.8em",
-								"fontWeight": "bold",
-								"letterSpacing": "0.08em",
-								"textTransform": "uppercase",
-								"opacity": 0.65
-							},
-							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
-							"xs": 12,
-							"sm": 4,
-							"md": 3,
-							"lg": 2,
-							"xl": 2
-						},
-						"w1gh": {
+						"w2h": {
 							"type": "header",
-							"text": "First, briefly: how does the alarm system work?",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"w1g": {
-							"type": "staticText",
-							"text": "Armed / disarmed: the alarm system is switched on / off. There are three ways of being armed: Full protection – nobody is at home, doors, windows and motion detectors are watched. Perimeter protection – you are at home, only doors and windows are watched, you can move around freely inside. Night protection – like perimeter protection, but switched on by itself at night.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"w1h": {
-							"type": "header",
-							"text": "Which sensors should be monitored?",
+							"text": "What do you already have?",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"xl": 12
 						},
-						"w1t": {
+						"w2t": {
 							"type": "staticText",
-							"text": "The easiest way is a function (enum) of ioBroker – e.g. \"Windows\" with all window contacts. Everything in the function is monitored, and sensors you add to it later are picked up by themselves. Press \"Search automatically\": Home Guard looks through your functions and fills in suitable ones – also lamps, presence and a door lock for the later steps. Only empty fields are filled; it takes about 15 seconds.",
+							"text": "Let Home Guard look first: \"Search automatically\" looks through your ioBroker (functions, door lock, messenger, speaker, brightness sensor) and fills in what fits – only empty fields, it takes about 15 seconds. Then check the ticks below and correct them. Every tick decides which pages follow – what you do not have is not asked at all.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"xl": 12
 						},
-						"w1scan": {
+						"w2scan": {
 							"type": "sendTo",
 							"label": "Search automatically",
 							"command": "wizardScan",
@@ -323,52 +318,420 @@
 							"sm": 12,
 							"md": 6,
 							"lg": 4,
-							"xl": 4,
-							"hidden": "!data.alarmEnabled"
+							"xl": 4
 						},
 						"wizScanInfo": {
 							"type": "text",
 							"label": "Result of the search",
 							"readOnly": true,
 							"minRows": 2,
-							"maxRows": 8,
-							"hidden": "(!data.alarmEnabled) || (!data.wizScanInfo)",
+							"maxRows": 10,
+							"hidden": "!data.wizScanInfo",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12
 						},
-						"w1a": {
+						"w2q": {
 							"type": "header",
-							"text": "Outer skin: doors and windows",
+							"text": "I have …",
 							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"xl": 12
 						},
-						"w1at": {
+						"w2any": {
 							"type": "staticText",
-							"text": "These raise an alarm in every mode – full, perimeter and night protection.",
+							"text": "Any kind of device works – what counts is only whether it should raise an alarm from outside, inside or always.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"wizHasDoors": {
+							"type": "checkbox",
+							"label": "Door and window contacts, glass break or vibration detectors",
+							"hidden": "!data.alarmEnabled || ((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasDoorsOk": {
+							"type": "staticText",
+							"text": "✔ Door and window contacts, glass break or vibration detectors – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasMotion": {
+							"type": "checkbox",
+							"label": "Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …)",
+							"hidden": "!data.alarmEnabled || ((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasMotionOk": {
+							"type": "staticText",
+							"text": "✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasFire": {
+							"type": "checkbox",
+							"label": "Smoke, heat, water or gas detectors, or a panic button",
+							"hidden": "!data.alarmEnabled || ((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasFireOk": {
+							"type": "staticText",
+							"text": "✔ Smoke, heat, water or gas detectors, or a panic button – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasReport": {
+							"type": "checkbox",
+							"label": "Sensors that should only report, e.g. garden gate, letter box or doorbell",
+							"hidden": "!data.alarmEnabled || ((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasReportOk": {
+							"type": "staticText",
+							"text": "✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasSiren": {
+							"type": "checkbox",
+							"label": "A siren (or a socket with a horn)",
+							"hidden": "!data.alarmEnabled || ((data.sirens || []).some(r => r && r.id))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasSirenOk": {
+							"type": "staticText",
+							"text": "✔ A siren (or a socket with a horn) – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !((data.sirens || []).some(r => r && r.id))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"lockEnabled": {
+							"type": "checkbox",
+							"label": "A smart door lock (e.g. Nuki) – unlocking switches the alarm system off",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
+						},
+						"presenceEnabled": {
+							"type": "checkbox",
+							"label": "ioBroker knows who is at home (phone in the Wi-Fi, GPS …)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+						},
+						"wizHasSpeaker": {
+							"type": "checkbox",
+							"label": "A speaker that reads texts aloud (e.g. Alexa)",
+							"hidden": "!data.alarmEnabled || (!!data.speechId)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasSpeakerOk": {
+							"type": "staticText",
+							"text": "✔ A speaker that reads texts aloud (e.g. Alexa) – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled || !(!!data.speechId)",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasLux": {
+							"type": "checkbox",
+							"label": "An outdoor brightness sensor",
+							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight) || (!!data.simLuxId)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasLuxOk": {
+							"type": "staticText",
+							"text": "✔ An outdoor brightness sensor – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight) || !(!!data.simLuxId)",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"wizHasDevices": {
+							"type": "checkbox",
+							"label": "A TV, radio or similar that should also run during the simulation",
+							"hidden": "!data.simEnabled || ((data.simLamps || []).some(r => r && r.id && r.type === 'device'))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"wizHasDevicesOk": {
+							"type": "staticText",
+							"text": "✔ A TV, radio or similar that should also run during the simulation – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.simEnabled || !((data.simLamps || []).some(r => r && r.id && r.type === 'device'))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						}
+					}
+				},
+				"wstep3": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 3",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa3_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip3": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w3h": {
+							"type": "header",
+							"text": "How the alarm system works",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w3t": {
+							"type": "staticText",
+							"text": "Armed / disarmed: the alarm system is switched on / off. There are three ways of being armed: Full protection – nobody is at home, doors, windows and motion detectors are watched. Perimeter protection – you are at home, only doors and windows are watched, you can move around freely inside. Night protection – like perimeter protection, but switched on by itself at night.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w3n": {
+							"type": "staticText",
+							"text": "On the next pages: which sensors are watched → single sensors and exceptions → times → switching on and off → messages → what happens on an alarm.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled)"
+						}
+					}
+				},
+				"wstep4": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 4",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa4_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip4": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w4h": {
+							"type": "header",
+							"text": "Outer skin: doors, windows, glass break …",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w4t": {
+							"type": "staticText",
+							"text": "Everything that reports a break-in from outside: door and window contacts, window handles, glass break, vibration or roller shutter sensors. They raise an alarm in every way of being armed – full, perimeter and night protection. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w4s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"autoPerimeter": {
 							"type": "checkbox",
-							"label": "Use a function for doors and windows",
+							"label": "Take these sensors from a function",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"enumPerimeter": {
 							"type": "selectSendTo",
@@ -382,48 +745,94 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!data.autoPerimeter)"
-						},
-						"w1b": {
-							"type": "header",
-							"text": "Inside: motion detectors",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"wizQMotion": {
-							"type": "checkbox",
-							"label": "Do you have motion detectors inside the house?",
-							"hidden": "(!data.alarmEnabled) || ((data.autoFull && data.enumFull))",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w1bt": {
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.autoPerimeter)"
+						}
+					}
+				},
+				"wstep5": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 5",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa5_0": {
 							"type": "staticText",
-							"text": "Only in full protection, i.e. when nobody is at home.",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip5": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)))"
+							"hidden": "(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w5h": {
+							"type": "header",
+							"text": "Inside: motion detectors …",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+						},
+						"w5t": {
+							"type": "staticText",
+							"text": "Detectors inside the house: motion and presence sensors, light barriers, a camera with motion detection, an interior door. Only watched in full protection, i.e. when nobody is at home. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+						},
+						"w5s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
 						},
 						"autoFull": {
 							"type": "checkbox",
-							"label": "Use a function for motion detectors",
+							"label": "Take these detectors from a function",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
 						},
 						"enumFull": {
 							"type": "selectSendTo",
@@ -437,48 +846,94 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)) || (!data.autoFull))"
-						},
-						"w1c": {
-							"type": "header",
-							"text": "Danger detectors: smoke, water, gas",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"wizQFire": {
-							"type": "checkbox",
-							"label": "Do you have smoke, water or gas detectors?",
-							"hidden": "(!data.alarmEnabled) || ((data.autoFire && data.enumFire))",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w1ct": {
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))) || (!data.autoFull)"
+						}
+					}
+				},
+				"wstep6": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 6",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa6_0": {
 							"type": "staticText",
-							"text": "Always active, also when disarmed. You choose whether they only send a message, also speak, or raise a full alarm.",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip6": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)))"
+							"hidden": "(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w6h": {
+							"type": "header",
+							"text": "Always active: danger and emergency",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+						},
+						"w6t": {
+							"type": "staticText",
+							"text": "Smoke, heat, water, gas or CO detectors – and a panic button. They are always active, also when the alarm system is off. Choose whether they only send a message, also speak, or raise a full alarm with siren; a panic button belongs on \"full alarm\" (single devices get their own reaction on the page \"Single sensors & exceptions\"). Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+						},
+						"w6s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						"autoFire": {
 							"type": "checkbox",
-							"label": "Use a function for danger detectors",
+							"label": "Take the detectors from a function",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						"enumFire": {
 							"type": "selectSendTo",
@@ -492,7 +947,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)) || (!data.autoFire))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))) || (!data.autoFire)"
 						},
 						"hazardDefault": {
 							"type": "select",
@@ -512,53 +967,100 @@
 								}
 							],
 							"default": "speech",
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)) || (!data.autoFire))",
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))) || (!data.autoFire)",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
 							"lg": 4,
-							"xl": 4
-						},
-						"w1d": {
-							"type": "header",
-							"text": "Report only: garden gate, letter box, shed",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"wizQReport": {
-							"type": "checkbox",
-							"label": "Do you want to be told about a garden gate, letter box or similar – without an alarm?",
-							"hidden": "(!data.alarmEnabled) || ((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\"))",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w1dt": {
+							"xl": 4,
+							"help": "Suggestion: message and speech output."
+						}
+					}
+				},
+				"wstep7": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 7",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa7_0": {
 							"type": "staticText",
-							"text": "Never an alarm – just a message, e.g. \"garden gate opened\".",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip7": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")))"
+							"hidden": "(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w7h": {
+							"type": "header",
+							"text": "Sensors that only report",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+						},
+						"w7t": {
+							"type": "staticText",
+							"text": "Never an alarm – just a message, e.g. \"garden gate opened\", \"post in the letter box\" or \"somebody rang\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+						},
+						"w7s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
 						"autoReport": {
 							"type": "checkbox",
-							"label": "Use a function for report-only sensors",
+							"label": "Take these sensors from a function",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
 						"enumReport": {
 							"type": "selectSendTo",
@@ -572,7 +1074,7 @@
 							"manual": true,
 							"noTranslation": true,
 							"label": "Function report-only sensors",
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")) || (!data.autoReport))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))) || (!data.autoReport)"
 						},
 						"reportWhen": {
 							"type": "select",
@@ -594,28 +1096,94 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")) || (!data.autoReport && !(data.sensors || []).some(r => r && r.circuit === \"report\")))"
-						},
-						"w1e": {
-							"type": "header",
-							"text": "Single sensors by hand",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"w1et": {
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+						}
+					}
+				},
+				"wstep8": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 8",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa8_0": {
 							"type": "staticText",
-							"text": "For sensors without a function, and for the front door: add a row for the door you come in through and tick \"delayed\". Then opening it does not raise the alarm at once – you have the entry delay (next step) to switch the alarm system off. Tick \"inverted\" only if a sensor reports the wrong way round (shows \"closed\" when it is open). A row here overrides the same sensor from a function.",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip8": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w8h": {
+							"type": "header",
+							"text": "Single sensors and exceptions",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w8t": {
+							"type": "staticText",
+							"text": "Important: when you come home, opening the front door would raise the alarm at once. So add a row for the door you come in through and tick \"delayed\" – then you have the entry delay to switch the alarm system off.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w8l": {
+							"type": "staticText",
+							"text": "Your door lock switches the alarm system off when you unlock it – then \"delayed\" is not needed.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled || !(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
+						},
+						"w8t2": {
+							"type": "staticText",
+							"text": "The table is for three things: 1. a device that is in no function – add a row with the area it belongs to. 2. a device from a function that should behave differently (other area, delayed, inverted, own reaction) – add the same state again with its settings; the row wins over the function. 3. a device from a function that should not be watched – add a row and untick \"Active\". Tick \"inverted\" only if a sensor reports the wrong way round (shows \"closed\" when it is open).",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"sensors": {
 							"type": "table",
@@ -657,15 +1225,15 @@
 									"options": [
 										{
 											"value": "perimeter",
-											"label": "Perimeter (outer doors, windows)"
+											"label": "Outer skin (doors, windows, glass break …)"
 										},
 										{
 											"value": "interior",
-											"label": "Inside (full protection only)"
+											"label": "Inside (motion … – full protection only)"
 										},
 										{
 											"value": "24h",
-											"label": "Danger detector (smoke, water, gas)"
+											"label": "Always (smoke, water, gas, panic button …)"
 										},
 										{
 											"value": "report",
@@ -707,34 +1275,20 @@
 									]
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						}
 					}
 				},
-				"wstep3": {
+				"wstep9": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 3",
+					"hidden": "data.wizStep !== 9",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip3": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "data.alarmEnabled",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa3_0": {
+						"wa9_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -744,25 +1298,39 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"hidden": "!data.alarmEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"w2h": {
+						"wskip9": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w9h": {
 							"type": "header",
-							"text": "Times when arming and on alarm",
+							"text": "Times",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
-						"w2t": {
+						"w9t": {
 							"type": "staticText",
 							"text": "All times in seconds. The suggestions suit most homes – press \"Use suggestions\" if you are unsure.",
 							"xs": 12,
@@ -770,9 +1338,9 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
-						"w2def": {
+						"w9def": {
 							"type": "sendTo",
 							"label": "Use suggestions",
 							"command": "wizardDefaults",
@@ -784,7 +1352,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"exitDelayFull": {
 							"type": "number",
@@ -794,10 +1362,11 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Time to leave the house after arming full protection. Suggestion: 60 s.",
+							"help": "Time to leave the house after switching on full protection. Suggestion: 60 s.",
 							"min": 0,
 							"max": 600,
-							"hidden": "!data.alarmEnabled"
+							"newLine": true,
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"exitDelayPerimeter": {
 							"type": "number",
@@ -810,7 +1379,7 @@
 							"min": 0,
 							"max": 600,
 							"help": "You stay inside, so little time is needed. Suggestion: 0–10 s.",
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"entryDelay": {
 							"type": "number",
@@ -820,10 +1389,10 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Time to disarm after a \"delayed\" door was opened. Suggestion: 30 s.",
+							"help": "Time to switch off after the \"delayed\" front door was opened. Suggestion: 30 s.",
 							"min": 0,
 							"max": 600,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"alarmDuration": {
 							"type": "number",
@@ -836,7 +1405,7 @@
 							"min": 0,
 							"max": 3600,
 							"help": "How long lamps blink and sirens sound. 0 = until somebody switches the alarm off. Suggestion: 180 s (many local rules allow 3 minutes).",
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"openCheck": {
 							"type": "select",
@@ -860,8 +1429,8 @@
 									"label": "Ignore"
 								}
 							],
-							"help": "What happens when a window is still open while arming. \"Warn\" arms anyway and tells you which one.",
-							"hidden": "!data.alarmEnabled"
+							"help": "What happens when a window is still open while switching on. \"Warn\" switches on anyway and tells you which one.",
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"armEarlyId": {
 							"type": "objectId",
@@ -871,39 +1440,81 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Optional, may stay empty: the door contact of the front door. As soon as you close it behind you, the system is armed at once – no waiting for the exit delay.",
-							"hidden": "!data.alarmEnabled"
-						},
-						"w2n": {
-							"type": "header",
-							"text": "Night protection",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"w2nt": {
+							"help": "Optional, may stay empty: the door contact of the front door. As soon as you close it behind you, the system is on at once – no waiting for the exit delay.",
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						}
+					}
+				},
+				"wstep10": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 10",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa10_0": {
 							"type": "staticText",
-							"text": "At night only doors and windows are monitored – you can move around inside. If you tick it, it is switched on and off by itself at the times below.",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip10": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w10h": {
+							"type": "header",
+							"text": "At night",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w10t": {
+							"type": "staticText",
+							"text": "At night the alarm system can switch on by itself: only doors and windows are watched, you can move around freely inside. In the morning it switches off again.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"nightEnabled": {
 							"type": "checkbox",
-							"label": "Arm night protection automatically",
+							"label": "Yes, switch on night protection by itself every night",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.alarmEnabled)"
 						},
 						"nightStart": {
 							"type": "text",
@@ -913,7 +1524,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!data.alarmEnabled) || (!data.nightEnabled)",
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
 							"help": "Suggestion: 23:00"
 						},
 						"nightEnd": {
@@ -924,35 +1535,21 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!data.alarmEnabled) || (!data.nightEnabled)",
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
 							"help": "Suggestion: 06:00"
 						}
 					}
 				},
-				"wstep4": {
+				"wstep11": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 4",
+					"hidden": "data.wizStep !== 11",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip4": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(data.alarmEnabled || data.simEnabled)",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa4_0": {
+						"wa11_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -962,14 +1559,14 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)",
+							"hidden": "!data.alarmEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"wa4_1": {
+						"wa11_1": {
 							"type": "staticText",
 							"text": "Presence simulation",
 							"style": {
@@ -979,90 +1576,28 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.simEnabled)",
+							"hidden": "!data.simEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"w3h": {
-							"type": "header",
-							"text": "How do you switch the alarm system off?",
-							"size": 4,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)"
-						},
-						"w3t": {
+						"wskip11": {
 							"type": "staticText",
-							"text": "Choose one or more ways. Most comfortable is a smart door lock (e.g. Nuki): unlocking the front door switches the alarm system off. Otherwise you switch it off in the panel (e.g. on the wall tablet or the phone) – a PIN makes sure only you can do that. The search on the page \"Sensors\" may already have filled in your lock.",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)"
+							"hidden": "((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
 						},
-						"lockEnabled": {
-							"type": "checkbox",
-							"label": "Disarm when the lock is unlocked",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)"
-						},
-						"lockId": {
-							"type": "objectId",
-							"label": "State of the lock",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.lockEnabled)",
-							"help": "The state that shows whether the door is locked, e.g. Nuki: nuki-local.0.<id>.status.lockState"
-						},
-						"lockValues": {
-							"type": "text",
-							"label": "Values meaning \"unlocked/opened\"",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"help": "Values that mean \"unlocked\". Nuki: 3, 5, 6 (the search fills them in) – a simple switch: true",
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.lockEnabled)"
-						},
-						"pin": {
-							"type": "password",
-							"label": "PIN (empty = no PIN)",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"repeat": false,
-							"visible": true,
-							"help": "Empty = no PIN. With a PIN, disarming in the panel asks for it.",
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)"
-						},
-						"pinForArm": {
-							"type": "checkbox",
-							"label": "PIN also for arming",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.pin)"
-						},
-						"w3p": {
+						"w11h": {
 							"type": "header",
 							"text": "Who lives here?",
 							"size": 4,
@@ -1071,56 +1606,31 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
 						},
-						"w3pt": {
+						"w11t": {
 							"type": "staticText",
-							"text": "If ioBroker already knows who is at home (e.g. through the phone in the Wi-Fi or GPS – adapters such as ping, iCloud or Life360), Home Guard can use it: when everybody has left, it can switch the alarm system on and start the simulation, and switch it off again when somebody comes home. For each person you need a state that is true while they are at home. Press \"Search automatically\" – it looks for a function such as \"Presence\".",
+							"text": "For each person you need a state that is true while they are at home – e.g. from the adapters ping, iCloud or Life360. Take them from a function (e.g. \"Presence\") or put them into the table. Several states of one person (e.g. GPS and Wi-Fi) get the same name in the column \"Person\" – the person counts as at home when one of them says so.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
 						},
-						"w3scan": {
-							"type": "sendTo",
-							"label": "Search automatically",
-							"command": "wizardScan",
-							"jsonData": "{\"enumPerimeter\": \"${data.enumPerimeter}\", \"enumFull\": \"${data.enumFull}\", \"enumFire\": \"${data.enumFire}\", \"enumReport\": \"${data.enumReport}\", \"enumLamps\": \"${data.enumLamps}\", \"enumSimLamps\": \"${data.enumSimLamps}\", \"enumMorningLamps\": \"${data.enumMorningLamps}\", \"enumPresence\": \"${data.enumPresence}\", \"lockId\": \"${data.lockId}\"}",
-							"useNative": true,
-							"variant": "contained",
-							"showProcess": true,
-							"timeout": 120000,
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "!(data.alarmEnabled || data.simEnabled)"
-						},
-						"wizScanInfo": {
-							"type": "text",
-							"label": "Result of the search",
-							"readOnly": true,
-							"minRows": 2,
-							"maxRows": 8,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.wizScanInfo)",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"presenceEnabled": {
-							"type": "checkbox",
-							"label": "Use presence (persons, phones)",
+						"w11s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled || data.simEnabled)"
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
 						},
 						"presenceAuto": {
 							"type": "checkbox",
@@ -1130,7 +1640,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled)"
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
 						},
 						"enumPresence": {
 							"type": "selectSendTo",
@@ -1144,17 +1654,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled || !data.presenceAuto)"
-						},
-						"iPersons": {
-							"type": "staticText",
-							"text": "Several states of one person (e.g. GPS and Wi-Fi) get the same name in the column \"Person\" – the person counts as at home when one of them says so.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled)"
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceAuto)"
 						},
 						"presence": {
 							"type": "table",
@@ -1185,7 +1685,128 @@
 									"width": "32%"
 								}
 							],
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.presenceEnabled)"
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
+						}
+					}
+				},
+				"wstep12": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 12",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa12_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip12": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w12h": {
+							"type": "header",
+							"text": "Switching the alarm system on and off",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w12t": {
+							"type": "staticText",
+							"text": "You switch the alarm system on and off in the panel (e.g. on the wall tablet or the phone). The following makes it more comfortable and safer.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w12l": {
+							"type": "header",
+							"text": "With the door lock",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled)"
+						},
+						"w12lt": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"lockId": {
+							"type": "objectId",
+							"label": "State of the lock",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled)",
+							"help": "The state that shows whether the door is locked, e.g. Nuki: nuki-local.0.<id>.status.lockState"
+						},
+						"lockValues": {
+							"type": "text",
+							"label": "Values meaning \"unlocked/opened\"",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"help": "Values that mean \"unlocked\". Nuki: 3, 5, 6 (the search fills them in) – a simple switch: true",
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled)"
+						},
+						"w12p": {
+							"type": "header",
+							"text": "With presence",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)"
 						},
 						"presenceArm": {
 							"type": "select",
@@ -1209,7 +1830,7 @@
 									"label": "Arm perimeter protection"
 								}
 							],
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.presenceEnabled)",
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)",
 							"help": "Suggestion: full protection – nobody is at home."
 						},
 						"presenceDisarm": {
@@ -1220,34 +1841,54 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled || !data.presenceEnabled)"
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)"
+						},
+						"w12n": {
+							"type": "header",
+							"text": "PIN",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"pin": {
+							"type": "password",
+							"label": "PIN (empty = no PIN)",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"repeat": false,
+							"visible": true,
+							"help": "Empty = no PIN. With a PIN, only somebody who knows it can switch off in the panel.",
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"pinForArm": {
+							"type": "checkbox",
+							"label": "PIN also for arming",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
 						}
 					}
 				},
-				"wstep5": {
+				"wstep13": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 5",
+					"hidden": "data.wizStep !== 13",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip5": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "data.alarmEnabled",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa5_0": {
+						"wa13_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1257,14 +1898,28 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"hidden": "!data.alarmEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"w4h": {
+						"wskip13": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w13h": {
 							"type": "header",
 							"text": "How do you want to be told?",
 							"size": 4,
@@ -1273,17 +1928,31 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
-						"w4t": {
+						"w13t": {
 							"type": "staticText",
-							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker; the search on the page \"Sensors\" fills in the first one it finds. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
+							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"notify": {
 							"type": "table",
@@ -1324,7 +1993,7 @@
 									"width": "30%"
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"testBtn": {
 							"type": "sendTo",
@@ -1338,9 +2007,9 @@
 							"lg": 4,
 							"xl": 4,
 							"help": "Save the settings first",
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
-						"w4w": {
+						"w13w": {
 							"type": "header",
 							"text": "What should be reported?",
 							"size": 5,
@@ -1349,7 +2018,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"notifyAlarm": {
 							"type": "checkbox",
@@ -1359,7 +2028,37 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"notifyArmed": {
+							"type": "checkbox",
+							"label": "Armed",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"notifyDisarmed": {
+							"type": "checkbox",
+							"label": "Disarmed",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"notifyArmingFailed": {
+							"type": "checkbox",
+							"label": "Not armed because of open windows",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"notifyHazard": {
 							"type": "checkbox",
@@ -1370,37 +2069,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!data.alarmEnabled"
-						},
-						"notifyArmed": {
-							"type": "checkbox",
-							"label": "Armed",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "!data.alarmEnabled"
-						},
-						"notifyDisarmed": {
-							"type": "checkbox",
-							"label": "Disarmed",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "!data.alarmEnabled"
-						},
-						"notifyArmingFailed": {
-							"type": "checkbox",
-							"label": "Not armed because of open windows",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						"notifyReport": {
 							"type": "checkbox",
@@ -1411,28 +2080,18 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
-						"w4s": {
+						"w13sp": {
 							"type": "header",
-							"text": "Speech output (optional)",
+							"text": "Speech output",
 							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
-						},
-						"wizQSpeech": {
-							"type": "checkbox",
-							"label": "Should messages also be spoken aloud (e.g. by Alexa)?",
-							"hidden": "(!data.alarmEnabled) || (!!data.speechId)",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSpeaker || !!data.speechId))"
 						},
 						"speechId": {
 							"type": "objectId",
@@ -1442,35 +2101,21 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"help": "Optional, may stay empty: a speaker that reads text aloud – e.g. for Alexa the state \"speak\" of the Echo (alexa2.0.Echo-Devices.<id>.Commands.speak).",
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQSpeech || !!data.speechId))"
+							"help": "The state that reads text aloud – e.g. for Alexa the state \"speak\" of the Echo (alexa2.0.Echo-Devices.<id>.Commands.speak).",
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSpeaker || !!data.speechId))"
 						}
 					}
 				},
-				"wstep6": {
+				"wstep14": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 6",
+					"hidden": "data.wizStep !== 14",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip6": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "data.alarmEnabled",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa6_0": {
+						"wa14_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1480,43 +2125,59 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"hidden": "!data.alarmEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"w5h": {
+						"wskip14": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.alarmEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w14h": {
 							"type": "header",
-							"text": "What happens on an alarm?",
+							"text": "What else should happen on an alarm?",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
-						"wizQLamps": {
-							"type": "checkbox",
-							"label": "Should lamps go on or blink on an alarm?",
-							"hidden": "(!data.alarmEnabled) || ((data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id))",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w5t": {
-							"type": "staticText",
-							"text": "Lamps on or blinking make the alarm visible from outside and chase intruders away; afterwards they go back as they were. Take a function with your lamps (the search may have found one) or put single lamps into the table.",
+						"w14q1": {
+							"type": "header",
+							"text": "Lamps",
+							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"wizQLamps": {
+							"type": "checkbox",
+							"label": "Yes, lamps should go on or blink on an alarm",
+							"help": "Makes the alarm visible from outside and chases intruders away; afterwards the lamps go back as they were.",
+							"hidden": "!(data.alarmEnabled) || ((data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
 						},
 						"lampsAuto": {
 							"type": "checkbox",
@@ -1526,7 +2187,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"enumLamps": {
 							"type": "selectSendTo",
@@ -1540,7 +2201,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)) || (!data.lampsAuto))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)) || !data.lampsAuto)"
 						},
 						"lampMode": {
 							"type": "select",
@@ -1560,7 +2221,7 @@
 									"label": "Switch on"
 								}
 							],
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"lamps": {
 							"type": "table",
@@ -1591,38 +2252,28 @@
 									"width": "32%"
 								}
 							],
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
-						"w5s": {
+						"w14s": {
 							"type": "header",
-							"text": "Sirens",
+							"text": "Siren",
 							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
 						},
-						"wizQSiren": {
-							"type": "checkbox",
-							"label": "Do you have a siren?",
-							"hidden": "(!data.alarmEnabled) || ((data.sirens || []).some(r => r && r.id))",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w5st": {
+						"w14st": {
 							"type": "staticText",
-							"text": "Optional. A siren can be a smart siren, a smoke detector with a siren or a socket with a horn. Leave \"Value on/off\" empty when it is simply switched on and off. \"Runs on\": an outside siren best only in full protection, so it does not wake the neighbours when you are at home.",
+							"text": "Leave \"Value on/off\" empty when it is simply switched on and off. \"Runs on\": an outside siren best only in full protection, so it does not wake the neighbours when you are at home.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQSiren || (data.sirens || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
 						},
 						"sirens": {
 							"type": "table",
@@ -1690,38 +2341,38 @@
 									"max": 3600
 								}
 							],
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQSiren || (data.sirens || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
 						},
-						"w5x": {
+						"w14x": {
 							"type": "header",
-							"text": "Switch anything else (optional)",
+							"text": "Anything else",
 							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "!(data.alarmEnabled)"
 						},
 						"wizQActions": {
 							"type": "checkbox",
-							"label": "Do you want to switch anything else (roller shutters, outdoor light, camera, door lock …)?",
-							"hidden": "(!data.alarmEnabled) || ((data.actions || []).some(r => r && r.id))",
+							"label": "Yes, switch something else too (roller shutters, outdoor light, camera …)",
+							"hidden": "!(data.alarmEnabled) || ((data.actions || []).some(r => r && r.id))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12
 						},
-						"w5xt": {
+						"w14xt": {
 							"type": "staticText",
-							"text": "Optional. Here you can switch anything else when something happens – one row per thing. Examples for the event \"Alarm\": outdoor lights or a socket on, roller shutters up, start a camera recording, the radio loud. With a second row and the event \"Alarm ended\" you switch it back. Other events, e.g. \"Full protection armed\": lock the door or roller shutters down. Value: true = on, false = off, a number for roller shutters or dimmers (e.g. 0 or 100). Scenes and scripts work too: the state of the scene, or for a script javascript.0.scriptEnabled.<name> with true.",
+							"text": "One row per thing. Examples for the event \"Alarm\": outdoor lights or a socket on, roller shutters up, start a camera recording, the radio loud. With a second row and the event \"Alarm ended\" you switch it back. Other events, e.g. \"Full protection armed\": lock the door or roller shutters down. Value: true = on, false = off, a number for roller shutters or dimmers (e.g. 0 or 100). Scenes and scripts work too: the state of the scene, or for a script javascript.0.scriptEnabled.<name> with true.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
 						},
 						"actions": {
 							"type": "table",
@@ -1830,34 +2481,20 @@
 									"default": "true"
 								}
 							],
-							"hidden": "(!data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
 						}
 					}
 				},
-				"wstep7": {
+				"wstep15": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 7",
+					"hidden": "data.wizStep !== 15",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip7": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(data.simEnabled || data.eveningLight || data.morningLight)",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa7_0": {
+						"wa15_0": {
 							"type": "staticText",
 							"text": "Presence simulation",
 							"style": {
@@ -1867,108 +2504,47 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)",
+							"hidden": "!data.simEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"wa7_1": {
+						"wskip15": {
 							"type": "staticText",
-							"text": "Evening light",
-							"style": {
-								"fontSize": "0.8em",
-								"fontWeight": "bold",
-								"letterSpacing": "0.08em",
-								"textTransform": "uppercase",
-								"opacity": 0.65
-							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight)",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
-							"sm": 4,
-							"md": 3,
-							"lg": 2,
-							"xl": 2
-						},
-						"wa7_2": {
-							"type": "staticText",
-							"text": "Morning light",
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.simEnabled)",
 							"style": {
-								"fontSize": "0.8em",
-								"fontWeight": "bold",
-								"letterSpacing": "0.08em",
-								"textTransform": "uppercase",
-								"opacity": 0.65
-							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight)",
-							"xs": 12,
-							"sm": 4,
-							"md": 3,
-							"lg": 2,
-							"xl": 2
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
 						},
-						"w6h": {
+						"w15h": {
 							"type": "header",
-							"text": "Evening, morning and simulation – what is what?",
+							"text": "Presence simulation",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+							"hidden": "!(data.simEnabled)"
 						},
-						"w6e": {
+						"w15t": {
 							"type": "staticText",
-							"text": "Evening light: every evening, also when you are at home – the evening lamps go on at dusk and off at bedtime.",
+							"text": "While you are away, lamps are switched as if somebody were at home: the evening and morning lamps at your times, and in addition short visits to the hall or bathroom and lights out one after the other at bedtime. Which lamps, comes after the times.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight)"
-						},
-						"w6m": {
-							"type": "staticText",
-							"text": "Morning light: on dark mornings the morning lamps go on at wake-up time and off again when it is light.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight)"
-						},
-						"w6s": {
-							"type": "staticText",
-							"text": "Presence simulation: only while you are away. It uses the same evening and morning lamps and times, and adds what makes a house look lived in: short visits to the hall or bathroom, lights out one after the other at bedtime, the TV or other devices – learned from your real evenings.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
-						},
-						"w6t": {
-							"type": "staticText",
-							"text": "Here you set the times; the lamps for each part come on the next page. Every time gets a random part, so nobody can see a fixed pattern.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
-						},
-						"w6sh": {
-							"type": "header",
-							"text": "When does the simulation run?",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
+							"hidden": "!(data.simEnabled)"
 						},
 						"simCoupling": {
 							"type": "select",
@@ -1992,8 +2568,36 @@
 									"label": "Full protection or nobody at home"
 								}
 							],
-							"help": "Recommended: \"full protection or nobody at home\" – then it also runs when you forgot to arm.",
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
+							"help": "Recommended: \"full protection or nobody at home\" – then it also runs when you forgot to switch on.",
+							"hidden": "!(data.simEnabled)"
+						},
+						"w15np": {
+							"type": "staticText",
+							"text": "Without presence detection Home Guard does not know when you are away – choose \"When full protection is armed\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.simEnabled) || (data.presenceEnabled || !data.alarmEnabled)",
+							"style": {
+								"color": "#e67e22",
+								"fontWeight": "bold"
+							}
+						},
+						"w15na": {
+							"type": "staticText",
+							"text": "Without the alarm system the simulation can only start when nobody is at home – choose \"When nobody is at home\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.simEnabled) || (data.alarmEnabled)",
+							"style": {
+								"color": "#e67e22",
+								"fontWeight": "bold"
+							}
 						},
 						"simMode": {
 							"type": "select",
@@ -2018,33 +2622,138 @@
 								}
 							],
 							"help": "Recommended: combination. \"Learned\" means: Home Guard notes on normal days when you switch which lamp, and replays that – it needs a few days for it. Until then it uses random times.",
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
+							"hidden": "!(data.simEnabled)"
 						},
-						"w7def": {
+						"wizSimMorning": {
+							"type": "checkbox",
+							"label": "The simulation should also make light in the morning (at wake-up time)",
+							"hidden": "!(data.simEnabled) || (data.morningLight || (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w15mo": {
+							"type": "staticText",
+							"text": "In the morning it uses the times and lamps of the morning light.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.simEnabled) || (!data.morningLight)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"simVisits": {
+							"type": "number",
+							"label": "Short visits per evening",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"min": 0,
+							"max": 20,
+							"help": "Random short visits as long as nothing has been learned yet. 0 = only what was learned.",
+							"hidden": "!(data.simEnabled)"
+						}
+					}
+				},
+				"wstep16": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 16",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa16_0": {
+							"type": "staticText",
+							"text": "Evening light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.eveningLight",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa16_1": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.simEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip16": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.eveningLight || data.simEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w16h": {
+							"type": "header",
+							"text": "Evening",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.eveningLight || data.simEnabled)"
+						},
+						"w16t": {
+							"type": "staticText",
+							"text": "In the evening the evening lamps go on around dusk and off at bedtime – every evening with the evening light, while you are away with the simulation. Every time gets a random part, so nobody can see a fixed pattern. Which lamps are evening lamps, you choose afterwards.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.eveningLight || data.simEnabled)"
+						},
+						"w16def": {
 							"type": "sendTo",
 							"label": "Use suggestions",
 							"command": "wizardDefaults",
 							"jsonData": "{\"step\": \"light\"}",
 							"useNative": true,
 							"variant": "outlined",
-							"newLine": true,
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
-						},
-						"w7e": {
-							"type": "header",
-							"text": "Evening",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)"
+							"hidden": "!(data.eveningLight || data.simEnabled)"
 						},
 						"simStartOffset": {
 							"type": "number",
@@ -2056,8 +2765,9 @@
 							"xl": 4,
 							"min": -180,
 							"max": 180,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
-							"help": "Negative = before sunset. Suggestion: −30 min."
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight && !data.simEnabled)",
+							"help": "Negative = before sunset. Suggestion: −30 min.",
+							"newLine": true
 						},
 						"simStartRandom": {
 							"type": "number",
@@ -2069,7 +2779,7 @@
 							"xl": 4,
 							"min": 0,
 							"max": 120,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight && !data.simEnabled)",
 							"help": "So the lamps do not go on at exactly the same minute every day. Suggestion: 20 min."
 						},
 						"simEnd": {
@@ -2080,7 +2790,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight && !data.simEnabled)",
 							"help": "When you usually go to bed. Suggestion: 22:30."
 						},
 						"simEndRandom": {
@@ -2093,7 +2803,7 @@
 							"xl": 4,
 							"min": 0,
 							"max": 240,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight && !data.simEnabled)",
 							"help": "Suggestion: 30–60 min."
 						},
 						"simWeekendLater": {
@@ -2106,18 +2816,19 @@
 							"xl": 4,
 							"min": 0,
 							"max": 240,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight && !data.simEnabled)",
 							"help": "On Friday and Saturday evening the lights go out this much later. Suggestion: 45 min."
 						},
-						"wizQLux": {
-							"type": "checkbox",
-							"label": "Do you have an outdoor brightness sensor?",
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || ((!!data.simLuxId) || ((!data.eveningLight && !data.simEnabled) && (!data.morningLight && !data.simEnabled)))",
+						"w16l": {
+							"type": "header",
+							"text": "Brightness sensor",
+							"size": 5,
 							"xs": 12,
 							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!(data.wizHasLux || !!data.simLuxId))"
 						},
 						"simLuxId": {
 							"type": "objectId",
@@ -2127,8 +2838,8 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || ((!data.eveningLight && !data.simEnabled) && (!data.morningLight && !data.simEnabled)))",
-							"help": "Optional: an outdoor brightness sensor – on dark days the evening starts earlier, in the morning the lamps go off when it is bright."
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!(data.wizHasLux || !!data.simLuxId))",
+							"help": "The outdoor brightness sensor – on dark days the evening starts earlier, in the morning the lamps go off when it is bright."
 						},
 						"simLuxBelow": {
 							"type": "number",
@@ -2140,19 +2851,102 @@
 							"xl": 4,
 							"min": 0,
 							"max": 10000,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || (!data.simLuxId || (!data.eveningLight && !data.simEnabled)))",
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!(data.wizHasLux || !!data.simLuxId) || !data.simLuxId)",
 							"help": "Lux = brightness. Around dusk outdoor sensors show about 50–200 lux."
+						}
+					}
+				},
+				"wstep17": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 17",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa17_0": {
+							"type": "staticText",
+							"text": "Morning light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.morningLight",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
-						"w7m": {
-							"type": "header",
-							"text": "Morning",
-							"size": 5,
+						"wa17_1": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.simEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip17": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)"
+							"hidden": "((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w17h": {
+							"type": "header",
+							"text": "Morning",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+						},
+						"w17t": {
+							"type": "staticText",
+							"text": "On dark mornings the morning lamps go on at wake-up time and off again when it is light – every morning with the morning light, while you are away with the simulation. Which lamps are morning lamps, you choose on the next page.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+						},
+						"w17def": {
+							"type": "sendTo",
+							"label": "Use suggestions",
+							"command": "wizardDefaults",
+							"jsonData": "{\"step\": \"light\"}",
+							"useNative": true,
+							"variant": "outlined",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
 						},
 						"simWake": {
 							"type": "text",
@@ -2163,8 +2957,9 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
-							"help": "When you get up on working days. Suggestion: 06:30."
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"help": "When you get up on working days. Suggestion: 06:30.",
+							"newLine": true
 						},
 						"simWakeRandom": {
 							"type": "number",
@@ -2177,7 +2972,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
 							"help": "So the lamps do not go on at exactly the same minute every morning. Suggestion: 20 min."
 						},
 						"simWakeWeekendLater": {
@@ -2191,7 +2986,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
 							"help": "Suggestion: 60 min."
 						},
 						"simMorningOffOffset": {
@@ -2205,7 +3000,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
 							"help": "In the morning the lamps go off this long after sunrise. Suggestion: 5 min."
 						},
 						"simMorningOffTime": {
@@ -2218,12 +3013,12 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight && !data.simEnabled)"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
 						},
 						"simMorningLuxAbove": {
 							"type": "number",
 							"label": "Off as soon as brightness above (lux, 0 = no)",
-							"help": "Only with the brightness sensor above. 0 = not used.",
+							"help": "With the brightness sensor: off as soon as it is brighter. 0 = not used.",
 							"default": 0,
 							"min": 0,
 							"xs": 12,
@@ -2231,34 +3026,20 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || (!data.simLuxId || (!data.morningLight && !data.simEnabled)))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))) || (!(data.wizHasLux || !!data.simLuxId))"
 						}
 					}
 				},
-				"wstep8": {
+				"wstep18": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 8",
+					"hidden": "data.wizStep !== 18",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip8": {
-							"type": "staticText",
-							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "(data.simEnabled || data.eveningLight || data.morningLight)",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"wa8_0": {
+						"wa18_0": {
 							"type": "staticText",
 							"text": "Presence simulation",
 							"style": {
@@ -2268,14 +3049,14 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)",
+							"hidden": "!data.simEnabled",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"wa8_1": {
+						"wa18_1": {
 							"type": "staticText",
 							"text": "Evening light",
 							"style": {
@@ -2285,14 +3066,14 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight)",
+							"hidden": "!data.eveningLight",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"wa8_2": {
+						"wa18_2": {
 							"type": "staticText",
 							"text": "Morning light",
 							"style": {
@@ -2302,72 +3083,61 @@
 								"textTransform": "uppercase",
 								"opacity": 0.65
 							},
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight)",
+							"hidden": "!data.morningLight",
 							"xs": 12,
 							"sm": 4,
 							"md": 3,
 							"lg": 2,
 							"xl": 2
 						},
-						"w7lh": {
+						"wskip18": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "((data.simEnabled || data.eveningLight || data.morningLight))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w18h": {
 							"type": "header",
-							"text": "Which lamps and devices?",
+							"text": "Which lamps?",
 							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
-						"w7lt": {
+						"w18t": {
 							"type": "staticText",
-							"text": "Each lamp gets one or more roles (ticks in the table): Evening – on from dusk to bedtime (evening light and simulation). Morning – on at wake-up time (morning light and simulation). Short visits – hall or bathroom briefly, only during the simulation. Bedtime – briefly on at lights out, only during the simulation. Evening and morning lamps can simply come from a function (the search may already have found them); all others go into the table.",
+							"text": "Each lamp gets one or more roles (ticks in the table): Evening – on from dusk to bedtime. Morning – on at wake-up time. Short visits – hall or bathroom briefly, only during the simulation. Bedtime – briefly on at lights out, only during the simulation. Evening and morning lamps can simply come from a function; all others go into the table.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
-						"w7dt": {
+						"w18s": {
 							"type": "staticText",
-							"text": "Type \"Device / scene / script\": any state that is switched only while the simulation runs – TV, radio, a socket, a scene (e.g. TV on, then a channel) or a script (javascript.0.scriptEnabled.…). Best with \"Learn from\" its real power state, then your real evenings are replayed.",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
-						},
-						"w7scan": {
-							"type": "sendTo",
-							"label": "Search automatically",
-							"command": "wizardScan",
-							"jsonData": "{\"enumPerimeter\": \"${data.enumPerimeter}\", \"enumFull\": \"${data.enumFull}\", \"enumFire\": \"${data.enumFire}\", \"enumReport\": \"${data.enumReport}\", \"enumLamps\": \"${data.enumLamps}\", \"enumSimLamps\": \"${data.enumSimLamps}\", \"enumMorningLamps\": \"${data.enumMorningLamps}\", \"enumPresence\": \"${data.enumPresence}\", \"lockId\": \"${data.lockId}\"}",
-							"useNative": true,
-							"variant": "contained",
-							"showProcess": true,
-							"timeout": 120000,
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
-						},
-						"wizScanInfo": {
-							"type": "text",
-							"label": "Result of the search",
-							"readOnly": true,
-							"minRows": 2,
-							"maxRows": 8,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.wizScanInfo)",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
 						"simAuto": {
 							"type": "checkbox",
@@ -2377,7 +3147,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
 						"enumSimLamps": {
 							"type": "selectSendTo",
@@ -2391,7 +3161,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto || !(data.eveningLight || data.simEnabled))"
 						},
 						"enumMorningLamps": {
 							"type": "selectSendTo",
@@ -2405,9 +3175,19 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto || !(data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
 						},
-						"w7tt": {
+						"w18dt": {
+							"type": "staticText",
+							"text": "Your TV or radio: add a row with the type \"Device / scene / script\" – it only runs during the simulation. Best with \"Learn from\" its real power state, then your real evenings are replayed. A scene (e.g. TV on, then a channel) or a script (javascript.0.scriptEnabled.…) works too.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled || !(data.wizHasDevices || (data.simLamps || []).some(r => r && r.id && r.type === 'device')))"
+						},
+						"w18tt": {
 							"type": "staticText",
 							"text": "In the table: \"Value on/off\" only if the lamp needs other values than on/off (e.g. a dimmer: 80). \"Learn from\" only if the switching state does not show whether the lamp is really on – then choose the state that does.",
 							"xs": 12,
@@ -2419,7 +3199,7 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							},
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
 						"simLamps": {
 							"type": "table",
@@ -2538,33 +3318,20 @@
 									]
 								}
 							],
-							"hidden": "!(data.simEnabled || data.eveningLight || data.morningLight)"
-						},
-						"simVisits": {
-							"type": "number",
-							"label": "Short visits per evening",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"min": 0,
-							"max": 20,
-							"help": "Random short visits as long as nothing has been learned yet. 0 = only what was learned.",
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						}
 					}
 				},
-				"wstep9": {
+				"wstep19": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 9",
+					"hidden": "data.wizStep !== 19",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"w8h": {
+						"w19h": {
 							"type": "header",
 							"text": "Check and finish",
 							"size": 4,
@@ -2574,7 +3341,7 @@
 							"lg": 12,
 							"xl": 12
 						},
-						"w8c0": {
+						"w19c0": {
 							"type": "staticText",
 							"text": "Nothing is ticked under \"What do you want to use?\" – Home Guard has nothing to do.",
 							"xs": 12,
@@ -2588,9 +3355,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c1": {
+						"w19c1": {
 							"type": "staticText",
-							"text": "⚠ No sensors – the alarm system cannot raise an alarm. → step \"Sensors\"",
+							"text": "⚠ No sensors – the alarm system cannot raise an alarm. → pages \"Outer skin\" … \"Single sensors & exceptions\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2602,9 +3369,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c2": {
+						"w19c2": {
 							"type": "staticText",
-							"text": "⚠ No messenger – when you are away, you will not learn about an alarm. → step \"Notifications\"",
+							"text": "⚠ No messenger – when you are away, you will not learn about an alarm. → page \"Messages\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2616,9 +3383,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c3": {
+						"w19c3": {
 							"type": "staticText",
-							"text": "⚠ \"Disarm with the lock\" is ticked, but no lock state is chosen. → step \"Disarming & persons\"",
+							"text": "⚠ A door lock is ticked, but no lock state is chosen. → page \"Switching on and off\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2630,9 +3397,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c4": {
+						"w19c4": {
 							"type": "staticText",
-							"text": "Note: no door is \"delayed\" and nothing disarms by itself – opening the front door while armed raises the alarm at once. Mark the front door as \"delayed\" or use the lock or presence. → steps \"Sensors\" / \"Disarming & persons\"",
+							"text": "Note: no door is \"delayed\" and nothing switches off by itself – opening the front door while armed raises the alarm at once. Mark the front door as \"delayed\" or use the lock or presence. → page \"Single sensors & exceptions\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2644,9 +3411,23 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c5": {
+						"w19c5": {
 							"type": "staticText",
-							"text": "⚠ The simulation has no lamps. → step \"Lamps & devices\"",
+							"text": "⚠ Presence is ticked, but no person is set up. → page \"Who lives here?\"",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.presenceEnabled && !(data.presenceAuto && data.enumPresence) && !(data.presence || []).some(r => r && r.id && r.enabled !== false))",
+							"style": {
+								"color": "#e67e22",
+								"fontWeight": "bold"
+							}
+						},
+						"w19c6": {
+							"type": "staticText",
+							"text": "⚠ The simulation has no lamps. → page \"Lamps\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2658,9 +3439,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c6": {
+						"w19c7": {
 							"type": "staticText",
-							"text": "⚠ The simulation should start when nobody is at home, but presence is not set up. → step \"Disarming & persons\"",
+							"text": "⚠ The simulation should start when nobody is at home, but presence is not set up. → page \"Simulation: when and how\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2672,9 +3453,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c7": {
+						"w19c8": {
 							"type": "staticText",
-							"text": "⚠ Evening light is ticked, but no lamp has the role \"Evening\". → step \"Lamps & devices\"",
+							"text": "⚠ Evening light is ticked, but no lamp has the role \"Evening\". → page \"Lamps\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2686,9 +3467,9 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8c8": {
+						"w19c9": {
 							"type": "staticText",
-							"text": "⚠ Morning light is ticked, but no lamp has the role \"Morning\". → step \"Lamps & devices\"",
+							"text": "⚠ Morning light is ticked, but no lamp has the role \"Morning\". → page \"Lamps\"",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2700,7 +3481,7 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w8ok": {
+						"w19ok": {
 							"type": "staticText",
 							"text": "✔ Everything important is set up.",
 							"xs": 12,
@@ -2708,13 +3489,13 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(!data.alarmEnabled && !data.simEnabled && !data.eveningLight && !data.morningLight) || (data.alarmEnabled && !(data.autoPerimeter && data.enumPerimeter) && !(data.autoFull && data.enumFull) && !(data.autoFire && data.enumFire) && !(data.sensors || []).some(r => r && r.id && r.enabled !== false)) || (data.alarmEnabled && !data.notificationManager && !(data.notify || []).some(r => r && r.instance && r.enabled !== false)) || (data.alarmEnabled && data.lockEnabled && !data.lockId) || (data.alarmEnabled && !data.lockEnabled && !(data.presenceEnabled && data.presenceDisarm) && !(data.sensors || []).some(r => r && r.delayed && r.enabled !== false)) || (data.simEnabled && !((data.simAuto && (data.enumSimLamps || data.enumMorningLamps)) || (data.simLamps || []).some(r => r && r.id && r.enabled !== false))) || (data.simEnabled && (data.simCoupling === \"away\" || data.simCoupling === \"alarmOrAway\") && !data.presenceEnabled) || (data.eveningLight && !(data.simAuto && data.enumSimLamps) && !(data.simLamps || []).some(r => r && r.id && r.enabled !== false && (r.evening || r.type === \"evening\"))) || (data.morningLight && !(data.simAuto && data.enumMorningLamps) && !(data.simLamps || []).some(r => r && r.id && r.enabled !== false && (r.morning || r.type === \"morning\")))",
+							"hidden": "(!data.alarmEnabled && !data.simEnabled && !data.eveningLight && !data.morningLight) || (data.alarmEnabled && !(data.autoPerimeter && data.enumPerimeter) && !(data.autoFull && data.enumFull) && !(data.autoFire && data.enumFire) && !(data.sensors || []).some(r => r && r.id && r.enabled !== false)) || (data.alarmEnabled && !data.notificationManager && !(data.notify || []).some(r => r && r.instance && r.enabled !== false)) || (data.alarmEnabled && data.lockEnabled && !data.lockId) || (data.alarmEnabled && !data.lockEnabled && !(data.presenceEnabled && data.presenceDisarm) && !(data.sensors || []).some(r => r && r.delayed && r.enabled !== false)) || (data.presenceEnabled && !(data.presenceAuto && data.enumPresence) && !(data.presence || []).some(r => r && r.id && r.enabled !== false)) || (data.simEnabled && !((data.simAuto && (data.enumSimLamps || data.enumMorningLamps)) || (data.simLamps || []).some(r => r && r.id && r.enabled !== false))) || (data.simEnabled && (data.simCoupling === \"away\" || data.simCoupling === \"alarmOrAway\") && !data.presenceEnabled) || (data.eveningLight && !(data.simAuto && data.enumSimLamps) && !(data.simLamps || []).some(r => r && r.id && r.enabled !== false && (r.evening || r.type === \"evening\"))) || (data.morningLight && !(data.simAuto && data.enumMorningLamps) && !(data.simLamps || []).some(r => r && r.id && r.enabled !== false && (r.morning || r.type === \"morning\")))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
 							}
 						},
-						"w8dt": {
+						"w19dt": {
 							"type": "staticText",
 							"text": "Tick this box once you are done – then all other tabs with every detail setting appear. Then save.",
 							"xs": 12,
@@ -2733,7 +3514,7 @@
 							"lg": 12,
 							"xl": 12
 						},
-						"w8save": {
+						"w19save": {
 							"type": "staticText",
 							"text": "Now press \"Save\" at the bottom of the page. Home Guard restarts with the new settings.",
 							"xs": 12,
@@ -2742,7 +3523,7 @@
 							"lg": 12,
 							"xl": 12
 						},
-						"w8tip": {
+						"w19tip": {
 							"type": "staticText",
 							"text": "Tip: the web component \"Home Guard panel\" for AURA and vis-2 shows status, buttons and the logbook.",
 							"xs": 12,
@@ -2761,7 +3542,7 @@
 					"type": "sendTo",
 					"label": "◀ Back",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"alarm\": \"${data.alarmEnabled}\", \"sim\": \"${data.simEnabled}\", \"evening\": \"${data.eveningLight}\", \"morning\": \"${data.morningLight}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "outlined",
 					"hidden": "data.wizStep <= 0",
@@ -2776,10 +3557,10 @@
 					"type": "sendTo",
 					"label": "Next ▶",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"alarm\": \"${data.alarmEnabled}\", \"sim\": \"${data.simEnabled}\", \"evening\": \"${data.eveningLight}\", \"morning\": \"${data.morningLight}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "contained",
-					"hidden": "data.wizStep >= 9",
+					"hidden": "data.wizStep >= 19",
 					"xs": 12,
 					"sm": 6,
 					"md": 3,
@@ -2959,7 +3740,7 @@
 				},
 				"autoFull": {
 					"type": "checkbox",
-					"label": "Inside sensors (motion detectors) – full protection only",
+					"label": "Inside sensors (motion detectors …) – full protection only",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -2982,7 +3763,7 @@
 				},
 				"autoPerimeter": {
 					"type": "checkbox",
-					"label": "Perimeter sensors (outer doors, windows) – full, perimeter and night protection",
+					"label": "Outer skin sensors (doors, windows, glass break …) – full, perimeter and night protection",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -3006,7 +3787,7 @@
 				},
 				"autoFire": {
 					"type": "checkbox",
-					"label": "Danger detectors (smoke, water, gas) – report always, also when disarmed",
+					"label": "Always active (smoke, water, gas, panic button …) – also when disarmed",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -3147,15 +3928,15 @@
 							"options": [
 								{
 									"value": "perimeter",
-									"label": "Perimeter (outer doors, windows)"
+									"label": "Outer skin (doors, windows, glass break …)"
 								},
 								{
 									"value": "interior",
-									"label": "Inside (full protection only)"
+									"label": "Inside (motion … – full protection only)"
 								},
 								{
 									"value": "24h",
-									"label": "Danger detector (smoke, water, gas)"
+									"label": "Always (smoke, water, gas, panic button …)"
 								},
 								{
 									"value": "report",

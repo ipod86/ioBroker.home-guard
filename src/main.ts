@@ -1177,16 +1177,10 @@ class HomeGuard extends utils.Adapter {
 				this.notifyAll(this.T.test, true);
 				return reply({ result: 'ok' });
 			// setup assistant: values of the form come as strings ("true", "undefined", …)
-			case 'wizardNav': {
-				const yes = (v: unknown): boolean => String(v) === 'true';
-				const step = nextStep(Number(msg.step) || 0, Number(msg.dir) || 1, {
-					alarm: yes(msg.alarm),
-					sim: yes(msg.sim),
-					evening: yes(msg.evening),
-					morning: yes(msg.morning),
+			case 'wizardNav':
+				return reply({
+					native: { wizStep: nextStep(Number(msg.step) || 0, Number(msg.dir) || 1, str(msg.need)) },
 				});
-				return reply({ native: { wizStep: step } });
-			}
 			case 'wizardDefaults':
 				return reply({ native: WIZARD_DEFAULTS[str(msg.step)] || {} });
 			case 'wizardScan':
@@ -1259,9 +1253,9 @@ class HomeGuard extends utils.Adapter {
 				`${label}: „${best.name}“ (${best.count} ${de ? (best.count === 1 ? 'Datenpunkt' : 'Datenpunkte') : best.count === 1 ? 'state' : 'states'})`,
 			);
 		}
+		const view = await this.getObjectViewAsync('system', 'state', { startkey: '', endkey: '\u9999' });
 		// door lock: Nuki or a state with a lock role
 		if (empty('lockId')) {
-			const view = await this.getObjectViewAsync('system', 'state', { startkey: '', endkey: '\u9999' });
 			const lock =
 				view.rows.find(r => /^nuki[^.]*\.\d+\..*lockState$/i.test(r.id)) ||
 				view.rows.find(r => /^(value|switch)\.lock$/.test(String(r.value?.common?.role || '')));
@@ -1286,6 +1280,38 @@ class HomeGuard extends utils.Adapter {
 				out.notify = [{ enabled: true, instance: ids[0], user: '', chatId: '' }];
 				lines.push(`${de ? 'Messenger' : 'Messenger'}: ${ids[0]}`);
 			}
+		}
+		// only ticks on the page "What do you have?" - the state itself is chosen later on its page
+		const insts = (
+			await this.getObjectViewAsync('system', 'instance', {
+				startkey: 'system.adapter.',
+				endkey: 'system.adapter.\u9999',
+			})
+		).rows.map(r => r.id.replace('system.adapter.', ''));
+		const speaker = insts.find(id => /^(alexa2|sayit)\.\d+$/.test(id));
+		if (speaker && empty('speechId')) {
+			out.wizHasSpeaker = true;
+			lines.push(`${de ? 'Lautsprecher' : 'Speaker'}: ${speaker}`);
+		}
+		const isState = (r: (typeof view.rows)[number], re: RegExp): boolean =>
+			!r.id.startsWith(`${this.namespace}.`) && re.test(`${r.id} ${String(r.value?.common?.role || '')}`);
+		const siren = view.rows.find(
+			r => isState(r, /siren|sirene|switch\.alarm/i) && r.value?.common?.write !== false,
+		);
+		if (siren && !(this.config.sirens || []).some(r => r && r.id)) {
+			out.wizHasSiren = true;
+			lines.push(`${de ? 'Sirene' : 'Siren'}: ${siren.id}`);
+		}
+		const lux = view.rows.filter(
+			r => r.value?.common?.unit === 'lx' || r.value?.common?.role === 'value.brightness',
+		);
+		if (lux.length && empty('simLuxId')) {
+			out.wizHasLux = true;
+			lines.push(
+				de
+					? `Helligkeit: ${lux.length} Datenpunkt(e) mit Lux – ob einer draußen ist, prüfst du auf der Seite „Licht: abends“`
+					: `Brightness: ${lux.length} state(s) with lux – whether one is outdoors, you check on the page "Light: evening"`,
+			);
 		}
 		out.wizScanInfo = lines.join('\n');
 		return out;

@@ -19,41 +19,22 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var wizard_exports = {};
 __export(wizard_exports, {
   WIZARD_DEFAULTS: () => WIZARD_DEFAULTS,
-  WIZARD_STEPS: () => WIZARD_STEPS,
   bestEnum: () => bestEnum,
-  nextStep: () => nextStep,
-  stepNeeded: () => stepNeeded
+  nextStep: () => nextStep
 });
 module.exports = __toCommonJS(wizard_exports);
-const WIZARD_STEPS = 10;
-function stepNeeded(step, c) {
-  const light = c.sim || c.evening || c.morning;
-  switch (step) {
-    case 2:
-    // sensors
-    case 3:
-    // times
-    case 5:
-    // notifications
-    case 6:
-      return c.alarm;
-    case 4:
-      return c.alarm || c.sim;
-    case 7:
-    // evening, morning & simulation
-    case 8:
-      return light;
-    default:
-      return true;
-  }
-}
-function nextStep(step, dir, c) {
-  let s = Math.max(0, Math.min(WIZARD_STEPS - 1, Math.round(step) || 0));
+function nextStep(step, dir, need) {
   const d = dir < 0 ? -1 : 1;
+  if (!/^[01]+$/.test(need)) {
+    return Math.max(0, (Math.round(step) || 0) + d);
+  }
+  const pages = need;
+  const last = pages.length - 1;
+  let s = Math.max(0, Math.min(last, Math.round(step) || 0));
   do {
     s += d;
-  } while (s > 0 && s < WIZARD_STEPS - 1 && !stepNeeded(s, c));
-  return Math.max(0, Math.min(WIZARD_STEPS - 1, s));
+  } while (s > 0 && s < last && pages[s] === "0");
+  return Math.max(0, Math.min(last, s));
 }
 const WIZARD_DEFAULTS = {
   times: {
@@ -79,17 +60,22 @@ const WIZARD_DEFAULTS = {
   }
 };
 const RULES = {
+  // anything that reports a break-in from outside: contacts, handles, glass break, vibration
   perimeter: {
-    role: /^(sensor\.(window|door|contact)|value\.window|sensor\.open)/,
-    name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)ll/i
+    role: /^(sensor\.(window|door|contact|open|glass|vibration|tilt)|value\.window|sensor\.alarm(\.secure)?$)/,
+    name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)ll|glas|glass|ersch(ü|ue)tter|vibration|einbruch|intrusion/i
   },
-  full: { role: /^sensor\.motion/, name: /bewegung|motion|innen|inside|interior|pir|voll/i },
+  full: {
+    role: /^sensor\.(motion|occupancy)/,
+    name: /bewegung|motion|innen|inside|interior|pir|voll|lichtschranke/i
+  },
+  // always active: danger and emergency
   fire: {
-    role: /^sensor\.alarm\.(fire|flood|smoke|gas|water)|^sensor\.(smoke|water|leak|gas)/,
-    name: /rauch|smoke|wasser|water|leck|leak|gas|brand|fire|gefahr|hazard/i
+    role: /^sensor\.alarm\.(fire|flood|smoke|gas|water|heat|co)|^sensor\.(smoke|water|leak|gas|heat|co)/,
+    name: /rauch|smoke|wasser|water|leck|leak|gas|brand|fire|hitze|heat(?!ing)|kohlenmonoxid|\bco\b|gefahr|hazard|panik|panic|notruf|sos/i
   },
   report: {
-    name: /melde|briefkast|mailbox|letter|gartentor|garden.?gate|schuppen|shed|nur.?melden|report/i,
+    name: /melde|briefkast|mailbox|letter|gartentor|garden.?gate|schuppen|shed|klingel|doorbell|nur.?melden|report/i,
     nameRequired: true
   },
   lamps: {
@@ -126,9 +112,7 @@ function bestEnum(kind, enums) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   WIZARD_DEFAULTS,
-  WIZARD_STEPS,
   bestEnum,
-  nextStep,
-  stepNeeded
+  nextStep
 });
 //# sourceMappingURL=wizard.js.map

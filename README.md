@@ -49,7 +49,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 ### Configuration
 
-**Setup assistant:** a new instance opens with the tab *Setup assistant*. If you know your way around, tick *I know ioBroker and set it up without the assistant* on the first page and all tabs appear at once. It asks step by step what you want to use (alarm system, presence simulation, evening/morning light), explains every question and skips what you do not need. *Search automatically* looks through your functions (enums) and fills in suitable ones (windows, motion detectors, lamps, presence), as well as a Nuki lock and a messenger; *Use suggestions* fills in proven times. The last page checks everything (e.g. "no messenger", "no door delayed"). Once you tick *Setup finished – show all settings*, all tabs below appear. Instances that were set up before keep showing all tabs.
+**Setup assistant:** a new instance opens with the tab *Setup assistant*. It first asks what you want to use (alarm system, presence simulation, evening light, morning light) and what you already have (door and window contacts, motion detectors, smoke detectors, siren, door lock, presence detection, speaker, brightness sensor, TV) – *Search automatically* looks through your ioBroker and ticks what it finds. After that only the pages that fit follow, each with one topic and marked with the part it belongs to; pages for things you do not have are left out. Proven times come with *Use suggestions*, the last page checks everything (e.g. "no messenger", "no door delayed"). Once you tick *Setup finished – show all settings*, all tabs appear. If you know your way around, choose *No – I set it up myself* on the first page. Instances that were set up before keep showing all tabs.
 
 1. **General** – switch the alarm system and the presence simulation on or off.
 2. **Triggers** – choose functions for perimeter (doors, windows), full protection (inside, motion) and 24 h sensors, or list sensors by hand (with *delayed*, *inverted* and *motion detector* flags).
@@ -136,7 +136,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) setup assistant: guided first setup with automatic search for functions, lock and messenger, suggested times and a final check; the other tabs appear when it is finished
+* (ipod86) setup assistant: guided first setup – first what you want to use and what you have, then only the pages that fit; automatic search, suggested times and a final check; the other tabs appear when it is finished
 * (ipod86) simulation: the type "TV / device" is now called "Device / scene / script" – any state can be switched while simulating
 * (ipod86) settings: evening and morning each have their own section (times, brightness); shown only when the evening/morning light or the simulation uses them
 * (ipod86) morning light off: own offset after sunrise, latest time, brightness sensor; panel shows "on" and "off" side by side for evening and morning light

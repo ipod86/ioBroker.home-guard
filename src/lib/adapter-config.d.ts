@@ -180,15 +180,18 @@ declare global {
 			wizStep: number;
 			wizDone: boolean;
 			wizScanInfo: string;
-			/** setup assistant: yes/no questions that only show or hide sections */
-			wizQMotion: boolean;
-			wizQFire: boolean;
-			wizQReport: boolean;
-			wizQSpeech: boolean;
+			/** setup assistant: what the user has (decides the pages) and yes/no questions on a page */
+			wizHasDoors: boolean;
+			wizHasMotion: boolean;
+			wizHasFire: boolean;
+			wizHasReport: boolean;
+			wizHasSiren: boolean;
+			wizHasSpeaker: boolean;
+			wizHasLux: boolean;
+			wizHasDevices: boolean;
 			wizQLamps: boolean;
-			wizQSiren: boolean;
 			wizQActions: boolean;
-			wizQLux: boolean;
+			wizSimMorning: boolean;
 			simMode: 'dusk' | 'learned' | 'combined';
 			simStartOffset: number;
 			simStartRandom: number;

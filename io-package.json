@@ -223,14 +223,17 @@
 		"wizStep": 0,
 		"wizDone": false,
 		"wizScanInfo": "",
-		"wizQMotion": false,
-		"wizQFire": false,
-		"wizQReport": false,
-		"wizQSpeech": false,
 		"wizQLamps": false,
-		"wizQSiren": false,
 		"wizQActions": false,
-		"wizQLux": false
+		"wizHasDoors": false,
+		"wizHasMotion": false,
+		"wizHasFire": false,
+		"wizHasReport": false,
+		"wizHasSiren": false,
+		"wizHasSpeaker": false,
+		"wizHasLux": false,
+		"wizHasDevices": false,
+		"wizSimMorning": false
 	},
 	"objects": [],
 	"instanceObjects": [

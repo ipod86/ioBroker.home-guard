@@ -1,28 +1,29 @@
 import { expect } from 'chai';
-import { bestEnum, nextStep, stepNeeded, WIZARD_DEFAULTS, type EnumInfo } from './wizard';
+import { bestEnum, nextStep, WIZARD_DEFAULTS, type EnumInfo } from './wizard';
 
 describe('setup assistant', () => {
-	const all = { alarm: true, sim: true, evening: true, morning: true };
-	const lightOnly = { alarm: false, sim: false, evening: true, morning: false };
-
-	it('goes through every step when everything is ticked', () => {
+	it('goes through every page that is needed', () => {
 		const seen = [0];
 		let s = 0;
-		while (s < 9) {
-			s = nextStep(s, 1, all);
+		while (s < 4) {
+			s = nextStep(s, 1, '11111');
 			seen.push(s);
 		}
-		expect(seen).to.deep.equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		expect(nextStep(9, 1, all)).to.equal(9);
-		expect(nextStep(0, -1, all)).to.equal(0);
+		expect(seen).to.deep.equal([0, 1, 2, 3, 4]);
+		expect(nextStep(4, 1, '11111')).to.equal(4);
+		expect(nextStep(0, -1, '11111')).to.equal(0);
 	});
 
-	it('skips the alarm steps for the evening light only', () => {
-		expect(nextStep(1, 1, lightOnly)).to.equal(7);
-		expect(nextStep(8, 1, lightOnly)).to.equal(9);
-		expect(nextStep(7, -1, lightOnly)).to.equal(1);
-		expect(stepNeeded(4, lightOnly)).to.equal(false);
-		expect(stepNeeded(4, { ...lightOnly, sim: true })).to.equal(true);
+	it('skips pages that are not needed, in both directions', () => {
+		expect(nextStep(1, 1, '1100011')).to.equal(5);
+		expect(nextStep(5, -1, '1100011')).to.equal(1);
+		expect(nextStep(5, 1, '1100010')).to.equal(6);
+	});
+
+	it('goes simply one page on when the list is missing or broken', () => {
+		expect(nextStep(2, 1, '')).to.equal(3);
+		expect(nextStep(2, -1, 'undefined')).to.equal(1);
+		expect(nextStep(0, -1, '')).to.equal(0);
 	});
 
 	it('suggests sensible defaults', () => {
@@ -58,5 +59,12 @@ describe('setup assistant', () => {
 		expect(bestEnum('perimeter', own)?.id).to.equal('enum.functions.alarm_huellschutz');
 		expect(bestEnum('full', own)?.id).to.equal('enum.functions.alarm_vollschutz');
 		expect(bestEnum('presence', own)?.id).to.equal('enum.functions.person_anwesend');
+		// not only windows: glass break and vibration count as outer skin, a panic button as danger
+		const more: EnumInfo[] = [
+			{ id: 'enum.functions.glasbruch', name: 'Glasbruchmelder', roles: ['sensor.alarm', 'sensor.alarm'] },
+			{ id: 'enum.functions.notruf', name: 'Panikknopf', roles: ['button'] },
+		];
+		expect(bestEnum('perimeter', more)?.id).to.equal('enum.functions.glasbruch');
+		expect(bestEnum('fire', more)?.id).to.equal('enum.functions.notruf');
 	});
 });
