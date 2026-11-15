@@ -20,6 +20,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 ### Highlights
 
+- **Setup assistant**: a new instance starts with a guided setup. First it asks what you want to use (alarm system, presence simulation, evening and morning light) and what you already have (door and window contacts, motion and smoke detectors, siren, door lock, presence detection, speaker …) – *Search automatically* looks through your ioBroker and ticks what it finds. After that only the pages that fit your answers follow: one topic each, explained in plain words, with suggested times and a check at the end ("no messenger", "no door delayed" …). If you know your way around, skip it with one tick.
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
 - **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
@@ -38,7 +39,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Report-only sensors** (garden gate, letter box, shed): a message instead of an alarm, only while armed or always; switchable at any time with `control.report`.
 - **Sirens per mode**: every alarm, full protection only (outside siren) or perimeter/night only (inside siren), each with its own duration.
 - **Morning light**: the morning lamps on at wake-up time (later on the weekend) and off after sunrise (own offset and random delay, optionally at the latest at a set time – e.g. when you leave the house – or as soon as the brightness sensor reports daylight) – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
-- **Test alarm** in the settings (tab *Actions on alarm*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
+- **Test alarm** in the settings (tab *Actions & test*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
 
@@ -49,15 +50,17 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 ### Configuration
 
-**Setup assistant:** a new instance opens with the tab *Setup assistant*. It first asks what you want to use (alarm system, presence simulation, evening light, morning light) and what you already have (door and window contacts, motion detectors, smoke detectors, siren, door lock, presence detection, speaker, brightness sensor, TV) – *Search automatically* looks through your ioBroker and ticks what it finds. After that only the pages that fit follow, each with one topic and marked with the part it belongs to; pages for things you do not have are left out. Proven times come with *Use suggestions*, the last page checks everything (e.g. "no messenger", "no door delayed"). Once you tick *Setup finished – show all settings*, all tabs appear. If you know your way around, choose *No – I set it up myself* on the first page. Instances that were set up before keep showing all tabs.
+**Setup assistant:** when the settings are opened for the first time, the setup assistant guides you through everything needed (see Highlights). Once you tick *Setup finished – show all settings* on the last page – or choose *No – I set it up myself* right on the first page – the tabs with every detail setting appear. The assistant stays reachable as the first tab; instances that were set up before keep showing the tabs directly.
+
+The tabs of the settings:
 
 1. **General** – switch the alarm system and the presence simulation on or off.
-2. **Triggers** – choose functions for perimeter (doors, windows), full protection (inside, motion) and 24 h sensors, or list sensors by hand (with *delayed*, *inverted* and *motion detector* flags).
+2. **Triggers** – choose functions for perimeter (doors, windows), full protection (inside, motion) and 24 h sensors, or list sensors by hand (with *delayed*, *inverted* and *motion detector* flags). Any device type works – also glass break or vibration detectors or a panic button; a row in the table overrides or excludes a sensor from a function.
 3. **Procedure & PIN** – exit and entry delays, front door contact for arming at once, open window check, alarm duration, PIN, night protection times.
-4. **Disarm & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
+4. **Lock & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
 5. **Notifications** – messenger instances, which events are reported, speech output state.
-6. **Actions on alarm** – lamps (function or list, on or blinking), sirens and an actions table for any event.
-7. **Presence simulation** – functions for evening and morning lamps, a table of lamps with the roles *evening*, *morning*, *short visits*, *bedtime* (several per lamp) and TVs/devices, way of planning, start relative to sunset or below a lux value, lights out, learning.
+6. **Actions & test** – lamps (function or list, on or blinking), sirens, an actions table for any event and the test alarm.
+7. **Presence simulation** – simulation, evening and morning light: functions for evening and morning lamps, a table of lamps with the roles *evening*, *morning*, *short visits*, *bedtime* (several per lamp) and devices/scenes/scripts, way of planning, start relative to sunset or below a lux value, lights out, learning.
 
 ### Function or table – what can be set up how
 

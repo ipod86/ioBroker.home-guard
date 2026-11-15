@@ -9,6 +9,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 
 ## Highlights
 
+- **Einrichtungsassistent**: Eine neue Instanz startet mit einer geführten Einrichtung. Zuerst fragt er, was du nutzen möchtest (Alarmanlage, Anwesenheitssimulation, Abend- und Morgenlicht) und was es bei dir schon gibt (Tür- und Fensterkontakte, Bewegungs- und Rauchmelder, Sirene, Türschloss, Anwesenheitserkennung, Lautsprecher …) – *Automatisch suchen* durchsucht dein ioBroker und hakt das Gefundene gleich an. Danach kommen nur die Seiten, die zu deinen Antworten passen: jede mit einem Thema, in einfachen Worten erklärt, mit Vorschlägen für die Zeiten und einer Prüfung am Ende („kein Messenger“, „keine Tür verzögert“ …). Wer sich auskennt, überspringt ihn mit einem Haken.
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). 24-h-Sensoren (Rauch, Wasser) lösen immer aus.
 - **Ausgangsverzögerung** je Modus, **sofort scharf**, wenn die Haustür zufällt, **Eingangsverzögerung** (stiller Alarm) für verzögerte Sensoren wie die Haustür.
 - **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern oder ignorieren. Gekippte Fenster (Wert 1) zählen als offen.
@@ -27,7 +28,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Melde-Sensoren** (Gartentor, Briefkasten, Schuppen): eine Nachricht statt eines Alarms, nur bei scharfer Anlage oder immer; jederzeit schaltbar über `control.report`.
 - **Sirenen je Modus**: bei jedem Alarm, nur bei Vollschutz (Außensirene) oder nur bei Hüll-/Nachtschutz (Innensirene), jeweils mit eigener Dauer.
 - **Morgenlicht**: die Morgenlampen zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus (eigener Versatz und Zufall, wahlweise spätestens zu einer festen Zeit – z. B. wenn ihr aus dem Haus geht – oder sobald der Helligkeitssensor Tageslicht meldet) – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
-- **Alarm testen** in den Einstellungen (Reiter *Aktionen bei Alarm*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
+- **Alarm testen** in den Einstellungen (Reiter *Aktionen & Test*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
@@ -38,15 +39,17 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 
 ## Einstellungen
 
-**Einrichtungsassistent:** Eine neue Instanz öffnet mit dem Reiter *Einrichtungsassistent*. Er fragt zuerst, was du nutzen möchtest (Alarmanlage, Anwesenheitssimulation, Abendlicht, Morgenlicht) und was du schon hast (Tür- und Fensterkontakte, Bewegungsmelder, Rauchmelder, Sirene, Türschloss, Anwesenheitserkennung, Lautsprecher, Helligkeitssensor, Fernseher) – *Automatisch suchen* durchsucht dein ioBroker und hakt an, was es findet. Danach folgen nur die passenden Seiten, jede mit einem Thema und mit dem Bereich gekennzeichnet, zu dem sie gehört; Seiten zu Dingen, die du nicht hast, fallen weg. Bewährte Zeiten setzt *Vorschläge übernehmen*, die letzte Seite prüft alles (z. B. „kein Messenger“, „keine Tür verzögert“). Sobald du *Einrichtung abgeschlossen – alle Einstellungen zeigen* anhakst, erscheinen alle Reiter. Wer sich auskennt, wählt auf der ersten Seite *Nein – ich richte selbst ein*. Bereits eingerichtete Instanzen zeigen weiterhin alle Reiter.
+**Einrichtungsassistent:** Beim ersten Öffnen der Einstellungen führt der Einrichtungsassistent durch alles Nötige (siehe Highlights). Sobald du auf der letzten Seite *Einrichtung abgeschlossen – alle Einstellungen zeigen* anhakst – oder gleich auf der ersten Seite *Nein – ich richte selbst ein* wählst –, erscheinen die Reiter mit allen Detail-Einstellungen. Der Assistent bleibt als erster Reiter erreichbar; bereits eingerichtete Instanzen zeigen die Reiter weiterhin direkt.
+
+Die Reiter der Einstellungen:
 
 1. **Allgemein** – Alarmanlage und Anwesenheitssimulation ein- oder ausschalten.
-2. **Auslöser** – Funktionen für Hüllschutz (Türen, Fenster), Vollschutz (innen, Bewegung) und 24-h-Sensoren wählen oder Sensoren von Hand eintragen (mit *verzögert*, *invertiert* und *Bewegungsmelder*).
+2. **Auslöser** – Funktionen für Hüllschutz (Türen, Fenster), Vollschutz (innen, Bewegung) und 24-h-Sensoren wählen oder Sensoren von Hand eintragen (mit *verzögert*, *invertiert* und *Bewegungsmelder*). Jeder Gerätetyp geht – auch Glasbruch-, Erschütterungsmelder oder ein Panikknopf; eine Zeile in der Tabelle überschreibt oder schließt einen Sensor aus einer Funktion aus.
 3. **Ablauf & PIN** – Ausgangs- und Eingangsverzögerung, Haustürkontakt für sofort scharf, Offen-Fenster-Prüfung, Alarmdauer, PIN, Nachtschutz-Zeiten.
-4. **Entschärfen & Anwesenheit** – Zustand des Türschlosses und die Werte für „aufgeschlossen“ (Nuki: 3, 5, 6), Anwesenheits-Datenpunkte und was passiert, wenn alle gehen oder jemand heimkommt.
+4. **Schloss & Anwesenheit** – Zustand des Türschlosses und die Werte für „aufgeschlossen“ (Nuki: 3, 5, 6), Anwesenheits-Datenpunkte und was passiert, wenn alle gehen oder jemand heimkommt.
 5. **Benachrichtigungen** – Messenger-Instanzen, welche Ereignisse gemeldet werden, Datenpunkt für Sprachausgabe.
-6. **Aktionen bei Alarm** – Lampen (Funktion oder Liste, an oder blinkend), Sirenen und eine Aktionstabelle für beliebige Ereignisse.
-7. **Anwesenheitssimulation** – Funktionen für Abend- und Morgenlampen, eine Lampentabelle mit den Rollen *Abend*, *Morgens*, *Kurze Gänge*, *Zubettgehen* (mehrere je Lampe) und Geräte/Szenen/Skripte, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
+6. **Aktionen & Test** – Lampen (Funktion oder Liste, an oder blinkend), Sirenen, eine Aktionstabelle für beliebige Ereignisse und der Testalarm.
+7. **Anwesenheitssimulation** – Simulation, Abend- und Morgenlicht: Funktionen für Abend- und Morgenlampen, eine Lampentabelle mit den Rollen *Abend*, *Morgen*, *Kurze Gänge*, *Zubettgehen* (mehrere je Lampe) und Geräte/Szenen/Skripte, Planungsart, Start relativ zum Sonnenuntergang oder unter einem Lux-Wert, Licht aus, Lernen.
 
 ### Funktion oder Tabelle – was wie eingerichtet wird
 
@@ -59,7 +62,7 @@ Vieles lässt sich über eine **Funktion** (Aufzählung) einbinden – jeder Dat
 | Lampen bei Alarm | ✓ | – |
 | Sirenen | – | ✓ (Modus *jeder Alarm / nur Vollschutz / nur Hüll-/Nachtschutz* und Dauer je Sirene) |
 | **Abendlampen** | ✓ Funktion *Abendlicht* | ✓ Haken *Abend* |
-| **Morgenlampen** | ✓ Funktion *Morgenlicht* (darf dieselbe Funktion sein) | ✓ Haken *Morgens* |
+| **Morgenlampen** | ✓ Funktion *Morgenlicht* (darf dieselbe Funktion sein) | ✓ Haken *Morgen* |
 | Lampen für **kurze Gänge** und **Zubettgehen** | – | ✓ Haken *Kurze Gänge* / *Zubettgehen* |
 | **Gerät / Szene / Skript** in der Simulation | – | ✓ (eigene Werte für an/aus, *Lernen von*, was beim Ende der Simulation passiert) |
 | Aktionen (Tür abschließen, Rollläden, Kamera …) | – | ✓ |
