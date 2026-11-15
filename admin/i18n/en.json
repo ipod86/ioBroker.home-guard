@@ -366,5 +366,13 @@
 	"Tick this box once you are done – then all other tabs with every detail setting appear. Then save.": "Tick this box once you are done – then all other tabs with every detail setting appear. Then save.",
 	"I know ioBroker and set it up without the assistant – show all settings now": "I know ioBroker and set it up without the assistant – show all settings now",
 	"All tabs appear at once. The assistant stays here and can be used at any time.": "All tabs appear at once. The assistant stays here and can be used at any time.",
-	"All tabs are shown – choose them at the top. Do not forget \"Save\" at the bottom.": "All tabs are shown – choose them at the top. Do not forget \"Save\" at the bottom."
+	"All tabs are shown – choose them at the top. Do not forget \"Save\" at the bottom.": "All tabs are shown – choose them at the top. Do not forget \"Save\" at the bottom.",
+	"Do you have motion detectors inside the house?": "Do you have motion detectors inside the house?",
+	"Do you have smoke, water or gas detectors?": "Do you have smoke, water or gas detectors?",
+	"Do you want to be told about a garden gate, letter box or similar – without an alarm?": "Do you want to be told about a garden gate, letter box or similar – without an alarm?",
+	"Should messages also be spoken aloud (e.g. by Alexa)?": "Should messages also be spoken aloud (e.g. by Alexa)?",
+	"Should lamps go on or blink on an alarm?": "Should lamps go on or blink on an alarm?",
+	"Do you have a siren?": "Do you have a siren?",
+	"Do you want to switch anything else (roller shutters, outdoor light, camera, door lock …)?": "Do you want to switch anything else (roller shutters, outdoor light, camera, door lock …)?",
+	"Do you have an outdoor brightness sensor?": "Do you have an outdoor brightness sensor?"
 }

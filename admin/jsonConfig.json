@@ -332,6 +332,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQMotion": {
+							"type": "checkbox",
+							"label": "Do you have motion detectors inside the house?",
+							"hidden": "(!data.alarmEnabled) || ((data.autoFull && data.enumFull))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w1bt": {
 							"type": "staticText",
 							"text": "Only in full protection, i.e. when nobody is at home.",
@@ -340,7 +350,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)))"
 						},
 						"autoFull": {
 							"type": "checkbox",
@@ -350,7 +360,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)))"
 						},
 						"enumFull": {
 							"type": "selectSendTo",
@@ -364,7 +374,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!data.autoFull)"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQMotion || (data.autoFull && data.enumFull)) || (!data.autoFull))"
 						},
 						"w1c": {
 							"type": "header",
@@ -377,6 +387,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQFire": {
+							"type": "checkbox",
+							"label": "Do you have smoke, water or gas detectors?",
+							"hidden": "(!data.alarmEnabled) || ((data.autoFire && data.enumFire))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w1ct": {
 							"type": "staticText",
 							"text": "Always active, also when disarmed. You choose whether they only send a message, also speak, or raise a full alarm.",
@@ -385,7 +405,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)))"
 						},
 						"autoFire": {
 							"type": "checkbox",
@@ -395,7 +415,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)))"
 						},
 						"enumFire": {
 							"type": "selectSendTo",
@@ -409,7 +429,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!data.autoFire)"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)) || (!data.autoFire))"
 						},
 						"hazardDefault": {
 							"type": "select",
@@ -429,7 +449,7 @@
 								}
 							],
 							"default": "speech",
-							"hidden": "(!data.alarmEnabled) || (!data.autoFire)",
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQFire || (data.autoFire && data.enumFire)) || (!data.autoFire))",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -447,6 +467,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQReport": {
+							"type": "checkbox",
+							"label": "Do you want to be told about a garden gate, letter box or similar – without an alarm?",
+							"hidden": "(!data.alarmEnabled) || ((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\"))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w1dt": {
 							"type": "staticText",
 							"text": "Never an alarm – just a message, e.g. \"garden gate opened\".",
@@ -455,7 +485,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")))"
 						},
 						"autoReport": {
 							"type": "checkbox",
@@ -465,7 +495,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")))"
 						},
 						"enumReport": {
 							"type": "selectSendTo",
@@ -479,7 +509,7 @@
 							"manual": true,
 							"noTranslation": true,
 							"label": "Function report-only sensors",
-							"hidden": "(!data.alarmEnabled) || (!data.autoReport)"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")) || (!data.autoReport))"
 						},
 						"reportWhen": {
 							"type": "select",
@@ -501,7 +531,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!data.alarmEnabled) || (!data.autoReport && !(data.sensors || []).some(r => r && r.circuit === \"report\"))"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === \"report\")) || (!data.autoReport && !(data.sensors || []).some(r => r && r.circuit === \"report\")))"
 						},
 						"w1e": {
 							"type": "header",
@@ -1263,6 +1293,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQSpeech": {
+							"type": "checkbox",
+							"label": "Should messages also be spoken aloud (e.g. by Alexa)?",
+							"hidden": "(!data.alarmEnabled) || (!!data.speechId)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"speechId": {
 							"type": "objectId",
 							"label": "State for speech (text is written)",
@@ -1272,7 +1312,7 @@
 							"lg": 4,
 							"xl": 4,
 							"help": "Optional, may stay empty: a speaker that reads text aloud – e.g. for Alexa the state \"speak\" of the Echo (alexa2.0.Echo-Devices.<id>.Commands.speak).",
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQSpeech || !!data.speechId))"
 						}
 					}
 				},
@@ -1310,6 +1350,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQLamps": {
+							"type": "checkbox",
+							"label": "Should lamps go on or blink on an alarm?",
+							"hidden": "(!data.alarmEnabled) || ((data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w5t": {
 							"type": "staticText",
 							"text": "Lamps on or blinking make the alarm visible from outside and chase intruders away; afterwards they go back as they were. Take a function with your lamps (the search may have found one) or put single lamps into the table.",
@@ -1318,7 +1368,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"lampsAuto": {
 							"type": "checkbox",
@@ -1328,7 +1378,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"enumLamps": {
 							"type": "selectSendTo",
@@ -1342,7 +1392,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "(!data.alarmEnabled) || (!data.lampsAuto)"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)) || (!data.lampsAuto))"
 						},
 						"lampMode": {
 							"type": "select",
@@ -1362,7 +1412,7 @@
 									"label": "Switch on"
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"lamps": {
 							"type": "table",
@@ -1393,7 +1443,7 @@
 									"width": "32%"
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
 						},
 						"w5s": {
 							"type": "header",
@@ -1406,6 +1456,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQSiren": {
+							"type": "checkbox",
+							"label": "Do you have a siren?",
+							"hidden": "(!data.alarmEnabled) || ((data.sirens || []).some(r => r && r.id))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w5st": {
 							"type": "staticText",
 							"text": "Optional. A siren can be a smart siren, a smoke detector with a siren or a socket with a horn. Leave \"Value on/off\" empty when it is simply switched on and off. \"Runs on\": an outside siren best only in full protection, so it does not wake the neighbours when you are at home.",
@@ -1414,7 +1474,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQSiren || (data.sirens || []).some(r => r && r.id)))"
 						},
 						"sirens": {
 							"type": "table",
@@ -1482,7 +1542,7 @@
 									"max": 3600
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQSiren || (data.sirens || []).some(r => r && r.id)))"
 						},
 						"w5x": {
 							"type": "header",
@@ -1495,6 +1555,16 @@
 							"xl": 12,
 							"hidden": "!data.alarmEnabled"
 						},
+						"wizQActions": {
+							"type": "checkbox",
+							"label": "Do you want to switch anything else (roller shutters, outdoor light, camera, door lock …)?",
+							"hidden": "(!data.alarmEnabled) || ((data.actions || []).some(r => r && r.id))",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"w5xt": {
 							"type": "staticText",
 							"text": "Optional. Here you can switch anything else when something happens – one row per thing. Examples for the event \"Alarm\": outdoor lights or a socket on, roller shutters up, start a camera recording, the radio loud. With a second row and the event \"Alarm ended\" you switch it back. Other events, e.g. \"Full protection armed\": lock the door or roller shutters down. Value: true = on, false = off, a number for roller shutters or dimmers (e.g. 0 or 100). Scenes and scripts work too: the state of the scene, or for a script javascript.0.scriptEnabled.<name> with true.",
@@ -1503,7 +1573,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
 						},
 						"actions": {
 							"type": "table",
@@ -1612,7 +1682,7 @@
 									"default": "true"
 								}
 							],
-							"hidden": "!data.alarmEnabled"
+							"hidden": "(!data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
 						}
 					}
 				},
@@ -1840,6 +1910,16 @@
 							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight && !data.simEnabled)",
 							"help": "On Friday and Saturday evening the lights go out this much later. Suggestion: 45 min."
 						},
+						"wizQLux": {
+							"type": "checkbox",
+							"label": "Do you have an outdoor brightness sensor?",
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || ((!!data.simLuxId) || ((!data.eveningLight && !data.simEnabled) && (!data.morningLight && !data.simEnabled)))",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4
+						},
 						"simLuxId": {
 							"type": "objectId",
 							"label": "Brightness sensor (optional)",
@@ -1848,7 +1928,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || ((!data.eveningLight && !data.simEnabled) && (!data.morningLight && !data.simEnabled))",
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || ((!data.eveningLight && !data.simEnabled) && (!data.morningLight && !data.simEnabled)))",
 							"help": "Optional: an outdoor brightness sensor – on dark days the evening starts earlier, in the morning the lamps go off when it is bright."
 						},
 						"simLuxBelow": {
@@ -1861,7 +1941,7 @@
 							"xl": 4,
 							"min": 0,
 							"max": 10000,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simLuxId || (!data.eveningLight && !data.simEnabled))",
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || (!data.simLuxId || (!data.eveningLight && !data.simEnabled)))",
 							"help": "Lux = brightness. Around dusk outdoor sensors show about 50–200 lux."
 						},
 						"w7m": {
@@ -1952,7 +2032,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simLuxId || (!data.morningLight && !data.simEnabled))"
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!(data.wizQLux || !!data.simLuxId) || (!data.simLuxId || (!data.morningLight && !data.simEnabled)))"
 						}
 					}
 				},
