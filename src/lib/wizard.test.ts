@@ -44,5 +44,19 @@ describe('setup assistant', () => {
 		expect(bestEnum('evening', enums)?.id).to.equal('enum.functions.abend_auto_an');
 		expect(bestEnum('morning', enums)).to.equal(null);
 		expect(bestEnum('fire', enums)).to.equal(null);
+		const own: EnumInfo[] = [
+			{ id: 'enum.functions.Lock', name: 'Sperren', roles: ['switch.lock', 'value.lock'] },
+			{ id: 'enum.functions.alarm_huellschutz', name: 'alarm_huellschutz', roles: ['sensor.window', 'state'] },
+			{
+				id: 'enum.functions.alarm_vollschutz',
+				name: 'alarm_vollschutz',
+				roles: ['sensor.motion', 'sensor.window'],
+			},
+			{ id: 'enum.functions.anwesend', name: 'Anwesend', roles: [] },
+			{ id: 'enum.functions.person_anwesend', name: 'person_anwesend', roles: ['indicator', 'indicator'] },
+		];
+		expect(bestEnum('perimeter', own)?.id).to.equal('enum.functions.alarm_huellschutz');
+		expect(bestEnum('full', own)?.id).to.equal('enum.functions.alarm_vollschutz');
+		expect(bestEnum('presence', own)?.id).to.equal('enum.functions.person_anwesend');
 	});
 });

@@ -90,10 +90,10 @@ interface KindRule {
 
 const RULES: Record<ScanKind, KindRule> = {
 	perimeter: {
-		role: /^(sensor\.(window|door|contact|lock)|value\.window|sensor\.open)/,
-		name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)lle/i,
+		role: /^(sensor\.(window|door|contact)|value\.window|sensor\.open)/,
+		name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)ll/i,
 	},
-	full: { role: /^sensor\.motion/, name: /bewegung|motion|innen|inside|interior|pir/i },
+	full: { role: /^sensor\.motion/, name: /bewegung|motion|innen|inside|interior|pir|voll/i },
 	fire: {
 		role: /^sensor\.alarm\.(fire|flood|smoke|gas|water)|^sensor\.(smoke|water|leak|gas)/,
 		name: /rauch|smoke|wasser|water|leck|leak|gas|brand|fire|gefahr|hazard/i,
@@ -108,7 +108,7 @@ const RULES: Record<ScanKind, KindRule> = {
 	},
 	evening: { name: /abend|evening|dusk|d(ä|ae)mmerung/i, nameRequired: true },
 	morning: { name: /morgen|morning|wake|aufsteh/i, nameRequired: true },
-	presence: { role: /^(indicator\.presence|state\.presence|presence)/, name: /anwesen|presence|zuhause|at.?home/i },
+	presence: { name: /anwesen|presence|zuhause|at.?home/i, nameRequired: true },
 };
 
 /** a function and the roles of its member states */
@@ -128,6 +128,9 @@ export function bestEnum(kind: ScanKind, enums: EnumInfo[]): { id: string; name:
 	const rule = RULES[kind];
 	let best: { id: string; name: string; count: number; score: number } | null = null;
 	for (const e of enums) {
+		if (!e.roles.length) {
+			continue; // an empty function is no help
+		}
 		const nameFit = rule.name.test(e.name) || rule.name.test(e.id.split('.').pop() || '');
 		if (rule.nameRequired && !nameFit) {
 			continue;

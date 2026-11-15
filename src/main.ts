@@ -1255,7 +1255,9 @@ class HomeGuard extends utils.Adapter {
 			if (kind === 'presence') {
 				out.presenceEnabled = true;
 			}
-			lines.push(`${label}: „${best.name}“ (${best.count} ${de ? 'Datenpunkte' : 'states'})`);
+			lines.push(
+				`${label}: „${best.name}“ (${best.count} ${de ? (best.count === 1 ? 'Datenpunkt' : 'Datenpunkte') : best.count === 1 ? 'state' : 'states'})`,
+			);
 		}
 		// door lock: Nuki or a state with a lock role
 		if (empty('lockId')) {

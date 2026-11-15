@@ -1125,7 +1125,9 @@ class HomeGuard extends utils.Adapter {
       if (kind === "presence") {
         out.presenceEnabled = true;
       }
-      lines.push(`${label}: \u201E${best.name}\u201C (${best.count} ${de ? "Datenpunkte" : "states"})`);
+      lines.push(
+        `${label}: \u201E${best.name}\u201C (${best.count} ${de ? best.count === 1 ? "Datenpunkt" : "Datenpunkte" : best.count === 1 ? "state" : "states"})`
+      );
     }
     if (empty("lockId")) {
       const view = await this.getObjectViewAsync("system", "state", { startkey: "", endkey: "\u9999" });
