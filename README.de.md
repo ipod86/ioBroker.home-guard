@@ -30,12 +30,12 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Morgenlicht**: die Morgenlampen zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus (eigener Versatz und Zufall, wahlweise spätestens zu einer festen Zeit – z. B. wenn ihr aus dem Haus geht – oder sobald der Helligkeitssensor Tageslicht meldet) – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen & Test*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
-- **Web-Komponente „Home Guard Panel“** für AURA und vis-2: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
+- **Widget „Home Guard Panel“** (Web-Komponente) für AURA, vis-2 und andere Visualisierungen, die Web-Komponenten unterstützen: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
 ## Voraussetzungen
 
 - Node.js 22 oder neuer, js-controller 6.0.11 oder neuer, Admin 7.6.20 oder neuer
-- Web-Komponente: AURA ab 0.106.0, vis-2 ab 2.20.7
+- Widget: AURA ab 0.106.0, vis-2 ab 2.20.7 oder eine andere Visualisierung, die Web-Komponenten unterstützt
 
 ## Einstellungen
 
@@ -114,9 +114,9 @@ sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, 
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
 
-## Web-Komponente
+## Widget (Web-Komponente)
 
-Nach der Installation steht das „Home Guard Panel“ in AURA und vis-2 in der Liste der Web-Komponenten. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Schalter für Abend-/Morgenlicht (nur wenn eingerichtet) und Logbuch. **In AURA beim Widget „Klicks“ auf „Komponente“ stellen** (`wcClick: "component"`), sonst kommen die Tasten nicht an.
+Nach der Installation steht das „Home Guard Panel“ in der Widget-Liste von AURA, vis-2 und jeder anderen Visualisierung, die Web-Komponenten unterstützt. Instanz wählen – es zeigt Status, Countdown, Modus-Tasten, PIN-Tastatur, offene Fenster, Schalter für Abend-/Morgenlicht (nur wenn eingerichtet) und Logbuch. **In AURA beim Widget „Klicks“ auf „Komponente“ stellen** (`wcClick: "component"`), sonst kommen die Tasten nicht an.
 
 ## Hinweis
 

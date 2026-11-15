@@ -41,12 +41,12 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Morning light**: the morning lamps on at wake-up time (later on the weekend) and off after sunrise (own offset and random delay, optionally at the latest at a set time – e.g. when you leave the house – or as soon as the brightness sensor reports daylight) – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions & test*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
-- **Web component "Home Guard panel"** for AURA and vis-2: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
+- **Widget "Home Guard panel"** (web component) for AURA, vis-2 and other visualisations that support web components: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
 
 ### Requirements
 
 - Node.js 22 or newer, js-controller 6.0.11 or newer, admin 7.6.20 or newer
-- Web component: AURA 0.106.0 or newer, vis-2 2.20.7 or newer
+- Widget: AURA 0.106.0 or newer, vis-2 2.20.7 or newer, or another visualisation that supports web components
 
 ### Configuration
 
@@ -125,9 +125,9 @@ sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, 
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
 ```
 
-### Web component
+### Widget (web component)
 
-After the installation, the "Home Guard panel" is in the list of web components of AURA and vis-2. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, switches for the evening/morning light (only when set up) and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
+After the installation, the "Home Guard panel" is in the widget list of AURA, vis-2 and every other visualisation that supports web components. Choose the instance; it shows status, countdown, mode buttons, PIN keypad, open windows, switches for the evening/morning light (only when set up) and logbook. **In AURA set "Clicks" of the widget to "component"** (`wcClick: "component"`), otherwise the buttons get no clicks.
 
 ### Note
 
@@ -152,7 +152,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 * (ipod86) internal: timer variable renamed (repochecker W5051); first release published automatically via GitHub (trusted publishing)
 
 ### 0.1.0 (2026-11-14)
-* (ipod86) initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component (AURA 0.106.0+, vis-2 2.20.7+)
+* (ipod86) initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and widget (web component; AURA 0.106.0+, vis-2 2.20.7+ and other visualisations)
 
 ## License
 MIT License

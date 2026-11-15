@@ -153,7 +153,7 @@
 	"Random delay of wake-up up to (min)": "Random delay of wake-up up to (min)",
 	"Reaction (danger detectors only)": "Reaction (danger detectors only)",
 	"Reaction of the danger detectors of the function": "Reaction of the danger detectors of the function",
-	"README: web component for AURA and vis-2, states and script commands": "README: web component for AURA and vis-2, states and script commands",
+	"README: widget for AURA, vis-2 and other visualisations, states and script commands": "README: widget for AURA, vis-2 and other visualisations, states and script commands",
 	"Repeat the alarm message every minutes until acknowledged (0 = no)": "Repeat the alarm message every … minutes until acknowledged (0 = no)",
 	"Report after so many wrong entries": "Report after so many wrong entries",
 	"Report only (message)": "Report only (message)",
@@ -272,7 +272,6 @@
 	"Now press \"Save\" at the bottom of the page. Home Guard restarts with the new settings.": "Now press \"Save\" at the bottom of the page. Home Guard restarts with the new settings.",
 	"Setup finished – show all settings": "Setup finished – show all settings",
 	"Shows the other tabs with every option (learning, siren modes, actions, test alarm …). The assistant stays available here.": "Shows the other tabs with every option (learning, siren modes, actions, test alarm …). The assistant stays available here.",
-	"Tip: the web component \"Home Guard panel\" for AURA and vis-2 shows status, buttons and the logbook.": "Tip: the web component \"Home Guard panel\" for AURA and vis-2 shows status, buttons and the logbook.",
 	"Step": "Step",
 	"◀ Back": "◀ Back",
 	"Next ▶": "Next ▶",
@@ -425,5 +424,6 @@
 	"Safety functions": "Safety functions",
 	"Comfort functions – for you at home": "Comfort functions – for you at home",
 	"The evening light is a comfort function for you at home: in the evening the light is simply there, without anybody having to think of it.": "The evening light is a comfort function for you at home: in the evening the light is simply there, without anybody having to think of it.",
-	"The morning light is a comfort function for you at home: on dark mornings it is already light when you get up.": "The morning light is a comfort function for you at home: on dark mornings it is already light when you get up."
+	"The morning light is a comfort function for you at home: on dark mornings it is already light when you get up.": "The morning light is a comfort function for you at home: on dark mornings it is already light when you get up.",
+	"Tip: the widget \"Home Guard panel\" for AURA, vis-2 and other visualisations shows status, buttons and the logbook.": "Tip: the widget \"Home Guard panel\" for AURA, vis-2 and other visualisations shows status, buttons and the logbook."
 }

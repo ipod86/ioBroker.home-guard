@@ -3582,7 +3582,7 @@
 						},
 						"w19tip": {
 							"type": "staticText",
-							"text": "Tip: the web component \"Home Guard panel\" for AURA and vis-2 shows status, buttons and the logbook.",
+							"text": "Tip: the widget \"Home Guard panel\" for AURA, vis-2 and other visualisations shows status, buttons and the logbook.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3754,7 +3754,7 @@
 				},
 				"docLink": {
 					"type": "staticLink",
-					"label": "README: web component for AURA and vis-2, states and script commands",
+					"label": "README: widget for AURA, vis-2 and other visualisations, states and script commands",
 					"href": "https://github.com/ipod86/ioBroker.home-guard/blob/main/README.md",
 					"button": true,
 					"variant": "outlined",
