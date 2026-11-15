@@ -1,6 +1,6 @@
 // Setup assistant of the instance settings: step navigation, suggested values and the automatic search
 
-/** which steps apply to what was ticked in the first step (same order as in jsonConfig) */
+/** which steps apply to what was ticked on the choice page (same order as in jsonConfig) */
 export interface WizardChoice {
 	alarm: boolean;
 	sim: boolean;
@@ -9,7 +9,7 @@ export interface WizardChoice {
 }
 
 /** number of steps of the assistant */
-export const WIZARD_STEPS = 9;
+export const WIZARD_STEPS = 10;
 
 /**
  * Is a step needed for the choice?
@@ -20,18 +20,18 @@ export const WIZARD_STEPS = 9;
 export function stepNeeded(step: number, c: WizardChoice): boolean {
 	const light = c.sim || c.evening || c.morning;
 	switch (step) {
-		case 1: // sensors
-		case 2: // times
-		case 4: // notifications
-		case 5: // on alarm
+		case 2: // sensors
+		case 3: // times
+		case 5: // notifications
+		case 6: // on alarm
 			return c.alarm;
-		case 3: // disarming & persons
+		case 4: // disarming & persons
 			return c.alarm || c.sim;
-		case 6: // simulation & lamps
-		case 7: // evening & morning
+		case 7: // evening, morning & simulation
+		case 8: // lamps & devices
 			return light;
 		default:
-			return true;
+			return true; // welcome, choice, check
 	}
 }
 

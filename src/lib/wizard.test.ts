@@ -8,21 +8,21 @@ describe('setup assistant', () => {
 	it('goes through every step when everything is ticked', () => {
 		const seen = [0];
 		let s = 0;
-		while (s < 8) {
+		while (s < 9) {
 			s = nextStep(s, 1, all);
 			seen.push(s);
 		}
-		expect(seen).to.deep.equal([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-		expect(nextStep(8, 1, all)).to.equal(8);
+		expect(seen).to.deep.equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		expect(nextStep(9, 1, all)).to.equal(9);
 		expect(nextStep(0, -1, all)).to.equal(0);
 	});
 
 	it('skips the alarm steps for the evening light only', () => {
-		expect(nextStep(0, 1, lightOnly)).to.equal(6);
-		expect(nextStep(7, 1, lightOnly)).to.equal(8);
-		expect(nextStep(6, -1, lightOnly)).to.equal(0);
-		expect(stepNeeded(3, lightOnly)).to.equal(false);
-		expect(stepNeeded(3, { ...lightOnly, sim: true })).to.equal(true);
+		expect(nextStep(1, 1, lightOnly)).to.equal(7);
+		expect(nextStep(8, 1, lightOnly)).to.equal(9);
+		expect(nextStep(7, -1, lightOnly)).to.equal(1);
+		expect(stepNeeded(4, lightOnly)).to.equal(false);
+		expect(stepNeeded(4, { ...lightOnly, sim: true })).to.equal(true);
 	});
 
 	it('suggests sensible defaults', () => {

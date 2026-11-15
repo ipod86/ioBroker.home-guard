@@ -25,23 +25,23 @@ __export(wizard_exports, {
   stepNeeded: () => stepNeeded
 });
 module.exports = __toCommonJS(wizard_exports);
-const WIZARD_STEPS = 9;
+const WIZARD_STEPS = 10;
 function stepNeeded(step, c) {
   const light = c.sim || c.evening || c.morning;
   switch (step) {
-    case 1:
-    // sensors
     case 2:
-    // times
-    case 4:
-    // notifications
-    case 5:
-      return c.alarm;
+    // sensors
     case 3:
-      return c.alarm || c.sim;
+    // times
+    case 5:
+    // notifications
     case 6:
-    // simulation & lamps
+      return c.alarm;
+    case 4:
+      return c.alarm || c.sim;
     case 7:
+    // evening, morning & simulation
+    case 8:
       return light;
     default:
       return true;

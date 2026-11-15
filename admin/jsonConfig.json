@@ -21,39 +21,43 @@
 					"options": [
 						{
 							"value": 0,
-							"label": "1. Start"
+							"label": "1. Welcome"
 						},
 						{
 							"value": 1,
-							"label": "2. Sensors"
+							"label": "2. What do you want to use?"
 						},
 						{
 							"value": 2,
-							"label": "3. Times"
+							"label": "3. Sensors"
 						},
 						{
 							"value": 3,
-							"label": "4. Disarming & persons"
+							"label": "4. Times"
 						},
 						{
 							"value": 4,
-							"label": "5. Notifications"
+							"label": "5. Disarming & persons"
 						},
 						{
 							"value": 5,
-							"label": "6. On alarm"
+							"label": "6. Notifications"
 						},
 						{
 							"value": 6,
-							"label": "7. Evening, morning & simulation"
+							"label": "7. On alarm"
 						},
 						{
 							"value": 7,
-							"label": "8. Lamps & devices"
+							"label": "8. Evening, morning & simulation"
 						},
 						{
 							"value": 8,
-							"label": "9. Check"
+							"label": "9. Lamps & devices"
+						},
+						{
+							"value": 9,
+							"label": "10. Check"
 						}
 					]
 				},
@@ -85,6 +89,16 @@
 							"lg": 12,
 							"xl": 12
 						},
+						"w0a": {
+							"type": "header",
+							"text": "Do you want to use the assistant?",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"wizDone": {
 							"type": "checkbox",
 							"label": "I know ioBroker and set it up without the assistant – show all settings now",
@@ -109,83 +123,10 @@
 								"fontWeight": "bold"
 							}
 						},
-						"w0q": {
-							"type": "header",
-							"text": "What do you want to use?",
-							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"alarmEnabled": {
-							"type": "checkbox",
-							"label": "Alarm system",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"help": "Monitors doors, windows and motion detectors. When armed, an open door or a movement raises an alarm: message, lamps, siren."
-						},
-						"simEnabled": {
-							"type": "checkbox",
-							"label": "Presence simulation when you are away",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"help": "While you are away, lamps and devices such as the TV are switched as if somebody were at home – learned from your own habits."
-						},
-						"eveningLight": {
-							"type": "checkbox",
-							"label": "Evening light every evening",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"help": "Every evening, also when you are at home: chosen lamps on at dusk and off at bedtime."
-						},
-						"morningLight": {
-							"type": "checkbox",
-							"label": "Morning light every morning",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"help": "Every morning: chosen lamps on at wake-up time and off after sunrise – only while it is still dark."
-						},
-						"w0n": {
-							"type": "staticText",
-							"text": "Nothing ticked yet – tick at least one part to go on.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "data.alarmEnabled || data.simEnabled || data.eveningLight || data.morningLight",
-							"style": {
-								"color": "#e67e22",
-								"fontWeight": "bold"
-							}
-						},
 						"w0g": {
 							"type": "header",
 							"text": "Words you will meet",
 							"size": 5,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12
-						},
-						"w0g1": {
-							"type": "staticText",
-							"text": "Armed / disarmed: the alarm system is switched on / off. There are three ways of being armed: Full protection – nobody is at home, doors, windows and motion detectors are watched. Perimeter protection – you are at home, only doors and windows are watched, you can move around freely inside. Night protection – like perimeter protection, but switched on by itself at night.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -212,9 +153,93 @@
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip1": {
+						"w0q": {
+							"type": "header",
+							"text": "What do you want to use?",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"w0qt": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "Tick what you want. Only the questions for it follow – everything else is skipped. You can change it later at any time.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
+						"alarmEnabled": {
+							"type": "checkbox",
+							"label": "I want to use the alarm system",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"help": "Monitors doors, windows and motion detectors. When armed, an open door or a movement raises an alarm: message, lamps, siren."
+						},
+						"simEnabled": {
+							"type": "checkbox",
+							"label": "I want a presence simulation while we are away or the alarm system is armed",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"help": "While you are away, lamps and devices such as the TV are switched as if somebody were at home – learned from your own habits."
+						},
+						"eveningLight": {
+							"type": "checkbox",
+							"label": "Also when we are at home: switch lamps on and off in the evening to our times (evening light)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"help": "Every evening, also when you are at home: chosen lamps on at dusk and off at bedtime."
+						},
+						"morningLight": {
+							"type": "checkbox",
+							"label": "Also when we are at home: switch lamps on and off in the morning to our times (morning light)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"help": "Every morning: chosen lamps on at wake-up time and off after sunrise – only while it is still dark."
+						},
+						"w0n": {
+							"type": "staticText",
+							"text": "Nothing ticked yet – tick at least one part to go on.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "data.alarmEnabled || data.simEnabled || data.eveningLight || data.morningLight",
+							"style": {
+								"color": "#e67e22",
+								"fontWeight": "bold"
+							}
+						}
+					}
+				},
+				"wstep2": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 2",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wskip2": {
+							"type": "staticText",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -225,6 +250,44 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa2_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"w1gh": {
+							"type": "header",
+							"text": "First, briefly: how does the alarm system work?",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled"
+						},
+						"w1g": {
+							"type": "staticText",
+							"text": "Armed / disarmed: the alarm system is switched on / off. There are three ways of being armed: Full protection – nobody is at home, doors, windows and motion detectors are watched. Perimeter protection – you are at home, only doors and windows are watched, you can move around freely inside. Night protection – like perimeter protection, but switched on by itself at night.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!data.alarmEnabled"
 						},
 						"w1h": {
 							"type": "header",
@@ -648,18 +711,18 @@
 						}
 					}
 				},
-				"wstep2": {
+				"wstep3": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 2",
+					"hidden": "data.wizStep !== 3",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip2": {
+						"wskip3": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -670,6 +733,23 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa3_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w2h": {
 							"type": "header",
@@ -849,18 +929,18 @@
 						}
 					}
 				},
-				"wstep3": {
+				"wstep4": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 3",
+					"hidden": "data.wizStep !== 4",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip3": {
+						"wskip4": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -871,6 +951,40 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa4_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.alarmEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa4_1": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.alarmEnabled || data.simEnabled)) || (!data.simEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w3h": {
 							"type": "header",
@@ -885,7 +999,7 @@
 						},
 						"w3t": {
 							"type": "staticText",
-							"text": "Choose one or more ways. Most comfortable is a smart door lock (e.g. Nuki): unlocking the front door switches the alarm system off. Otherwise you switch it off in the panel (e.g. on the wall tablet or the phone) – a PIN makes sure only you can do that. The search in step 2 may already have filled in your lock.",
+							"text": "Choose one or more ways. Most comfortable is a smart door lock (e.g. Nuki): unlocking the front door switches the alarm system off. Otherwise you switch it off in the panel (e.g. on the wall tablet or the phone) – a PIN makes sure only you can do that. The search on the page \"Sensors\" may already have filled in your lock.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1110,18 +1224,18 @@
 						}
 					}
 				},
-				"wstep4": {
+				"wstep5": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 4",
+					"hidden": "data.wizStep !== 5",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip4": {
+						"wskip5": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1132,6 +1246,23 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa5_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w4h": {
 							"type": "header",
@@ -1146,7 +1277,7 @@
 						},
 						"w4t": {
 							"type": "staticText",
-							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker; the search in step 2 fills in the first one it finds. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
+							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker; the search on the page \"Sensors\" fills in the first one it finds. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1316,18 +1447,18 @@
 						}
 					}
 				},
-				"wstep5": {
+				"wstep6": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 5",
+					"hidden": "data.wizStep !== 6",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip5": {
+						"wskip6": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1338,6 +1469,23 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa6_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!data.alarmEnabled) || (!data.alarmEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w5h": {
 							"type": "header",
@@ -1686,18 +1834,18 @@
 						}
 					}
 				},
-				"wstep6": {
+				"wstep7": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 6",
+					"hidden": "data.wizStep !== 7",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip6": {
+						"wskip7": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1708,6 +1856,57 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa7_0": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa7_1": {
+							"type": "staticText",
+							"text": "Evening light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa7_2": {
+							"type": "staticText",
+							"text": "Morning light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w6h": {
 							"type": "header",
@@ -2036,18 +2235,18 @@
 						}
 					}
 				},
-				"wstep7": {
+				"wstep8": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 7",
+					"hidden": "data.wizStep !== 8",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wskip7": {
+						"wskip8": {
 							"type": "staticText",
-							"text": "This step is not needed for what you ticked in step 1 – go on with \"Next\".",
+							"text": "This step is not needed for what you ticked under \"What do you want to use?\" – go on with \"Next\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2058,6 +2257,57 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							}
+						},
+						"wa8_0": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa8_1": {
+							"type": "staticText",
+							"text": "Evening light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.eveningLight)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wa8_2": {
+							"type": "staticText",
+							"text": "Morning light",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "(!(data.simEnabled || data.eveningLight || data.morningLight)) || (!data.morningLight)",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
 						},
 						"w7lh": {
 							"type": "header",
@@ -2305,9 +2555,9 @@
 						}
 					}
 				},
-				"wstep8": {
+				"wstep9": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 8",
+					"hidden": "data.wizStep !== 9",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -2326,7 +2576,7 @@
 						},
 						"w8c0": {
 							"type": "staticText",
-							"text": "Nothing is ticked in step 1 – Home Guard has nothing to do.",
+							"text": "Nothing is ticked under \"What do you want to use?\" – Home Guard has nothing to do.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2529,7 +2779,7 @@
 					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"alarm\": \"${data.alarmEnabled}\", \"sim\": \"${data.simEnabled}\", \"evening\": \"${data.eveningLight}\", \"morning\": \"${data.morningLight}\"}",
 					"useNative": true,
 					"variant": "contained",
-					"hidden": "data.wizStep >= 8",
+					"hidden": "data.wizStep >= 9",
 					"xs": 12,
 					"sm": 6,
 					"md": 3,
