@@ -38,6 +38,8 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 
 ## Einstellungen
 
+**Einrichtungsassistent:** Eine neue Instanz öffnet mit dem Reiter *Einrichtungsassistent*. Er fragt Schritt für Schritt, was du nutzen willst (Alarmanlage, Anwesenheitssimulation, Abend-/Morgenlicht), erklärt jede Frage und überspringt, was du nicht brauchst. *Automatisch suchen* durchsucht deine Funktionen (Aufzählungen) und trägt passende ein (Fenster, Bewegungsmelder, Lampen, Anwesenheit), dazu ein Nuki-Schloss und einen Messenger; *Vorschläge übernehmen* setzt bewährte Zeiten. Die letzte Seite prüft alles (z. B. „kein Messenger“, „keine Tür verzögert“). Sobald du *Einrichtung abgeschlossen – alle Einstellungen zeigen* anhakst, erscheinen alle Reiter. Bereits eingerichtete Instanzen zeigen weiterhin alle Reiter.
+
 1. **Allgemein** – Alarmanlage und Anwesenheitssimulation ein- oder ausschalten.
 2. **Auslöser** – Funktionen für Hüllschutz (Türen, Fenster), Vollschutz (innen, Bewegung) und 24-h-Sensoren wählen oder Sensoren von Hand eintragen (mit *verzögert*, *invertiert* und *Bewegungsmelder*).
 3. **Ablauf & PIN** – Ausgangs- und Eingangsverzögerung, Haustürkontakt für sofort scharf, Offen-Fenster-Prüfung, Alarmdauer, PIN, Nachtschutz-Zeiten.

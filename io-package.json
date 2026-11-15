@@ -219,7 +219,10 @@
     "reportWhen": "armed",
     "notifyReport": true,
     "autoReport": false,
-    "enumReport": ""
+    "enumReport": "",
+    "wizStep": 0,
+    "wizDone": false,
+    "wizScanInfo": ""
   },
   "objects": [],
   "instanceObjects": [

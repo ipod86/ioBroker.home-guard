@@ -49,6 +49,8 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 ### Configuration
 
+**Setup assistant:** a new instance opens with the tab *Setup assistant*. It asks step by step what you want to use (alarm system, presence simulation, evening/morning light), explains every question and skips what you do not need. *Search automatically* looks through your functions (enums) and fills in suitable ones (windows, motion detectors, lamps, presence), as well as a Nuki lock and a messenger; *Use suggestions* fills in proven times. The last page checks everything (e.g. "no messenger", "no door delayed"). Once you tick *Setup finished – show all settings*, all tabs below appear. Instances that were set up before keep showing all tabs.
+
 1. **General** – switch the alarm system and the presence simulation on or off.
 2. **Triggers** – choose functions for perimeter (doors, windows), full protection (inside, motion) and 24 h sensors, or list sensors by hand (with *delayed*, *inverted* and *motion detector* flags).
 3. **Procedure & PIN** – exit and entry delays, front door contact for arming at once, open window check, alarm duration, PIN, night protection times.
@@ -132,6 +134,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
+* (ipod86) setup assistant: guided first setup with automatic search for functions, lock and messenger, suggested times and a final check; the other tabs appear when it is finished
 * (ipod86) settings: evening and morning each have their own section (times, brightness); shown only when the evening/morning light or the simulation uses them
 * (ipod86) morning light off: own offset after sunrise, latest time, brightness sensor; panel shows "on" and "off" side by side for evening and morning light
 * (ipod86) simulation lamps: own function for the morning light; in the table a lamp has roles (evening, morning, short visits, bedtime – several at once) instead of one type; older tables are converted automatically

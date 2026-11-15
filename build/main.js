@@ -24,6 +24,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var utils = __toESM(require("@iobroker/adapter-core"));
 var import_alarm = require("./lib/alarm");
 var import_simulation = require("./lib/simulation");
+var import_wizard = require("./lib/wizard");
 var import_sun = require("./lib/sun");
 var import_texts = require("./lib/texts");
 const MODES = ["off", "full", "perimeter", "night"];
@@ -137,6 +138,10 @@ class HomeGuard extends utils.Adapter {
     this.sysLang = lang;
     this.T = (0, import_texts.texts)(lang);
     if (await this.migrateSimLamps()) {
+      return;
+    }
+    if (!c.wizDone && !(Number(c.wizStep) > 0) && this.looksConfigured()) {
+      await this.extendForeignObjectAsync(`system.adapter.${this.namespace}`, { native: { wizDone: true } });
       return;
     }
     const lastMode = (_b = await this.getStateAsync("status.mode")) == null ? void 0 : _b.val;
@@ -563,6 +568,11 @@ class HomeGuard extends utils.Adapter {
       ""
     ).trim();
     return stripped || name;
+  }
+  /** @returns the instance has settings of its own (set up before the assistant existed) */
+  looksConfigured() {
+    const c = this.config;
+    return (c.sensors || []).length > 0 || (c.simLamps || []).length > 0 || (c.notify || []).length > 0 || !!(c.enumFull || c.enumPerimeter || c.enumFire || c.enumSimLamps || c.enumPresence || c.lockId);
   }
   /**
    * Older versions had one type per lamp row; now a lamp has roles (evening, morning, visit, bedtime)
@@ -1039,9 +1049,110 @@ class HomeGuard extends utils.Adapter {
       case "test":
         this.notifyAll(this.T.test, true);
         return reply({ result: "ok" });
+      // setup assistant: values of the form come as strings ("true", "undefined", …)
+      case "wizardNav": {
+        const yes = (v) => String(v) === "true";
+        const step = (0, import_wizard.nextStep)(Number(msg.step) || 0, Number(msg.dir) || 1, {
+          alarm: yes(msg.alarm),
+          sim: yes(msg.sim),
+          evening: yes(msg.evening),
+          morning: yes(msg.morning)
+        });
+        return reply({ native: { wizStep: step } });
+      }
+      case "wizardDefaults":
+        return reply({ native: import_wizard.WIZARD_DEFAULTS[str(msg.step)] || {} });
+      case "wizardScan":
+        return reply({ native: await this.wizardScan(msg) });
       default:
         return reply({ error: `unknown command ${obj.command}` });
     }
+  }
+  /**
+   * Setup assistant: looks through the functions (and states) and suggests what fits - only for empty fields
+   *
+   * @param form current values of the form (strings; "undefined" when empty)
+   * @returns the settings to fill in, and a text with the result
+   */
+  async wizardScan(form) {
+    var _a, _b;
+    const de = this.sysLang === "de";
+    const empty = (k) => {
+      var _a2;
+      const v = (_a2 = form[k]) != null ? _a2 : this.config[k];
+      return v === void 0 || v === null || v === "" || v === "undefined" || v === "null";
+    };
+    const out = {};
+    const lines = [];
+    const enums = await this.getForeignObjectsAsync("enum.functions.*", "enum");
+    const infos = [];
+    for (const [id, o] of Object.entries(enums)) {
+      if (id.split(".").length !== 3) {
+        continue;
+      }
+      const n = (_a = o.common) == null ? void 0 : _a.name;
+      const name = typeof n === "object" ? n[this.sysLang] || n.en : n;
+      const roles = [];
+      for (const sid of await this.enumStates(id)) {
+        const so = await this.getForeignObjectAsync(sid);
+        roles.push(String(((_b = so == null ? void 0 : so.common) == null ? void 0 : _b.role) || ""));
+      }
+      infos.push({ id, name: String(name || id.split(".").pop()), roles });
+    }
+    const kinds = [
+      ["perimeter", "autoPerimeter", "enumPerimeter", "T\xFCren und Fenster", "Doors and windows"],
+      ["full", "autoFull", "enumFull", "Bewegungsmelder", "Motion detectors"],
+      ["fire", "autoFire", "enumFire", "Gefahrenmelder", "Danger detectors"],
+      ["report", "autoReport", "enumReport", "Melde-Sensoren", "Report-only sensors"],
+      ["lamps", "lampsAuto", "enumLamps", "Lampen bei Alarm", "Lamps on alarm"],
+      ["evening", "simAuto", "enumSimLamps", "Abendlicht", "Evening light"],
+      ["morning", "simAuto", "enumMorningLamps", "Morgenlicht", "Morning light"],
+      ["presence", "presenceAuto", "enumPresence", "Anwesenheit", "Presence"]
+    ];
+    for (const [kind, autoKey, enumKey, labelDe, labelEn] of kinds) {
+      const label = de ? labelDe : labelEn;
+      if (!empty(enumKey)) {
+        lines.push(`${label}: ${de ? "schon gew\xE4hlt" : "already chosen"}`);
+        continue;
+      }
+      const best = (0, import_wizard.bestEnum)(kind, infos);
+      if (!best) {
+        lines.push(`${label}: ${de ? "nichts Passendes gefunden" : "nothing suitable found"}`);
+        continue;
+      }
+      out[autoKey] = true;
+      out[enumKey] = best.id;
+      if (kind === "presence") {
+        out.presenceEnabled = true;
+      }
+      lines.push(`${label}: \u201E${best.name}\u201C (${best.count} ${de ? "Datenpunkte" : "states"})`);
+    }
+    if (empty("lockId")) {
+      const view = await this.getObjectViewAsync("system", "state", { startkey: "", endkey: "\u9999" });
+      const lock = view.rows.find((r) => /^nuki[^.]*\.\d+\..*lockState$/i.test(r.id)) || view.rows.find((r) => {
+        var _a2, _b2;
+        return /^(value|switch)\.lock$/.test(String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || ""));
+      });
+      if (lock) {
+        out.lockEnabled = true;
+        out.lockId = lock.id;
+        out.lockValues = /lockState$/i.test(lock.id) ? "3,5,6" : "false";
+        lines.push(`${de ? "T\xFCrschloss" : "Door lock"}: ${lock.id}`);
+      }
+    }
+    if (!(this.config.notify || []).some((r) => r && r.instance)) {
+      const inst = await this.getObjectViewAsync("system", "instance", {
+        startkey: "system.adapter.",
+        endkey: "system.adapter.\u9999"
+      });
+      const ids = inst.rows.map((r) => r.id.replace("system.adapter.", "")).filter((id) => id.replace(/\.\d+$/, "") in SEND_FORMAT).sort((a, b) => a.startsWith("telegram") ? -1 : b.startsWith("telegram") ? 1 : a.localeCompare(b));
+      if (ids.length) {
+        out.notify = [{ enabled: true, instance: ids[0], user: "", chatId: "" }];
+        lines.push(`${de ? "Messenger" : "Messenger"}: ${ids[0]}`);
+      }
+    }
+    out.wizScanInfo = lines.join("\n");
+    return out;
   }
   // ======================================================================
   // alarm events: notifications, actions, logbook

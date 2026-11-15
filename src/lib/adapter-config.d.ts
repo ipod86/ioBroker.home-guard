@@ -176,6 +176,10 @@ declare global {
 			enumSimLamps: string;
 			enumMorningLamps: string;
 			simLamps: SimLampRow[];
+			/** setup assistant: current page, finished (all tabs shown), result of the search */
+			wizStep: number;
+			wizDone: boolean;
+			wizScanInfo: string;
 			simMode: 'dusk' | 'learned' | 'combined';
 			simStartOffset: number;
 			simStartRandom: number;
