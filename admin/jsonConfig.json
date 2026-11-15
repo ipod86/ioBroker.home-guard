@@ -34,48 +34,48 @@
 						},
 						{
 							"value": 3,
-							"label": "How it works",
-							"hidden": "data.wizStep !== 3 && !(data.alarmEnabled)"
+							"label": "Who lives here?",
+							"hidden": "data.wizStep !== 3 && !((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
 						},
 						{
 							"value": 4,
-							"label": "Alarm system: outer skin",
-							"hidden": "data.wizStep !== 4 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"label": "How it works",
+							"hidden": "data.wizStep !== 4 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 5,
-							"label": "Alarm system: inside",
-							"hidden": "data.wizStep !== 5 && !(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"label": "Alarm system: outer skin",
+							"hidden": "data.wizStep !== 5 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 6,
-							"label": "Alarm system: danger & emergency",
-							"hidden": "data.wizStep !== 6 && !(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"label": "Alarm system: inside",
+							"hidden": "data.wizStep !== 6 && !(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
 						},
 						{
 							"value": 7,
-							"label": "Alarm system: report only",
-							"hidden": "data.wizStep !== 7 && !(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"label": "Alarm system: danger & emergency",
+							"hidden": "data.wizStep !== 7 && !(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						{
 							"value": 8,
-							"label": "Alarm system: single sensors & exceptions",
-							"hidden": "data.wizStep !== 8 && !(data.alarmEnabled)"
+							"label": "Alarm system: report only",
+							"hidden": "data.wizStep !== 8 && !(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
 						{
 							"value": 9,
-							"label": "Alarm system: times",
+							"label": "Alarm system: single sensors & exceptions",
 							"hidden": "data.wizStep !== 9 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 10,
-							"label": "Alarm system: at night",
-							"hidden": "data.wizStep !== 10 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"label": "Alarm system: times",
+							"hidden": "data.wizStep !== 10 && !(data.alarmEnabled)"
 						},
 						{
 							"value": 11,
-							"label": "Who lives here?",
-							"hidden": "data.wizStep !== 11 && !((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
+							"label": "Alarm system: at night",
+							"hidden": "data.wizStep !== 11 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 12,
@@ -634,7 +634,156 @@
 							"lg": 2,
 							"xl": 2
 						},
+						"wa3_1": {
+							"type": "staticText",
+							"text": "Presence simulation",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.simEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
 						"wskip3": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w11h": {
+							"type": "header",
+							"text": "Who lives here?",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
+						},
+						"w11t": {
+							"type": "staticText",
+							"text": "For each person you need a state that is true while they are at home – e.g. from the adapters ping, iCloud or Life360. Take them from a function (e.g. \"Presence\") or put them into the table. Several states of one person (e.g. GPS and Wi-Fi) get the same name in the column \"Person\" – the person counts as at home when one of them says so.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
+						},
+						"w11s": {
+							"type": "staticText",
+							"text": "The search on the page \"What do you have?\" may already have filled this in.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
+						},
+						"presenceAuto": {
+							"type": "checkbox",
+							"label": "Presence states through a function",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
+						},
+						"enumPresence": {
+							"type": "selectSendTo",
+							"label": "Function presence",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"command": "getEnums",
+							"jsonData": "{}",
+							"manual": true,
+							"noTranslation": true,
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceAuto)"
+						},
+						"presence": {
+							"type": "table",
+							"label": "Presence states by hand",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"items": [
+								{
+									"type": "checkbox",
+									"attr": "enabled",
+									"title": "Active",
+									"width": "8%",
+									"default": true
+								},
+								{
+									"type": "objectId",
+									"attr": "id",
+									"title": "State",
+									"width": "60%"
+								},
+								{
+									"type": "text",
+									"attr": "name",
+									"title": "Person",
+									"width": "32%"
+								}
+							],
+							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
+						}
+					}
+				},
+				"wstep4": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 4",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa4_0": {
+							"type": "staticText",
+							"text": "Alarm system",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"hidden": "!data.alarmEnabled",
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip4": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -685,16 +834,16 @@
 						}
 					}
 				},
-				"wstep4": {
+				"wstep5": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 4",
+					"hidden": "data.wizStep !== 5",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa4_0": {
+						"wa5_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -711,7 +860,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip4": {
+						"wskip5": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -786,16 +935,16 @@
 						}
 					}
 				},
-				"wstep5": {
+				"wstep6": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 5",
+					"hidden": "data.wizStep !== 6",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa5_0": {
+						"wa6_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -812,7 +961,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip5": {
+						"wskip6": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -887,16 +1036,16 @@
 						}
 					}
 				},
-				"wstep6": {
+				"wstep7": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 6",
+					"hidden": "data.wizStep !== 7",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa6_0": {
+						"wa7_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -913,7 +1062,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip6": {
+						"wskip7": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -1014,16 +1163,16 @@
 						}
 					}
 				},
-				"wstep7": {
+				"wstep8": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 7",
+					"hidden": "data.wizStep !== 8",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa7_0": {
+						"wa8_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1040,7 +1189,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip7": {
+						"wskip8": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -1137,16 +1286,16 @@
 						}
 					}
 				},
-				"wstep8": {
+				"wstep9": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 8",
+					"hidden": "data.wizStep !== 9",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa8_0": {
+						"wa9_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1163,7 +1312,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip8": {
+						"wskip9": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -1316,16 +1465,16 @@
 						}
 					}
 				},
-				"wstep9": {
+				"wstep10": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 9",
+					"hidden": "data.wizStep !== 10",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa9_0": {
+						"wa10_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1342,7 +1491,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip9": {
+						"wskip10": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -1482,16 +1631,16 @@
 						}
 					}
 				},
-				"wstep10": {
+				"wstep11": {
 					"type": "panel",
-					"hidden": "data.wizStep !== 10",
+					"hidden": "data.wizStep !== 11",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
 					"items": {
-						"wa10_0": {
+						"wa11_0": {
 							"type": "staticText",
 							"text": "Alarm system",
 							"style": {
@@ -1508,7 +1657,7 @@
 							"lg": 2,
 							"xl": 2
 						},
-						"wskip10": {
+						"wskip11": {
 							"type": "staticText",
 							"text": "This page is not needed for your answers – go on with \"Next\".",
 							"xs": 12,
@@ -1574,155 +1723,6 @@
 							"xl": 4,
 							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
 							"help": "Suggestion: 06:00"
-						}
-					}
-				},
-				"wstep11": {
-					"type": "panel",
-					"hidden": "data.wizStep !== 11",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"items": {
-						"wa11_0": {
-							"type": "staticText",
-							"text": "Alarm system",
-							"style": {
-								"fontSize": "0.8em",
-								"fontWeight": "bold",
-								"letterSpacing": "0.08em",
-								"textTransform": "uppercase",
-								"opacity": 0.65
-							},
-							"hidden": "!data.alarmEnabled",
-							"xs": 12,
-							"sm": 4,
-							"md": 3,
-							"lg": 2,
-							"xl": 2
-						},
-						"wa11_1": {
-							"type": "staticText",
-							"text": "Presence simulation",
-							"style": {
-								"fontSize": "0.8em",
-								"fontWeight": "bold",
-								"letterSpacing": "0.08em",
-								"textTransform": "uppercase",
-								"opacity": 0.65
-							},
-							"hidden": "!data.simEnabled",
-							"xs": 12,
-							"sm": 4,
-							"md": 3,
-							"lg": 2,
-							"xl": 2
-						},
-						"wskip11": {
-							"type": "staticText",
-							"text": "This page is not needed for your answers – go on with \"Next\".",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)",
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							}
-						},
-						"w11h": {
-							"type": "header",
-							"text": "Who lives here?",
-							"size": 4,
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
-						},
-						"w11t": {
-							"type": "staticText",
-							"text": "For each person you need a state that is true while they are at home – e.g. from the adapters ping, iCloud or Life360. Take them from a function (e.g. \"Presence\") or put them into the table. Several states of one person (e.g. GPS and Wi-Fi) get the same name in the column \"Person\" – the person counts as at home when one of them says so.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
-						},
-						"w11s": {
-							"type": "staticText",
-							"text": "The search on the page \"What do you have?\" may already have filled this in.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontStyle": "italic",
-								"opacity": 0.8
-							},
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled)"
-						},
-						"presenceAuto": {
-							"type": "checkbox",
-							"label": "Presence states through a function",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
-						},
-						"enumPresence": {
-							"type": "selectSendTo",
-							"label": "Function presence",
-							"xs": 12,
-							"sm": 12,
-							"md": 6,
-							"lg": 4,
-							"xl": 4,
-							"command": "getEnums",
-							"jsonData": "{}",
-							"manual": true,
-							"noTranslation": true,
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceAuto)"
-						},
-						"presence": {
-							"type": "table",
-							"label": "Presence states by hand",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"items": [
-								{
-									"type": "checkbox",
-									"attr": "enabled",
-									"title": "Active",
-									"width": "8%",
-									"default": true
-								},
-								{
-									"type": "objectId",
-									"attr": "id",
-									"title": "State",
-									"width": "60%"
-								},
-								{
-									"type": "text",
-									"attr": "name",
-									"title": "Person",
-									"width": "32%"
-								}
-							],
-							"hidden": "!((data.alarmEnabled || data.simEnabled) && data.presenceEnabled) || (!data.presenceEnabled)"
 						}
 					}
 				},
@@ -3599,7 +3599,7 @@
 					"type": "sendTo",
 					"label": "◀ Back",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "outlined",
 					"hidden": "data.wizStep <= 0",
@@ -3614,7 +3614,7 @@
 					"type": "sendTo",
 					"label": "Next ▶",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "contained",
 					"hidden": "data.wizStep >= 19",
