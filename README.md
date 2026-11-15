@@ -136,6 +136,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) fix: evening and morning light also work when the presence simulation is not used
 * (ipod86) setup assistant: guided first setup – first what you want to use and what you have, then only the pages that fit; automatic search, suggested times and a final check; the other tabs appear when it is finished
 * (ipod86) simulation: the type "TV / device" is now called "Device / scene / script" – any state can be switched while simulating
 * (ipod86) settings: evening and morning each have their own section (times, brightness); shown only when the evening/morning light or the simulation uses them

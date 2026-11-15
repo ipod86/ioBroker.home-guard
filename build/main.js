@@ -1018,8 +1018,8 @@ class HomeGuard extends utils.Adapter {
           autoArmAvailable: !!c.alarmEnabled && this.presenceIds.length > 0 && (!!c.presenceArm && c.presenceArm !== "off" || !!c.presenceDisarm),
           simActive: this.sim.active,
           // which light switches the panel shows: only for an evening/morning light that is set up
-          eveningAvailable: !!c.simEnabled && !!c.eveningLight && this.simLamps.some((l) => l.type === "evening"),
-          morningAvailable: !!c.simEnabled && !!c.morningLight && this.simLamps.some((l) => l.type === "morning"),
+          eveningAvailable: !!c.eveningLight && this.simLamps.some((l) => l.type === "evening"),
+          morningAvailable: !!c.morningLight && this.simLamps.some((l) => l.type === "morning"),
           texts: { mode: this.T.mode, phase: this.T.phase },
           log: this.log_.slice(0, 20)
         });
@@ -1780,13 +1780,13 @@ class HomeGuard extends utils.Adapter {
       ...this.morningOn() ? part("morning", this.lightSw.morningOn, this.lightSw.morningOff) : []
     ].sort((a, b) => a.at - b.at);
   }
-  /** @returns the evening light is switched on and has lamps */
+  /** @returns the evening light is switched on and has lamps - every evening, independent of the simulation */
   eveningOn() {
-    return (this.lightSw.eveningOn || this.lightSw.eveningOff) && !!this.config.simEnabled && !!this.config.eveningLight && this.simLamps.some((l) => l.type === "evening");
+    return (this.lightSw.eveningOn || this.lightSw.eveningOff) && !!this.config.eveningLight && this.simLamps.some((l) => l.type === "evening");
   }
   /** @returns the morning light is switched on and has lamps */
   morningOn() {
-    return (this.lightSw.morningOn || this.lightSw.morningOff) && !!this.config.simEnabled && !!this.config.morningLight && this.simLamps.some((l) => l.type === "morning");
+    return (this.lightSw.morningOn || this.lightSw.morningOff) && !!this.config.morningLight && this.simLamps.some((l) => l.type === "morning");
   }
   /**
    * Starts, re-plans or stops the evening and morning light after the settings or the lamps changed

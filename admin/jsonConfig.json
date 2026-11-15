@@ -238,6 +238,16 @@
 							"lg": 12,
 							"xl": 12
 						},
+						"w1sec": {
+							"type": "header",
+							"text": "Safety functions",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"alarmEnabled": {
 							"type": "checkbox",
 							"label": "I want to use the alarm system",
@@ -250,7 +260,7 @@
 						},
 						"simEnabled": {
 							"type": "checkbox",
-							"label": "I want a presence simulation while we are away or the alarm system is armed",
+							"label": "When we are away: switch light and TV as if somebody were at home (presence simulation)",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -258,25 +268,35 @@
 							"xl": 12,
 							"help": "While you are away, lamps and devices such as the TV are switched as if somebody were at home – learned from your own habits."
 						},
+						"w1com": {
+							"type": "header",
+							"text": "Comfort functions – for you at home",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
+						},
 						"eveningLight": {
 							"type": "checkbox",
-							"label": "Also when we are at home: switch lamps on and off in the evening to our times (evening light)",
+							"label": "In the evening, switch lamps on and off by themselves at our times (evening light)",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"help": "Every evening, also when you are at home: chosen lamps on at dusk and off at bedtime."
+							"help": "Lamps on at dusk and off at bedtime, so you do not have to think of it. Runs every evening – when you are away, the simulation comes on top."
 						},
 						"morningLight": {
 							"type": "checkbox",
-							"label": "Also when we are at home: switch lamps on and off in the morning to our times (morning light)",
+							"label": "In the morning, switch lamps on and off by themselves at our times (morning light)",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"help": "Every morning: chosen lamps on at wake-up time and off when it is light – only while it is still dark."
+							"help": "Lamps on at wake-up time and off as soon as it is light – only on dark mornings. Runs every morning, also when you are away."
 						},
 						"w1n": {
 							"type": "staticText",
@@ -2748,6 +2768,16 @@
 							"xl": 12,
 							"hidden": "!(data.eveningLight || data.simEnabled)"
 						},
+						"w16c": {
+							"type": "staticText",
+							"text": "The evening light is a comfort function for you at home: in the evening the light is simply there, without anybody having to think of it.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.eveningLight || data.simEnabled) || (!data.eveningLight)"
+						},
 						"w16t": {
 							"type": "staticText",
 							"text": "In the evening the evening lamps go on around dusk and off at bedtime – every evening with the evening light, while you are away with the simulation. Every time gets a random part, so nobody can see a fixed pattern. Which lamps are evening lamps, you choose afterwards.",
@@ -2940,6 +2970,16 @@
 							"lg": 12,
 							"xl": 12,
 							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+						},
+						"w17c": {
+							"type": "staticText",
+							"text": "The morning light is a comfort function for you at home: on dark mornings it is already light when you get up.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))) || (!data.morningLight)"
 						},
 						"w17t": {
 							"type": "staticText",
