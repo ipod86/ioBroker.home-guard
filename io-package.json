@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "news": {
+      "0.2.1": {
+        "en": "fix: panel – the PIN keypad was white with invisible keys in a dark theme; it now uses the colours of the panel",
+        "de": "Fix: Panel — Die PIN-Tastatur war weiß mit unsichtbaren Tasten in dunklem Design; sie hat jetzt die Farben",
+        "ru": "исправлено: панель — клавиатура PIN-кода была белой с невидимыми клавишами в темной теме; теперь она использует цвета панели",
+        "pt": "fix: panel — o PIN era branco com teclas invisíveis em um tema escuro; agora usa as cores do painel",
+        "nl": "opgelost: paneel — het pincodetoetsenbord was wit met onzichtbare toetsen in een donker thema; nu worden de kleuren van het paneel gebruikt",
+        "fr": "fix : panel — le code PIN était blanc avec des touches invisibles sur le thème foncé ; il reprend les couleurs du panneau",
+        "it": "fix: pannello — il PIN era bianco con tasti invisibili a tema scuro; ora usa i colori del pannello",
+        "es": "fix: panel: el teclado PIN era blanco con teclas invisibles en un tema oscuro; ahora usa los colores del panel",
+        "pl": "poprawka: panel — klawiatura PIN była biała z niewidocznymi klawiszami w ciemnym motywie; teraz wykorzystuje kolory panelu",
+        "uk": "fix: panel - клавіатура PIN-коду була білою з невидимими клавішами в темній темі; тепер вона використовує кольори панелі",
+        "zh-cn": "修复：面板 — PIN 键盘为白色，深色主题中的按键不可见；它现在使用面板的颜色"
+      },
       "0.2.0": {
         "en": "fix: evening and morning light also work when the presence simulation is not used\nsetup assistant: guided first setup – first what you want to use and what you have, then only the pages that fit; automatic search, suggested times and a final check; the other tabs appear when it is finished\nsimulation: the type \"TV / device\" is now called \"Device / scene / script\" – any state can be switched while simulating\nsettings: evening and morning each have their own section (times, brightness); shown only when the evening/morning light or the simulation uses them\nmorning light off: own offset after sunrise, latest time, brightness sensor; panel shows \"on\" and \"off\" side by side for evening and morning light\nsimulation lamps: own function for the morning light; in the table a lamp has roles (evening, morning, short visits, bedtime – several at once) instead of one type; older tables are converted automatically\nevening/morning light: switching on and off as states (`control.eveningOn` …) and switches in the panel, only shown when set up; the simulation runs only coupled (alarm system/nobody at home), the manual switch `simulation.enabled` was removed\nlearned simulation: choose the learned day by weekday/weekend (default, more variety) or by the same day of the week (only with at least 3 of them)",
         "de": "Fix: Abend- und Morgenlicht funktionieren auch ohne Präsenzsimulation\nSetup-Assistent: zuerst was Sie verwenden wollen und was Sie haben, dann nur die Seiten, die passen; automatische Suche, Zeitvorschläge und Endcheck; die anderen Tabs erscheinen, wenn es fertig ist\nSimulation: Der Typ „TV/Gerät“ heißt jetzt „Gerät/Szene/Drehbuch“ — jeder Status kann während der Simulation geändert werden\nEinstellungen: Abend und Morgen haben jeweils eigene Bereiche (Uhrzeit, Helligkeit); nur im Abend-/Morgenlicht oder in der Simulation\nMorgenlicht aus: eigener Offset nach Sonnenaufgang, aktuelle Uhrzeit, Helligkeitssensor; am Abend- und Morgenlicht\nSimulationslampen: eigene Funktion für das Morgenlicht; am Tisch gibt es Rollen (Abend, Morgen, Kurzbesuche, Schlafenszeit — mehrere auf einmal); ältere Tische werden automatisch umgerechnet\nAbend-/Morgenlicht: Ein- und Ausschalten als Status (`Control.EveningOn`...) und Schalter im Panel, nur im Aufbau; Simulation läuft nur gekoppelt (Alarmanlage/niemand zu Hause), manueller Schalter\nGelernte Simulation: Wähle den Lerntag wochentag/wochenweise (Standard, mehr Abwechslung) oder am selben Wochentag (nur mit mindestens 3)",

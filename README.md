@@ -141,7 +141,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.2.1 (2026-11-16)
 * (ipod86) fix: panel – the PIN keypad was white with invisible keys in a dark theme; it now uses the colours of the panel
 
 ### 0.2.0 (2026-11-15)
