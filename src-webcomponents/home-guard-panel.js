@@ -496,7 +496,7 @@ button:disabled { opacity: .5; cursor: default; }
 .row.sep { margin-top: 2cqmin; padding-top: 2cqmin; border-top: 1px solid var(--hg-line, rgba(127,127,127,.25)); }
 .log time { opacity: .7; flex: none; font-variant-numeric: tabular-nums; }
 .msg { color: var(--iob-error, #d32f2f); font-size: .9em; text-align: center; }
-.pad { position: absolute; inset: 0; min-height: 100%; background: var(--iob-paper, #fff); color: inherit; display: flex; flex-direction: column; gap: 2.5cqmin; padding: 4cqmin; z-index: 2; }
+.pad { flex: 1 0 auto; display: flex; flex-direction: column; gap: 2.5cqmin; }
 .pad .dots { text-align: center; font-size: 2em; letter-spacing: .3em; min-height: 1.3em; }
 .pad .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqmin; flex: 1; }
 .pad .keys button { font-size: 1.5em; justify-content: center; }
@@ -759,7 +759,8 @@ class HomeGuardPanel extends IobWebComponent {
 				: phase === 'disarmed'
 					? ''
 					: esc(t.mode[mode] || mode);
-		let html = `<style>${STYLE}</style><div class="wrap" style="position:relative${this.pad ? ';overflow:hidden' : ''}">`;
+		const start = `<style>${STYLE}</style><div class="wrap">`;
+		let html = start;
 		html += `<div class="head ${phase}">${ICON[mode === 'off' ? (phase === 'alarm' ? 'shield' : 'disarmed') : mode] || ICON.shield}<div class="t"><div class="big">${esc(
 			t.phase[phase] || phase,
 		)}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>${cd > 0 && (phase === 'arming' || phase === 'entry') ? `<div class="cd">${cd}</div>` : ''}</div>`;
@@ -874,7 +875,10 @@ class HomeGuardPanel extends IobWebComponent {
 			}</div>`;
 		}
 		if (this.pad) {
-			html += `<div class="pad"><div class="lbl center">${esc(t.pin)}</div><div class="dots">${'•'.repeat(this.pad.pin.length)}</div>${
+			// the keypad replaces the content (no overlay with an own background): colours of the panel in every theme
+			html = `${
+				start
+			}<div class="pad"><div class="lbl center">${esc(t.pin)}</div><div class="dots">${'•'.repeat(this.pad.pin.length)}</div>${
 				this.pad.msg ? `<div class="msg center">${esc(this.pad.msg)}</div>` : ''
 			}<div class="keys">${[1, 2, 3, 4, 5, 6, 7, 8, 9]
 				.map(k => `<button data-a="key" data-k="${k}">${k}</button>`)

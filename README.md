@@ -141,6 +141,9 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) fix: panel – the PIN keypad was white with invisible keys in a dark theme; it now uses the colours of the panel
+
 ### 0.2.0 (2026-11-15)
 * (ipod86) fix: evening and morning light also work when the presence simulation is not used
 * (ipod86) setup assistant: guided first setup – first what you want to use and what you have, then only the pages that fit; automatic search, suggested times and a final check; the other tabs appear when it is finished
