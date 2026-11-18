@@ -2442,7 +2442,12 @@ class HomeGuard extends utils.Adapter {
 			}
 			const speak = await this.getForeignObjectAsync(`${r.id}.Commands.ssml`);
 			if (!speak) {
-				continue; // no speaker (e.g. the app)
+				continue; // no speaker
+			}
+			// the Alexa app on a phone is listed like an Echo - nobody would hear it at home
+			const kind = await this.getForeignStateAsync(`${r.id}.Info.deviceTypeString`);
+			if (String(kind?.val || '') === 'Apps') {
+				continue;
 			}
 			const player = !!(await this.getForeignObjectAsync(`${r.id}.Player.currentState`));
 			const n = r.value?.common?.name;

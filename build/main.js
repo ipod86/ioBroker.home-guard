@@ -2192,6 +2192,10 @@ class HomeGuard extends utils.Adapter {
       if (!speak) {
         continue;
       }
+      const kind = await this.getForeignStateAsync(`${r.id}.Info.deviceTypeString`);
+      if (String((kind == null ? void 0 : kind.val) || "") === "Apps") {
+        continue;
+      }
       const player = !!await this.getForeignObjectAsync(`${r.id}.Player.currentState`);
       const n = (_b = (_a = r.value) == null ? void 0 : _a.common) == null ? void 0 : _b.name;
       const name = String(
