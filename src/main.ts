@@ -23,13 +23,13 @@ import {
 	type SimLamp,
 } from './lib/simulation';
 import type { EchoRow, SimLampRow } from './lib/adapter-config';
-import { WIZARD_DEFAULTS, bestEnum, nextStep, roleSensors, type EnumInfo, type ScanKind } from './lib/wizard';
+import { WIZARD_DEFAULTS, bestEnum, nextStep, type EnumInfo, type ScanKind } from './lib/wizard';
+import { findSensors, sameDevices, sensorNote, type FinderObject, type FoundCircuit } from './lib/finder';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
 import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
-type RoleSensorArea = 'perimeter' | 'interior' | '24h';
 type LightSwitch = 'eveningOn' | 'eveningOff' | 'morningOn' | 'morningOff';
 const LIGHT_SWITCHES: LightSwitch[] = ['eveningOn', 'eveningOff', 'morningOn', 'morningOff'];
 /** former settings of the instance configuration, taken over once by a new instance */
@@ -1363,70 +1363,82 @@ class HomeGuard extends utils.Adapter {
 			);
 		}
 		const view = await this.getObjectViewAsync('system', 'state', { startkey: '', endkey: '\u9999' });
-		// sensors by their roles - most people have no functions, only roles. Without a function they go into the
-		// table; with a function they are only named, the function stays what is watched
-		const aliasTargets = new Set<string>();
+		// sensors without functions - most people only have roles: by role, Homematic device type and the state
+		// names of known adapters. They are listed unticked in the table; a tick takes them in
+		const objects: Record<string, FinderObject> = {};
 		for (const r of view.rows) {
-			const a = (r.value?.common as { alias?: { id?: string | { read?: string; write?: string } } } | undefined)
-				?.alias?.id;
-			for (const target of typeof a === 'string' ? [a] : a ? [a.read, a.write] : []) {
-				if (target) {
-					aliasTargets.add(target);
-				}
+			objects[r.id] = r.value;
+		}
+		for (const type of ['channel', 'device'] as const) {
+			for (const r of (await this.getObjectViewAsync('system', type, { startkey: '', endkey: '\u9999' })).rows) {
+				objects[r.id] = r.value;
 			}
 		}
-		const nameOf = (n: unknown): string =>
-			typeof n === 'object' && n
-				? String((n as Record<string, string>)[this.sysLang] || (n as Record<string, string>).en || '')
-				: typeof n === 'string'
-					? n
-					: '';
-		const byRole = roleSensors(
-			view.rows.map(r => ({
-				id: r.id,
-				role: String(r.value?.common?.role || ''),
-				name: nameOf(r.value?.common?.name),
-			})),
-			aliasTargets,
-			this.name,
-		);
+		for (const [id, o] of Object.entries(await this.getForeignObjectsAsync('enum.rooms.*', 'enum'))) {
+			objects[id] = o;
+		}
+		const instances: Record<string, boolean> = {};
+		for (const r of (
+			await this.getObjectViewAsync('system', 'instance', {
+				startkey: 'system.adapter.',
+				endkey: 'system.adapter.\u9999',
+			})
+		).rows) {
+			instances[r.id.replace('system.adapter.', '')] = !!r.value?.common?.enabled;
+		}
+		const found = findSensors({ objects, instances, ownAdapter: this.name, lang: this.sysLang });
 		const rows = [...(this.config.sensors || [])].filter(r => r && r.id);
-		const inTable = new Set(rows.map(r => r.id));
-		const areas: [RoleSensorArea, string, string, string, string][] = [
+		const inTable = sameDevices(
+			rows.map(r => r.id),
+			objects,
+		);
+		const areas: [FoundCircuit, string, string, string, string][] = [
 			['perimeter', 'enumPerimeter', 'autoPerimeter', 'Türen und Fenster', 'Doors and windows'],
 			['interior', 'enumFull', 'autoFull', 'Bewegungsmelder', 'Motion detectors'],
 			['24h', 'enumFire', 'autoFire', 'Gefahrenmelder', 'Danger detectors'],
 		];
-		let added = 0;
-		for (const [circuit, enumKey, autoKey, labelDe, labelEn] of areas) {
-			const label = de ? labelDe : labelEn;
+		// a device in any chosen function is not offered again (also not as its alias or alias target)
+		const inEnums = new Set<string>();
+		for (const [, enumKey, autoKey] of areas) {
 			const v = out[enumKey] ?? form[enumKey] ?? (this.config as unknown as Record<string, unknown>)[enumKey];
 			const enumId = typeof v === 'string' && v !== 'undefined' && v !== 'null' ? v : '';
 			const useEnum = out[autoKey] ?? (this.config as unknown as Record<string, unknown>)[autoKey];
-			const inEnum = new Set(enumId && useEnum !== false ? await this.enumStates(enumId) : []);
-			const extra = byRole.filter(s => s.circuit === circuit && !inEnum.has(s.id) && !inTable.has(s.id));
+			if (enumId && useEnum !== false) {
+				(await this.enumStates(enumId)).forEach(id => inEnums.add(id));
+			}
+		}
+		const known = new Set([...inTable, ...sameDevices(inEnums, objects)]);
+		const now = Date.now();
+		let added = 0;
+		for (const [circuit, enumKey, , labelDe, labelEn] of areas) {
+			const extra = found.filter(s => s.circuit === circuit && !known.has(s.id));
 			if (!extra.length) {
 				continue;
 			}
-			// unticked: the list shows what was found, a tick takes it in (and shows its options)
-			for (const s of extra) {
+			const states = await this.getForeignStatesAsync(extra.map(s => s.id));
+			const noted = extra.map(s => ({ s, ...sensorNote(s, states[s.id], now, de) }));
+			// silent for a month or longer: at the end
+			noted.sort((a, b) => Number(a.stale) - Number(b.stale));
+			for (const { s, note } of noted) {
 				rows.push({
 					enabled: false,
 					id: s.id,
-					name: '',
+					name: s.name,
 					circuit,
 					delayed: false,
-					invert: false,
+					invert: s.invert,
 					motion: s.motion,
+					info: note,
 					...(circuit === '24h' ? { hazard: this.config.hazardDefault || 'speech' } : {}),
 				});
-				inTable.add(s.id);
+				known.add(s.id);
 			}
 			added += extra.length;
+			const hasEnum = !empty(enumKey) || !!out[enumKey];
 			lines.push(
 				de
-					? `${label}: ${extra.length} ${enumId ? 'weitere ' : ''}über die Rolle gefunden – stehen ohne Haken in der Sensortabelle, anhaken was überwacht werden soll`
-					: `${label}: ${extra.length} ${enumId ? 'more ' : ''}found by role – listed unticked in the sensor table, tick what should be watched`,
+					? `${labelDe}: ${extra.length} ${hasEnum ? 'weitere ' : ''}Geräte gefunden – stehen ohne Haken in der Sensortabelle, anhaken was überwacht werden soll`
+					: `${labelEn}: ${extra.length} ${hasEnum ? 'more ' : ''}devices found – listed unticked in the sensor table, tick what should be watched`,
 			);
 		}
 		if (added) {

@@ -1413,21 +1413,21 @@
 									"type": "checkbox",
 									"attr": "enabled",
 									"title": "Active",
-									"width": "5%",
+									"width": "4%",
 									"default": true
 								},
 								{
 									"type": "objectId",
 									"attr": "id",
 									"title": "State",
-									"width": "26%",
+									"width": "20%",
 									"filter": false
 								},
 								{
 									"type": "text",
 									"attr": "name",
 									"title": "Name (optional)",
-									"width": "15%",
+									"width": "14%",
 									"filter": false,
 									"hidden": "data.enabled === false"
 								},
@@ -1435,7 +1435,7 @@
 									"type": "select",
 									"attr": "circuit",
 									"title": "Area",
-									"width": "12%",
+									"width": "11%",
 									"default": "perimeter",
 									"options": [
 										{
@@ -1461,21 +1461,21 @@
 									"type": "checkbox",
 									"attr": "delayed",
 									"title": "delayed",
-									"width": "9%",
+									"width": "7%",
 									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "checkbox",
 									"attr": "invert",
 									"title": "inverted",
-									"width": "8%",
+									"width": "7%",
 									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "select",
 									"attr": "hazard",
 									"title": "Reaction (danger detectors only)",
-									"width": "16%",
+									"width": "11%",
 									"default": "speech",
 									"options": [
 										{
@@ -1492,6 +1492,14 @@
 										}
 									],
 									"hidden": "data.enabled === false"
+								},
+								{
+									"type": "text",
+									"attr": "info",
+									"title": "Note",
+									"width": "19%",
+									"readOnly": true,
+									"noTranslation": true
 								}
 							],
 							"hidden": "!(data.alarmEnabled)"
@@ -4945,21 +4953,21 @@
 							"type": "checkbox",
 							"attr": "enabled",
 							"title": "Active",
-							"width": "5%",
+							"width": "4%",
 							"default": true
 						},
 						{
 							"type": "objectId",
 							"attr": "id",
 							"title": "State",
-							"width": "26%",
+							"width": "20%",
 							"filter": false
 						},
 						{
 							"type": "text",
 							"attr": "name",
 							"title": "Name (optional)",
-							"width": "15%",
+							"width": "14%",
 							"filter": false,
 							"hidden": "data.enabled === false"
 						},
@@ -4967,7 +4975,7 @@
 							"type": "select",
 							"attr": "circuit",
 							"title": "Area",
-							"width": "12%",
+							"width": "11%",
 							"default": "perimeter",
 							"options": [
 								{
@@ -4993,28 +5001,28 @@
 							"type": "checkbox",
 							"attr": "delayed",
 							"title": "delayed",
-							"width": "9%",
+							"width": "7%",
 							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "checkbox",
 							"attr": "motion",
 							"title": "motion detector",
-							"width": "9%",
+							"width": "7%",
 							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "checkbox",
 							"attr": "invert",
 							"title": "inverted",
-							"width": "8%",
+							"width": "7%",
 							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "select",
 							"attr": "hazard",
 							"title": "Reaction (danger detectors only)",
-							"width": "16%",
+							"width": "11%",
 							"default": "speech",
 							"options": [
 								{
@@ -5031,6 +5039,14 @@
 								}
 							],
 							"hidden": "data.enabled === false"
+						},
+						{
+							"type": "text",
+							"attr": "info",
+							"title": "Note",
+							"width": "19%",
+							"readOnly": true,
+							"noTranslation": true
 						}
 					]
 				},

@@ -508,5 +508,6 @@
 	"User": "用户",
 	"Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".": "选择消息如何到达你的手机——Telegram、Pushover、WhatsApp、电子邮件……相应的适配器必须已在 ioBroker 中安装并配置。试用方法：先点击底部的“保存”（向导保持打开），再点击“发送测试消息”。",
 	"Only messengers that Home Guard supports and that are installed can be chosen; the fields the messenger needs appear in its row. Other messengers can be reached via the ioBroker notification manager.": "只能选择 Home Guard 支持且已安装的消息服务；所需字段会显示在其所在行。其他消息服务可通过 ioBroker 通知管理器使用。",
-	"Devices that the automatic search found by their role are listed here without a tick – tick the ones that should be watched, then their settings appear.": "自动搜索按角色找到的设备在此列出且未勾选——勾选需要监控的设备后，其设置就会显示。"
+	"Devices that the automatic search found by their role are listed here without a tick – tick the ones that should be watched, then their settings appear.": "自动搜索按角色找到的设备在此列出且未勾选——勾选需要监控的设备后，其设置就会显示。",
+	"Note": "备注"
 }

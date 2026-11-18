@@ -20,8 +20,7 @@ var wizard_exports = {};
 __export(wizard_exports, {
   WIZARD_DEFAULTS: () => WIZARD_DEFAULTS,
   bestEnum: () => bestEnum,
-  nextStep: () => nextStep,
-  roleSensors: () => roleSensors
+  nextStep: () => nextStep
 });
 module.exports = __toCommonJS(wizard_exports);
 function nextStep(step, dir, need) {
@@ -110,40 +109,10 @@ function bestEnum(kind, enums) {
   }
   return best ? { id: best.id, name: best.name, count: best.count } : null;
 }
-const SENSOR_ROLES = [
-  ["24h", RULES.fire.role],
-  ["interior", /^sensor\.(motion|occupancy)(\.|$)/],
-  [
-    "perimeter",
-    /^(sensor\.(window|door|contact|open|glass|vibration|tilt)(\.|$)|value\.window$|sensor\.alarm\.secure$)/
-  ]
-];
-function roleSensors(states, aliasTargets, ownAdapter) {
-  const parent = (id) => id.substring(0, id.lastIndexOf("."));
-  const thermostats = /* @__PURE__ */ new Set();
-  for (const s of states) {
-    if (/^level\.temperature/.test(s.role)) {
-      thermostats.add(parent(s.id));
-    }
-  }
-  const out = [];
-  for (const s of states) {
-    if (s.id.startsWith(`${ownAdapter}.`) || s.id.startsWith("system.") || aliasTargets.has(s.id)) {
-      continue;
-    }
-    const hit = SENSOR_ROLES.find(([, rx]) => rx.test(s.role));
-    if (!hit || thermostats.has(parent(s.id))) {
-      continue;
-    }
-    out.push({ id: s.id, name: s.name, circuit: hit[0], motion: hit[0] === "interior" });
-  }
-  return out.sort((a, b) => a.id.localeCompare(b.id));
-}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   WIZARD_DEFAULTS,
   bestEnum,
-  nextStep,
-  roleSensors
+  nextStep
 });
 //# sourceMappingURL=wizard.js.map

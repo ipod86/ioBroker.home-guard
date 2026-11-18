@@ -25,6 +25,7 @@ var utils = __toESM(require("@iobroker/adapter-core"));
 var import_alarm = require("./lib/alarm");
 var import_simulation = require("./lib/simulation");
 var import_wizard = require("./lib/wizard");
+var import_finder = require("./lib/finder");
 var import_sun = require("./lib/sun");
 var import_texts = require("./lib/texts");
 var import_messengers = require("./lib/messengers");
@@ -1158,7 +1159,7 @@ class HomeGuard extends utils.Adapter {
    * @returns the settings to fill in, and a text with the result
    */
   async wizardScan(form) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g;
     const de = this.sysLang === "de";
     const empty = (k) => {
       var _a2;
@@ -1213,62 +1214,74 @@ class HomeGuard extends utils.Adapter {
       );
     }
     const view = await this.getObjectViewAsync("system", "state", { startkey: "", endkey: "\u9999" });
-    const aliasTargets = /* @__PURE__ */ new Set();
+    const objects = {};
     for (const r of view.rows) {
-      const a = (_e = (_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.alias) == null ? void 0 : _e.id;
-      for (const target of typeof a === "string" ? [a] : a ? [a.read, a.write] : []) {
-        if (target) {
-          aliasTargets.add(target);
-        }
+      objects[r.id] = r.value;
+    }
+    for (const type of ["channel", "device"]) {
+      for (const r of (await this.getObjectViewAsync("system", type, { startkey: "", endkey: "\u9999" })).rows) {
+        objects[r.id] = r.value;
       }
     }
-    const nameOf = (n) => typeof n === "object" && n ? String(n[this.sysLang] || n.en || "") : typeof n === "string" ? n : "";
-    const byRole = (0, import_wizard.roleSensors)(
-      view.rows.map((r) => {
-        var _a2, _b2, _c2, _d2;
-        return {
-          id: r.id,
-          role: String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || ""),
-          name: nameOf((_d2 = (_c2 = r.value) == null ? void 0 : _c2.common) == null ? void 0 : _d2.name)
-        };
-      }),
-      aliasTargets,
-      this.name
-    );
+    for (const [id, o] of Object.entries(await this.getForeignObjectsAsync("enum.rooms.*", "enum"))) {
+      objects[id] = o;
+    }
+    const instances = {};
+    for (const r of (await this.getObjectViewAsync("system", "instance", {
+      startkey: "system.adapter.",
+      endkey: "system.adapter.\u9999"
+    })).rows) {
+      instances[r.id.replace("system.adapter.", "")] = !!((_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.enabled);
+    }
+    const found = (0, import_finder.findSensors)({ objects, instances, ownAdapter: this.name, lang: this.sysLang });
     const rows = [...this.config.sensors || []].filter((r) => r && r.id);
-    const inTable = new Set(rows.map((r) => r.id));
+    const inTable = (0, import_finder.sameDevices)(
+      rows.map((r) => r.id),
+      objects
+    );
     const areas = [
       ["perimeter", "enumPerimeter", "autoPerimeter", "T\xFCren und Fenster", "Doors and windows"],
       ["interior", "enumFull", "autoFull", "Bewegungsmelder", "Motion detectors"],
       ["24h", "enumFire", "autoFire", "Gefahrenmelder", "Danger detectors"]
     ];
-    let added = 0;
-    for (const [circuit, enumKey, autoKey, labelDe, labelEn] of areas) {
-      const label = de ? labelDe : labelEn;
-      const v = (_g = (_f = out[enumKey]) != null ? _f : form[enumKey]) != null ? _g : this.config[enumKey];
+    const inEnums = /* @__PURE__ */ new Set();
+    for (const [, enumKey, autoKey] of areas) {
+      const v = (_f = (_e = out[enumKey]) != null ? _e : form[enumKey]) != null ? _f : this.config[enumKey];
       const enumId = typeof v === "string" && v !== "undefined" && v !== "null" ? v : "";
-      const useEnum = (_h = out[autoKey]) != null ? _h : this.config[autoKey];
-      const inEnum = new Set(enumId && useEnum !== false ? await this.enumStates(enumId) : []);
-      const extra = byRole.filter((s) => s.circuit === circuit && !inEnum.has(s.id) && !inTable.has(s.id));
+      const useEnum = (_g = out[autoKey]) != null ? _g : this.config[autoKey];
+      if (enumId && useEnum !== false) {
+        (await this.enumStates(enumId)).forEach((id) => inEnums.add(id));
+      }
+    }
+    const known = /* @__PURE__ */ new Set([...inTable, ...(0, import_finder.sameDevices)(inEnums, objects)]);
+    const now = Date.now();
+    let added = 0;
+    for (const [circuit, enumKey, , labelDe, labelEn] of areas) {
+      const extra = found.filter((s) => s.circuit === circuit && !known.has(s.id));
       if (!extra.length) {
         continue;
       }
-      for (const s of extra) {
+      const states = await this.getForeignStatesAsync(extra.map((s) => s.id));
+      const noted = extra.map((s) => ({ s, ...(0, import_finder.sensorNote)(s, states[s.id], now, de) }));
+      noted.sort((a, b) => Number(a.stale) - Number(b.stale));
+      for (const { s, note } of noted) {
         rows.push({
           enabled: false,
           id: s.id,
-          name: "",
+          name: s.name,
           circuit,
           delayed: false,
-          invert: false,
+          invert: s.invert,
           motion: s.motion,
+          info: note,
           ...circuit === "24h" ? { hazard: this.config.hazardDefault || "speech" } : {}
         });
-        inTable.add(s.id);
+        known.add(s.id);
       }
       added += extra.length;
+      const hasEnum = !empty(enumKey) || !!out[enumKey];
       lines.push(
-        de ? `${label}: ${extra.length} ${enumId ? "weitere " : ""}\xFCber die Rolle gefunden \u2013 stehen ohne Haken in der Sensortabelle, anhaken was \xFCberwacht werden soll` : `${label}: ${extra.length} ${enumId ? "more " : ""}found by role \u2013 listed unticked in the sensor table, tick what should be watched`
+        de ? `${labelDe}: ${extra.length} ${hasEnum ? "weitere " : ""}Ger\xE4te gefunden \u2013 stehen ohne Haken in der Sensortabelle, anhaken was \xFCberwacht werden soll` : `${labelEn}: ${extra.length} ${hasEnum ? "more " : ""}devices found \u2013 listed unticked in the sensor table, tick what should be watched`
       );
     }
     if (added) {

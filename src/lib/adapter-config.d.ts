@@ -15,6 +15,8 @@ export interface SensorRow {
 	motion: boolean;
 	/** 24 h sensors: message only, message and speech, or full alarm */
 	hazard?: 'notify' | 'speech' | 'alarm';
+	/** note of the automatic search (value at that time, camera, last report) - display only */
+	info?: string;
 }
 
 /** A plain state ID with an optional name */
