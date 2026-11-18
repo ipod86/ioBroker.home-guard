@@ -30,7 +30,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm. During the entry delay the inside sensors follow: walking past motion detectors to the panel is no alarm.
 - **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out.
 - **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
-- **Notifications** to Telegram, Pushover, e-mail, WhatsApp (cmb), Signal (cmb) and Pushsafer in their own format, and to **every messenger that supports ioBroker notifications** (e.g. Gotify, Discord, ioBroker.pro app, GSM-SMS) in the format of the notification manager; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
+- **Notifications** directly to Telegram, e-mail, Pushover, Pushsafer, Gotify, WhatsApp and Signal (CallMeBot), SMS (gsmsms), Discord, MAX, the ioBroker Visu app (iot) and Synology Chat – each in its own format with the fields it needs; only installed messengers are offered; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any states through an actions table – devices, scenes, scripts (e.g. outdoor lights on, lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day learned from your own switching, with shifted times – any weekday for a weekday evening, any Friday/Saturday for the weekend; optionally the same day of the week when at least 3 of them are learned) and *combined* (recommended).
@@ -143,6 +143,10 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) feat: messengers sent to directly in their own format: in addition Gotify, SMS (gsmsms), Discord, MAX, ioBroker Visu app and Synology Chat; only supported and installed messengers can be chosen, each with its own fields
+* (ipod86) change: no more generic notification format and free instance input – other messengers via the notification manager
+
 ### 0.3.0 (2026-11-18)
 * (ipod86) simulation: time window per device – in the evening, the whole day or own times – with own count (also a range like 1-3 = random each day) and duration
 * (ipod86) Amazon Echo (alexa2): per Echo for the alarm (volume, sound, announcement) and as radio in the simulation (station or random station, volume, time window, learning); setup assistant page "Alexa"

@@ -26,21 +26,9 @@ import type { EchoRow, SimLampRow } from './lib/adapter-config';
 import { WIZARD_DEFAULTS, bestEnum, nextStep, type EnumInfo, type ScanKind } from './lib/wizard';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
+import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
-/**
- * Messengers whose "send" command is known: they get the short text in their own format. Every other instance whose
- * adapter declares common.supportedMessages.notifications gets the standard "sendNotification" of the notification
- * manager and formats it itself (gotify, discord, iot, gsmsms, ...).
- */
-const SEND_FORMAT: Record<string, (text: string) => Record<string, unknown>> = {
-	telegram: text => ({ text }),
-	pushover: text => ({ message: text, title: 'Home Guard' }),
-	email: text => ({ text, subject: `Home Guard: ${text.substring(0, 60)}` }),
-	'whatsapp-cmb': text => ({ text }),
-	'signal-cmb': text => ({ text }),
-	pushsafer: text => ({ message: text, title: 'Home Guard' }),
-};
 type LightSwitch = 'eveningOn' | 'eveningOff' | 'morningOn' | 'morningOff';
 const LIGHT_SWITCHES: LightSwitch[] = ['eveningOn', 'eveningOff', 'morningOn', 'morningOff'];
 /** former settings of the instance configuration, taken over once by a new instance */
@@ -1246,22 +1234,23 @@ class HomeGuard extends utils.Adapter {
 					startkey: 'system.adapter.',
 					endkey: 'system.adapter.香',
 				});
-				// like the notification manager: every adapter that can receive notifications, plus the known ones
-				const list = inst.rows
-					.filter(
-						r =>
-							!!(r.value?.common as { supportedMessages?: { notifications?: boolean } } | undefined)
-								?.supportedMessages?.notifications ||
-							r.id.replace('system.adapter.', '').replace(/\.\d+$/, '') in SEND_FORMAT,
-					)
-					.map(r => r.id.replace('system.adapter.', ''))
-					.filter(id => id !== this.namespace)
-					.map(id => ({ value: id, label: id }));
+				// only the messengers this adapter knows (lib/messengers.ts), and only installed ones
+				const list = listMessengers(inst.rows.map(r => r.id));
 				return reply(list);
 			}
-			case 'test':
-				this.notifyAll(this.T.test, true);
-				return reply({ result: 'ok' });
+			case 'test': {
+				// directly here, so that a missing field (phone number, channel, ...) shows up at the button
+				const errors: string[] = [];
+				for (const row of this.config.notify || []) {
+					if (row?.instance && row.enabled !== false) {
+						await sendToMessenger(this, row, { title: 'Home Guard', text: this.T.test, alert: true }).catch(
+							(e: Error) => errors.push(e.message),
+						);
+					}
+				}
+				this.log.info('Test notification sent');
+				return reply(errors.length ? { error: errors.join('; ') } : { result: 'ok' });
+			}
 			// setup assistant: values of the form come as strings ("true", "undefined", …)
 			case 'wizardNav':
 				return reply({
@@ -1369,7 +1358,8 @@ class HomeGuard extends utils.Adapter {
 			});
 			const ids = inst.rows
 				.map(r => r.id.replace('system.adapter.', ''))
-				.filter(id => id.replace(/\.\d+$/, '') in SEND_FORMAT)
+				// only messengers that work without further fields, Telegram first
+				.filter(id => MESSENGERS[adapterOf(id)] && !MESSENGERS[adapterOf(id)].required)
 				.sort((a, b) => (a.startsWith('telegram') ? -1 : b.startsWith('telegram') ? 1 : a.localeCompare(b)));
 			if (ids.length) {
 				out.notify = [{ enabled: true, instance: ids[0], user: '', chatId: '' }];
@@ -1676,63 +1666,17 @@ class HomeGuard extends utils.Adapter {
 	}
 
 	/**
-	 * Sends a text to one messenger instance: known ones with "send", the others like the notification manager
+	 * Sends a text to one messenger instance in its own format (lib/messengers.ts)
 	 *
 	 * @param row row of the notification table
-	 * @param row.instance messenger instance
-	 * @param row.user optional user
-	 * @param row.chatId optional chat ID
 	 * @param text message
-	 * @param alert true for alarms (severity "alert")
+	 * @param alert true for alarms (higher priority where the messenger has one)
 	 */
-	private async notifyOne(
-		row: { instance: string; user?: string; chatId?: string },
-		text: string,
-		alert: boolean,
-	): Promise<void> {
-		const inst = row.instance;
-		const format = SEND_FORMAT[inst.replace(/\.\d+$/, '')];
+	private async notifyOne(row: MessengerRow, text: string, alert: boolean): Promise<void> {
 		try {
-			if (format) {
-				const payload = format(text);
-				if (row.user) {
-					payload.user = row.user;
-				}
-				if (row.chatId) {
-					payload.chatId = row.chatId;
-				}
-				this.sendTo(inst, 'send', payload);
-				return;
-			}
-			const obj = await this.getForeignObjectAsync(`system.adapter.${inst}`);
-			const supports = (obj?.common as { supportedMessages?: { notifications?: boolean } } | undefined)
-				?.supportedMessages?.notifications;
-			if (!supports) {
-				// unknown adapter without notification support: try the usual "send" fields
-				this.sendTo(inst, 'send', { text, message: text, title: 'Home Guard' });
-				return;
-			}
-			// the format of the notification manager (LocalizedNotification); the messenger builds its own text
-			const res = (await this.sendToAsync(
-				inst,
-				'sendNotification',
-				{
-					host: `system.host.${this.host}`,
-					scope: { name: 'Home Guard', description: this.T.title },
-					category: {
-						name: alert ? this.T.alarmWord : this.T.title,
-						description: '',
-						severity: alert ? 'alert' : 'notify',
-						instances: { [this.namespace]: { messages: [{ message: text, ts: Date.now() }] } },
-					},
-				},
-				{ timeout: 10000 },
-			)) as { sent?: boolean } | undefined;
-			if (!res || res.sent !== true) {
-				this.log.warn(`${inst} did not confirm the notification`);
-			}
+			await sendToMessenger(this, row, { title: 'Home Guard', text, alert });
 		} catch (err) {
-			this.log.warn(`Notification to ${inst} failed: ${(err as Error).message}`);
+			this.log.warn(`Notification to ${row.instance} failed: ${(err as Error).message}`);
 		}
 	}
 

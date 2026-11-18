@@ -1984,7 +1984,7 @@
 						},
 						"w13t": {
 							"type": "staticText",
-							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker. User and chat ID may stay empty – then everybody gets the message. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
+							"text": "Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2019,32 +2019,205 @@
 									"type": "checkbox",
 									"attr": "enabled",
 									"title": "Active",
-									"width": "8%",
+									"width": "6%",
 									"default": true
 								},
 								{
 									"type": "selectSendTo",
 									"attr": "instance",
-									"title": "Instance",
-									"width": "32%",
+									"title": "Messenger",
+									"width": "28%",
 									"command": "getMessengers",
 									"jsonData": "{}",
-									"manual": true,
 									"noTranslation": true
 								},
 								{
 									"type": "text",
 									"attr": "user",
-									"title": "User (optional)",
-									"width": "30%"
+									"title": "User",
+									"width": "11%",
+									"hidden": "!['telegram', 'discord', 'max'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 								},
 								{
 									"type": "text",
 									"attr": "chatId",
-									"title": "Chat ID (optional)",
-									"width": "30%"
+									"title": "Chat ID",
+									"width": "11%",
+									"hidden": "!['telegram'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+								},
+								{
+									"type": "text",
+									"attr": "phone",
+									"title": "Phone number",
+									"width": "11%",
+									"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+								},
+								{
+									"type": "text",
+									"attr": "to",
+									"title": "Recipient",
+									"width": "11%",
+									"hidden": "!['email'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+								},
+								{
+									"type": "text",
+									"attr": "device",
+									"title": "Device",
+									"width": "11%",
+									"hidden": "!['pushover', 'pushsafer', 'iot'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+								},
+								{
+									"type": "text",
+									"attr": "channel",
+									"title": "Channel",
+									"width": "11%",
+									"hidden": "!['discord', 'synochat'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 								}
 							],
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13mh": {
+							"type": "staticText",
+							"text": "Only messengers that Home Guard supports and that are installed can be chosen; the fields the messenger needs appear in its row. Other messengers can be reached via the ioBroker notification manager.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m0": {
+							"type": "staticText",
+							"text": "Telegram: user name or chat ID (e.g. of a group); empty = everybody who talked to the bot.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m1": {
+							"type": "staticText",
+							"text": "E-mail: recipient; empty = the address from the e-mail settings, several separated by commas.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m2": {
+							"type": "staticText",
+							"text": "Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m3": {
+							"type": "staticText",
+							"text": "Gotify: nothing to fill in. Alarms come with high priority.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m4": {
+							"type": "staticText",
+							"text": "WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m5": {
+							"type": "staticText",
+							"text": "SMS (gsmsms): phone number like +491701234567 – required.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m6": {
+							"type": "staticText",
+							"text": "Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m7": {
+							"type": "staticText",
+							"text": "MAX: user ID; empty = every user the bot knows.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m8": {
+							"type": "staticText",
+							"text": "ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
+						"w13m9": {
+							"type": "staticText",
+							"text": "Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontSize": "0.85em"
+							},
 							"hidden": "!(data.alarmEnabled)"
 						},
 						"testBtn": {
@@ -5402,32 +5575,194 @@
 							"type": "checkbox",
 							"attr": "enabled",
 							"title": "Active",
-							"width": "8%",
+							"width": "6%",
 							"default": true
 						},
 						{
 							"type": "selectSendTo",
 							"attr": "instance",
-							"title": "Instance",
-							"width": "32%",
+							"title": "Messenger",
+							"width": "28%",
 							"command": "getMessengers",
 							"jsonData": "{}",
-							"manual": true,
 							"noTranslation": true
 						},
 						{
 							"type": "text",
 							"attr": "user",
-							"title": "User (optional)",
-							"width": "30%"
+							"title": "User",
+							"width": "11%",
+							"hidden": "!['telegram', 'discord', 'max'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 						},
 						{
 							"type": "text",
 							"attr": "chatId",
-							"title": "Chat ID (optional)",
-							"width": "30%"
+							"title": "Chat ID",
+							"width": "11%",
+							"hidden": "!['telegram'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+						},
+						{
+							"type": "text",
+							"attr": "phone",
+							"title": "Phone number",
+							"width": "11%",
+							"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+						},
+						{
+							"type": "text",
+							"attr": "to",
+							"title": "Recipient",
+							"width": "11%",
+							"hidden": "!['email'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+						},
+						{
+							"type": "text",
+							"attr": "device",
+							"title": "Device",
+							"width": "11%",
+							"hidden": "!['pushover', 'pushsafer', 'iot'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+						},
+						{
+							"type": "text",
+							"attr": "channel",
+							"title": "Channel",
+							"width": "11%",
+							"hidden": "!['discord', 'synochat'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 						}
 					]
+				},
+				"nmh": {
+					"type": "staticText",
+					"text": "Only messengers that Home Guard supports and that are installed can be chosen; the fields the messenger needs appear in its row. Other messengers can be reached via the ioBroker notification manager.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontStyle": "italic",
+						"opacity": 0.8
+					}
+				},
+				"nm0": {
+					"type": "staticText",
+					"text": "Telegram: user name or chat ID (e.g. of a group); empty = everybody who talked to the bot.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm1": {
+					"type": "staticText",
+					"text": "E-mail: recipient; empty = the address from the e-mail settings, several separated by commas.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm2": {
+					"type": "staticText",
+					"text": "Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm3": {
+					"type": "staticText",
+					"text": "Gotify: nothing to fill in. Alarms come with high priority.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm4": {
+					"type": "staticText",
+					"text": "WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm5": {
+					"type": "staticText",
+					"text": "SMS (gsmsms): phone number like +491701234567 – required.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm6": {
+					"type": "staticText",
+					"text": "Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm7": {
+					"type": "staticText",
+					"text": "MAX: user ID; empty = every user the bot knows.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm8": {
+					"type": "staticText",
+					"text": "ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
+				},
+				"nm9": {
+					"type": "staticText",
+					"text": "Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontSize": "0.85em"
+					}
 				},
 				"testBtn": {
 					"type": "sendTo",

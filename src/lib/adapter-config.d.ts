@@ -48,8 +48,13 @@ export interface ActionRow {
 export interface NotifyRow {
 	enabled: boolean;
 	instance: string;
-	user: string;
-	chatId: string;
+	/** fields per messenger: see lib/messengers.ts */
+	user?: string;
+	chatId?: string;
+	phone?: string;
+	to?: string;
+	device?: string;
+	channel?: string;
 }
 
 /** A lamp of the presence simulation */
