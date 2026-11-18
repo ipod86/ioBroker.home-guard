@@ -6187,7 +6187,7 @@
 		"tabAlexa": {
 			"type": "panel",
 			"label": "Alexa",
-			"hidden": "!data.wizDone || (!data.wizHasAlexa && !(data.echos || []).some(r => r && r.device))",
+			"hidden": "!data.wizDone",
 			"items": {
 				"ah": {
 					"type": "header",
