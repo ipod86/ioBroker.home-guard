@@ -1455,7 +1455,10 @@ class HomeGuard extends utils.Adapter {
 		}
 		const alarm = yes(form.wizAlexaAlarm);
 		const sim = yes(form.wizAlexaSim);
-		const simDevice = String(form.wizEchoSimDevice || '') || found.find(e => e.player)?.value || '';
+		const simDevice =
+			(typeof form.wizEchoSimDevice === 'string' && form.wizEchoSimDevice) ||
+			found.find(e => e.player)?.value ||
+			'';
 		rows = rows.map(r => {
 			const out: EchoRow = { ...r, alarm };
 			if (alarm) {
