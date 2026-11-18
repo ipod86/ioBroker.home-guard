@@ -71,6 +71,44 @@ export interface SimLampRow {
 	learnFrom?: string;
 	/** when the simulation ends: '' automatic (devices off, lamps on), 'off', 'keep' */
 	stopOff?: '' | 'off' | 'keep';
+	/** devices: time window ('' / evening = dusk to lights out, day = wake-up to lights out, custom = times) */
+	window?: '' | 'evening' | 'day' | 'custom';
+	/** devices with an own window: "HH:MM-HH:MM" */
+	times?: string;
+	/** devices: how often (empty = general setting) */
+	count?: number | string;
+	/** devices: how long, minutes "min-max" or "min" (empty = general setting) */
+	dur?: string;
+}
+
+/** an Amazon Echo (alexa2 adapter): used for the alarm and/or the presence simulation, each with own settings */
+export interface EchoRow {
+	enabled: boolean;
+	/** device object of the alexa2 adapter, e.g. alexa2.0.Echo-Devices.G090XX */
+	device: string;
+	/** own name (optional) */
+	name?: string;
+	/** alarm: sound and announcement on this Echo */
+	alarm?: boolean;
+	/** volume for the alarm 0-100 */
+	alarmVolume?: number | string;
+	/** sound of the Amazon sound library ('' = none) */
+	alarmSound?: string;
+	/** read the alarm text aloud */
+	alarmText?: boolean;
+	/** simulation: play radio on this Echo */
+	sim?: boolean;
+	/** station(s): name or TuneIn ID (s12345); several separated by commas = a random one each time */
+	stations?: string;
+	/** volume for the radio 0-100 (empty = as it is) */
+	simVolume?: number | string;
+	/** time window, times, how often, how long - as for the devices of the simulation */
+	window?: '' | 'evening' | 'day' | 'custom';
+	times?: string;
+	count?: number | string;
+	dur?: string;
+	/** learn when radio or music really plays on this Echo (runs of at least 5 minutes) */
+	learn?: boolean;
 }
 
 declare global {
@@ -192,6 +230,12 @@ declare global {
 			wizQLamps: boolean;
 			wizQActions: boolean;
 			wizSimMorning: boolean;
+			/** setup assistant: an Echo was found / use it for the alarm / for the simulation */
+			wizHasAlexa: boolean;
+			wizAlexaAlarm: boolean;
+			wizAlexaSim: boolean;
+			/** Amazon Echo devices (alexa2) for the alarm and the simulation */
+			echos: EchoRow[];
 			simMode: 'dusk' | 'learned' | 'combined';
 			simStartOffset: number;
 			simStartRandom: number;

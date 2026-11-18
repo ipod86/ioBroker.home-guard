@@ -58,6 +58,37 @@ function rowRoles(row) {
   }
   return roles;
 }
+const ECHO_SOUNDS = {
+  bell: "soundbank://soundlibrary/alarms/beeps_and_bloops/bell_02",
+  siren: "soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_04",
+  horn: "soundbank://soundlibrary/alarms/air_horns/air_horn_01"
+};
+function deviceWindow(row) {
+  var _a;
+  const out = {};
+  if (row.window === "day" || row.window === "custom") {
+    out.window = row.window;
+  }
+  const t = /^\s*(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})\s*$/.exec(String(row.times || ""));
+  if (out.window === "custom" && t) {
+    out.from = t[1];
+    out.to = t[2];
+  }
+  const n = Number(row.count);
+  if (row.count !== "" && row.count != null && n >= 1) {
+    out.count = Math.min(5, Math.round(n));
+  }
+  const d = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*$/.exec(String(row.dur || ""));
+  if (d) {
+    out.durMin = Math.max(5, Number(d[1]));
+    out.durMax = Math.max(out.durMin, Number((_a = d[2]) != null ? _a : d[1]));
+  }
+  return out;
+}
+function hmMin(hm) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(hm || "").trim());
+  return m ? Number(m[1]) * 60 + Number(m[2]) : -1;
+}
 const LEARN_IGNORE = /^system\.adapter\.(javascript|scenes|node-red|home-guard)\./;
 class HomeGuard extends utils.Adapter {
   T = (0, import_texts.texts)("en");
@@ -79,6 +110,12 @@ class HomeGuard extends utils.Adapter {
   learnFrom = /* @__PURE__ */ new Map();
   // learn source state -> simulation lamp
   learnFromVals = /* @__PURE__ */ new Map();
+  /** Echos of the simulation: lamp ID (Player.currentState) -> row */
+  echoSim = /* @__PURE__ */ new Map();
+  /** alarm on the Echos: repeat timer, end time, text of the alarm */
+  echoAlarmTimer;
+  echoAlarmUntil = 0;
+  echoAlarmText = "";
   /** switches of the evening and morning light (control.eveningOn …), all on for a new instance */
   lightSw = {
     eveningOn: true,
@@ -606,7 +643,7 @@ class HomeGuard extends utils.Adapter {
    * Collects the lamps of the presence simulation
    */
   async setupSimLamps() {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const c = this.config;
     const lamps = /* @__PURE__ */ new Map();
     this.learnFrom.clear();
@@ -640,6 +677,27 @@ class HomeGuard extends utils.Adapter {
         this.stopOff.set(row.id, row.stopOff === "off");
       }
     }
+    this.echoSim.clear();
+    const echoWindows = /* @__PURE__ */ new Map();
+    for (const row of c.echos || []) {
+      if (!(row == null ? void 0 : row.device) || row.enabled === false || !row.sim) {
+        continue;
+      }
+      const id = `${row.device}.Player.currentState`;
+      if (!await this.getForeignObjectAsync(id)) {
+        this.log.warn(`Echo ${row.device}: no player (only speech) - not used for the simulation`);
+        continue;
+      }
+      this.echoSim.set(id, row);
+      lamps.set(id, {
+        name: row.name || await this.nameOf(row.device),
+        roles: /* @__PURE__ */ new Set(["device"])
+      });
+      echoWindows.set(id, deviceWindow(row));
+      if (row.learn) {
+        this.learnFrom.set(id, id);
+      }
+    }
     this.simLamps = [];
     for (const [id, l] of lamps) {
       for (const type of l.roles) {
@@ -649,16 +707,17 @@ class HomeGuard extends utils.Adapter {
           type,
           valueOn: ((_b = l.row) == null ? void 0 : _b.valueOn) ? String(l.row.valueOn) : void 0,
           valueOff: ((_c = l.row) == null ? void 0 : _c.valueOff) ? String(l.row.valueOff) : void 0,
-          learn: !!((_d = l.row) == null ? void 0 : _d.learnFrom)
+          learn: !!((_d = l.row) == null ? void 0 : _d.learnFrom) || this.echoSim.has(id) && !!((_e = this.echoSim.get(id)) == null ? void 0 : _e.learn),
+          ...type === "device" ? (_f = echoWindows.get(id)) != null ? _f : l.row ? deviceWindow(l.row) : {} : {}
         });
       }
     }
     for (const id of lamps.keys()) {
-      this.simLampVals.set(id, (0, import_alarm.isOpenValue)((_e = await this.getForeignStateAsync(id)) == null ? void 0 : _e.val));
+      this.simLampVals.set(id, (0, import_alarm.isOpenValue)((_g = await this.getForeignStateAsync(id)) == null ? void 0 : _g.val));
       await this.subscribeForeignStatesAsync(id);
     }
     for (const src of this.learnFrom.keys()) {
-      this.learnFromVals.set(src, (0, import_alarm.isOpenValue)((_f = await this.getForeignStateAsync(src)) == null ? void 0 : _f.val));
+      this.learnFromVals.set(src, (0, import_alarm.isOpenValue)((_h = await this.getForeignStateAsync(src)) == null ? void 0 : _h.val));
       await this.subscribeForeignStatesAsync(src);
     }
   }
@@ -742,8 +801,8 @@ class HomeGuard extends utils.Adapter {
       const from = state.from || "";
       const ignored = c.simLearnDevicesOnly !== false ? LEARN_IGNORE.test(from) : from.startsWith(`system.adapter.${this.namespace}`);
       const ts = state.ts || Date.now();
-      const hasSource = [...this.learnFrom.values()].includes(id);
-      if (before !== on && !hasSource && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindow(ts))) {
+      const hasSource = [...this.learnFrom.values()].includes(id) || this.echoSim.has(id);
+      if (before !== on && !hasSource && !this.sim.active && !ignored && confirmed && (!on || this.inLearnWindowFor(id, ts))) {
         if (this.learner.record(id, on, ts)) {
           this.saveLearnedSoon();
         }
@@ -755,8 +814,8 @@ class HomeGuard extends utils.Adapter {
       const before = this.learnFromVals.get(id);
       this.learnFromVals.set(id, on);
       const ts = state.ts || Date.now();
-      if (before !== on && !this.sim.active && (!on || this.inLearnWindow(ts))) {
-        if (this.learner.record(target, on, ts)) {
+      if (before !== on && !this.sim.active && (!on || this.inLearnWindowFor(target, ts))) {
+        if (this.learner.record(target, on, ts, this.echoSim.has(target) ? 5 : 1)) {
           this.saveLearnedSoon();
         }
       }
@@ -1058,6 +1117,10 @@ class HomeGuard extends utils.Adapter {
         return reply({ native: import_wizard.WIZARD_DEFAULTS[str(msg.step)] || {} });
       case "wizardScan":
         return reply({ native: await this.wizardScan(msg) });
+      case "echoList":
+        return reply((await this.echoList()).map((e) => ({ value: e.value, label: e.label })));
+      case "wizardAlexa":
+        return reply({ native: await this.wizardAlexa(msg) });
       default:
         return reply({ error: `unknown command ${obj.command}` });
     }
@@ -1151,6 +1214,24 @@ class HomeGuard extends utils.Adapter {
       startkey: "system.adapter.",
       endkey: "system.adapter.\u9999"
     })).rows.map((r) => r.id.replace("system.adapter.", ""));
+    if (insts.some((id) => /^alexa2\.\d+$/.test(id))) {
+      const echos = await this.echoList();
+      if (echos.length) {
+        out.wizHasAlexa = true;
+        if (!(this.config.echos || []).some((r) => r && r.device)) {
+          out.echos = echos.map((e) => ({
+            enabled: true,
+            device: e.value,
+            name: "",
+            alarm: false,
+            sim: false
+          }));
+        }
+        lines.push(
+          `Alexa: ${echos.length} Echo${echos.length === 1 ? "" : "s"} (${echos.map((e) => e.label).join(", ")})`
+        );
+      }
+    }
     const speaker = insts.find((id) => /^(alexa2|sayit)\.\d+$/.test(id));
     if (speaker && empty("speechId")) {
       out.wizHasSpeaker = true;
@@ -1180,6 +1261,44 @@ class HomeGuard extends utils.Adapter {
     }
     out.wizScanInfo = lines.join("\n");
     return out;
+  }
+  /**
+   * Setup assistant, page "Alexa": takes the answers into the table of the Echos - for the alarm every Echo,
+   * for the radio the first Echo with a player, with sensible volumes
+   *
+   * @param form current values of the form (wizAlexaAlarm, wizAlexaSim, echos)
+   */
+  async wizardAlexa(form) {
+    var _a;
+    const found = await this.echoList();
+    let rows = (Array.isArray(form.echos) ? form.echos : this.config.echos || []).filter(
+      (r) => r == null ? void 0 : r.device
+    );
+    for (const e of found) {
+      if (!rows.some((r) => r.device === e.value)) {
+        rows.push({ enabled: true, device: e.value, name: "" });
+      }
+    }
+    const alarm = form.wizAlexaAlarm === true || form.wizAlexaAlarm === "true";
+    const sim = form.wizAlexaSim === true || form.wizAlexaSim === "true";
+    const firstPlayer = (_a = found.find((e) => e.player)) == null ? void 0 : _a.value;
+    rows = rows.map((r) => {
+      var _a2, _b, _c, _d, _e, _f;
+      return {
+        ...r,
+        alarm,
+        alarmVolume: (_a2 = r.alarmVolume) != null ? _a2 : 80,
+        alarmSound: (_b = r.alarmSound) != null ? _b : "siren",
+        alarmText: (_c = r.alarmText) != null ? _c : true,
+        sim: sim && r.device === firstPlayer,
+        simVolume: (_d = r.simVolume) != null ? _d : 30,
+        window: r.window || "day",
+        count: (_e = r.count) != null ? _e : 2,
+        dur: r.dur || "30-90",
+        learn: (_f = r.learn) != null ? _f : true
+      };
+    });
+    return { echos: rows };
   }
   // ======================================================================
   // alarm events: notifications, actions, logbook
@@ -1280,6 +1399,7 @@ class HomeGuard extends utils.Adapter {
         speech = c.speechAlarm;
         await this.setStateAsync("status.lastTrigger", ((_a = info.sensor) == null ? void 0 : _a.name) || "", true);
         await this.setStateAsync("status.lastTriggerTime", Date.now(), true);
+        this.echoAlarmText = text;
         this.startRepeat(text);
         if (c.notificationManager) {
           try {
@@ -1505,6 +1625,7 @@ class HomeGuard extends utils.Adapter {
    */
   async sirens(on) {
     var _a;
+    await this.echoAlarm(on);
     for (const t of this.sirenTimers) {
       if (t) {
         this.clearTimeout(t);
@@ -1552,7 +1673,7 @@ class HomeGuard extends utils.Adapter {
     const duration = Math.min(300, Math.max(5, num(msg.duration, 15)));
     const text = `${T.testPrefix}${T.alarm(T.testTrigger)}`;
     const done = [];
-    const sirenCount = (c.sirens || []).filter((x) => (x == null ? void 0 : x.id) && x.enabled !== false).length;
+    const sirenCount = (c.sirens || []).filter((x) => (x == null ? void 0 : x.id) && x.enabled !== false).length + this.alarmEchos().length;
     const actionCount = (c.actions || []).filter((a) => (a == null ? void 0 : a.id) && a.enabled !== false && a.event === "alarm").length;
     const anything = on("notify", true) && (c.notify || []).some((r) => (r == null ? void 0 : r.instance) && r.enabled !== false) || on("speech", true) && !!c.speechId || on("lamps", true) && this.lampOuts.length > 0 || on("sirens", false) && sirenCount > 0 || on("actions", false) && actionCount > 0;
     if (!anything) {
@@ -1590,6 +1711,7 @@ class HomeGuard extends utils.Adapter {
       done.push(T.testParts.lamps(test.lamps.length));
     }
     if (on("sirens", false) && sirenCount) {
+      this.echoAlarmText = text;
       await this.sirens(true);
       test.sirens = true;
       done.push(T.testParts.sirens(sirenCount));
@@ -1809,7 +1931,28 @@ class HomeGuard extends utils.Adapter {
     }
   }
   /**
-   * Is a time inside the learning window (always, only when dark, or between two times)?
+   * Is a time inside the learning window of a lamp: a device with an own time window uses that window,
+   * everything else the window of the settings
+   *
+   * @param id state ID of the lamp or device
+   * @param ts time in ms
+   */
+  inLearnWindowFor(id, ts) {
+    const dev = this.simLamps.find((l) => l.id === id && l.type === "device" && l.window);
+    if (!dev) {
+      return this.inLearnWindow(ts);
+    }
+    const d = new Date(ts);
+    const m = d.getHours() * 60 + d.getMinutes();
+    const from = dev.window === "day" ? Math.max(0, hmMin(this.config.simWake) < 0 ? 390 : hmMin(this.config.simWake)) : hmMin(dev.from);
+    const to = dev.window === "day" ? hmMin(this.config.simEnd) < 0 ? 1350 : hmMin(this.config.simEnd) : hmMin(dev.to);
+    if (from < 0 || to < 0) {
+      return true;
+    }
+    return from <= to ? m >= from && m < to : m >= from || m < to;
+  }
+  /**
+   * Is a time inside the learning window of the settings (always, only when dark, or between two times)?
    *
    * @param ts time in ms
    */
@@ -1880,7 +2023,7 @@ class HomeGuard extends utils.Adapter {
         morningOffRandom: clamp(num(c.simMorningOffRandom, 25), 0, 120),
         morningOffTime: c.simMorningOffTime || "",
         morningBright: this.luxBrightTs && (0, import_simulation.eveningKey)(this.luxBrightTs) === (0, import_simulation.eveningKey)(noon) ? this.luxBrightTs : void 0,
-        learnFilter: (ts) => this.inLearnWindow(ts)
+        learnFilter: (ts, id) => this.inLearnWindowFor(id, ts)
       },
       this.learner
     );
@@ -1927,10 +2070,137 @@ class HomeGuard extends utils.Adapter {
    * @param on on or off
    */
   async switchLamp(id, on) {
+    const echo = this.echoSim.get(id);
+    if (echo) {
+      return this.echoPlay(echo, on);
+    }
     const { on: vOn, off } = await this.onOffValues(id);
     const lamp = this.simLamps.find((l) => l.id === id);
     const own = on ? lamp == null ? void 0 : lamp.valueOn : lamp == null ? void 0 : lamp.valueOff;
     await this.setForeignStateAsync(id, own ? this.parseValue(own) : on ? vOn : off, false);
+  }
+  // ======================================================================
+  // Amazon Echo (alexa2): radio in the simulation, sound and announcement on alarm
+  // ======================================================================
+  /**
+   * Radio on an Echo on or off
+   *
+   * @param row the Echo row
+   * @param on play (a station of the row, a random one of several) or pause
+   */
+  async echoPlay(row, on) {
+    const dev = row.device;
+    try {
+      if (!on) {
+        await this.setForeignStateAsync(`${dev}.Player.controlPause`, true, false);
+        return;
+      }
+      const vol = Number(row.simVolume);
+      if (row.simVolume !== "" && row.simVolume != null && vol >= 0 && vol <= 100) {
+        await this.setForeignStateAsync(`${dev}.Player.volume`, Math.round(vol), false);
+      }
+      const list = String(row.stations || "").split(",").map((x) => x.trim()).filter(Boolean);
+      const station = list.length ? list[Math.floor(Math.random() * list.length)] : "";
+      if (!station) {
+        await this.setForeignStateAsync(`${dev}.Player.controlPlay`, true, false);
+      } else if (/^[sp]\d+$/i.test(station)) {
+        await this.setForeignStateAsync(`${dev}.Player.TuneIn-Station`, station, false);
+      } else {
+        const say = this.sysLang === "de" ? `spiele ${station}` : `play ${station}`;
+        await this.setForeignStateAsync(`${dev}.Commands.textCommand`, say, false);
+      }
+    } catch (e) {
+      this.log.warn(`Echo ${dev}: ${e.message}`);
+    }
+  }
+  /** Echos used on alarm */
+  alarmEchos() {
+    return (this.config.echos || []).filter((r) => (r == null ? void 0 : r.device) && r.enabled !== false && r.alarm);
+  }
+  /**
+   * Alarm on the Echos: volume, sound and (optionally) the alarm text, repeated while the alarm runs
+   *
+   * @param on alarm starts or ends
+   */
+  async echoAlarm(on) {
+    if (this.echoAlarmTimer) {
+      this.clearInterval(this.echoAlarmTimer);
+      this.echoAlarmTimer = void 0;
+    }
+    const echos = this.alarmEchos();
+    if (!echos.length) {
+      return;
+    }
+    if (!on) {
+      if (this.echoAlarmUntil) {
+        this.echoAlarmUntil = 0;
+        for (const r of echos) {
+          await this.setForeignStateAsync(`${r.device}.Commands.deviceStop`, true, false).catch(() => {
+          });
+        }
+      }
+      return;
+    }
+    const secs = clamp(num(this.config.alarmDuration, 180), 20, 3600);
+    this.echoAlarmUntil = Date.now() + secs * 1e3;
+    const once = async () => {
+      var _a;
+      if (Date.now() > this.echoAlarmUntil) {
+        if (this.echoAlarmTimer) {
+          this.clearInterval(this.echoAlarmTimer);
+          this.echoAlarmTimer = void 0;
+        }
+        return;
+      }
+      const words = (this.echoAlarmText || this.T.phase.alarm || "Alarm").replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim().replace(/[<>&]/g, " ");
+      for (const r of echos) {
+        try {
+          const vol = Number(r.alarmVolume);
+          await this.setForeignStateAsync(
+            `${r.device}.Commands.speak-volume`,
+            r.alarmVolume !== "" && r.alarmVolume != null && vol >= 0 && vol <= 100 ? Math.round(vol) : 80,
+            false
+          );
+          const sound = ECHO_SOUNDS[(_a = r.alarmSound) != null ? _a : "siren"] || "";
+          const ssml = `<speak>${sound ? `<audio src="${sound}"/>` : ""}${r.alarmText !== false ? ` ${words}` : ""}</speak>`;
+          await this.setForeignStateAsync(`${r.device}.Commands.ssml`, ssml, false);
+        } catch (e) {
+          this.log.warn(`Echo ${r.device}: ${e.message}`);
+        }
+      }
+    };
+    await once();
+    this.echoAlarmTimer = this.setInterval(() => void once(), 2e4);
+  }
+  /**
+   * The Echos of all alexa2 instances, for the selection in the settings
+   *
+   * @returns value = device object, label = name (with a note when it can only speak)
+   */
+  async echoList() {
+    var _a, _b;
+    const out = [];
+    const devs = await this.getObjectViewAsync("system", "device", {
+      startkey: "alexa2.",
+      endkey: "alexa2.\u9999"
+    });
+    for (const r of devs.rows) {
+      if (!/^alexa2\.\d+\.Echo-Devices\.[^.]+$/.test(r.id)) {
+        continue;
+      }
+      const speak = await this.getForeignObjectAsync(`${r.id}.Commands.ssml`);
+      if (!speak) {
+        continue;
+      }
+      const player = !!await this.getForeignObjectAsync(`${r.id}.Player.currentState`);
+      const n = (_b = (_a = r.value) == null ? void 0 : _a.common) == null ? void 0 : _b.name;
+      const name = String(
+        (typeof n === "object" ? n[this.sysLang] || n.en : n) || r.id
+      );
+      const de = this.sysLang === "de";
+      out.push({ value: r.id, label: player ? name : `${name} (${de ? "nur Ansagen" : "speech only"})`, player });
+    }
+    return out.sort((a, b) => a.label.localeCompare(b.label));
   }
   /**
    * Writes the simulation states

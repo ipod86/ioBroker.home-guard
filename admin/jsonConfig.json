@@ -114,6 +114,11 @@
 						},
 						{
 							"value": 19,
+							"label": "Alexa",
+							"hidden": "data.wizStep !== 19 && !(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						},
+						{
+							"value": 20,
 							"label": "Check"
 						}
 					]
@@ -557,6 +562,16 @@
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
 							}
+						},
+						"wizHasAlexa": {
+							"type": "checkbox",
+							"label": "Amazon Echo (Alexa) – for the alarm or radio in the simulation",
+							"hidden": "!(data.alarmEnabled || data.simEnabled)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12
 						},
 						"wizHasLux": {
 							"type": "checkbox",
@@ -3355,6 +3370,51 @@
 								},
 								{
 									"type": "select",
+									"attr": "window",
+									"title": "When",
+									"width": "9%",
+									"default": "",
+									"options": [
+										{
+											"value": "",
+											"label": "in the evening (dusk to lights out)"
+										},
+										{
+											"value": "day",
+											"label": "the whole day (wake-up to lights out)"
+										},
+										{
+											"value": "custom",
+											"label": "own times"
+										}
+									],
+									"hidden": "data.type !== 'device'"
+								},
+								{
+									"type": "text",
+									"attr": "times",
+									"title": "Times (e.g. 08:00-20:00)",
+									"width": "7%",
+									"hidden": "data.type !== 'device' || data.window !== 'custom'"
+								},
+								{
+									"type": "number",
+									"attr": "count",
+									"title": "How often",
+									"width": "5%",
+									"min": 1,
+									"max": 5,
+									"hidden": "data.type !== 'device'"
+								},
+								{
+									"type": "text",
+									"attr": "dur",
+									"title": "Minutes (e.g. 30-90)",
+									"width": "6%",
+									"hidden": "data.type !== 'device'"
+								},
+								{
+									"type": "select",
 									"attr": "stopOff",
 									"title": "When the simulation ends",
 									"width": "12%",
@@ -3382,6 +3442,274 @@
 				"wstep19": {
 					"type": "panel",
 					"hidden": "data.wizStep !== 19",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": {
+						"wa19_0": {
+							"type": "staticText",
+							"text": "Alexa",
+							"style": {
+								"fontSize": "0.8em",
+								"fontWeight": "bold",
+								"letterSpacing": "0.08em",
+								"textTransform": "uppercase",
+								"opacity": 0.65
+							},
+							"xs": 12,
+							"sm": 4,
+							"md": 3,
+							"lg": 2,
+							"xl": 2
+						},
+						"wskip19": {
+							"type": "staticText",
+							"text": "This page is not needed for your answers – go on with \"Next\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))",
+							"style": {
+								"fontStyle": "italic",
+								"opacity": 0.8
+							}
+						},
+						"w19ah": {
+							"type": "header",
+							"text": "I found Alexa at your place",
+							"size": 4,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						},
+						"w19at": {
+							"type": "staticText",
+							"text": "Your Echo devices can help Home Guard: on alarm with a loud sound and the alarm read aloud, and while you are away with radio, so the house does not sound empty. Answer the two questions and press \"Use suggestions\" – then you can adjust everything per Echo in the table.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						},
+						"wizAlexaAlarm": {
+							"type": "checkbox",
+							"label": "Use the Echos for the alarm (sound and announcement)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+						},
+						"wizAlexaSim": {
+							"type": "checkbox",
+							"label": "Use an Echo for the presence simulation (radio while you are away)",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+						},
+						"w19adef": {
+							"type": "sendTo",
+							"label": "Use suggestions",
+							"command": "wizardAlexa",
+							"jsonData": "{\"wizAlexaAlarm\": ${data.wizAlexaAlarm}, \"wizAlexaSim\": ${data.wizAlexaSim}}",
+							"useNative": true,
+							"variant": "outlined",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						},
+						"w19atab": {
+							"type": "staticText",
+							"text": "Per Echo and per use: on alarm it plays a sound and reads the alarm aloud (as an addition to a real siren – it needs the internet and the Amazon login of the alexa2 adapter); in the presence simulation it plays radio while you are away – a fixed station or a random one of several, in the evening, the whole day or at your own times. With \"Learn\" Home Guard notes when radio or music really plays (at least 5 minutes; answers to questions do not count) and replays that.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						},
+						"echos": {
+							"type": "table",
+							"label": "Echo devices",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"items": [
+								{
+									"type": "checkbox",
+									"attr": "enabled",
+									"title": "Active",
+									"width": "4%",
+									"default": true
+								},
+								{
+									"type": "selectSendTo",
+									"attr": "device",
+									"title": "Echo",
+									"width": "14%",
+									"command": "echoList",
+									"jsonData": "{}",
+									"noTranslation": true
+								},
+								{
+									"type": "text",
+									"attr": "name",
+									"title": "Name (optional)",
+									"width": "7%"
+								},
+								{
+									"type": "checkbox",
+									"attr": "alarm",
+									"title": "Alarm",
+									"width": "4%",
+									"default": false
+								},
+								{
+									"type": "number",
+									"attr": "alarmVolume",
+									"title": "Volume alarm",
+									"width": "5%",
+									"min": 0,
+									"max": 100,
+									"default": 80,
+									"hidden": "!data.alarm"
+								},
+								{
+									"type": "select",
+									"attr": "alarmSound",
+									"title": "Alarm sound",
+									"width": "7%",
+									"default": "siren",
+									"hidden": "!data.alarm",
+									"options": [
+										{
+											"value": "siren",
+											"label": "Alarm"
+										},
+										{
+											"value": "bell",
+											"label": "Bell"
+										},
+										{
+											"value": "horn",
+											"label": "Horn"
+										},
+										{
+											"value": "",
+											"label": "no sound"
+										}
+									]
+								},
+								{
+									"type": "checkbox",
+									"attr": "alarmText",
+									"title": "Read the alarm aloud",
+									"width": "5%",
+									"default": true,
+									"hidden": "!data.alarm"
+								},
+								{
+									"type": "checkbox",
+									"attr": "sim",
+									"title": "Radio in the simulation",
+									"width": "5%",
+									"default": false
+								},
+								{
+									"type": "text",
+									"attr": "stations",
+									"title": "Station(s): name or TuneIn ID, several = random",
+									"width": "12%",
+									"hidden": "!data.sim"
+								},
+								{
+									"type": "number",
+									"attr": "simVolume",
+									"title": "Volume radio",
+									"width": "5%",
+									"min": 0,
+									"max": 100,
+									"default": 30,
+									"hidden": "!data.sim"
+								},
+								{
+									"type": "select",
+									"attr": "window",
+									"title": "When",
+									"width": "9%",
+									"default": "",
+									"options": [
+										{
+											"value": "",
+											"label": "in the evening (dusk to lights out)"
+										},
+										{
+											"value": "day",
+											"label": "the whole day (wake-up to lights out)"
+										},
+										{
+											"value": "custom",
+											"label": "own times"
+										}
+									],
+									"hidden": "!data.sim"
+								},
+								{
+									"type": "text",
+									"attr": "times",
+									"title": "Times (e.g. 08:00-20:00)",
+									"width": "7%",
+									"hidden": "!data.sim || data.window !== 'custom'"
+								},
+								{
+									"type": "number",
+									"attr": "count",
+									"title": "How often",
+									"width": "5%",
+									"min": 1,
+									"max": 5,
+									"hidden": "!data.sim"
+								},
+								{
+									"type": "text",
+									"attr": "dur",
+									"title": "Minutes (e.g. 30-90)",
+									"width": "6%",
+									"hidden": "!data.sim"
+								},
+								{
+									"type": "checkbox",
+									"attr": "learn",
+									"title": "Learn when it really plays",
+									"width": "5%",
+									"default": true,
+									"hidden": "!data.sim"
+								}
+							],
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+						}
+					}
+				},
+				"wstep20": {
+					"type": "panel",
+					"hidden": "data.wizStep !== 20",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
@@ -3599,7 +3927,7 @@
 					"type": "sendTo",
 					"label": "◀ Back",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "outlined",
 					"hidden": "data.wizStep <= 0",
@@ -3614,10 +3942,10 @@
 					"type": "sendTo",
 					"label": "Next ▶",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "contained",
-					"hidden": "data.wizStep >= 19",
+					"hidden": "data.wizStep >= 20",
 					"xs": 12,
 					"sm": 6,
 					"md": 3,
@@ -5364,6 +5692,51 @@
 						},
 						{
 							"type": "select",
+							"attr": "window",
+							"title": "When",
+							"width": "9%",
+							"default": "",
+							"options": [
+								{
+									"value": "",
+									"label": "in the evening (dusk to lights out)"
+								},
+								{
+									"value": "day",
+									"label": "the whole day (wake-up to lights out)"
+								},
+								{
+									"value": "custom",
+									"label": "own times"
+								}
+							],
+							"hidden": "data.type !== 'device'"
+						},
+						{
+							"type": "text",
+							"attr": "times",
+							"title": "Times (e.g. 08:00-20:00)",
+							"width": "7%",
+							"hidden": "data.type !== 'device' || data.window !== 'custom'"
+						},
+						{
+							"type": "number",
+							"attr": "count",
+							"title": "How often",
+							"width": "5%",
+							"min": 1,
+							"max": 5,
+							"hidden": "data.type !== 'device'"
+						},
+						{
+							"type": "text",
+							"attr": "dur",
+							"title": "Minutes (e.g. 30-90)",
+							"width": "6%",
+							"hidden": "data.type !== 'device'"
+						},
+						{
+							"type": "select",
 							"attr": "stopOff",
 							"title": "When the simulation ends",
 							"width": "12%",
@@ -5808,6 +6181,193 @@
 					"lg": 4,
 					"xl": 4,
 					"hidden": "!data.morningLight && !(data.simEnabled && ((data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.morning)))"
+				}
+			}
+		},
+		"tabAlexa": {
+			"type": "panel",
+			"label": "Alexa",
+			"hidden": "!data.wizDone || (!data.wizHasAlexa && !(data.echos || []).some(r => r && r.device))",
+			"items": {
+				"ah": {
+					"type": "header",
+					"text": "Amazon Echo (Alexa)",
+					"size": 4,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"at": {
+					"type": "staticText",
+					"text": "Per Echo and per use: on alarm it plays a sound and reads the alarm aloud (as an addition to a real siren – it needs the internet and the Amazon login of the alexa2 adapter); in the presence simulation it plays radio while you are away – a fixed station or a random one of several, in the evening, the whole day or at your own times. With \"Learn\" Home Guard notes when radio or music really plays (at least 5 minutes; answers to questions do not count) and replays that.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"echos": {
+					"type": "table",
+					"label": "Echo devices",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"items": [
+						{
+							"type": "checkbox",
+							"attr": "enabled",
+							"title": "Active",
+							"width": "4%",
+							"default": true
+						},
+						{
+							"type": "selectSendTo",
+							"attr": "device",
+							"title": "Echo",
+							"width": "14%",
+							"command": "echoList",
+							"jsonData": "{}",
+							"noTranslation": true
+						},
+						{
+							"type": "text",
+							"attr": "name",
+							"title": "Name (optional)",
+							"width": "7%"
+						},
+						{
+							"type": "checkbox",
+							"attr": "alarm",
+							"title": "Alarm",
+							"width": "4%",
+							"default": false
+						},
+						{
+							"type": "number",
+							"attr": "alarmVolume",
+							"title": "Volume alarm",
+							"width": "5%",
+							"min": 0,
+							"max": 100,
+							"default": 80,
+							"hidden": "!data.alarm"
+						},
+						{
+							"type": "select",
+							"attr": "alarmSound",
+							"title": "Alarm sound",
+							"width": "7%",
+							"default": "siren",
+							"hidden": "!data.alarm",
+							"options": [
+								{
+									"value": "siren",
+									"label": "Alarm"
+								},
+								{
+									"value": "bell",
+									"label": "Bell"
+								},
+								{
+									"value": "horn",
+									"label": "Horn"
+								},
+								{
+									"value": "",
+									"label": "no sound"
+								}
+							]
+						},
+						{
+							"type": "checkbox",
+							"attr": "alarmText",
+							"title": "Read the alarm aloud",
+							"width": "5%",
+							"default": true,
+							"hidden": "!data.alarm"
+						},
+						{
+							"type": "checkbox",
+							"attr": "sim",
+							"title": "Radio in the simulation",
+							"width": "5%",
+							"default": false
+						},
+						{
+							"type": "text",
+							"attr": "stations",
+							"title": "Station(s): name or TuneIn ID, several = random",
+							"width": "12%",
+							"hidden": "!data.sim"
+						},
+						{
+							"type": "number",
+							"attr": "simVolume",
+							"title": "Volume radio",
+							"width": "5%",
+							"min": 0,
+							"max": 100,
+							"default": 30,
+							"hidden": "!data.sim"
+						},
+						{
+							"type": "select",
+							"attr": "window",
+							"title": "When",
+							"width": "9%",
+							"default": "",
+							"options": [
+								{
+									"value": "",
+									"label": "in the evening (dusk to lights out)"
+								},
+								{
+									"value": "day",
+									"label": "the whole day (wake-up to lights out)"
+								},
+								{
+									"value": "custom",
+									"label": "own times"
+								}
+							],
+							"hidden": "!data.sim"
+						},
+						{
+							"type": "text",
+							"attr": "times",
+							"title": "Times (e.g. 08:00-20:00)",
+							"width": "7%",
+							"hidden": "!data.sim || data.window !== 'custom'"
+						},
+						{
+							"type": "number",
+							"attr": "count",
+							"title": "How often",
+							"width": "5%",
+							"min": 1,
+							"max": 5,
+							"hidden": "!data.sim"
+						},
+						{
+							"type": "text",
+							"attr": "dur",
+							"title": "Minutes (e.g. 30-90)",
+							"width": "6%",
+							"hidden": "!data.sim"
+						},
+						{
+							"type": "checkbox",
+							"attr": "learn",
+							"title": "Learn when it really plays",
+							"width": "5%",
+							"default": true,
+							"hidden": "!data.sim"
+						}
+					]
 				}
 			}
 		}

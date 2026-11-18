@@ -23,7 +23,9 @@ __export(simulation_exports, {
   eveningKey: () => eveningKey,
   eveningNoon: () => eveningNoon,
   isWeekendEvening: () => isWeekendEvening,
-  planEvening: () => planEvening
+  placeRuns: () => placeRuns,
+  planEvening: () => planEvening,
+  windowParts: () => windowParts
 });
 module.exports = __toCommonJS(simulation_exports);
 const MIN_SAME_WEEKDAY = 3;
@@ -60,8 +62,9 @@ class Learner {
    * @param id lamp state ID
    * @param on switched on (true) or off
    * @param ts time of the switching in ms
+   * @param minDur shorter runs are not learned (minutes; e.g. an Echo that only answered a question)
    */
-  record(id, on, ts) {
+  record(id, on, ts, minDur = 1) {
     if (on) {
       if (!this.onSince.has(id)) {
         this.onSince.set(id, ts);
@@ -74,7 +77,7 @@ class Learner {
       return false;
     }
     const dur = Math.round((ts - since) / MIN);
-    if (dur < 1 || dur > 16 * 60) {
+    if (dur < Math.max(1, minDur) || dur > 16 * 60) {
       return false;
     }
     const key = eveningKey(since);
@@ -130,8 +133,51 @@ class Learner {
     return (sameKind.length ? sameKind : usable).map(([, d]) => d);
   }
 }
+function windowParts(noon, fromMin, toMin) {
+  const out = [];
+  const len = (toMin > fromMin ? toMin - fromMin : toMin + 24 * 60 - fromMin) * MIN;
+  const lo = noon;
+  const hi = noon + 24 * 36e5;
+  for (const k of [-1, 0, 1]) {
+    const midnight = new Date(noon + k * 24 * 36e5);
+    midnight.setHours(0, 0, 0, 0);
+    const a = Math.max(lo, midnight.getTime() + fromMin * MIN);
+    const b = Math.min(hi, midnight.getTime() + fromMin * MIN + len);
+    if (b - a >= 10 * MIN) {
+      out.push([a, b]);
+    }
+  }
+  return out.sort((x, y) => x[0] - y[0]);
+}
+function placeRuns(parts, n, dMin, dMax, r) {
+  const total = parts.reduce((t, [a, b]) => t + (b - a), 0);
+  if (!total || n < 1) {
+    return [];
+  }
+  const at = (pos) => {
+    for (const [a, b2] of parts) {
+      if (pos <= b2 - a) {
+        return [a + pos, b2];
+      }
+      pos -= b2 - a;
+    }
+    const [, b] = parts[parts.length - 1];
+    return [b, b];
+  };
+  const slot = total / n;
+  const runs = [];
+  for (let i = 0; i < n; i++) {
+    const dur = Math.min(r(dMin, dMax) * MIN, slot * (n > 1 ? 0.8 : 1));
+    const [on, partEnd] = at(r(i * slot, Math.max(i * slot, (i + 1) * slot - dur)));
+    const off = Math.min(on + dur, partEnd);
+    if (off - on >= MIN) {
+      runs.push([on, off]);
+    }
+  }
+  return runs;
+}
 function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
-  var _a, _b, _c, _d, _e, _f;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i;
   const r = (a, b) => a + rand() * (b - a);
   const steps = [];
   const weekend = isWeekendEvening(noon);
@@ -150,7 +196,7 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
         if (!ids.has(s.id)) {
           continue;
         }
-        if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
+        if (o.learnFilter && !o.learnFilter(noon + s.start * MIN, s.id)) {
           continue;
         }
         learnedIds.add(s.id);
@@ -199,33 +245,37 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
       endMin += 24 * 60;
     }
     const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
-    const dMin = Math.max(5, (_a = o.deviceMin) != null ? _a : 60);
-    const dMax = Math.max(dMin, (_b = o.deviceMax) != null ? _b : 180);
-    const n = Math.max(1, Math.min(5, Math.round((_c = o.deviceCount) != null ? _c : 1)));
-    const slot = (end - start) / n;
     for (const d of devices) {
-      for (let i = 0; i < n; i++) {
-        const from = start + i * slot;
-        const dur = Math.min(r(dMin, dMax), slot / MIN * (n > 1 ? 0.8 : 1));
-        const on = r(from, Math.max(from, from + slot - dur * MIN));
+      const dMin = Math.max(5, (_b = (_a = d.durMin) != null ? _a : o.deviceMin) != null ? _b : 60);
+      const dMax = Math.max(dMin, (_d = (_c = d.durMax) != null ? _c : o.deviceMax) != null ? _d : 180);
+      const n = Math.max(1, Math.min(5, Math.round((_f = (_e = d.count) != null ? _e : o.deviceCount) != null ? _f : 1)));
+      let parts;
+      if (d.window === "day") {
+        parts = windowParts(noon, parseHm(o.wake || "", 6 * 60 + 30), endMin % (24 * 60));
+      } else if (d.window === "custom") {
+        parts = windowParts(noon, parseHm(d.from || "", 9 * 60), parseHm(d.to || "", 20 * 60));
+      } else {
+        parts = [[start, end]];
+      }
+      for (const [on, off] of placeRuns(parts, n, dMin, dMax, r)) {
         steps.push({ at: on, id: d.id, on: true, why: "device" });
-        steps.push({ at: on + dur * MIN, id: d.id, on: false, why: "device" });
+        steps.push({ at: off, id: d.id, on: false, why: "device" });
       }
     }
   }
   const mornings = byType("morning").filter((m) => !learnedIds.has(m.id));
   if (mornings.length && o.sunriseNext) {
     const nextDay = new Date(noon + 24 * 36e5).getDay();
-    const later = nextDay === 0 || nextDay === 6 ? (_d = o.wakeWeekendLater) != null ? _d : 60 : 0;
+    const later = nextDay === 0 || nextDay === 6 ? (_g = o.wakeWeekendLater) != null ? _g : 60 : 0;
     const wakeMin = parseHm(o.wake || "", 6 * 60 + 30) + later;
-    const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, (_e = o.wakeRandom) != null ? _e : 20) * MIN;
+    const wake = noon + (wakeMin + 12 * 60) * MIN + r(0, (_h = o.wakeRandom) != null ? _h : 20) * MIN;
     for (const m of mornings) {
       const on = wake + r(0, 10) * MIN;
       const rnd = () => {
         var _a2;
         return r(0, (_a2 = o.morningOffRandom) != null ? _a2 : 25) * MIN;
       };
-      let off = o.sunriseNext + ((_f = o.morningOffOffset) != null ? _f : 5) * MIN + rnd();
+      let off = o.sunriseNext + ((_i = o.morningOffOffset) != null ? _i : 5) * MIN + rnd();
       const offTime = o.morningOffTime ? parseHm(o.morningOffTime, -1) : -1;
       if (offTime >= 0) {
         off = Math.min(off, noon + (offTime + later + 12 * 60) * MIN + rnd());
@@ -382,6 +432,8 @@ class SimRunner {
   eveningKey,
   eveningNoon,
   isWeekendEvening,
-  planEvening
+  placeRuns,
+  planEvening,
+  windowParts
 });
 //# sourceMappingURL=simulation.js.map

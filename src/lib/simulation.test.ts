@@ -4,7 +4,9 @@ import {
 	SimRunner,
 	eveningKey,
 	eveningNoon,
+	placeRuns,
 	planEvening,
+	windowParts,
 	type PlanStep,
 	type SimLamp,
 	type SimOptions,
@@ -463,5 +465,83 @@ describe('morning', () => {
 		expect(offAt({ morningOffOffset: 20, morningBright: new Date(2026, 10, 19, 7, 30).getTime() })).to.equal(
 			'07:30',
 		);
+	});
+});
+
+describe('devices: time window per device', () => {
+	const hm = (ts: number): number => new Date(ts).getHours() * 60 + new Date(ts).getMinutes();
+	it('own times: every run lies between the times, also in the morning of the next day', () => {
+		const radio: SimLamp[] = [
+			{
+				id: 'radio',
+				name: 'Radio',
+				type: 'device',
+				window: 'custom',
+				from: '08:00',
+				to: '20:00',
+				count: 3,
+				durMin: 30,
+				durMax: 60,
+			},
+		];
+		for (let seed = 1; seed < 40; seed++) {
+			const steps = planEvening(noon, sunset, radio, opts, new Learner(), seeded(seed)).filter(
+				s => s.id === 'radio',
+			);
+			expect(steps.filter(s => s.on).length).to.be.within(1, 3);
+			for (const s of steps) {
+				expect(hm(s.at)).to.be.within(8 * 60, 20 * 60);
+				expect(s.at).to.be.within(noon, noon + 24 * 3600000);
+			}
+		}
+	});
+	it('the whole day: from wake-up to lights out, not at night', () => {
+		const radio: SimLamp[] = [{ id: 'radio', name: 'Radio', type: 'device', window: 'day', count: 2 }];
+		const plan = planEvening(
+			noon,
+			sunset,
+			radio,
+			{ ...opts, wake: '07:00', end: '22:00' },
+			new Learner(),
+			seeded(3),
+		);
+		const steps = plan.filter(s => s.id === 'radio');
+		expect(steps.filter(s => s.on).length).to.equal(2);
+		for (const s of steps) {
+			const m = hm(s.at);
+			expect(m >= 7 * 60 && m <= 22 * 60).to.equal(true);
+		}
+	});
+	it('a window over midnight and the parts of one evening day', () => {
+		const parts = windowParts(noon, 22 * 60, 2 * 60);
+		expect(parts.length).to.equal(1);
+		expect(hm(parts[0][0])).to.equal(22 * 60);
+		expect(hm(parts[0][1])).to.equal(2 * 60);
+		const day = windowParts(noon, 8 * 60, 20 * 60);
+		expect(day.map(([a, b]) => [hm(a), hm(b)])).to.deep.equal([
+			[12 * 60, 20 * 60],
+			[8 * 60, 12 * 60],
+		]);
+	});
+	it('runs never cross a gap between two parts', () => {
+		const a = noon;
+		const parts: [number, number][] = [
+			[a, a + 60 * MIN],
+			[a + 600 * MIN, a + 660 * MIN],
+		];
+		const r = seeded(5);
+		const rr = (x: number, y: number): number => x + r() * (y - x);
+		for (const [on, off] of placeRuns(parts, 2, 40, 50, rr)) {
+			const inside = parts.some(([p, q]) => on >= p && off <= q);
+			expect(inside).to.equal(true);
+		}
+	});
+	it('a short Echo answer is not learned, a radio evening is', () => {
+		const l = new Learner();
+		const t = new Date(2026, 10, 18, 19, 0, 0).getTime();
+		l.record('echo', true, t);
+		expect(l.record('echo', false, t + 2 * MIN, 5)).to.equal(false);
+		l.record('echo', true, t + 10 * MIN);
+		expect(l.record('echo', false, t + 70 * MIN, 5)).to.equal(true);
 	});
 });

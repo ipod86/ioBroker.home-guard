@@ -8,6 +8,8 @@ export type LearnPick = 'kind' | 'weekday';
 /** the same day of the week is only preferred when at least this many of them are learned */
 const MIN_SAME_WEEKDAY = 3;
 export type LampType = 'evening' | 'visit' | 'bedtime' | 'device' | 'morning';
+/** when a device (TV, radio, Echo) runs in the simulation: in the evening, the whole day or between two times */
+export type DeviceWindow = 'evening' | 'day' | 'custom';
 
 export interface SimLamp {
 	id: string;
@@ -19,6 +21,15 @@ export interface SimLamp {
 	valueOff?: string;
 	/** learned from a separate state (e.g. the real power state of the TV) - devices are learned only then */
 	learn?: boolean;
+	/** devices: time window (default: evening = dusk to lights out) */
+	window?: DeviceWindow;
+	/** devices with an own window: from / to (HH:MM, may pass midnight) */
+	from?: string;
+	to?: string;
+	/** devices: how often and how long (minutes) - empty = the general settings */
+	count?: number;
+	durMin?: number;
+	durMax?: number;
 }
 
 /** one learned switching: start in minutes after 12:00 of the evening day, duration in minutes */
@@ -69,8 +80,8 @@ export interface SimOptions {
 	morningOffTime?: string;
 	/** it became bright this morning (lux sensor): morning lamps off then at the latest */
 	morningBright?: number;
-	/** learned switching is only replayed when this says yes for its time (e.g. only when dark) */
-	learnFilter?: (ts: number) => boolean;
+	/** learned switching is only replayed when this says yes for its time and lamp (e.g. only when dark) */
+	learnFilter?: (ts: number, id: string) => boolean;
 }
 
 export interface PlanStep {
@@ -143,8 +154,9 @@ export class Learner {
 	 * @param id lamp state ID
 	 * @param on switched on (true) or off
 	 * @param ts time of the switching in ms
+	 * @param minDur shorter runs are not learned (minutes; e.g. an Echo that only answered a question)
 	 */
-	record(id: string, on: boolean, ts: number): boolean {
+	record(id: string, on: boolean, ts: number, minDur = 1): boolean {
 		if (on) {
 			if (!this.onSince.has(id)) {
 				this.onSince.set(id, ts);
@@ -157,7 +169,7 @@ export class Learner {
 			return false;
 		}
 		const dur = Math.round((ts - since) / MIN);
-		if (dur < 1 || dur > 16 * 60) {
+		if (dur < Math.max(1, minDur) || dur > 16 * 60) {
 			return false; // a flick of the switch or a lamp forgotten all day
 		}
 		const key = eveningKey(since);
@@ -218,6 +230,76 @@ export class Learner {
 }
 
 /**
+ * The parts of a daily time window that lie in one evening day (12:00 to 12:00 of the next day)
+ *
+ * @param noon 12:00 of the evening day
+ * @param fromMin start in minutes after midnight
+ * @param toMin end in minutes after midnight (smaller than the start: the window passes midnight)
+ * @returns [from, to] in ms, at least 10 minutes long
+ */
+export function windowParts(noon: number, fromMin: number, toMin: number): [number, number][] {
+	const out: [number, number][] = [];
+	const len = (toMin > fromMin ? toMin - fromMin : toMin + 24 * 60 - fromMin) * MIN;
+	const lo = noon;
+	const hi = noon + 24 * 3600000;
+	for (const k of [-1, 0, 1]) {
+		const midnight = new Date(noon + k * 24 * 3600000);
+		midnight.setHours(0, 0, 0, 0);
+		const a = Math.max(lo, midnight.getTime() + fromMin * MIN);
+		const b = Math.min(hi, midnight.getTime() + fromMin * MIN + len);
+		if (b - a >= 10 * MIN) {
+			out.push([a, b]);
+		}
+	}
+	return out.sort((x, y) => x[0] - y[0]);
+}
+
+/**
+ * n runs spread over the parts of a window: each in its own share of the time, never across a gap
+ *
+ * @param parts the parts of the window
+ * @param n number of runs
+ * @param dMin shortest run (minutes)
+ * @param dMax longest run (minutes)
+ * @param r random number between a and b
+ * @returns [on, off] in ms
+ */
+export function placeRuns(
+	parts: [number, number][],
+	n: number,
+	dMin: number,
+	dMax: number,
+	r: (a: number, b: number) => number,
+): [number, number][] {
+	const total = parts.reduce((t, [a, b]) => t + (b - a), 0);
+	if (!total || n < 1) {
+		return [];
+	}
+	// position on the joined parts -> time and the end of its part
+	const at = (pos: number): [number, number] => {
+		for (const [a, b] of parts) {
+			if (pos <= b - a) {
+				return [a + pos, b];
+			}
+			pos -= b - a;
+		}
+		const [, b] = parts[parts.length - 1];
+		return [b, b];
+	};
+	const slot = total / n;
+	const runs: [number, number][] = [];
+	for (let i = 0; i < n; i++) {
+		const dur = Math.min(r(dMin, dMax) * MIN, slot * (n > 1 ? 0.8 : 1));
+		const [on, partEnd] = at(r(i * slot, Math.max(i * slot, (i + 1) * slot - dur)));
+		const off = Math.min(on + dur, partEnd);
+		if (off - on >= MIN) {
+			runs.push([on, off]);
+		}
+	}
+	return runs;
+}
+
+/**
  * The plan of one evening.
  *
  * @param noon 12:00 of the evening day
@@ -258,7 +340,7 @@ export function planEvening(
 				if (!ids.has(s.id)) {
 					continue;
 				}
-				if (o.learnFilter && !o.learnFilter(noon + s.start * MIN)) {
+				if (o.learnFilter && !o.learnFilter(noon + s.start * MIN, s.id)) {
 					continue;
 				}
 				learnedIds.add(s.id);
@@ -302,8 +384,9 @@ export function planEvening(
 			}
 		}
 	}
-	// devices (TV, radio) without learned switching: n times in the evening for a random time, between dusk and
-	// lights out - each in its own part of the evening, so they do not overlap
+	// devices (TV, radio, Echo) without learned switching: n times for a random time in their window - in the evening
+	// (dusk to lights out, the default), the whole day (wake-up to lights out) or between two own times; each run in
+	// its own part of the window, so they do not overlap
 	const devices = byType('device').filter(d => !learnedIds.has(d.id));
 	if (devices.length) {
 		const start = sunset + (o.startOffset + r(0, o.startRandom)) * MIN;
@@ -312,17 +395,21 @@ export function planEvening(
 			endMin += 24 * 60;
 		}
 		const end = Math.max(start + 30 * MIN, noon + (endMin - 12 * 60) * MIN);
-		const dMin = Math.max(5, o.deviceMin ?? 60);
-		const dMax = Math.max(dMin, o.deviceMax ?? 180);
-		const n = Math.max(1, Math.min(5, Math.round(o.deviceCount ?? 1)));
-		const slot = (end - start) / n;
 		for (const d of devices) {
-			for (let i = 0; i < n; i++) {
-				const from = start + i * slot;
-				const dur = Math.min(r(dMin, dMax), (slot / MIN) * (n > 1 ? 0.8 : 1));
-				const on = r(from, Math.max(from, from + slot - dur * MIN));
+			const dMin = Math.max(5, d.durMin ?? o.deviceMin ?? 60);
+			const dMax = Math.max(dMin, d.durMax ?? o.deviceMax ?? 180);
+			const n = Math.max(1, Math.min(5, Math.round(d.count ?? o.deviceCount ?? 1)));
+			let parts: [number, number][];
+			if (d.window === 'day') {
+				parts = windowParts(noon, parseHm(o.wake || '', 6 * 60 + 30), endMin % (24 * 60));
+			} else if (d.window === 'custom') {
+				parts = windowParts(noon, parseHm(d.from || '', 9 * 60), parseHm(d.to || '', 20 * 60));
+			} else {
+				parts = [[start, end]];
+			}
+			for (const [on, off] of placeRuns(parts, n, dMin, dMax, r)) {
 				steps.push({ at: on, id: d.id, on: true, why: 'device' });
-				steps.push({ at: on + dur * MIN, id: d.id, on: false, why: 'device' });
+				steps.push({ at: off, id: d.id, on: false, why: 'device' });
 			}
 		}
 	}
