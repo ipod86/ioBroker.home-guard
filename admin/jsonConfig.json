@@ -2050,7 +2050,7 @@
 									"attr": "phone",
 									"title": "Phone number",
 									"width": "11%",
-									"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+									"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms','sevenio'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 								},
 								{
 									"type": "text",
@@ -2157,7 +2157,7 @@
 						},
 						"w13m5": {
 							"type": "staticText",
-							"text": "SMS (gsmsms): phone number like +491701234567 – required.",
+							"text": "SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -5606,7 +5606,7 @@
 							"attr": "phone",
 							"title": "Phone number",
 							"width": "11%",
-							"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
+							"hidden": "!['whatsapp-cmb', 'signal-cmb', 'gsmsms','sevenio'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 						},
 						{
 							"type": "text",
@@ -5706,7 +5706,7 @@
 				},
 				"nm5": {
 					"type": "staticText",
-					"text": "SMS (gsmsms): phone number like +491701234567 – required.",
+					"text": "SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,

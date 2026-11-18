@@ -513,9 +513,9 @@
 	"Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.": "Pushover / Pushsafer: dispositivo; vacío = todos los dispositivos. Las alarmas llegan con prioridad alta.",
 	"Gotify: nothing to fill in. Alarms come with high priority.": "Gotify: no hay que rellenar nada. Las alarmas llegan con prioridad alta.",
 	"WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.": "WhatsApp / Signal (CallMeBot): número como +491701234567; vacío = el número de la configuración del adaptador.",
-	"SMS (gsmsms): phone number like +491701234567 – required.": "SMS (gsmsms): número como +491701234567 – obligatorio.",
 	"Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.": "Discord: un usuario (ID, etiqueta o nombre) para un mensaje directo, o un canal como ID de servidor/ID de canal.",
 	"MAX: user ID; empty = every user the bot knows.": "MAX: ID de usuario; vacío = todos los usuarios que conoce el bot.",
 	"ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.": "App ioBroker Visu (iot): nombres de dispositivos de la app separados por comas; vacío = todos los móviles. Las alarmas llegan con prioridad alta.",
-	"Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.": "Synology Chat: nombre del canal como en la configuración de synochat (canal de tipo «entrante») – obligatorio."
+	"Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.": "Synology Chat: nombre del canal como en la configuración de synochat (canal de tipo «entrante») – obligatorio.",
+	"SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.": "SMS (gsmsms, seven.io): número como +491701234567 – obligatorio; seven.io también acepta un nombre de contacto."
 }

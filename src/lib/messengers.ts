@@ -136,6 +136,15 @@ export const MESSENGERS: Record<string, MessengerDef> = {
 			host.sendTo(inst, 'send', { text: titled(m), recipient: s(row.phone), alert: false });
 		},
 	},
+	sevenio: {
+		name: 'SMS (seven.io)',
+		fields: ['phone'],
+		required: ['phone'],
+		send: (host, inst, row, m) => {
+			// "to" is a phone number or a contact name of seven.io
+			host.sendTo(inst, 'send', { to: s(row.phone), text: titled(m) });
+		},
+	},
 	discord: {
 		name: 'Discord',
 		fields: ['user', 'channel'],

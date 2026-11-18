@@ -513,9 +513,9 @@
 	"Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.": "Pushover / Pushsafer：设备；留空 = 所有设备。报警以高优先级发送。",
 	"Gotify: nothing to fill in. Alarms come with high priority.": "Gotify：无需填写。报警以高优先级发送。",
 	"WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.": "WhatsApp / Signal（CallMeBot）：电话号码如 +491701234567；留空 = 适配器设置中的号码。",
-	"SMS (gsmsms): phone number like +491701234567 – required.": "短信（gsmsms）：电话号码如 +491701234567 – 必填。",
 	"Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.": "Discord：用户（ID、标签或名称）用于私信，或以 服务器 ID/频道 ID 指定频道。",
 	"MAX: user ID; empty = every user the bot knows.": "MAX：用户 ID；留空 = 机器人认识的所有用户。",
 	"ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.": "ioBroker Visu 应用（iot）：应用中的设备名称，用逗号分隔；留空 = 所有手机。报警以高优先级发送。",
-	"Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.": "Synology Chat：频道名称，与 synochat 设置中相同（类型为“传入”的频道）– 必填。"
+	"Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.": "Synology Chat：频道名称，与 synochat 设置中相同（类型为“传入”的频道）– 必填。",
+	"SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.": "短信（gsmsms、seven.io）：电话号码如 +491701234567 – 必填；seven.io 也接受联系人名称。"
 }

@@ -114,6 +114,14 @@ const MESSENGERS = {
       host.sendTo(inst, "send", { text: titled(m), recipient: s(row.phone), alert: false });
     }
   },
+  sevenio: {
+    name: "SMS (seven.io)",
+    fields: ["phone"],
+    required: ["phone"],
+    send: (host, inst, row, m) => {
+      host.sendTo(inst, "send", { to: s(row.phone), text: titled(m) });
+    }
+  },
   discord: {
     name: "Discord",
     fields: ["user", "channel"],

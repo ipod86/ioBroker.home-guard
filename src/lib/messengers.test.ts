@@ -18,8 +18,8 @@ function fakeHost(): MessengerHost & { calls: Record<string, unknown>[] } {
 const msg = { title: 'Home Guard', text: 'Alarm: Haustür', alert: true };
 
 describe('messengers', () => {
-	it('knows the 12 supported messengers', () => {
-		expect(Object.keys(MESSENGERS)).to.have.length(12);
+	it('knows the 13 supported messengers', () => {
+		expect(Object.keys(MESSENGERS)).to.have.length(13);
 	});
 	it('lists only installed supported instances', () => {
 		const list = listMessengers(
