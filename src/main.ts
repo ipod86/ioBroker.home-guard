@@ -1388,7 +1388,7 @@ class HomeGuard extends utils.Adapter {
 				name: nameOf(r.value?.common?.name),
 			})),
 			aliasTargets,
-			this.namespace,
+			this.name,
 		);
 		const rows = [...(this.config.sensors || [])].filter(r => r && r.id);
 		const inTable = new Set(rows.map(r => r.id));

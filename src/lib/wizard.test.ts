@@ -81,8 +81,9 @@ describe('roleSensors', () => {
 		{ id: 'zigbee.0.z.smoke', role: 'sensor.alarm.fire', name: 'Rauch' },
 		{ id: 'zigbee.0.d.doorbell', role: 'sensor.doorbell', name: 'Klingel' },
 		{ id: 'home-guard.0.status.open', role: 'sensor.window', name: 'own' },
+		{ id: 'home-guard.1.status.alarm', role: 'sensor.alarm.secure', name: 'other instance' },
 	];
-	const found = roleSensors(states, new Set(['hm-rpc.0.A.1.STATE']), 'home-guard.0');
+	const found = roleSensors(states, new Set(['hm-rpc.0.A.1.STATE']), 'home-guard');
 	it('takes the alias instead of its target and leaves out thermostats, doorbells and itself', () => {
 		expect(found.map(f => f.id)).to.deep.equal([
 			'alias.0.Bad.Fenster',

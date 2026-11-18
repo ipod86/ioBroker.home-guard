@@ -157,9 +157,9 @@ const SENSOR_ROLES: [RoleSensor['circuit'], RegExp][] = [
  *
  * @param states all states with role and name
  * @param aliasTargets ids that an alias points to
- * @param ownNamespace e.g. home-guard.0
+ * @param ownAdapter e.g. home-guard - states of all its instances are left out
  */
-export function roleSensors(states: StateInfo[], aliasTargets: Set<string>, ownNamespace: string): RoleSensor[] {
+export function roleSensors(states: StateInfo[], aliasTargets: Set<string>, ownAdapter: string): RoleSensor[] {
 	const parent = (id: string): string => id.substring(0, id.lastIndexOf('.'));
 	// channels with a temperature set point are thermostats: their WINDOW_STATE is no contact
 	const thermostats = new Set<string>();
@@ -170,7 +170,7 @@ export function roleSensors(states: StateInfo[], aliasTargets: Set<string>, ownN
 	}
 	const out: RoleSensor[] = [];
 	for (const s of states) {
-		if (s.id.startsWith(`${ownNamespace}.`) || s.id.startsWith('system.') || aliasTargets.has(s.id)) {
+		if (s.id.startsWith(`${ownAdapter}.`) || s.id.startsWith('system.') || aliasTargets.has(s.id)) {
 			continue;
 		}
 		const hit = SENSOR_ROLES.find(([, rx]) => rx.test(s.role));
