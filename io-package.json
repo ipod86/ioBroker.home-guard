@@ -259,7 +259,22 @@
     "wizHasSpeaker": false,
     "wizHasLux": false,
     "wizHasDevices": false,
-    "wizSimMorning": false
+    "wizSimMorning": false,
+    "echos": [],
+    "wizHasAlexa": false,
+    "wizAlexaAlarm": false,
+    "wizAlexaSim": false,
+    "wizEchoAlarmVolume": 80,
+    "wizEchoAlarmSound": "siren",
+    "wizEchoAlarmText": true,
+    "wizEchoSimDevice": "",
+    "wizEchoStations": "",
+    "wizEchoSimVolume": 40,
+    "wizEchoWindow": "day",
+    "wizEchoTimes": "",
+    "wizEchoCount": "1-3",
+    "wizEchoDur": "30-90",
+    "wizEchoLearn": false
   },
   "objects": [],
   "instanceObjects": [

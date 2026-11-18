@@ -1121,7 +1121,9 @@ class HomeGuard extends utils.Adapter {
       case "wizardScan":
         return reply({ native: await this.wizardScan(msg) });
       case "echoList":
-        return reply((await this.echoList()).map((e) => ({ value: e.value, label: e.label })));
+        return reply(
+          (await this.echoList()).filter((e) => !msg.player || e.player).map((e) => ({ value: e.value, label: e.label }))
+        );
       case "wizardAlexa":
         return reply({ native: await this.wizardAlexa(msg) });
       default:
@@ -1266,14 +1268,16 @@ class HomeGuard extends utils.Adapter {
     return out;
   }
   /**
-   * Setup assistant, page "Alexa": takes the answers into the table of the Echos - for the alarm every Echo,
-   * for the radio the first Echo with a player, with sensible volumes
+   * Setup assistant, page "Alexa": takes the answers into the table of the Echos - the alarm settings for every
+   * Echo, the radio for the chosen Echo (or the first one with a player); rows of other Echos stay as they are
    *
-   * @param form current values of the form (wizAlexaAlarm, wizAlexaSim, echos)
+   * @param form answers of the page (wizAlexa*, wizEcho*) and the current table (echos)
    */
   async wizardAlexa(form) {
     var _a;
     const found = await this.echoList();
+    const yes = (v) => v === true || v === "true";
+    const val = (v, def) => v === void 0 || v === null || v === "" ? def : v;
     let rows = (Array.isArray(form.echos) ? form.echos : this.config.echos || []).filter(
       (r) => r == null ? void 0 : r.device
     );
@@ -1282,24 +1286,27 @@ class HomeGuard extends utils.Adapter {
         rows.push({ enabled: true, device: e.value, name: "" });
       }
     }
-    const alarm = form.wizAlexaAlarm === true || form.wizAlexaAlarm === "true";
-    const sim = form.wizAlexaSim === true || form.wizAlexaSim === "true";
-    const firstPlayer = (_a = found.find((e) => e.player)) == null ? void 0 : _a.value;
+    const alarm = yes(form.wizAlexaAlarm);
+    const sim = yes(form.wizAlexaSim);
+    const simDevice = String(form.wizEchoSimDevice || "") || ((_a = found.find((e) => e.player)) == null ? void 0 : _a.value) || "";
     rows = rows.map((r) => {
-      var _a2, _b, _c, _d, _e, _f;
-      return {
-        ...r,
-        alarm,
-        alarmVolume: (_a2 = r.alarmVolume) != null ? _a2 : 80,
-        alarmSound: (_b = r.alarmSound) != null ? _b : "siren",
-        alarmText: (_c = r.alarmText) != null ? _c : true,
-        sim: sim && r.device === firstPlayer,
-        simVolume: (_d = r.simVolume) != null ? _d : 30,
-        window: r.window || "day",
-        count: (_e = r.count) != null ? _e : 2,
-        dur: r.dur || "30-90",
-        learn: (_f = r.learn) != null ? _f : true
-      };
+      const out = { ...r, alarm };
+      if (alarm) {
+        out.alarmVolume = val(form.wizEchoAlarmVolume, 80);
+        out.alarmSound = String(val(form.wizEchoAlarmSound, "siren"));
+        out.alarmText = form.wizEchoAlarmText !== false && form.wizEchoAlarmText !== "false";
+      }
+      out.sim = sim && r.device === simDevice;
+      if (out.sim) {
+        out.stations = String(val(form.wizEchoStations, ""));
+        out.simVolume = val(form.wizEchoSimVolume, 40);
+        out.window = val(form.wizEchoWindow, "day");
+        out.times = String(val(form.wizEchoTimes, ""));
+        out.count = String(val(form.wizEchoCount, "1-3"));
+        out.dur = String(val(form.wizEchoDur, "30-90"));
+        out.learn = yes(form.wizEchoLearn);
+      }
+      return out;
     });
     return { echos: rows };
   }

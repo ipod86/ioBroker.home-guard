@@ -3273,6 +3273,66 @@
 							},
 							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
 						},
+						"w18wt": {
+							"type": "staticText",
+							"text": "For devices (TV, radio, scene, script) there are four more columns:",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
+						"w18w1": {
+							"type": "staticText",
+							"text": "• When: in the evening (dusk to lights out), the whole day (wake-up to lights out) or own times. It only runs while the simulation runs.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
+						"w18w2": {
+							"type": "staticText",
+							"text": "• Times: only for \"own times\", e.g. 09:00-20:00 – also over midnight.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
+						"w18w3": {
+							"type": "staticText",
+							"text": "• How often: per day, a number or a range like 1-3 (random each day). Empty = the general setting \"Devices: times per evening\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
+						"w18w4": {
+							"type": "staticText",
+							"text": "• Minutes: how long each time, e.g. 30-90. Empty = the general settings \"Devices run from / to (min)\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
+						"w18w5": {
+							"type": "staticText",
+							"text": "With \"Learn from\", learned times take precedence over random ones – they are learned in the time window of the device.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+						},
 						"simLamps": {
 							"type": "table",
 							"label": "Lamps by hand",
@@ -3489,7 +3549,7 @@
 						},
 						"w19at": {
 							"type": "staticText",
-							"text": "Your Echo devices can help Home Guard: on alarm with a loud sound and the alarm read aloud, and while you are away with radio, so the house does not sound empty. Answer the two questions and press \"Use suggestions\" – then you can adjust everything per Echo in the table.",
+							"text": "Your Echo devices can help Home Guard in two ways. Answer the questions below one after the other – every setting is explained. \"Apply to the table\" then fills the table at the bottom, where you can still change everything per Echo.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3497,9 +3557,10 @@
 							"xl": 12,
 							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
 						},
-						"wizAlexaAlarm": {
-							"type": "checkbox",
-							"label": "Use the Echos for the alarm (sound and announcement)",
+						"w19a1": {
+							"type": "header",
+							"text": "1. On alarm",
+							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3507,9 +3568,78 @@
 							"xl": 12,
 							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
 						},
-						"wizAlexaSim": {
+						"wizAlexaAlarm": {
 							"type": "checkbox",
-							"label": "Use an Echo for the presence simulation (radio while you are away)",
+							"label": "Use the Echos for the alarm (sound and announcement)",
+							"help": "All Echos play a loud sound and read the alarm aloud, every 20 seconds while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+						},
+						"wizEchoAlarmVolume": {
+							"type": "number",
+							"label": "Volume for the alarm (0–100)",
+							"min": 0,
+							"max": 100,
+							"default": 80,
+							"help": "80–100 wakes everybody up. Only the announcement gets this volume – music and radio are not changed.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm",
+							"newLine": true
+						},
+						"wizEchoAlarmSound": {
+							"type": "select",
+							"label": "Alarm sound",
+							"default": "siren",
+							"options": [
+								{
+									"value": "siren",
+									"label": "Alarm"
+								},
+								{
+									"value": "bell",
+									"label": "Bell"
+								},
+								{
+									"value": "horn",
+									"label": "Horn"
+								},
+								{
+									"value": "",
+									"label": "no sound"
+								}
+							],
+							"help": "A sound of Amazon's sound library before the announcement. \"Alarm\" is the most urgent one.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+						},
+						"wizEchoAlarmText": {
+							"type": "checkbox",
+							"label": "Read the alarm aloud",
+							"default": true,
+							"help": "The Echo says what happened, e.g. \"Alarm: terrace door\" – useful when you are at home at night.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+						},
+						"w19a2": {
+							"type": "header",
+							"text": "2. While you are away",
+							"size": 5,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3517,23 +3647,161 @@
 							"xl": 12,
 							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
 						},
-						"w19adef": {
-							"type": "sendTo",
-							"label": "Use suggestions",
-							"command": "wizardAlexa",
-							"jsonData": "{\"wizAlexaAlarm\": ${data.wizAlexaAlarm}, \"wizAlexaSim\": ${data.wizAlexaSim}}",
-							"useNative": true,
-							"variant": "outlined",
+						"wizAlexaSim": {
+							"type": "checkbox",
+							"label": "Use an Echo for the presence simulation (radio while you are away)",
+							"help": "One Echo plays radio during the presence simulation, so the house does not sound empty. It only runs while the simulation runs (alarm armed or nobody at home) – never while you are at home.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+						},
+						"wizEchoSimDevice": {
+							"type": "selectSendTo",
+							"label": "Which Echo plays the radio?",
+							"command": "echoList",
+							"jsonData": "{\"player\": true}",
+							"noTranslation": true,
+							"help": "Only Echos with a speaker for music are listed. Best one that can be heard at the front door or from the terrace.",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"newLine": true
+						},
+						"wizEchoStations": {
+							"type": "text",
+							"label": "Station(s)",
+							"help": "The name as you would say it to Alexa, e.g. \"Radio Siegen\" – or a TuneIn ID like s12345. Several separated by commas: each time a random one, e.g. \"Radio Siegen, WDR 2, 1LIVE\". Empty = what played last.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+						},
+						"wizEchoSimVolume": {
+							"type": "number",
+							"label": "Volume for the radio (0–100)",
+							"min": 0,
+							"max": 100,
+							"default": 40,
+							"help": "So that it can be heard at the door without disturbing the neighbours – about 40–60.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+						},
+						"wizEchoWindow": {
+							"type": "select",
+							"label": "When",
+							"default": "day",
+							"options": [
+								{
+									"value": "",
+									"label": "in the evening (dusk to lights out)"
+								},
+								{
+									"value": "day",
+									"label": "the whole day (wake-up to lights out)"
+								},
+								{
+									"value": "custom",
+									"label": "own times"
+								}
+							],
+							"help": "In the evening: dusk to lights out (like the TV). The whole day: from your wake-up time to lights out – radio typically runs in the daytime. Own times: e.g. 09:00-20:00.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"newLine": true
+						},
+						"wizEchoTimes": {
+							"type": "text",
+							"label": "Times (e.g. 08:00-20:00)",
+							"help": "From–to, also over midnight (e.g. 22:00-01:00).",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim || data.wizEchoWindow !== 'custom'"
+						},
+						"wizEchoCount": {
+							"type": "text",
+							"label": "How often per day",
+							"default": "1-3",
+							"help": "A number, or a range like \"1-3\" – then a random number each day, so no two days look the same. The runs are spread over the time window and never overlap.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"newLine": true
+						},
+						"wizEchoDur": {
+							"type": "text",
+							"label": "How long each time (minutes)",
+							"default": "30-90",
+							"help": "e.g. \"30-90\" = between half an hour and an hour and a half, random each time.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+						},
+						"wizEchoLearn": {
+							"type": "checkbox",
+							"label": "Learn when radio or music really plays",
+							"default": false,
+							"help": "Home Guard notes when this Echo really plays (at least 5 minutes – answers to questions, alarms and timers do not count) and replays that instead of random times. Only useful if you listen to radio or music on this Echo regularly.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+						},
+						"w19adef": {
+							"type": "sendTo",
+							"label": "Apply to the table",
+							"command": "wizardAlexa",
+							"jsonData": "{\"wizAlexaAlarm\": ${JSON.stringify(!!data.wizAlexaAlarm)}, \"wizAlexaSim\": ${JSON.stringify(!!data.wizAlexaSim)}, \"wizEchoAlarmVolume\": ${JSON.stringify(data.wizEchoAlarmVolume ?? 80)}, \"wizEchoAlarmSound\": ${JSON.stringify(data.wizEchoAlarmSound ?? 'siren')}, \"wizEchoAlarmText\": ${JSON.stringify(data.wizEchoAlarmText !== false)}, \"wizEchoSimDevice\": ${JSON.stringify(data.wizEchoSimDevice || '')}, \"wizEchoStations\": ${JSON.stringify(data.wizEchoStations || '')}, \"wizEchoSimVolume\": ${JSON.stringify(data.wizEchoSimVolume ?? 40)}, \"wizEchoWindow\": ${JSON.stringify(data.wizEchoWindow ?? 'day')}, \"wizEchoTimes\": ${JSON.stringify(data.wizEchoTimes || '')}, \"wizEchoCount\": ${JSON.stringify(data.wizEchoCount ?? '1-3')}, \"wizEchoDur\": ${JSON.stringify(data.wizEchoDur ?? '30-90')}, \"wizEchoLearn\": ${JSON.stringify(!!data.wizEchoLearn)}, \"echos\": ${JSON.stringify(data.echos || [])}}",
+							"useNative": true,
+							"variant": "contained",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || (!data.wizAlexaAlarm && !data.wizAlexaSim)",
+							"newLine": true
+						},
+						"w19a3": {
+							"type": "header",
+							"text": "3. Fine-tuning per Echo",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
 							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19atab": {
 							"type": "staticText",
-							"text": "Per Echo and per use: on alarm it plays a sound and reads the alarm aloud (as an addition to a real siren – it needs the internet and the Amazon login of the alexa2 adapter); in the presence simulation it plays radio while you are away – a fixed station or a random one of several, in the evening, the whole day or at your own times. With \"Learn\" Home Guard notes when radio or music really plays (at least 5 minutes; answers to questions do not count) and replays that.",
+							"text": "Here every Echo has its own row with its own settings for the alarm and the radio – the columns are the same as the questions above. Change a row only if one Echo should behave differently from the others.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -6360,6 +6628,280 @@
 							"hidden": "!data.sim"
 						}
 					]
+				},
+				"alh": {
+					"type": "header",
+					"text": "What the columns mean",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al0t": {
+					"type": "staticText",
+					"text": "Alarm",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al0h": {
+					"type": "staticText",
+					"text": "All Echos play a loud sound and read the alarm aloud, every 20 seconds while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al1t": {
+					"type": "staticText",
+					"text": "Volume alarm",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al1h": {
+					"type": "staticText",
+					"text": "80–100 wakes everybody up. Only the announcement gets this volume – music and radio are not changed.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al2t": {
+					"type": "staticText",
+					"text": "Alarm sound",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al2h": {
+					"type": "staticText",
+					"text": "A sound of Amazon's sound library before the announcement. \"Alarm\" is the most urgent one.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al3t": {
+					"type": "staticText",
+					"text": "Read the alarm aloud",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al3h": {
+					"type": "staticText",
+					"text": "The Echo says what happened, e.g. \"Alarm: terrace door\" – useful when you are at home at night.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al4t": {
+					"type": "staticText",
+					"text": "Radio in the simulation",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al4h": {
+					"type": "staticText",
+					"text": "One Echo plays radio during the presence simulation, so the house does not sound empty. It only runs while the simulation runs (alarm armed or nobody at home) – never while you are at home.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al5t": {
+					"type": "staticText",
+					"text": "Station(s): name or TuneIn ID, several = random",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al5h": {
+					"type": "staticText",
+					"text": "The name as you would say it to Alexa, e.g. \"Radio Siegen\" – or a TuneIn ID like s12345. Several separated by commas: each time a random one, e.g. \"Radio Siegen, WDR 2, 1LIVE\". Empty = what played last.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al6t": {
+					"type": "staticText",
+					"text": "Volume radio",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al6h": {
+					"type": "staticText",
+					"text": "So that it can be heard at the door without disturbing the neighbours – about 40–60.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al7t": {
+					"type": "staticText",
+					"text": "When",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al7h": {
+					"type": "staticText",
+					"text": "In the evening: dusk to lights out (like the TV). The whole day: from your wake-up time to lights out – radio typically runs in the daytime. Own times: e.g. 09:00-20:00.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al8t": {
+					"type": "staticText",
+					"text": "Times (e.g. 08:00-20:00)",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al8h": {
+					"type": "staticText",
+					"text": "From–to, also over midnight (e.g. 22:00-01:00).",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al9t": {
+					"type": "staticText",
+					"text": "How often (e.g. 2 or 1-3)",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al9h": {
+					"type": "staticText",
+					"text": "A number, or a range like \"1-3\" – then a random number each day, so no two days look the same. The runs are spread over the time window and never overlap.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al10t": {
+					"type": "staticText",
+					"text": "Minutes (e.g. 30-90)",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al10h": {
+					"type": "staticText",
+					"text": "e.g. \"30-90\" = between half an hour and an hour and a half, random each time.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"al11t": {
+					"type": "staticText",
+					"text": "Learn when it really plays",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold",
+						"marginTop": "8px"
+					}
+				},
+				"al11h": {
+					"type": "staticText",
+					"text": "Home Guard notes when this Echo really plays (at least 5 minutes – answers to questions, alarms and timers do not count) and replays that instead of random times. Only useful if you listen to radio or music on this Echo regularly.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
 				}
 			}
 		}
