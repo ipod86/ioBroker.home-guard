@@ -35,7 +35,8 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
 - **Presence simulation** with three ways of planning: *dusk* (random times around sunset, lights out around a set time, later on Friday/Saturday, short visits to hall and bath), *learned* (replays a real day learned from your own switching, with shifted times – any weekday for a weekday evening, any Friday/Saturday for the weekend; optionally the same day of the week when at least 3 of them are learned) and *combined* (recommended).
 - **Evening light**: the evening lamps every evening, also when somebody is at home – at dusk all on (also those switched off by hand the evening before), at "lights out" all off (also those switched on by hand). Short visits, bedtime and learned switching only while the simulation runs. Switching on and off can be turned on or off separately at any time (e.g. on automatically, off by hand) – with `control.eveningOn`/`eveningOff`/`morningOn`/`morningOff` or the switches in the panel.
-- **TV and other devices, scenes or scripts** in the simulation (type "Device / scene / script"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
+- **TV and other devices, scenes or scripts** in the simulation (type "Device / scene / script"), only while the simulation runs: with "Learn from" (e.g. the real power state of the TV) your real evenings are replayed, also several times an evening; without, it runs a set number of times for a random time – per device **in the evening** (dusk to lights out), **the whole day** (wake-up to lights out) or at **own times**, with its own count and duration. An own value for on and off lets a scene of the scenes adapter or a script do several steps (TV on, then a channel).
+- **Amazon Echo (Alexa)** when the alexa2 adapter is installed – set per Echo and per use: **on alarm** volume, an alarm sound of Amazon's sound library and the alarm read aloud (as an addition to a real siren, while the alarm runs; also in the test alarm); **as radio in the simulation** with a fixed station or a random one of several (name or TuneIn ID), own volume, time window, count and duration – and, if wanted, learned when radio or music really plays at your place (from 5 minutes; answers to questions do not count). The setup assistant finds the Echos and asks what you want to use them for.
 - **When the simulation ends** (e.g. coming home): per entry automatic (devices like the TV off, lamps stay on), switch off or leave on. Entries in the tables override the ones found through a function.
 - **Learning window**: learn and replay only when it is dark (from shortly before sunset to sunrise), between two times or always.
 - **Danger detectors** (smoke, water, gas – 24 h sensors) report always, also when disarmed; per sensor: message only, message and speech output, or a full alarm with sirens, lamps and actions. Own event "danger detector" for the actions table (e.g. close a water valve).
@@ -63,7 +64,8 @@ The tabs of the settings:
 4. **Lock & presence** – door lock state and the values meaning "unlocked" (Nuki: 3, 5, 6), presence states and what happens when everybody leaves or somebody comes home.
 5. **Notifications** – messenger instances, which events are reported, speech output state.
 6. **Actions & test** – lamps (function or list, on or blinking), sirens, an actions table for any event and the test alarm.
-7. **Presence simulation** – simulation, evening and morning light: functions for evening and morning lamps, a table of lamps with the roles *evening*, *morning*, *short visits*, *bedtime* (several per lamp) and devices/scenes/scripts, way of planning, start relative to sunset or below a lux value, lights out, learning.
+7. **Presence simulation** – simulation, evening and morning light: functions for evening and morning lamps, a table of lamps with the roles *evening*, *morning*, *short visits*, *bedtime* (several per lamp) and devices/scenes/scripts, way of planning, start relative to sunset or below a lux value, lights out, learning. Devices get a time window per row (evening, whole day, own times), count and duration.
+8. **Alexa** – Echo devices for the alarm (volume, alarm sound, announcement) and as radio in the simulation (station, volume, time window, count, duration, learning), each per device.
 
 ### Function or table – what can be set up how
 
@@ -141,6 +143,10 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) simulation: time window per device – in the evening, the whole day or own times – with own count and duration
+* (ipod86) Amazon Echo (alexa2): per Echo for the alarm (volume, sound, announcement) and as radio in the simulation (station or random station, volume, time window, learning); setup assistant page "Alexa"
+
 ### 0.2.1 (2026-11-16)
 * (ipod86) fix: panel – the PIN keypad was white with invisible keys in a dark theme; it now uses the colours of the panel
 
