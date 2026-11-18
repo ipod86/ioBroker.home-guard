@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { bestEnum, nextStep, WIZARD_DEFAULTS, type EnumInfo } from './wizard';
+import { bestEnum, nextStep, roleSensors, WIZARD_DEFAULTS, type EnumInfo } from './wizard';
 
 describe('setup assistant', () => {
 	it('goes through every page that is needed', () => {
@@ -66,5 +66,38 @@ describe('setup assistant', () => {
 		];
 		expect(bestEnum('perimeter', more)?.id).to.equal('enum.functions.glasbruch');
 		expect(bestEnum('fire', more)?.id).to.equal('enum.functions.notruf');
+	});
+});
+
+describe('roleSensors', () => {
+	const states = [
+		{ id: 'hm-rpc.0.A.1.STATE', role: 'value.window', name: 'raw contact' },
+		{ id: 'alias.0.Bad.Fenster', role: 'value.window', name: 'Badfenster' },
+		{ id: 'hm-rpc.0.T.1.WINDOW_STATE', role: 'value.window', name: 'thermostat window' },
+		{ id: 'hm-rpc.0.T.1.SET_POINT_TEMPERATURE', role: 'level.temperature', name: 'set point' },
+		{ id: 'zigbee.0.x.contact', role: 'sensor.contact', name: 'Tür' },
+		{ id: 'zigbee.0.x.device_temperature', role: 'value.temperature', name: 'temp' },
+		{ id: 'zigbee.0.y.occupancy', role: 'sensor.occupancy', name: 'PIR' },
+		{ id: 'zigbee.0.z.smoke', role: 'sensor.alarm.fire', name: 'Rauch' },
+		{ id: 'zigbee.0.d.doorbell', role: 'sensor.doorbell', name: 'Klingel' },
+		{ id: 'home-guard.0.status.open', role: 'sensor.window', name: 'own' },
+	];
+	const found = roleSensors(states, new Set(['hm-rpc.0.A.1.STATE']), 'home-guard.0');
+	it('takes the alias instead of its target and leaves out thermostats, doorbells and itself', () => {
+		expect(found.map(f => f.id)).to.deep.equal([
+			'alias.0.Bad.Fenster',
+			'zigbee.0.x.contact',
+			'zigbee.0.y.occupancy',
+			'zigbee.0.z.smoke',
+		]);
+	});
+	it('sorts into the areas', () => {
+		expect(found.map(f => f.circuit)).to.deep.equal(['perimeter', 'perimeter', 'interior', '24h']);
+		expect(found[2].motion).to.equal(true);
+	});
+	it('a contact is no danger detector', () => {
+		expect(bestEnum('fire', [{ id: 'enum.functions.f', name: 'Fenster', roles: ['sensor.contact'] }])).to.equal(
+			null,
+		);
 	});
 });

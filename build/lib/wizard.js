@@ -20,7 +20,8 @@ var wizard_exports = {};
 __export(wizard_exports, {
   WIZARD_DEFAULTS: () => WIZARD_DEFAULTS,
   bestEnum: () => bestEnum,
-  nextStep: () => nextStep
+  nextStep: () => nextStep,
+  roleSensors: () => roleSensors
 });
 module.exports = __toCommonJS(wizard_exports);
 function nextStep(step, dir, need) {
@@ -62,16 +63,16 @@ const WIZARD_DEFAULTS = {
 const RULES = {
   // anything that reports a break-in from outside: contacts, handles, glass break, vibration
   perimeter: {
-    role: /^(sensor\.(window|door|contact|open|glass|vibration|tilt)|value\.window|sensor\.alarm(\.secure)?$)/,
+    role: /^(sensor\.(window|door|contact|open|glass|vibration|tilt)(\.|$)|value\.window$|sensor\.alarm(\.secure)?$)/,
     name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)ll|glas|glass|ersch(ü|ue)tter|vibration|einbruch|intrusion/i
   },
   full: {
-    role: /^sensor\.(motion|occupancy)/,
+    role: /^sensor\.(motion|occupancy)(\.|$)/,
     name: /bewegung|motion|innen|inside|interior|pir|voll|lichtschranke/i
   },
   // always active: danger and emergency
   fire: {
-    role: /^sensor\.alarm\.(fire|flood|smoke|gas|water|heat|co)|^sensor\.(smoke|water|leak|gas|heat|co)/,
+    role: /^(sensor\.alarm\.(fire|flood|smoke|gas|water|heat|co)|sensor\.(smoke|water|leak|gas|heat|co)|indicator\.alarm\.(fire|flood))(\.|$)/,
     name: /rauch|smoke|wasser|water|leck|leak|gas|brand|fire|hitze|heat(?!ing)|kohlenmonoxid|\bco\b|gefahr|hazard|panik|panic|notruf|sos/i
   },
   report: {
@@ -109,10 +110,40 @@ function bestEnum(kind, enums) {
   }
   return best ? { id: best.id, name: best.name, count: best.count } : null;
 }
+const SENSOR_ROLES = [
+  ["24h", RULES.fire.role],
+  ["interior", /^sensor\.(motion|occupancy)(\.|$)/],
+  [
+    "perimeter",
+    /^(sensor\.(window|door|contact|open|glass|vibration|tilt)(\.|$)|value\.window$|sensor\.alarm\.secure$)/
+  ]
+];
+function roleSensors(states, aliasTargets, ownNamespace) {
+  const parent = (id) => id.substring(0, id.lastIndexOf("."));
+  const thermostats = /* @__PURE__ */ new Set();
+  for (const s of states) {
+    if (/^level\.temperature/.test(s.role)) {
+      thermostats.add(parent(s.id));
+    }
+  }
+  const out = [];
+  for (const s of states) {
+    if (s.id.startsWith(`${ownNamespace}.`) || s.id.startsWith("system.") || aliasTargets.has(s.id)) {
+      continue;
+    }
+    const hit = SENSOR_ROLES.find(([, rx]) => rx.test(s.role));
+    if (!hit || thermostats.has(parent(s.id))) {
+      continue;
+    }
+    out.push({ id: s.id, name: s.name, circuit: hit[0], motion: hit[0] === "interior" });
+  }
+  return out.sort((a, b) => a.id.localeCompare(b.id));
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   WIZARD_DEFAULTS,
   bestEnum,
-  nextStep
+  nextStep,
+  roleSensors
 });
 //# sourceMappingURL=wizard.js.map

@@ -1386,6 +1386,19 @@
 							"xl": 12,
 							"hidden": "!(data.alarmEnabled)"
 						},
+						"w8rs": {
+							"type": "staticText",
+							"text": "Devices that the automatic search found by their role are listed here without a tick – tick the ones that should be watched, then their settings appear.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontWeight": "bold"
+							},
+							"hidden": "!(data.alarmEnabled)"
+						},
 						"sensors": {
 							"type": "table",
 							"label": "",
@@ -1415,7 +1428,8 @@
 									"attr": "name",
 									"title": "Name (optional)",
 									"width": "15%",
-									"filter": false
+									"filter": false,
+									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "select",
@@ -1440,19 +1454,22 @@
 											"value": "report",
 											"label": "Report only (message)"
 										}
-									]
+									],
+									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "checkbox",
 									"attr": "delayed",
 									"title": "delayed",
-									"width": "9%"
+									"width": "9%",
+									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "checkbox",
 									"attr": "invert",
 									"title": "inverted",
-									"width": "8%"
+									"width": "8%",
+									"hidden": "data.enabled === false"
 								},
 								{
 									"type": "select",
@@ -1473,7 +1490,8 @@
 											"value": "alarm",
 											"label": "full alarm (sirens, lamps, actions)"
 										}
-									]
+									],
+									"hidden": "data.enabled === false"
 								}
 							],
 							"hidden": "!(data.alarmEnabled)"
@@ -4901,6 +4919,18 @@
 					"lg": 12,
 					"xl": 12
 				},
+				"srs": {
+					"type": "staticText",
+					"text": "Devices that the automatic search found by their role are listed here without a tick – tick the ones that should be watched, then their settings appear.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"fontWeight": "bold"
+					}
+				},
 				"sensors": {
 					"type": "table",
 					"label": "",
@@ -4930,7 +4960,8 @@
 							"attr": "name",
 							"title": "Name (optional)",
 							"width": "15%",
-							"filter": false
+							"filter": false,
+							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "select",
@@ -4955,25 +4986,29 @@
 									"value": "report",
 									"label": "Report only (message)"
 								}
-							]
+							],
+							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "checkbox",
 							"attr": "delayed",
 							"title": "delayed",
-							"width": "9%"
+							"width": "9%",
+							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "checkbox",
 							"attr": "motion",
 							"title": "motion detector",
-							"width": "9%"
+							"width": "9%",
+							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "checkbox",
 							"attr": "invert",
 							"title": "inverted",
-							"width": "8%"
+							"width": "8%",
+							"hidden": "data.enabled === false"
 						},
 						{
 							"type": "select",
@@ -4994,7 +5029,8 @@
 									"value": "alarm",
 									"label": "full alarm (sirens, lamps, actions)"
 								}
-							]
+							],
+							"hidden": "data.enabled === false"
 						}
 					]
 				},

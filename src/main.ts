@@ -23,12 +23,13 @@ import {
 	type SimLamp,
 } from './lib/simulation';
 import type { EchoRow, SimLampRow } from './lib/adapter-config';
-import { WIZARD_DEFAULTS, bestEnum, nextStep, type EnumInfo, type ScanKind } from './lib/wizard';
+import { WIZARD_DEFAULTS, bestEnum, nextStep, roleSensors, type EnumInfo, type ScanKind } from './lib/wizard';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
 import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
+type RoleSensorArea = 'perimeter' | 'interior' | '24h';
 type LightSwitch = 'eveningOn' | 'eveningOff' | 'morningOn' | 'morningOff';
 const LIGHT_SWITCHES: LightSwitch[] = ['eveningOn', 'eveningOff', 'morningOn', 'morningOff'];
 /** former settings of the instance configuration, taken over once by a new instance */
@@ -1362,11 +1363,82 @@ class HomeGuard extends utils.Adapter {
 			);
 		}
 		const view = await this.getObjectViewAsync('system', 'state', { startkey: '', endkey: '\u9999' });
+		// sensors by their roles - most people have no functions, only roles. Without a function they go into the
+		// table; with a function they are only named, the function stays what is watched
+		const aliasTargets = new Set<string>();
+		for (const r of view.rows) {
+			const a = (r.value?.common as { alias?: { id?: string | { read?: string; write?: string } } } | undefined)
+				?.alias?.id;
+			for (const target of typeof a === 'string' ? [a] : a ? [a.read, a.write] : []) {
+				if (target) {
+					aliasTargets.add(target);
+				}
+			}
+		}
+		const nameOf = (n: unknown): string =>
+			typeof n === 'object' && n
+				? String((n as Record<string, string>)[this.sysLang] || (n as Record<string, string>).en || '')
+				: typeof n === 'string'
+					? n
+					: '';
+		const byRole = roleSensors(
+			view.rows.map(r => ({
+				id: r.id,
+				role: String(r.value?.common?.role || ''),
+				name: nameOf(r.value?.common?.name),
+			})),
+			aliasTargets,
+			this.namespace,
+		);
+		const rows = [...(this.config.sensors || [])].filter(r => r && r.id);
+		const inTable = new Set(rows.map(r => r.id));
+		const areas: [RoleSensorArea, string, string, string, string][] = [
+			['perimeter', 'enumPerimeter', 'autoPerimeter', 'Türen und Fenster', 'Doors and windows'],
+			['interior', 'enumFull', 'autoFull', 'Bewegungsmelder', 'Motion detectors'],
+			['24h', 'enumFire', 'autoFire', 'Gefahrenmelder', 'Danger detectors'],
+		];
+		let added = 0;
+		for (const [circuit, enumKey, autoKey, labelDe, labelEn] of areas) {
+			const label = de ? labelDe : labelEn;
+			const v = out[enumKey] ?? form[enumKey] ?? (this.config as unknown as Record<string, unknown>)[enumKey];
+			const enumId = typeof v === 'string' && v !== 'undefined' && v !== 'null' ? v : '';
+			const useEnum = out[autoKey] ?? (this.config as unknown as Record<string, unknown>)[autoKey];
+			const inEnum = new Set(enumId && useEnum !== false ? await this.enumStates(enumId) : []);
+			const extra = byRole.filter(s => s.circuit === circuit && !inEnum.has(s.id) && !inTable.has(s.id));
+			if (!extra.length) {
+				continue;
+			}
+			// unticked: the list shows what was found, a tick takes it in (and shows its options)
+			for (const s of extra) {
+				rows.push({
+					enabled: false,
+					id: s.id,
+					name: '',
+					circuit,
+					delayed: false,
+					invert: false,
+					motion: s.motion,
+					...(circuit === '24h' ? { hazard: this.config.hazardDefault || 'speech' } : {}),
+				});
+				inTable.add(s.id);
+			}
+			added += extra.length;
+			lines.push(
+				de
+					? `${label}: ${extra.length} ${enumId ? 'weitere ' : ''}über die Rolle gefunden – stehen ohne Haken in der Sensortabelle, anhaken was überwacht werden soll`
+					: `${label}: ${extra.length} ${enumId ? 'more ' : ''}found by role – listed unticked in the sensor table, tick what should be watched`,
+			);
+		}
+		if (added) {
+			out.sensors = rows;
+		}
 		// door lock: Nuki or a state with a lock role
 		if (empty('lockId')) {
 			const lock =
 				view.rows.find(r => /^nuki[^.]*\.\d+\..*lockState$/i.test(r.id)) ||
-				view.rows.find(r => /^(value|switch)\.lock$/.test(String(r.value?.common?.role || '')));
+				view.rows.find(r =>
+					/^(value\.lock|switch\.lock(\.door)?|sensor\.lock)$/.test(String(r.value?.common?.role || '')),
+				);
 			if (lock) {
 				out.lockEnabled = true;
 				out.lockId = lock.id;
@@ -1384,7 +1456,10 @@ class HomeGuard extends utils.Adapter {
 				.map(r => r.id.replace('system.adapter.', ''))
 				// only messengers that work without further fields, Telegram first
 				.filter(id => MESSENGERS[adapterOf(id)] && !MESSENGERS[adapterOf(id)].required)
-				.sort((a, b) => (a.startsWith('telegram') ? -1 : b.startsWith('telegram') ? 1 : a.localeCompare(b)));
+				.sort(
+					(a, b) =>
+						Number(b.startsWith('telegram.')) - Number(a.startsWith('telegram.')) || a.localeCompare(b),
+				);
 			if (ids.length) {
 				out.notify = [{ enabled: true, instance: ids[0], user: '', chatId: '' }];
 				lines.push(`${de ? 'Messenger' : 'Messenger'}: ${ids[0]}`);

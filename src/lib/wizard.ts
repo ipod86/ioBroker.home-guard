@@ -64,16 +64,16 @@ interface KindRule {
 const RULES: Record<ScanKind, KindRule> = {
 	// anything that reports a break-in from outside: contacts, handles, glass break, vibration
 	perimeter: {
-		role: /^(sensor\.(window|door|contact|open|glass|vibration|tilt)|value\.window|sensor\.alarm(\.secure)?$)/,
+		role: /^(sensor\.(window|door|contact|open|glass|vibration|tilt)(\.|$)|value\.window$|sensor\.alarm(\.secure)?$)/,
 		name: /fenster|t(ü|ue)r|window|door|kontakt|contact|au(ß|ss)en|perimeter|h(ü|ue)ll|glas|glass|ersch(ü|ue)tter|vibration|einbruch|intrusion/i,
 	},
 	full: {
-		role: /^sensor\.(motion|occupancy)/,
+		role: /^sensor\.(motion|occupancy)(\.|$)/,
 		name: /bewegung|motion|innen|inside|interior|pir|voll|lichtschranke/i,
 	},
 	// always active: danger and emergency
 	fire: {
-		role: /^sensor\.alarm\.(fire|flood|smoke|gas|water|heat|co)|^sensor\.(smoke|water|leak|gas|heat|co)/,
+		role: /^(sensor\.alarm\.(fire|flood|smoke|gas|water|heat|co)|sensor\.(smoke|water|leak|gas|heat|co)|indicator\.alarm\.(fire|flood))(\.|$)/,
 		name: /rauch|smoke|wasser|water|leck|leak|gas|brand|fire|hitze|heat(?!ing)|kohlenmonoxid|\bco\b|gefahr|hazard|panik|panic|notruf|sos/i,
 	},
 	report: {
@@ -125,4 +125,59 @@ export function bestEnum(kind: ScanKind, enums: EnumInfo[]): { id: string; name:
 		}
 	}
 	return best ? { id: best.id, name: best.name, count: best.count } : null;
+}
+
+/** a state as the search sees it */
+export interface StateInfo {
+	id: string;
+	role: string;
+	name: string;
+}
+/** a sensor found by its role */
+export interface RoleSensor {
+	id: string;
+	name: string;
+	circuit: 'perimeter' | 'interior' | '24h';
+	motion: boolean;
+}
+
+/** roles of real sensors, per area - stricter than for functions: no general "sensor.alarm" */
+const SENSOR_ROLES: [RoleSensor['circuit'], RegExp][] = [
+	['24h', RULES.fire.role!],
+	['interior', /^sensor\.(motion|occupancy)(\.|$)/],
+	[
+		'perimeter',
+		/^(sensor\.(window|door|contact|open|glass|vibration|tilt)(\.|$)|value\.window$|sensor\.alarm\.secure$)/,
+	],
+];
+
+/**
+ * Sensors found by their roles, for people who do not use functions. Left out: states an alias points to (the
+ * alias is taken), the open-window detection of thermostats (a set point next to it) and the adapter itself.
+ *
+ * @param states all states with role and name
+ * @param aliasTargets ids that an alias points to
+ * @param ownNamespace e.g. home-guard.0
+ */
+export function roleSensors(states: StateInfo[], aliasTargets: Set<string>, ownNamespace: string): RoleSensor[] {
+	const parent = (id: string): string => id.substring(0, id.lastIndexOf('.'));
+	// channels with a temperature set point are thermostats: their WINDOW_STATE is no contact
+	const thermostats = new Set<string>();
+	for (const s of states) {
+		if (/^level\.temperature/.test(s.role)) {
+			thermostats.add(parent(s.id));
+		}
+	}
+	const out: RoleSensor[] = [];
+	for (const s of states) {
+		if (s.id.startsWith(`${ownNamespace}.`) || s.id.startsWith('system.') || aliasTargets.has(s.id)) {
+			continue;
+		}
+		const hit = SENSOR_ROLES.find(([, rx]) => rx.test(s.role));
+		if (!hit || thermostats.has(parent(s.id))) {
+			continue;
+		}
+		out.push({ id: s.id, name: s.name, circuit: hit[0], motion: hit[0] === 'interior' });
+	}
+	return out.sort((a, b) => a.id.localeCompare(b.id));
 }

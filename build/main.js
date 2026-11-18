@@ -1158,7 +1158,7 @@ class HomeGuard extends utils.Adapter {
    * @returns the settings to fill in, and a text with the result
    */
   async wizardScan(form) {
-    var _a, _b;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const de = this.sysLang === "de";
     const empty = (k) => {
       var _a2;
@@ -1213,11 +1213,74 @@ class HomeGuard extends utils.Adapter {
       );
     }
     const view = await this.getObjectViewAsync("system", "state", { startkey: "", endkey: "\u9999" });
+    const aliasTargets = /* @__PURE__ */ new Set();
+    for (const r of view.rows) {
+      const a = (_e = (_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.alias) == null ? void 0 : _e.id;
+      for (const target of typeof a === "string" ? [a] : a ? [a.read, a.write] : []) {
+        if (target) {
+          aliasTargets.add(target);
+        }
+      }
+    }
+    const nameOf = (n) => typeof n === "object" && n ? String(n[this.sysLang] || n.en || "") : typeof n === "string" ? n : "";
+    const byRole = (0, import_wizard.roleSensors)(
+      view.rows.map((r) => {
+        var _a2, _b2, _c2, _d2;
+        return {
+          id: r.id,
+          role: String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || ""),
+          name: nameOf((_d2 = (_c2 = r.value) == null ? void 0 : _c2.common) == null ? void 0 : _d2.name)
+        };
+      }),
+      aliasTargets,
+      this.namespace
+    );
+    const rows = [...this.config.sensors || []].filter((r) => r && r.id);
+    const inTable = new Set(rows.map((r) => r.id));
+    const areas = [
+      ["perimeter", "enumPerimeter", "autoPerimeter", "T\xFCren und Fenster", "Doors and windows"],
+      ["interior", "enumFull", "autoFull", "Bewegungsmelder", "Motion detectors"],
+      ["24h", "enumFire", "autoFire", "Gefahrenmelder", "Danger detectors"]
+    ];
+    let added = 0;
+    for (const [circuit, enumKey, autoKey, labelDe, labelEn] of areas) {
+      const label = de ? labelDe : labelEn;
+      const v = (_g = (_f = out[enumKey]) != null ? _f : form[enumKey]) != null ? _g : this.config[enumKey];
+      const enumId = typeof v === "string" && v !== "undefined" && v !== "null" ? v : "";
+      const useEnum = (_h = out[autoKey]) != null ? _h : this.config[autoKey];
+      const inEnum = new Set(enumId && useEnum !== false ? await this.enumStates(enumId) : []);
+      const extra = byRole.filter((s) => s.circuit === circuit && !inEnum.has(s.id) && !inTable.has(s.id));
+      if (!extra.length) {
+        continue;
+      }
+      for (const s of extra) {
+        rows.push({
+          enabled: false,
+          id: s.id,
+          name: "",
+          circuit,
+          delayed: false,
+          invert: false,
+          motion: s.motion,
+          ...circuit === "24h" ? { hazard: this.config.hazardDefault || "speech" } : {}
+        });
+        inTable.add(s.id);
+      }
+      added += extra.length;
+      lines.push(
+        de ? `${label}: ${extra.length} ${enumId ? "weitere " : ""}\xFCber die Rolle gefunden \u2013 stehen ohne Haken in der Sensortabelle, anhaken was \xFCberwacht werden soll` : `${label}: ${extra.length} ${enumId ? "more " : ""}found by role \u2013 listed unticked in the sensor table, tick what should be watched`
+      );
+    }
+    if (added) {
+      out.sensors = rows;
+    }
     if (empty("lockId")) {
-      const lock = view.rows.find((r) => /^nuki[^.]*\.\d+\..*lockState$/i.test(r.id)) || view.rows.find((r) => {
-        var _a2, _b2;
-        return /^(value|switch)\.lock$/.test(String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || ""));
-      });
+      const lock = view.rows.find((r) => /^nuki[^.]*\.\d+\..*lockState$/i.test(r.id)) || view.rows.find(
+        (r) => {
+          var _a2, _b2;
+          return /^(value\.lock|switch\.lock(\.door)?|sensor\.lock)$/.test(String(((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.role) || ""));
+        }
+      );
       if (lock) {
         out.lockEnabled = true;
         out.lockId = lock.id;
@@ -1230,7 +1293,9 @@ class HomeGuard extends utils.Adapter {
         startkey: "system.adapter.",
         endkey: "system.adapter.\u9999"
       });
-      const ids = inst.rows.map((r) => r.id.replace("system.adapter.", "")).filter((id) => import_messengers.MESSENGERS[(0, import_messengers.adapterOf)(id)] && !import_messengers.MESSENGERS[(0, import_messengers.adapterOf)(id)].required).sort((a, b) => a.startsWith("telegram") ? -1 : b.startsWith("telegram") ? 1 : a.localeCompare(b));
+      const ids = inst.rows.map((r) => r.id.replace("system.adapter.", "")).filter((id) => import_messengers.MESSENGERS[(0, import_messengers.adapterOf)(id)] && !import_messengers.MESSENGERS[(0, import_messengers.adapterOf)(id)].required).sort(
+        (a, b) => Number(b.startsWith("telegram.")) - Number(a.startsWith("telegram.")) || a.localeCompare(b)
+      );
       if (ids.length) {
         out.notify = [{ enabled: true, instance: ids[0], user: "", chatId: "" }];
         lines.push(`${de ? "Messenger" : "Messenger"}: ${ids[0]}`);
@@ -1265,8 +1330,8 @@ class HomeGuard extends utils.Adapter {
     }
     const siren = view.rows.find(
       (r) => {
-        var _a2, _b2, _c, _d;
-        return !r.id.startsWith(`${this.namespace}.`) && ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.write) !== false && (/^(switch\.alarm|switch\.siren|level\.siren)/.test(String(((_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.role) || "")) || /^(siren|sirene|alarm_?siren)$/i.test(r.id.split(".").pop() || ""));
+        var _a2, _b2, _c2, _d2;
+        return !r.id.startsWith(`${this.namespace}.`) && ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.write) !== false && (/^(switch\.alarm|switch\.siren|level\.siren)/.test(String(((_d2 = (_c2 = r.value) == null ? void 0 : _c2.common) == null ? void 0 : _d2.role) || "")) || /^(siren|sirene|alarm_?siren)$/i.test(r.id.split(".").pop() || ""));
       }
     );
     if (siren && !(this.config.sirens || []).some((r) => r && r.id)) {
@@ -1275,8 +1340,8 @@ class HomeGuard extends utils.Adapter {
     }
     const lux = view.rows.filter(
       (r) => {
-        var _a2, _b2, _c, _d;
-        return ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.unit) === "lx" || ((_d = (_c = r.value) == null ? void 0 : _c.common) == null ? void 0 : _d.role) === "value.brightness";
+        var _a2, _b2, _c2, _d2;
+        return ((_b2 = (_a2 = r.value) == null ? void 0 : _a2.common) == null ? void 0 : _b2.unit) === "lx" || ((_d2 = (_c2 = r.value) == null ? void 0 : _c2.common) == null ? void 0 : _d2.role) === "value.brightness";
       }
     );
     if (lux.length && empty("simLuxId")) {
