@@ -26,8 +26,12 @@ export interface SimLamp {
 	/** devices with an own window: from / to (HH:MM, may pass midnight) */
 	from?: string;
 	to?: string;
-	/** devices: how often and how long (minutes) - empty = the general settings */
+	/**
+	 * devices: how often (with countMax: a random number between both each day) and how long (minutes) -
+	 * empty = the general settings
+	 */
 	count?: number;
+	countMax?: number;
 	durMin?: number;
 	durMax?: number;
 }
@@ -398,7 +402,8 @@ export function planEvening(
 		for (const d of devices) {
 			const dMin = Math.max(5, d.durMin ?? o.deviceMin ?? 60);
 			const dMax = Math.max(dMin, d.durMax ?? o.deviceMax ?? 180);
-			const n = Math.max(1, Math.min(5, Math.round(d.count ?? o.deviceCount ?? 1)));
+			const lo = d.count ?? o.deviceCount ?? 1;
+			const n = Math.max(1, Math.min(5, Math.round(d.countMax ? r(lo - 0.49, d.countMax + 0.49) : lo)));
 			let parts: [number, number][];
 			if (d.window === 'day') {
 				parts = windowParts(noon, parseHm(o.wake || '', 6 * 60 + 30), endMin % (24 * 60));

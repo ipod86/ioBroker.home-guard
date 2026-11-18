@@ -433,7 +433,6 @@
 	"Bell": "铃声",
 	"Echo devices": "Echo 设备",
 	"Horn": "喇叭",
-	"How often": "次数",
 	"I found Alexa at your place": "我在你家找到了 Alexa",
 	"Learn when it really plays": "学习真实播放时间",
 	"Minutes (e.g. 30-90)": "分钟（例如 30-90）",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "傍晚（黄昏到熄灯）",
 	"no sound": "无声音",
 	"own times": "自定义时间",
-	"the whole day (wake-up to lights out)": "全天（起床到熄灯）"
+	"the whole day (wake-up to lights out)": "全天（起床到熄灯）",
+	"How often (e.g. 2 or 1-3)": "次数（例如 2 或 1-3）"
 }

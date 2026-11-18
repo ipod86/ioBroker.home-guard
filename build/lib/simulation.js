@@ -248,7 +248,8 @@ function planEvening(noon, sunset, lamps, o, learner, rand = Math.random) {
     for (const d of devices) {
       const dMin = Math.max(5, (_b = (_a = d.durMin) != null ? _a : o.deviceMin) != null ? _b : 60);
       const dMax = Math.max(dMin, (_d = (_c = d.durMax) != null ? _c : o.deviceMax) != null ? _d : 180);
-      const n = Math.max(1, Math.min(5, Math.round((_f = (_e = d.count) != null ? _e : o.deviceCount) != null ? _f : 1)));
+      const lo = (_f = (_e = d.count) != null ? _e : o.deviceCount) != null ? _f : 1;
+      const n = Math.max(1, Math.min(5, Math.round(d.countMax ? r(lo - 0.49, d.countMax + 0.49) : lo)));
       let parts;
       if (d.window === "day") {
         parts = windowParts(noon, parseHm(o.wake || "", 6 * 60 + 30), endMin % (24 * 60));

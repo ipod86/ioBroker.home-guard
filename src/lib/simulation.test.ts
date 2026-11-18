@@ -536,6 +536,29 @@ describe('devices: time window per device', () => {
 			expect(inside).to.equal(true);
 		}
 	});
+	it('how often "1-3": a random number of runs, different on different days', () => {
+		const radio: SimLamp[] = [
+			{
+				id: 'radio',
+				name: 'Radio',
+				type: 'device',
+				window: 'day',
+				count: 1,
+				countMax: 3,
+				durMin: 20,
+				durMax: 40,
+			},
+		];
+		const seen = new Set<number>();
+		for (let seed = 1; seed < 60; seed++) {
+			const n = planEvening(noon, sunset, radio, { ...opts, wake: '07:00' }, new Learner(), seeded(seed)).filter(
+				s => s.id === 'radio' && s.on,
+			).length;
+			expect(n).to.be.within(1, 3);
+			seen.add(n);
+		}
+		expect([...seen].sort()).to.deep.equal([1, 2, 3]);
+	});
 	it('a short Echo answer is not learned, a radio evening is', () => {
 		const l = new Learner();
 		const t = new Date(2026, 10, 18, 19, 0, 0).getTime();

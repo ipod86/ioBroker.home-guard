@@ -75,7 +75,7 @@ export interface SimLampRow {
 	window?: '' | 'evening' | 'day' | 'custom';
 	/** devices with an own window: "HH:MM-HH:MM" */
 	times?: string;
-	/** devices: how often (empty = general setting) */
+	/** devices: how often, "2" or "1-3" = random each day (empty = general setting) */
 	count?: number | string;
 	/** devices: how long, minutes "min-max" or "min" (empty = general setting) */
 	dur?: string;

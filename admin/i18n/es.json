@@ -433,7 +433,6 @@
 	"Bell": "Campana",
 	"Echo devices": "Dispositivos Echo",
 	"Horn": "Bocina",
-	"How often": "Cuántas veces",
 	"I found Alexa at your place": "He encontrado Alexa en tu casa",
 	"Learn when it really plays": "Aprender cuándo suena de verdad",
 	"Minutes (e.g. 30-90)": "Minutos (p. ej. 30-90)",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "por la tarde (del anochecer a apagar las luces)",
 	"no sound": "sin sonido",
 	"own times": "horarios propios",
-	"the whole day (wake-up to lights out)": "todo el día (de levantarse a apagar las luces)"
+	"the whole day (wake-up to lights out)": "todo el día (de levantarse a apagar las luces)",
+	"How often (e.g. 2 or 1-3)": "Cuántas veces (p. ej. 2 o 1-3)"
 }

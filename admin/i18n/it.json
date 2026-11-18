@@ -433,7 +433,6 @@
 	"Bell": "Campana",
 	"Echo devices": "Dispositivi Echo",
 	"Horn": "Clacson",
-	"How often": "Quante volte",
 	"I found Alexa at your place": "Ho trovato Alexa a casa tua",
 	"Learn when it really plays": "Impara quando suona davvero",
 	"Minutes (e.g. 30-90)": "Minuti (es. 30-90)",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "la sera (dal crepuscolo allo spegnimento)",
 	"no sound": "nessun suono",
 	"own times": "orari propri",
-	"the whole day (wake-up to lights out)": "tutto il giorno (dal risveglio allo spegnimento)"
+	"the whole day (wake-up to lights out)": "tutto il giorno (dal risveglio allo spegnimento)",
+	"How often (e.g. 2 or 1-3)": "Quante volte (es. 2 o 1-3)"
 }

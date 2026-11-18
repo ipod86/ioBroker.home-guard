@@ -64,7 +64,7 @@ const ECHO_SOUNDS = {
   horn: "soundbank://soundlibrary/alarms/air_horns/air_horn_01"
 };
 function deviceWindow(row) {
-  var _a;
+  var _a, _b;
   const out = {};
   if (row.window === "day" || row.window === "custom") {
     out.window = row.window;
@@ -74,14 +74,17 @@ function deviceWindow(row) {
     out.from = t[1];
     out.to = t[2];
   }
-  const n = Number(row.count);
-  if (row.count !== "" && row.count != null && n >= 1) {
-    out.count = Math.min(5, Math.round(n));
+  const c = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*$/.exec(String((_a = row.count) != null ? _a : ""));
+  if (c && Number(c[1]) >= 1) {
+    out.count = Math.min(5, Number(c[1]));
+    if (c[2]) {
+      out.countMax = Math.min(5, Math.max(out.count, Number(c[2])));
+    }
   }
   const d = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*$/.exec(String(row.dur || ""));
   if (d) {
     out.durMin = Math.max(5, Number(d[1]));
-    out.durMax = Math.max(out.durMin, Number((_a = d[2]) != null ? _a : d[1]));
+    out.durMax = Math.max(out.durMin, Number((_b = d[2]) != null ? _b : d[1]));
   }
   return out;
 }
@@ -2141,8 +2144,8 @@ class HomeGuard extends utils.Adapter {
       }
       return;
     }
-    const secs = clamp(num(this.config.alarmDuration, 180), 20, 3600);
-    this.echoAlarmUntil = Date.now() + secs * 1e3;
+    const secs = clamp(num(this.config.alarmDuration, 180), 0, 3600);
+    this.echoAlarmUntil = secs > 0 ? Date.now() + Math.max(20, secs) * 1e3 : Number.MAX_SAFE_INTEGER;
     const once = async () => {
       var _a;
       if (Date.now() > this.echoAlarmUntil) {

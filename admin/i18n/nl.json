@@ -433,7 +433,6 @@
 	"Bell": "Bel",
 	"Echo devices": "Echo-apparaten",
 	"Horn": "Toeter",
-	"How often": "Hoe vaak",
 	"I found Alexa at your place": "Ik heb Alexa bij je gevonden",
 	"Learn when it really plays": "Leren wanneer het echt speelt",
 	"Minutes (e.g. 30-90)": "Minuten (bijv. 30-90)",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "'s avonds (schemering tot licht uit)",
 	"no sound": "geen geluid",
 	"own times": "eigen tijden",
-	"the whole day (wake-up to lights out)": "de hele dag (opstaan tot licht uit)"
+	"the whole day (wake-up to lights out)": "de hele dag (opstaan tot licht uit)",
+	"How often (e.g. 2 or 1-3)": "Hoe vaak (bijv. 2 of 1-3)"
 }

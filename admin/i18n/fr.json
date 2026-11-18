@@ -433,7 +433,6 @@
 	"Bell": "Cloche",
 	"Echo devices": "Appareils Echo",
 	"Horn": "Klaxon",
-	"How often": "Combien de fois",
 	"I found Alexa at your place": "J'ai trouvé Alexa chez toi",
 	"Learn when it really plays": "Apprendre quand ça joue vraiment",
 	"Minutes (e.g. 30-90)": "Minutes (p. ex. 30-90)",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "le soir (crépuscule jusqu'à l'extinction)",
 	"no sound": "pas de son",
 	"own times": "horaires personnalisés",
-	"the whole day (wake-up to lights out)": "toute la journée (du réveil à l'extinction)"
+	"the whole day (wake-up to lights out)": "toute la journée (du réveil à l'extinction)",
+	"How often (e.g. 2 or 1-3)": "Combien de fois (p. ex. 2 ou 1-3)"
 }

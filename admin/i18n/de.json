@@ -433,7 +433,6 @@
 	"Bell": "Glocke",
 	"Echo devices": "Echo-Geräte",
 	"Horn": "Horn",
-	"How often": "Wie oft",
 	"I found Alexa at your place": "Ich habe Alexa bei dir gefunden",
 	"Learn when it really plays": "Lernen, wann es wirklich läuft",
 	"Minutes (e.g. 30-90)": "Minuten (z. B. 30-90)",
@@ -450,5 +449,6 @@
 	"in the evening (dusk to lights out)": "abends (Dämmerung bis Licht aus)",
 	"no sound": "kein Ton",
 	"own times": "eigene Zeiten",
-	"the whole day (wake-up to lights out)": "den ganzen Tag (Aufstehen bis Licht aus)"
+	"the whole day (wake-up to lights out)": "den ganzen Tag (Aufstehen bis Licht aus)",
+	"How often (e.g. 2 or 1-3)": "Wie oft (z. B. 2 oder 1-3)"
 }

@@ -102,9 +102,13 @@ function deviceWindow(row: {
 		out.from = t[1];
 		out.to = t[2];
 	}
-	const n = Number(row.count);
-	if (row.count !== '' && row.count != null && n >= 1) {
-		out.count = Math.min(5, Math.round(n));
+	// how often: a number, or "1-3" = a random number of runs each day
+	const c = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*$/.exec(String(row.count ?? ''));
+	if (c && Number(c[1]) >= 1) {
+		out.count = Math.min(5, Number(c[1]));
+		if (c[2]) {
+			out.countMax = Math.min(5, Math.max(out.count, Number(c[2])));
+		}
 	}
 	const d = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*$/.exec(String(row.dur || ''));
 	if (d) {
@@ -2391,8 +2395,9 @@ class HomeGuard extends utils.Adapter {
 			}
 			return;
 		}
-		const secs = clamp(num(this.config.alarmDuration, 180), 20, 3600);
-		this.echoAlarmUntil = Date.now() + secs * 1000;
+		// as the sirens: the alarm duration of the settings, 0 = until the alarm is acknowledged or disarmed
+		const secs = clamp(num(this.config.alarmDuration, 180), 0, 3600);
+		this.echoAlarmUntil = secs > 0 ? Date.now() + Math.max(20, secs) * 1000 : Number.MAX_SAFE_INTEGER;
 		const once = async (): Promise<void> => {
 			if (Date.now() > this.echoAlarmUntil) {
 				if (this.echoAlarmTimer) {
