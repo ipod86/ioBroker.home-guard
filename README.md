@@ -143,7 +143,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.3.0 (2026-11-18)
 * (ipod86) simulation: time window per device – in the evening, the whole day or own times – with own count (also a range like 1-3 = random each day) and duration
 * (ipod86) Amazon Echo (alexa2): per Echo for the alarm (volume, sound, announcement) and as radio in the simulation (station or random station, volume, time window, learning); setup assistant page "Alexa"
 * (ipod86) setup assistant: the Alexa page asks every setting one by one with an explanation; the lamp page explains the table column by column
