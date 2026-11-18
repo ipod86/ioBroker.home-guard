@@ -66,6 +66,11 @@ const T = {
 		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Testnachricht von Home Guard',
+		nmMissing:
+			'Der Adapter „notification-manager“ ist nicht installiert. Ohne ihn erscheinen Alarme nur in der Glocke des Admins und gehen an keinen Messenger. Installiere ihn über „Adapter“ und richte dort die Messenger ein.',
+		nmStopped:
+			'Der Adapter „notification-manager“ ist installiert, läuft aber nicht. Starte die Instanz, damit Alarme weitergeleitet werden.',
+		nmOk: 'Der Adapter „notification-manager“ ist installiert und läuft. Welche Messenger die Alarme bekommen, stellst du in seinen Einstellungen ein.',
 		onOff: ['aus', 'an'],
 	},
 	en: {
@@ -125,6 +130,11 @@ const T = {
 		} as Record<string, string>,
 		via: (s: string) => (s ? ` (${s})` : ''),
 		test: '🧪 Test message from Home Guard',
+		nmMissing:
+			'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.',
+		nmStopped:
+			'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.',
+		nmOk: 'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.',
 		onOff: ['off', 'on'],
 	},
 };

@@ -143,6 +143,10 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) feat: notification tab shows whether the notification manager is installed and running
+* (ipod86) change: shorter messenger settings without the explanation per messenger
+
 ### 0.3.1 (2026-11-18)
 * (ipod86) feat: messengers sent to directly in their own format: in addition Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu app and Synology Chat; only supported and installed messengers can be chosen, each with its own fields
 * (ipod86) change: no more generic notification format and free instance input – other messengers via the notification manager

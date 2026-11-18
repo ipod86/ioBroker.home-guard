@@ -85,6 +85,9 @@ const T = {
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Testnachricht von Home Guard",
+    nmMissing: "Der Adapter \u201Enotification-manager\u201C ist nicht installiert. Ohne ihn erscheinen Alarme nur in der Glocke des Admins und gehen an keinen Messenger. Installiere ihn \xFCber \u201EAdapter\u201C und richte dort die Messenger ein.",
+    nmStopped: "Der Adapter \u201Enotification-manager\u201C ist installiert, l\xE4uft aber nicht. Starte die Instanz, damit Alarme weitergeleitet werden.",
+    nmOk: "Der Adapter \u201Enotification-manager\u201C ist installiert und l\xE4uft. Welche Messenger die Alarme bekommen, stellst du in seinen Einstellungen ein.",
     onOff: ["aus", "an"]
   },
   en: {
@@ -144,6 +147,9 @@ const T = {
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Test message from Home Guard",
+    nmMissing: 'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.',
+    nmStopped: 'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.',
+    nmOk: 'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.',
     onOff: ["off", "on"]
   }
 };

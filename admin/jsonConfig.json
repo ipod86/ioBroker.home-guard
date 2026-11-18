@@ -2090,136 +2090,6 @@
 							},
 							"hidden": "!(data.alarmEnabled)"
 						},
-						"w13m0": {
-							"type": "staticText",
-							"text": "Telegram: user name or chat ID (e.g. of a group); empty = everybody who talked to the bot.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m1": {
-							"type": "staticText",
-							"text": "E-mail: recipient; empty = the address from the e-mail settings, several separated by commas.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m2": {
-							"type": "staticText",
-							"text": "Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m3": {
-							"type": "staticText",
-							"text": "Gotify: nothing to fill in. Alarms come with high priority.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m4": {
-							"type": "staticText",
-							"text": "WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m5": {
-							"type": "staticText",
-							"text": "SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m6": {
-							"type": "staticText",
-							"text": "Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m7": {
-							"type": "staticText",
-							"text": "MAX: user ID; empty = every user the bot knows.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m8": {
-							"type": "staticText",
-							"text": "ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
-						"w13m9": {
-							"type": "staticText",
-							"text": "Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 12,
-							"xl": 12,
-							"style": {
-								"fontSize": "0.85em"
-							},
-							"hidden": "!(data.alarmEnabled)"
-						},
 						"testBtn": {
 							"type": "sendTo",
 							"label": "Send test message",
@@ -5644,126 +5514,6 @@
 						"opacity": 0.8
 					}
 				},
-				"nm0": {
-					"type": "staticText",
-					"text": "Telegram: user name or chat ID (e.g. of a group); empty = everybody who talked to the bot.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm1": {
-					"type": "staticText",
-					"text": "E-mail: recipient; empty = the address from the e-mail settings, several separated by commas.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm2": {
-					"type": "staticText",
-					"text": "Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm3": {
-					"type": "staticText",
-					"text": "Gotify: nothing to fill in. Alarms come with high priority.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm4": {
-					"type": "staticText",
-					"text": "WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm5": {
-					"type": "staticText",
-					"text": "SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm6": {
-					"type": "staticText",
-					"text": "Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm7": {
-					"type": "staticText",
-					"text": "MAX: user ID; empty = every user the bot knows.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm8": {
-					"type": "staticText",
-					"text": "ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
-				"nm9": {
-					"type": "staticText",
-					"text": "Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"style": {
-						"fontSize": "0.85em"
-					}
-				},
 				"testBtn": {
 					"type": "sendTo",
 					"label": "Send test message",
@@ -5785,6 +5535,21 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4
+				},
+				"nmStatus": {
+					"type": "textSendTo",
+					"command": "nmStatus",
+					"jsonData": "{}",
+					"alsoDependsOn": [
+						"notificationManager"
+					],
+					"container": "div",
+					"hidden": "!data.notificationManager",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
 				},
 				"h2": {
 					"type": "header",

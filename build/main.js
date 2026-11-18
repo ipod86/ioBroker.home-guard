@@ -1014,6 +1014,7 @@ class HomeGuard extends utils.Adapter {
    * @param obj the message
    */
   async onMessage(obj) {
+    var _a;
     if (!obj || !obj.command) {
       return;
     }
@@ -1081,12 +1082,35 @@ class HomeGuard extends utils.Adapter {
       case "getEnums": {
         const enums = await this.getForeignObjectsAsync("enum.functions.*", "enum");
         const list = Object.entries(enums).filter(([id]) => id.split(".").length === 3).map(([id, o]) => {
-          var _a;
-          const n = (_a = o.common) == null ? void 0 : _a.name;
+          var _a2;
+          const n = (_a2 = o.common) == null ? void 0 : _a2.name;
           const name = typeof n === "object" ? n[this.sysLang] || n.en : n;
           return { value: id, label: `${name || id} (${id})` };
         });
         return reply([{ value: "", label: "\u2013" }, ...list]);
+      }
+      case "nmStatus": {
+        const nm = await this.getObjectViewAsync("system", "instance", {
+          startkey: "system.adapter.notification-manager.",
+          endkey: "system.adapter.notification-manager.\u9999"
+        });
+        let alive = false;
+        for (const r of nm.rows) {
+          if ((_a = await this.getForeignStateAsync(`${r.id}.alive`)) == null ? void 0 : _a.val) {
+            alive = true;
+          }
+        }
+        const box = (text, color, bg) => ({
+          text,
+          style: { color, background: bg, padding: "8px 12px", borderRadius: 4 }
+        });
+        if (!nm.rows.length) {
+          return reply(box(this.T.nmMissing, "#663c00", "#fff4e5"));
+        }
+        if (!alive) {
+          return reply(box(this.T.nmStopped, "#663c00", "#fff4e5"));
+        }
+        return reply(box(this.T.nmOk, "#014361", "#e5f6fd"));
       }
       case "getMessengers": {
         const inst = await this.getObjectViewAsync("system", "instance", {

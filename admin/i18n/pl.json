@@ -507,15 +507,5 @@
 	"Recipient": "Odbiorca",
 	"User": "Użytkownik",
 	"Choose how messages reach your phone – Telegram, Pushover, WhatsApp, e-mail … The matching adapter must already be installed and set up in ioBroker. To try it: press \"Save\" at the bottom first (the assistant stays open), then \"Send test message\".": "Wybierz, jak wiadomości trafiają na telefon – Telegram, Pushover, WhatsApp, e-mail … Odpowiedni adapter musi być już zainstalowany i skonfigurowany w ioBroker. Aby wypróbować: najpierw naciśnij „Zapisz” na dole (asystent pozostaje otwarty), potem „Wyślij wiadomość testową”.",
-	"Only messengers that Home Guard supports and that are installed can be chosen; the fields the messenger needs appear in its row. Other messengers can be reached via the ioBroker notification manager.": "Można wybrać tylko komunikatory obsługiwane przez Home Guard i zainstalowane; potrzebne pola pojawiają się w ich wierszu. Inne komunikatory są dostępne przez menedżer powiadomień ioBroker.",
-	"Telegram: user name or chat ID (e.g. of a group); empty = everybody who talked to the bot.": "Telegram: nazwa użytkownika lub ID czatu (np. grupy); puste = wszyscy, którzy pisali z botem.",
-	"E-mail: recipient; empty = the address from the e-mail settings, several separated by commas.": "E-mail: odbiorca; puste = adres z ustawień e-mail, kilka oddzielonych przecinkami.",
-	"Pushover / Pushsafer: device; empty = all devices. Alarms come with high priority.": "Pushover / Pushsafer: urządzenie; puste = wszystkie urządzenia. Alarmy przychodzą z wysokim priorytetem.",
-	"Gotify: nothing to fill in. Alarms come with high priority.": "Gotify: nic do wypełnienia. Alarmy przychodzą z wysokim priorytetem.",
-	"WhatsApp / Signal (CallMeBot): phone number like +491701234567; empty = the number from the adapter settings.": "WhatsApp / Signal (CallMeBot): numer telefonu np. +491701234567; puste = numer z ustawień adaptera.",
-	"Discord: a user (ID, tag or name) for a direct message, or a channel as server ID/channel ID.": "Discord: użytkownik (ID, tag lub nazwa) dla wiadomości prywatnej albo kanał jako ID serwera/ID kanału.",
-	"MAX: user ID; empty = every user the bot knows.": "MAX: ID użytkownika; puste = wszyscy użytkownicy znani botowi.",
-	"ioBroker Visu app (iot): device names from the app separated by commas; empty = all phones. Alarms come with high priority.": "Aplikacja ioBroker Visu (iot): nazwy urządzeń z aplikacji oddzielone przecinkami; puste = wszystkie telefony. Alarmy przychodzą z wysokim priorytetem.",
-	"Synology Chat: channel name as in the synochat settings (channel of type \"incoming\") – required.": "Synology Chat: nazwa kanału jak w ustawieniach synochat (kanał typu „przychodzący”) – wymagane.",
-	"SMS (gsmsms, seven.io): phone number like +491701234567 – required; seven.io also takes a contact name.": "SMS (gsmsms, seven.io): numer telefonu np. +491701234567 – wymagane; seven.io przyjmuje też nazwę kontaktu."
+	"Only messengers that Home Guard supports and that are installed can be chosen; the fields the messenger needs appear in its row. Other messengers can be reached via the ioBroker notification manager.": "Można wybrać tylko komunikatory obsługiwane przez Home Guard i zainstalowane; potrzebne pola pojawiają się w ich wierszu. Inne komunikatory są dostępne przez menedżer powiadomień ioBroker."
 }

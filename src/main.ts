@@ -1229,6 +1229,30 @@ class HomeGuard extends utils.Adapter {
 					});
 				return reply([{ value: '', label: '–' }, ...list]);
 			}
+			case 'nmStatus': {
+				// box under "Alarm also to the ioBroker notifications": is the notification manager there and running?
+				const nm = await this.getObjectViewAsync('system', 'instance', {
+					startkey: 'system.adapter.notification-manager.',
+					endkey: 'system.adapter.notification-manager.\u9999',
+				});
+				let alive = false;
+				for (const r of nm.rows) {
+					if ((await this.getForeignStateAsync(`${r.id}.alive`))?.val) {
+						alive = true;
+					}
+				}
+				const box = (text: string, color: string, bg: string): object => ({
+					text,
+					style: { color, background: bg, padding: '8px 12px', borderRadius: 4 },
+				});
+				if (!nm.rows.length) {
+					return reply(box(this.T.nmMissing, '#663c00', '#fff4e5'));
+				}
+				if (!alive) {
+					return reply(box(this.T.nmStopped, '#663c00', '#fff4e5'));
+				}
+				return reply(box(this.T.nmOk, '#014361', '#e5f6fd'));
+			}
 			case 'getMessengers': {
 				const inst = await this.getObjectViewAsync('system', 'instance', {
 					startkey: 'system.adapter.',
