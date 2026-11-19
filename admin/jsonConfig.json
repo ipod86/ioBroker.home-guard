@@ -902,12 +902,25 @@
 						},
 						"w4t": {
 							"type": "staticText",
-							"text": "Everything that reports a break-in from outside: door and window contacts, window handles, glass break, vibration or roller shutter sensors. They raise an alarm in every way of being armed – full, perimeter and night protection. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"text": "Everything that reports a break-in from outside: door and window contacts, window handles, glass break, vibration or roller shutter sensors. They raise an alarm in every way of being armed – full, perimeter and night protection. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w4tb": {
+							"type": "staticText",
+							"text": "Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontWeight": "bold"
+							},
 							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						},
 						"w4s": {
@@ -1046,12 +1059,25 @@
 						},
 						"w5t": {
 							"type": "staticText",
-							"text": "Detectors inside the house: motion and presence sensors, light barriers, a camera with motion detection, an interior door. Only watched in full protection, i.e. when nobody is at home. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"text": "Detectors inside the house: motion and presence sensors, light barriers, a camera with motion detection, an interior door. Only watched in full protection, i.e. when nobody is at home. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+						},
+						"w5tb": {
+							"type": "staticText",
+							"text": "Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontWeight": "bold"
+							},
 							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
 						},
 						"w5s": {
@@ -1147,12 +1173,25 @@
 						},
 						"w6t": {
 							"type": "staticText",
-							"text": "Smoke, heat, water, gas or CO detectors – and a panic button. They are always active, also when the alarm system is off. Choose whether they only send a message, also speak, or raise a full alarm with siren; a panic button belongs on \"full alarm\" (single devices get their own reaction on the page \"Single sensors & exceptions\"). Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"text": "Smoke, heat, water, gas or CO detectors – and a panic button. They are always active, also when the alarm system is off. Choose whether they only send a message, also speak, or raise a full alarm with siren; a panic button belongs on \"full alarm\" (single devices get their own reaction on the page \"Single sensors & exceptions\"). Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+						},
+						"w6tb": {
+							"type": "staticText",
+							"text": "Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontWeight": "bold"
+							},
 							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
 						},
 						"w6s": {
@@ -1274,12 +1313,25 @@
 						},
 						"w7t": {
 							"type": "staticText",
-							"text": "Never an alarm – just a message, e.g. \"garden gate opened\", \"post in the letter box\" or \"somebody rang\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves. Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"text": "Never an alarm – just a message, e.g. \"garden gate opened\", \"post in the letter box\" or \"somebody rang\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+						},
+						"w7tb": {
+							"type": "staticText",
+							"text": "Single devices without a function, and exceptions, come in on the page \"Single sensors & exceptions\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"fontWeight": "bold"
+							},
 							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
 						},
 						"w7s": {
