@@ -13,6 +13,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 
   <img src="https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/wizard_flow_de.png" alt="Ablauf des Einrichtungsassistenten" width="700">
 
+- **Automatische Sensorsuche** – auch ohne Funktionen: Sensoren werden über ihre Rolle, den Homematic-Gerätetyp und die Datenpunktnamen von Zigbee, deCONZ, Hue und Shelly gefunden. Gefundene Sensoren stehen ohne Haken in der Sensortabelle, mit Raum, Name und einem Hinweis (aktueller Wert, Kamera, seit 30+ Tagen keine Meldung) – du hakst an, was du nutzen willst. Aliase gehen vor ihren Zielen, Thermostat-Fenster und deaktivierte Adapter bleiben außen vor.
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). 24-h-Sensoren (Rauch, Wasser) lösen immer aus.
 - **Ausgangsverzögerung** je Modus, **sofort scharf**, wenn die Haustür zufällt, **Eingangsverzögerung** (stiller Alarm) für verzögerte Sensoren wie die Haustür.
 - **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern oder ignorieren. Gekippte Fenster (Wert 1) zählen als offen.

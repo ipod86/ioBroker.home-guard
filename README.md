@@ -24,6 +24,8 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
   <img src="https://raw.githubusercontent.com/ipod86/ioBroker.home-guard/main/docs/wizard_flow_en.png" alt="Flow of the setup assistant" width="700">
 
+- **Automatic sensor search** – also without functions: sensors are found by their role, by the Homematic device type and by the state names of Zigbee, deCONZ, Hue and Shelly. Found sensors are listed unticked in the sensor table with room, name and a note (current value, camera, no report for 30+ days) – tick what you want to use. Aliases win over their targets, thermostat windows and disabled adapters are left out.
+
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
 - **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
@@ -144,11 +146,10 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) feat: notification tab shows whether the notification manager is installed and running
-* (ipod86) change: shorter messenger settings without the explanation per messenger
-* (ipod86) feat: the automatic search also finds sensors without functions – by role, by the Homematic device type and by the state names of Zigbee, deCONZ, Hue and Shelly – and lists them unticked in the sensor table with room, name and a note (value now, camera, no report for 30+ days); options of a row only appear when it is ticked
-* (ipod86) feat: aliases win over their targets, thermostat windows and actuators with a wrong role are left out, disabled adapters are skipped, Zigbee contacts are set inverted
-* (ipod86) fix: the search took a contact (`sensor.contact`) for a danger detector and a doorbell for a door; door locks with `switch.lock.door` / `sensor.lock` are found; Telegram instance with the lowest number is suggested
+* (ipod86) feat: automatic search also finds sensors without functions and lists them unticked in the sensor table
+* (ipod86) feat: notification tab shows the status of the notification manager
+* (ipod86) change: shorter messenger settings
+* (ipod86) fix: better detection in the search (aliases, door locks, contacts, doorbells, thermostat windows)
 
 ### 0.3.1 (2026-11-18)
 * (ipod86) feat: messengers sent to directly in their own format: in addition Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu app and Synology Chat; only supported and installed messengers can be chosen, each with its own fields
