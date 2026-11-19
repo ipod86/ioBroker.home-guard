@@ -951,7 +951,7 @@
 						"w4ih": {
 							"type": "header",
 							"text": "Doors and windows you open while at home",
-							"size": 5,
+							"size": 4,
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
