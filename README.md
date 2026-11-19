@@ -145,7 +145,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.3.2 (2026-11-19)
 * (ipod86) feat: automatic search also finds sensors without functions and lists them unticked in the sensor table
 * (ipod86) feat: notification tab shows the status of the notification manager
 * (ipod86) change: shorter messenger settings

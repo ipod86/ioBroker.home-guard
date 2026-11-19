@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "news": {
+      "0.3.2": {
+        "en": "feat: automatic search also finds sensors without functions and lists them unticked in the sensor table\nfeat: notification tab shows the status of the notification manager\nchange: shorter messenger settings\nfix: better detection in the search (aliases, door locks, contacts, doorbells, thermostat windows)",
+        "de": "Feat: Automatische Suche findet auch Sensoren ohne Funktion und listet sie in der Sensortabelle\nfeat: Der Info-Tab zeigt den Status des Meldemanagers\nÄnderung: kürzere Messenger-Einstellungen\nFix: Bessere Suche (Aliase, Türschlösser, Kontakte, Klingeln, Thermostate)",
+        "ru": "подвиг: автоматический поиск также находит датчики без функций и перечисляет их без галочек в таблице датчиков\nfeat: вкладка уведомлений показывает статус диспетчера уведомлений\nизменение: более короткие настройки мессенджера\nисправлено: улучшено распознавание при поиске (псевдонимы, дверные замки, контакты, дверные звонки, окна с термостатом)",
+        "pt": "feat: a busca automática também encontra sensores sem funções e os lista desmarcados na tabela\nfeat: a aba de notificação mostra o status do gerente\nmudança: menor ajuste do messenger\ncorreção: melhor detecção na busca (aliases, fechaduras, contatos, campainhas, termostatos)",
+        "nl": "prestatie: automatisch zoeken vindt ook sensoren zonder functies en vermeldt ze zonder vinkje in de sensortabel\nfeat: op het tabblad Meldingen wordt de status van de meldingsbeheerder weergegeven\nverandering: kortere messenger-instellingen\noplossing: betere detectie bij het zoeken (aliassen, deursloten, contacten, deurbellen, thermostaatvensters)",
+        "fr": "exploit : la recherche automatique trouve aussi les capteurs sans fonction et les répertorie décochés\nexploit : l'onglet des notifications indique l'état du gestionnaire de notifications\nmodifier : réglages de Messenger plus courts\ncorrectif : meilleure détection lors de la recherche (alias, serrures, contacts, sonnettes, thermostat)",
+        "it": "feat: la ricerca automatica trova anche i sensori senza funzioni e li elenca nella tabella\nfeat: la scheda notifiche mostra lo stato del gestore notifiche\nmodifica: impostazioni brevi\ncorrezione: migliore rilevamento nella ricerca (alias, serrature, contatti, campanelli, termostati)",
+        "es": "hazaña: la búsqueda automática también busca sensores sin funciones y los muestra sin marcar en la tabla\nhazaña: la pestaña de notificaciones muestra el estado del gestor de notificaciones\ncambio: ajustes de mensajería más cortos\nsolución: mejor detección en la búsqueda (alias, cerraduras, contactos, timbres, termostato de ventanas)",
+        "pl": "feat: automatyczne wyszukiwanie znajduje również czujniki bez funkcji i wyświetla je bez zaznaczenia w tabeli czujników\nfeat: karta powiadomień pokazuje stan menedżera powiadomień\nzmiana: krótsze ustawienia komunikatora\npoprawka: lepsze wykrywanie w wyszukiwaniu (aliasy, zamki drzwiowe, styki, dzwonki do drzwi, okna termostatu)",
+        "uk": "feat: автоматичний пошук також знаходить датчики без функцій і перераховує їх без позначки в таблиці датчиків\nfeat: вкладка сповіщень показує статус менеджера сповіщень\nзміна: коротші налаштування месенджера\nвиправлення: краще виявлення в пошуку (псевдоніми, дверні замки, контакти, дверні дзвінки, вікна термостата)",
+        "zh-cn": "壮举：自动搜索还能找到没有功能的传感器，并在传感器表中不勾选地列出它们\nfeat: 通知选项卡显示通知管理器的状态\n更改：缩短信使设置\n修复：更好的搜索检测（别名、门锁、联系人、门铃、恒温器窗口）"
+      },
       "0.3.1": {
         "en": "feat: messengers sent to directly in their own format: in addition Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu app and Synology Chat; only supported and installed messengers can be chosen, each with its own fields\nchange: no more generic notification format and free instance input – other messengers via the notification manager",
         "de": "Feat: Direktnachrichten im eigenen Format: zusätzlich Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu App und Synology Chat; es können nur unterstützte und installierte Messenger ausgewählt werden, jeder mit eigenen Feldern\nÄnderung: kein generisches Meldeformat und freie Instanzeingabe mehr — andere Messenger über den Meldemanager",
