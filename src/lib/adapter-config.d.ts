@@ -9,6 +9,8 @@ export interface SensorRow {
 	circuit: 'perimeter' | 'interior' | '24h' | 'report';
 	/** entry delay instead of an immediate alarm (e.g. the door you come in through) */
 	delayed: boolean;
+	/** outer skin only: ignored in perimeter and night protection (you are at home), e.g. the bedroom window */
+	homeIgnore?: boolean;
 	/** the sensor reports "open" as false */
 	invert: boolean;
 	/** motion detector: counts for the "several sensors" rule */
@@ -132,8 +134,6 @@ declare global {
 			autoFire: boolean;
 			enumFire: string;
 			sensors: SensorRow[];
-			/** outer-skin sensors that are ignored in perimeter and night protection (you are at home), e.g. the bedroom window */
-			homeIgnore?: string[];
 			motionCount: number;
 			motionWindowSec: number;
 			sabotageHours: number;

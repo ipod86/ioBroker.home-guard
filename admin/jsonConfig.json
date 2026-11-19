@@ -975,33 +975,12 @@
 						},
 						"w4it": {
 							"type": "staticText",
-							"text": "E.g. the bedroom window you tilt at night. Choose them here: they stay watched in full protection (nobody at home) but are ignored in perimeter and night protection. Devices you only add on the page \"Single sensors & exceptions\" appear here after saving.",
+							"text": "E.g. the bedroom window you tilt at night: add it on the page \"Single sensors & exceptions\" and tick \"ignore at home\". It stays watched in full protection (nobody at home) and is ignored in perimeter and night protection.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
-						},
-						"homeIgnore": {
-							"type": "selectSendTo",
-							"label": "Ignore at home",
-							"xs": 12,
-							"sm": 12,
-							"md": 12,
-							"lg": 8,
-							"xl": 6,
-							"command": "perimeterList",
-							"jsonData": "{\"autoPerimeter\": \"${data.autoPerimeter}\", \"enumPerimeter\": \"${data.enumPerimeter}\"}",
-							"alsoDependsOn": [
-								"autoPerimeter",
-								"enumPerimeter",
-								"sensors"
-							],
-							"multiple": true,
-							"manual": false,
-							"noTranslation": true,
-							"help": "Watched in full protection as usual – ignored in perimeter and night protection, also when open while arming.",
 							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						}
 					}
@@ -1473,7 +1452,7 @@
 						},
 						"w8t2": {
 							"type": "staticText",
-							"text": "The table is for three things: 1. a device that is in no function – add a row with the area it belongs to. 2. a device from a function that should behave differently (other area, delayed, inverted, own reaction) – add the same state again with its settings; the row wins over the function. 3. a device from a function that should not be watched – add a row and untick \"Active\". Tick \"inverted\" only if a sensor reports the wrong way round (shows \"closed\" when it is open).",
+							"text": "The table is for four things: 1. a device that is in no function – add a row with the area it belongs to. 2. a device from a function that should behave differently (other area, delayed, inverted, own reaction) – add the same state again with its settings; the row wins over the function. 3. a device from a function that should not be watched – add a row and untick \"Active\". 4. a door or window you open while at home (e.g. the bedroom window) – add a row and tick \"ignore at home\". Tick \"inverted\" only if a sensor reports the wrong way round (shows \"closed\" when it is open).",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1561,6 +1540,15 @@
 								},
 								{
 									"type": "checkbox",
+									"attr": "homeIgnore",
+									"title": "ignore at home",
+									"width": "7%",
+									"hidden": "data.enabled === false",
+									"disabled": "(data.circuit || 'perimeter') !== 'perimeter'",
+									"tooltip": "Outer skin only: watched in full protection, ignored in perimeter and night protection (e.g. the bedroom window you tilt at night)"
+								},
+								{
+									"type": "checkbox",
 									"attr": "invert",
 									"title": "inverted",
 									"width": "7%",
@@ -1592,7 +1580,7 @@
 									"type": "text",
 									"attr": "info",
 									"title": "Note",
-									"width": "19%",
+									"width": "12%",
 									"readOnly": true,
 									"noTranslation": true
 								}
@@ -4919,46 +4907,6 @@
 					"noTranslation": true,
 					"hidden": "!data.autoPerimeter"
 				},
-				"homeIgnoreH": {
-					"type": "header",
-					"text": "Doors and windows you open while at home",
-					"size": 5,
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12,
-					"newLine": true
-				},
-				"homeIgnoreT": {
-					"type": "staticText",
-					"text": "E.g. the bedroom window you tilt at night: watched in full protection, ignored in perimeter and night protection.",
-					"xs": 12,
-					"sm": 12,
-					"md": 12,
-					"lg": 12,
-					"xl": 12
-				},
-				"homeIgnore": {
-					"type": "selectSendTo",
-					"label": "Ignore at home",
-					"xs": 12,
-					"sm": 12,
-					"md": 8,
-					"lg": 8,
-					"xl": 6,
-					"command": "perimeterList",
-					"jsonData": "{\"autoPerimeter\": \"${data.autoPerimeter}\", \"enumPerimeter\": \"${data.enumPerimeter}\"}",
-					"alsoDependsOn": [
-						"autoPerimeter",
-						"enumPerimeter",
-						"sensors"
-					],
-					"multiple": true,
-					"manual": false,
-					"noTranslation": true,
-					"help": "Watched in full protection as usual – ignored in perimeter and night protection, also when open while arming."
-				},
 				"autoFire": {
 					"type": "checkbox",
 					"label": "Always active (smoke, water, gas, panic button …) – also when disarmed",
@@ -5141,6 +5089,15 @@
 						},
 						{
 							"type": "checkbox",
+							"attr": "homeIgnore",
+							"title": "ignore at home",
+							"width": "7%",
+							"hidden": "data.enabled === false",
+							"disabled": "(data.circuit || 'perimeter') !== 'perimeter'",
+							"tooltip": "Outer skin only: watched in full protection, ignored in perimeter and night protection (e.g. the bedroom window you tilt at night)"
+						},
+						{
+							"type": "checkbox",
 							"attr": "motion",
 							"title": "motion detector",
 							"width": "7%",
@@ -5179,7 +5136,7 @@
 							"type": "text",
 							"attr": "info",
 							"title": "Note",
-							"width": "19%",
+							"width": "12%",
 							"readOnly": true,
 							"noTranslation": true
 						}
@@ -5192,7 +5149,7 @@
 					"md": 12,
 					"lg": 12,
 					"xl": 12,
-					"text": "\"delayed\": entry delay instead of an immediate alarm (the door you come in through). \"inverted\": the sensor reports open as false."
+					"text": "\"delayed\": entry delay instead of an immediate alarm (the door you come in through). \"inverted\": the sensor reports open as false. \"ignore at home\" (outer skin only): watched in full protection, ignored in perimeter and night protection – e.g. the bedroom window you tilt at night."
 				},
 				"h3": {
 					"type": "header",

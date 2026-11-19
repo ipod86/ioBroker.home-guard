@@ -612,8 +612,10 @@ class HomeGuard extends utils.Adapter {
 				hazard: (row.circuit || 'perimeter') === '24h' ? row.hazard || c.hazardDefault || 'speech' : undefined,
 			});
 		}
-		// outer-skin sensors you may open while at home: only watched in full protection (like inside sensors)
-		const homeIgnore = new Set(Array.isArray(c.homeIgnore) ? c.homeIgnore : []);
+		// outer-skin sensors you may open while at home (table column): only watched in full protection
+		const homeIgnore = new Set(
+			(c.sensors || []).filter(r => r?.id && r.enabled !== false && r.homeIgnore).map(r => r.id),
+		);
 		const ignored = new Set<string>();
 		for (const s of found.values()) {
 			if (s.circuit === 'perimeter' && homeIgnore.has(s.id)) {
@@ -1278,35 +1280,6 @@ class HomeGuard extends utils.Adapter {
 						return { value: id, label: `${name || id} (${id})` };
 					});
 				return reply([{ value: '', label: '–' }, ...list]);
-			}
-			case 'perimeterList': {
-				// choice "ignore at home": every outer-skin sensor (function of the form + saved table rows)
-				const ids = new Map<string, string>();
-				if (
-					str(msg.autoPerimeter) === 'true' &&
-					str(msg.enumPerimeter) &&
-					str(msg.enumPerimeter) !== 'undefined'
-				) {
-					for (const id of await this.enumStates(str(msg.enumPerimeter))) {
-						ids.set(id, '');
-					}
-				}
-				for (const row of this.config.sensors || []) {
-					if (row?.id && row.enabled !== false && (row.circuit || 'perimeter') === 'perimeter') {
-						ids.set(row.id, row.name || '');
-					}
-				}
-				for (const id of Array.isArray(this.config.homeIgnore) ? this.config.homeIgnore : []) {
-					if (!ids.has(id)) {
-						ids.set(id, '');
-					}
-				}
-				const list = [];
-				for (const [id, given] of ids) {
-					list.push({ value: id, label: `${await this.nameOf(id, given)} (${id})` });
-				}
-				list.sort((a, b) => a.label.localeCompare(b.label));
-				return reply(list);
 			}
 			case 'nmStatus': {
 				// box under "Alarm also to the ioBroker notifications": is the notification manager there and running?
