@@ -947,6 +947,49 @@
 							"manual": true,
 							"noTranslation": true,
 							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.autoPerimeter)"
+						},
+						"w4ih": {
+							"type": "header",
+							"text": "Doors and windows you open while at home",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"newLine": true,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w4it": {
+							"type": "staticText",
+							"text": "E.g. the bedroom window you tilt at night. Choose them here: they stay watched in full protection (nobody at home) but are ignored in perimeter and night protection. Devices you only add on the page \"Single sensors & exceptions\" appear here after saving.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"homeIgnore": {
+							"type": "selectSendTo",
+							"label": "Ignore at home",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 8,
+							"xl": 6,
+							"command": "perimeterList",
+							"jsonData": "{\"autoPerimeter\": \"${data.autoPerimeter}\", \"enumPerimeter\": \"${data.enumPerimeter}\"}",
+							"alsoDependsOn": [
+								"autoPerimeter",
+								"enumPerimeter",
+								"sensors"
+							],
+							"multiple": true,
+							"manual": false,
+							"noTranslation": true,
+							"help": "Watched in full protection as usual – ignored in perimeter and night protection, also when open while arming.",
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
 						}
 					}
 				},
@@ -4823,6 +4866,46 @@
 					"manual": true,
 					"noTranslation": true,
 					"hidden": "!data.autoPerimeter"
+				},
+				"homeIgnoreH": {
+					"type": "header",
+					"text": "Doors and windows you open while at home",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"newLine": true
+				},
+				"homeIgnoreT": {
+					"type": "staticText",
+					"text": "E.g. the bedroom window you tilt at night: watched in full protection, ignored in perimeter and night protection.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"homeIgnore": {
+					"type": "selectSendTo",
+					"label": "Ignore at home",
+					"xs": 12,
+					"sm": 12,
+					"md": 8,
+					"lg": 8,
+					"xl": 6,
+					"command": "perimeterList",
+					"jsonData": "{\"autoPerimeter\": \"${data.autoPerimeter}\", \"enumPerimeter\": \"${data.enumPerimeter}\"}",
+					"alsoDependsOn": [
+						"autoPerimeter",
+						"enumPerimeter",
+						"sensors"
+					],
+					"multiple": true,
+					"manual": false,
+					"noTranslation": true,
+					"help": "Watched in full protection as usual – ignored in perimeter and night protection, also when open while arming."
 				},
 				"autoFire": {
 					"type": "checkbox",

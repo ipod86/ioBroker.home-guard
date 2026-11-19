@@ -185,6 +185,7 @@
     "autoFire": false,
     "enumFire": "",
     "sensors": [],
+    "homeIgnore": [],
     "motionCount": 2,
     "motionWindowSec": 120,
     "sabotageHours": 0,

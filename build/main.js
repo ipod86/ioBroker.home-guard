@@ -528,6 +528,14 @@ class HomeGuard extends utils.Adapter {
         hazard: (row.circuit || "perimeter") === "24h" ? row.hazard || c.hazardDefault || "speech" : void 0
       });
     }
+    const homeIgnore = new Set(Array.isArray(c.homeIgnore) ? c.homeIgnore : []);
+    const ignored = /* @__PURE__ */ new Set();
+    for (const s of found.values()) {
+      if (s.circuit === "perimeter" && homeIgnore.has(s.id)) {
+        s.circuit = "interior";
+        ignored.add(s.id);
+      }
+    }
     const list = [...found.values()];
     const values = {};
     for (const s of list) {
@@ -539,7 +547,14 @@ class HomeGuard extends utils.Adapter {
     await this.setStateAsync(
       "status.sensors",
       JSON.stringify(
-        list.map((s) => ({ id: s.id, name: s.name, circuit: s.circuit, delayed: s.delayed, motion: s.motion }))
+        list.map((s) => ({
+          id: s.id,
+          name: s.name,
+          circuit: ignored.has(s.id) ? "perimeter" : s.circuit,
+          home: ignored.has(s.id) ? false : void 0,
+          delayed: s.delayed,
+          motion: s.motion
+        }))
       ),
       true
     );
@@ -1089,6 +1104,30 @@ class HomeGuard extends utils.Adapter {
           return { value: id, label: `${name || id} (${id})` };
         });
         return reply([{ value: "", label: "\u2013" }, ...list]);
+      }
+      case "perimeterList": {
+        const ids = /* @__PURE__ */ new Map();
+        if (str(msg.autoPerimeter) === "true" && str(msg.enumPerimeter) && str(msg.enumPerimeter) !== "undefined") {
+          for (const id of await this.enumStates(str(msg.enumPerimeter))) {
+            ids.set(id, "");
+          }
+        }
+        for (const row of this.config.sensors || []) {
+          if ((row == null ? void 0 : row.id) && row.enabled !== false && (row.circuit || "perimeter") === "perimeter") {
+            ids.set(row.id, row.name || "");
+          }
+        }
+        for (const id of Array.isArray(this.config.homeIgnore) ? this.config.homeIgnore : []) {
+          if (!ids.has(id)) {
+            ids.set(id, "");
+          }
+        }
+        const list = [];
+        for (const [id, given] of ids) {
+          list.push({ value: id, label: `${await this.nameOf(id, given)} (${id})` });
+        }
+        list.sort((a, b) => a.label.localeCompare(b.label));
+        return reply(list);
       }
       case "nmStatus": {
         const nm = await this.getObjectViewAsync("system", "instance", {

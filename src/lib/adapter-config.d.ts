@@ -132,6 +132,8 @@ declare global {
 			autoFire: boolean;
 			enumFire: string;
 			sensors: SensorRow[];
+			/** outer-skin sensors that are ignored in perimeter and night protection (you are at home), e.g. the bedroom window */
+			homeIgnore?: string[];
 			motionCount: number;
 			motionWindowSec: number;
 			sabotageHours: number;

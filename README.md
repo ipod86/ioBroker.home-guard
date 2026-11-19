@@ -26,7 +26,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 - **Automatic sensor search** – also without functions: sensors are found by their role, by the Homematic device type and by the state names of Zigbee, deCONZ, Hue and Shelly. Found sensors are listed unticked in the sensor table with room, name and a note (current value, camera, no report for 30+ days) – tick what you want to use. Aliases win over their targets, thermostat windows and disabled adapters are left out.
 
-- **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). 24 h sensors (smoke, water) always trigger.
+- **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). Doors and windows you open at home (e.g. the bedroom window) can be ignored in perimeter and night protection. 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
 - **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
 - **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm. During the entry delay the inside sensors follow: walking past motion detectors to the panel is no alarm.
@@ -145,6 +145,9 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) feat: choose doors and windows you open while at home (e.g. the bedroom window) – ignored in perimeter and night protection
+
 ### 0.3.2 (2026-11-19)
 * (ipod86) feat: automatic search also finds sensors without functions and lists them unticked in the sensor table
 * (ipod86) feat: notification tab shows the status of the notification manager
