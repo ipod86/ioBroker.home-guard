@@ -146,7 +146,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) feat: choose doors and windows you open while at home (e.g. the bedroom window) – ignored in perimeter and night protection
+* (ipod86) feat: choose doors and windows you open while at home (e.g. the bedroom window) – ignored in perimeter and night protection, with an info log line when opened
 
 ### 0.3.2 (2026-11-19)
 * (ipod86) feat: automatic search also finds sensors without functions and lists them unticked in the sensor table

@@ -98,6 +98,8 @@ class HomeGuard extends utils.Adapter {
   eveningLogged = "";
   learner = new import_simulation.Learner();
   sensorIds = /* @__PURE__ */ new Set();
+  /** outer-skin sensors ignored at home (perimeter/night): name, inverted, last open state - for the info log */
+  homeIgnored = /* @__PURE__ */ new Map();
   presenceIds = [];
   presenceVals = /* @__PURE__ */ new Map();
   personOf = /* @__PURE__ */ new Map();
@@ -543,6 +545,9 @@ class HomeGuard extends utils.Adapter {
       await this.subscribeForeignStatesAsync(s.id);
     }
     this.sensorIds = new Set(list.map((s) => s.id));
+    this.homeIgnored = new Map(
+      list.filter((s) => ignored.has(s.id)).map((s) => [s.id, { name: s.name, invert: s.invert, open: (0, import_alarm.isOpenValue)(values[s.id], s.invert) }])
+    );
     this.alarm.setSensors(list, values);
     await this.setStateAsync(
       "status.sensors",
@@ -792,6 +797,18 @@ class HomeGuard extends utils.Adapter {
     if ((this.sensorIds.has(id) || id === c.armEarlyId) && confirmed) {
       if (c.alarmEnabled) {
         this.alarm.sensorChanged(id, state.val);
+      }
+      const ign = this.homeIgnored.get(id);
+      if (ign) {
+        const open = (0, import_alarm.isOpenValue)(state.val, ign.invert);
+        if (open && !ign.open && c.alarmEnabled && (this.alarm.mode === "perimeter" || this.alarm.mode === "night")) {
+          const de = this.sysLang === "de";
+          const mode = this.alarm.mode === "night" ? de ? "Nachtschutz" : "night protection" : de ? "H\xFCllschutz" : "perimeter protection";
+          this.log.info(
+            de ? `${ign.name} ge\xF6ffnet \u2013 im ${mode} ignoriert (zu Hause erlaubt)` : `${ign.name} opened \u2013 ignored in ${mode} (allowed at home)`
+          );
+        }
+        ign.open = open;
       }
     }
     if (c.lockEnabled && id === c.lockId && confirmed) {
