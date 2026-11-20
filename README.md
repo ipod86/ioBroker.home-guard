@@ -145,6 +145,10 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### 0.3.4 (2026-11-20)
+* (ipod86) fix: review findings – logs in English only, failures of background tasks are logged, texts of the setup assistant and the test alarm in all admin languages, corrected translations
+* (ipod86) change: admin – wide tables (sensors, lamps, Echos, messengers) as cards, reaction only for danger detectors, Alexa page in the assistant also for Echos already set up, clearer texts
+
 ### 0.3.3 (2026-11-20)
 * (ipod86) feat: new column "ignore at home" in the sensor table – doors and windows you open at home (e.g. the bedroom window) are ignored in perimeter and night protection, with an info log line when opened
 

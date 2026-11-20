@@ -134,6 +134,10 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### 0.3.4 (2026-11-20)
+* (ipod86) Fix: Befunde der Prüfung – Logmeldungen nur noch englisch, Fehler bei Hintergrundaufgaben werden geloggt, Texte des Assistenten und des Testalarms in allen Admin-Sprachen, Übersetzungen korrigiert
+* (ipod86) Geändert: Admin – breite Tabellen (Sensoren, Lampen, Echos, Messenger) als Karten, Reaktion nur bei Gefahrenmeldern, Alexa-Seite im Assistenten auch bei schon eingerichteten Echos, klarere Texte
+
 ### 0.3.3 (2026-11-20)
 * (ipod86) Neu: Spalte „zu Hause ignorieren“ in der Sensortabelle – Türen und Fenster, die ihr zu Hause öffnet (z. B. das Schlafzimmerfenster), werden im Hüll- und Nachtschutz ignoriert, mit Info-Logmeldung beim Öffnen
 
