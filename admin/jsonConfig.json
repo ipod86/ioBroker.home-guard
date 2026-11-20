@@ -115,7 +115,7 @@
 						{
 							"value": 19,
 							"label": "Alexa",
-							"hidden": "data.wizStep !== 19 && !(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "data.wizStep !== 19 && !((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						{
 							"value": 20,
@@ -566,12 +566,26 @@
 						"wizHasAlexa": {
 							"type": "checkbox",
 							"label": "Amazon Echo (Alexa) – for the alarm or radio in the simulation",
-							"hidden": "!(data.alarmEnabled || data.simEnabled)",
+							"hidden": "!(data.alarmEnabled || data.simEnabled) || (data.echos || []).some(r => r && r.device)",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
 							"lg": 12,
 							"xl": 12
+						},
+						"wizHasAlexaOk": {
+							"type": "staticText",
+							"text": "✔ Amazon Echo (Alexa) – for the alarm or radio in the simulation – already set up",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled || data.simEnabled) || !(data.echos || []).some(r => r && r.device)",
+							"style": {
+								"color": "#2e9d4f",
+								"fontWeight": "bold"
+							}
 						},
 						"wizHasLux": {
 							"type": "checkbox",
@@ -758,7 +772,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "60%"
 								},
 								{
@@ -903,6 +917,16 @@
 						"w4t": {
 							"type": "staticText",
 							"text": "Everything that reports a break-in from outside: door and window contacts, window handles, glass break, vibration or roller shutter sensors. They raise an alarm in every way of being armed – full, perimeter and night protection. Any state works – it raises the alarm as soon as it reports true, a number above 0 or \"open\". The easiest way is a function – everything in it is watched, and sensors you add to it later are picked up by themselves.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w4tx": {
+							"type": "staticText",
+							"text": "Exception: doors and windows with the tick \"ignore at home\" are only watched in full protection (see below).",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -1493,7 +1517,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "20%",
 									"filter": false
 								},
@@ -1574,7 +1598,7 @@
 											"label": "full alarm (sirens, lamps, actions)"
 										}
 									],
-									"hidden": "data.enabled === false"
+									"hidden": "data.enabled === false || data.circuit !== '24h'"
 								},
 								{
 									"type": "text",
@@ -1585,7 +1609,14 @@
 									"noTranslation": true
 								}
 							],
-							"hidden": "!(data.alarmEnabled)"
+							"hidden": "!(data.alarmEnabled)",
+							"useCardFor": [
+								"xs",
+								"sm",
+								"md",
+								"lg",
+								"xl"
+							]
 						}
 					}
 				},
@@ -1809,6 +1840,16 @@
 						"w10t": {
 							"type": "staticText",
 							"text": "At night the alarm system can switch on by itself: only doors and windows are watched, you can move around freely inside. In the morning it switches off again.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+						},
+						"w10tx": {
+							"type": "staticText",
+							"text": "Doors and windows with the tick \"ignore at home\" are not watched at night.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2183,7 +2224,14 @@
 									"hidden": "!['discord', 'synochat'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 								}
 							],
-							"hidden": "!(data.alarmEnabled)"
+							"hidden": "!(data.alarmEnabled)",
+							"useCardFor": [
+								"xs",
+								"sm",
+								"md",
+								"lg",
+								"xl"
+							]
 						},
 						"w13mh": {
 							"type": "staticText",
@@ -2446,7 +2494,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "60%"
 								},
 								{
@@ -2498,7 +2546,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "34%"
 								},
 								{
@@ -2597,7 +2645,7 @@
 								{
 									"type": "select",
 									"attr": "event",
-									"title": "Event",
+									"title": "On event",
 									"width": "26%",
 									"default": "alarm",
 									"options": [
@@ -2674,7 +2722,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "46%"
 								},
 								{
@@ -3448,7 +3496,7 @@
 						},
 						"w18l1t": {
 							"type": "staticText",
-							"text": "State",
+							"text": "Datapoint",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3825,7 +3873,7 @@
 								{
 									"type": "objectId",
 									"attr": "id",
-									"title": "State",
+									"title": "Datapoint",
 									"width": "18%"
 								},
 								{
@@ -3966,7 +4014,14 @@
 									]
 								}
 							],
-							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight))",
+							"useCardFor": [
+								"xs",
+								"sm",
+								"md",
+								"lg",
+								"xl"
+							]
 						}
 					}
 				},
@@ -4003,7 +4058,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))",
+							"hidden": "((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -4018,7 +4073,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19at": {
 							"type": "staticText",
@@ -4028,7 +4083,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19a1": {
 							"type": "header",
@@ -4039,7 +4094,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
 						},
 						"wizAlexaAlarm": {
 							"type": "checkbox",
@@ -4050,7 +4105,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
 						},
 						"wizEchoAlarmVolume": {
 							"type": "number",
@@ -4064,7 +4119,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm",
 							"newLine": true
 						},
 						"wizEchoAlarmSound": {
@@ -4095,7 +4150,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
 						},
 						"wizEchoAlarmText": {
 							"type": "checkbox",
@@ -4107,7 +4162,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
 						},
 						"w19a2": {
 							"type": "header",
@@ -4118,7 +4173,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
 						},
 						"wizAlexaSim": {
 							"type": "checkbox",
@@ -4129,7 +4184,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
 						},
 						"wizEchoSimDevice": {
 							"type": "selectSendTo",
@@ -4143,7 +4198,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoStations": {
@@ -4155,7 +4210,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoSimVolume": {
 							"type": "number",
@@ -4169,7 +4224,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoWindow": {
 							"type": "select",
@@ -4195,7 +4250,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoTimes": {
@@ -4207,7 +4262,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim || data.wizEchoWindow !== 'custom'"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim || data.wizEchoWindow !== 'custom'"
 						},
 						"wizEchoCount": {
 							"type": "text",
@@ -4219,7 +4274,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoDur": {
@@ -4232,7 +4287,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoLearn": {
 							"type": "checkbox",
@@ -4244,7 +4299,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"w19adef": {
 							"type": "sendTo",
@@ -4258,7 +4313,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)) || (!data.wizAlexaAlarm && !data.wizAlexaSim)",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || (!data.wizAlexaAlarm && !data.wizAlexaSim)",
 							"newLine": true
 						},
 						"w19a3": {
@@ -4270,7 +4325,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19atab": {
 							"type": "staticText",
@@ -4280,7 +4335,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"echos": {
 							"type": "table",
@@ -4440,7 +4495,14 @@
 									"hidden": "!data.sim"
 								}
 							],
-							"hidden": "!(data.wizHasAlexa && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))",
+							"useCardFor": [
+								"xs",
+								"sm",
+								"md",
+								"lg",
+								"xl"
+							]
 						}
 					}
 				},
@@ -4664,7 +4726,7 @@
 					"type": "sendTo",
 					"label": "◀ Back",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "outlined",
 					"hidden": "data.wizStep <= 0",
@@ -4679,7 +4741,7 @@
 					"type": "sendTo",
 					"label": "Next ▶",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), (data.wizHasAlexa && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "contained",
 					"hidden": "data.wizStep >= 20",
@@ -5042,7 +5104,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "20%",
 							"filter": false
 						},
@@ -5130,7 +5192,7 @@
 									"label": "full alarm (sirens, lamps, actions)"
 								}
 							],
-							"hidden": "data.enabled === false"
+							"hidden": "data.enabled === false || data.circuit !== '24h'"
 						},
 						{
 							"type": "text",
@@ -5140,6 +5202,13 @@
 							"readOnly": true,
 							"noTranslation": true
 						}
+					],
+					"useCardFor": [
+						"xs",
+						"sm",
+						"md",
+						"lg",
+						"xl"
 					]
 				},
 				"iSensors": {
@@ -5506,7 +5575,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "60%"
 						},
 						{
@@ -5643,6 +5712,13 @@
 							"width": "11%",
 							"hidden": "!['discord', 'synochat'].includes(String(data.instance || '').replace(/\\.\\d+$/, ''))"
 						}
+					],
+					"useCardFor": [
+						"xs",
+						"sm",
+						"md",
+						"lg",
+						"xl"
 					]
 				},
 				"nmh": {
@@ -5933,7 +6009,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "60%"
 						},
 						{
@@ -6015,7 +6091,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "34%"
 						},
 						{
@@ -6114,7 +6190,7 @@
 						{
 							"type": "select",
 							"attr": "event",
-							"title": "Event",
+							"title": "On event",
 							"width": "26%",
 							"default": "alarm",
 							"options": [
@@ -6191,7 +6267,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "46%"
 						},
 						{
@@ -6443,7 +6519,7 @@
 						{
 							"type": "objectId",
 							"attr": "id",
-							"title": "State",
+							"title": "Datapoint",
 							"width": "18%"
 						},
 						{
@@ -6583,6 +6659,13 @@
 								}
 							]
 						}
+					],
+					"useCardFor": [
+						"xs",
+						"sm",
+						"md",
+						"lg",
+						"xl"
 					]
 				},
 				"iDevices": {
@@ -7192,6 +7275,13 @@
 							"default": true,
 							"hidden": "!data.sim"
 						}
+					],
+					"useCardFor": [
+						"xs",
+						"sm",
+						"md",
+						"lg",
+						"xl"
 					]
 				},
 				"alh": {

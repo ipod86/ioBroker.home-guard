@@ -67,7 +67,6 @@
 	"Entry delay started (silent alarm)": "Entry delay started (silent alarm)",
 	"Evening light": "Evening light",
 	"Evening light every evening, also when somebody is at home": "Evening light every evening, also when somebody is at home",
-	"Event": "Event",
 	"every alarm": "every alarm",
 	"Exit delay full protection (s)": "Exit delay full protection (s)",
 	"Exit delay perimeter protection (s)": "Exit delay perimeter protection (s)",
@@ -179,7 +178,6 @@
 	"Speech output": "Speech output",
 	"Start earlier when below lux": "Start earlier when below lux",
 	"Start relative to sunset (min)": "Start relative to sunset (min)",
-	"State": "State",
 	"State for speech (text is written)": "State for speech (text is written)",
 	"State of the lock": "State of the lock",
 	"Switch devices on events": "Switch devices on events",
@@ -536,5 +534,10 @@
 	"reports \"closed\" as true, set inverted": "reports \"closed\" as true, set inverted",
 	"speech output": "speech output",
 	"Start test": "Start test",
-	"Cancel": "Cancel"
+	"Cancel": "Cancel",
+	"Datapoint": "Datapoint",
+	"On event": "On event",
+	"✔ Amazon Echo (Alexa) – for the alarm or radio in the simulation – already set up": "✔ Amazon Echo (Alexa) – for the alarm or radio in the simulation – already set up",
+	"Exception: doors and windows with the tick \"ignore at home\" are only watched in full protection (see below).": "Exception: doors and windows with the tick \"ignore at home\" are only watched in full protection (see below).",
+	"Doors and windows with the tick \"ignore at home\" are not watched at night.": "Doors and windows with the tick \"ignore at home\" are not watched at night."
 }
