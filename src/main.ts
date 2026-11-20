@@ -190,6 +190,8 @@ class HomeGuard extends utils.Adapter {
 	private minuteTimer: ioBroker.Interval | undefined;
 	private rescanTimer: ioBroker.Timeout | undefined;
 	private wrongPin = 0;
+	/** walk test: running until, sensors that reported */
+	private walk: { until: number; seen: Map<string, number>; timer?: ioBroker.Timeout } | null = null;
 	private pinLockedUntil = 0;
 	private pinError = 'wrong pin';
 	private outputsOn = false;
@@ -373,6 +375,8 @@ class HomeGuard extends utils.Adapter {
 			await this.publishAlarm(this.alarm.status());
 		}
 		this.wrongPin = num((await this.getStateAsync('status.wrongPin'))?.val, 0);
+		await this.setStateAsync('control.walkTest', false, true);
+		await this.setStateAsync('status.bypassed', '[]', true);
 
 		// every minute: night mode, sabotage (hourly), daily new simulation plan, learned days cleanup
 		this.minuteTimer = this.setInterval(() => this.bg(this.everyMinute(), 'everyMinute'), 60000);
@@ -382,6 +386,90 @@ class HomeGuard extends utils.Adapter {
 		this.log.info(
 			`Home Guard ready: ${this.sensorIds.size} sensors, ${this.presenceIds.length} presence states, ${this.simLamps.length} simulation lamps, ${this.lampOuts.length} alarm lamps`,
 		);
+	}
+
+	/**
+	 * Starts the walk test: every sensor that reports "open" is ticked off. Returns an error text or ''.
+	 */
+	private startWalk(): string {
+		if (this.alarm.mode !== 'off') {
+			return this.tr('The walk test only runs while the alarm system is disarmed');
+		}
+		if (!this.alarm.getSensors().length) {
+			return this.tr('No sensors to test');
+		}
+		const min = clamp(num(this.config.walkTestMin, 10), 1, 60);
+		if (this.walk?.timer) {
+			this.clearTimeout(this.walk.timer);
+		}
+		this.walk = { until: Date.now() + min * 60000, seen: new Map() };
+		this.walk.timer = this.setTimeout(() => this.endWalk(), min * 60000);
+		this.addLog('walk', this.T.walkStart(min));
+		this.log.info(texts('en').walkStart(min));
+		this.bg(this.setStateAsync('control.walkTest', true, true), 'setStateAsync');
+		this.bg(this.publishWalk(), 'publishWalk');
+		return '';
+	}
+
+	/**
+	 * Ends the walk test: result to the logbook and the messengers
+	 */
+	private endWalk(): void {
+		if (!this.walk) {
+			return;
+		}
+		if (this.walk.timer) {
+			this.clearTimeout(this.walk.timer);
+		}
+		const { seen, missing, total } = this.walkResult();
+		this.walk = null;
+		const text = this.T.walkDone(seen.length, total, missing.join(', '));
+		this.addLog('walk', text);
+		this.log.info(texts('en').walkDone(seen.length, total, missing.join(', ')));
+		this.notifyAll(text);
+		this.bg(this.setStateAsync('control.walkTest', false, true), 'setStateAsync');
+		this.bg(
+			this.setStateAsync('status.walkTest', JSON.stringify({ running: false, seen, missing, total }), true),
+			'setStateAsync',
+		);
+	}
+
+	/**
+	 * Sensors of the walk test: reported and not yet reported (report-only sensors count too)
+	 */
+	private walkResult(): { seen: string[]; missing: string[]; total: number } {
+		const sensors = this.alarm.getSensors();
+		const seenIds = this.walk?.seen ?? new Map<string, number>();
+		return {
+			seen: sensors.filter(s => seenIds.has(s.id)).map(s => s.name),
+			missing: sensors.filter(s => !seenIds.has(s.id)).map(s => s.name),
+			total: sensors.length,
+		};
+	}
+
+	/**
+	 * Writes the running walk test to status.walkTest
+	 */
+	private async publishWalk(): Promise<void> {
+		const { seen, missing, total } = this.walkResult();
+		await this.setStateAsync(
+			'status.walkTest',
+			JSON.stringify({ running: !!this.walk, until: this.walk?.until ?? 0, seen, missing, total }),
+			true,
+		);
+	}
+
+	/**
+	 * Text for the admin button "Show result"
+	 */
+	private walkText(): string {
+		const { seen, missing, total } = this.walkResult();
+		if (!this.walk) {
+			return this.tr('No walk test is running – the last result is in the logbook');
+		}
+		return missing.length
+			? this.tr('%s of %s sensors reported. Still missing: %s', seen.length, total, missing.join(', '))
+			: this.tr('All %s sensors reported', total);
 	}
 
 	/**
@@ -633,6 +721,7 @@ class HomeGuard extends utils.Adapter {
 				invert: !!row.invert,
 				motion: !!row.motion,
 				hazard: (row.circuit || 'perimeter') === '24h' ? row.hazard || c.hazardDefault || 'speech' : undefined,
+				tiltOk: (row.circuit || 'perimeter') === 'perimeter' && !!row.tiltOk,
 			});
 		}
 		// outer-skin sensors you may open while at home (table column): only watched in full protection
@@ -932,6 +1021,13 @@ class HomeGuard extends utils.Adapter {
 			if (c.alarmEnabled) {
 				this.alarm.sensorChanged(id, state.val);
 			}
+			if (this.walk && !this.walk.seen.has(id)) {
+				const s = this.alarm.getSensors().find(x => x.id === id);
+				if (s && isOpenValue(state.val, s.invert)) {
+					this.walk.seen.set(id, Date.now());
+					this.bg(this.publishWalk(), 'publishWalk');
+				}
+			}
 			const ign = this.homeIgnored.get(id);
 			if (ign) {
 				const open = isOpenValue(state.val, ign.invert);
@@ -1095,6 +1191,17 @@ class HomeGuard extends utils.Adapter {
 				}
 				return;
 			}
+			case 'control.walkTest':
+				if (val) {
+					const err = this.startWalk();
+					if (err) {
+						this.log.warn(err);
+					}
+				} else {
+					this.endWalk();
+				}
+				await this.setStateAsync('control.walkTest', !!this.walk, true);
+				return;
 			case 'control.autoArm':
 				this.autoArm = !!val;
 				await this.setStateAsync('control.autoArm', this.autoArm, true);
@@ -1149,7 +1256,13 @@ class HomeGuard extends utils.Adapter {
 			return false;
 		}
 		this.pinError = 'wrong pin';
-		if (!c.pin || pin === String(c.pin)) {
+		const duress = !!c.pin && !!c.pinDuress && String(c.pinDuress) !== String(c.pin) && pin === String(c.pinDuress);
+		if (duress) {
+			// looks like a normal PIN entry (no hint in the logbook or the panel), but sends a silent alarm
+			this.notifyAll(this.T.duress(this.src(source)), false, true);
+			this.log.warn('Disarmed with the duress PIN - silent alarm sent to the messengers');
+		}
+		if (!c.pin || pin === String(c.pin) || duress) {
 			this.wrongPin = 0;
 			this.bg(this.setStateAsync('status.wrongPin', 0, true), 'setStateAsync');
 			if (mode === 'off') {
@@ -1295,6 +1408,14 @@ class HomeGuard extends utils.Adapter {
 					});
 				return reply([{ value: '', label: '–' }, ...list]);
 			}
+			case 'walkStart': {
+				const err = this.startWalk();
+				return reply(
+					err ? { error: err } : { result: this.tr('Walk test started – trigger every sensor now') },
+				);
+			}
+			case 'walkStatus':
+				return reply({ result: this.walkText() });
 			case 'nmStatus': {
 				// box under "Alarm also to the ioBroker notifications": is the notification manager there and running?
 				const nm = await this.getObjectViewAsync('system', 'instance', {
@@ -1718,7 +1839,9 @@ class HomeGuard extends utils.Adapter {
 				case 'armingFailed':
 					return T.armingFailed(this.modeName(info.mode, T), names);
 				case 'openWarning':
-					return T.openWarning(this.modeName(info.mode, T), names);
+					return info.bypass
+						? T.openBypass(this.modeName(info.mode, T), names)
+						: T.openWarning(this.modeName(info.mode, T), names);
 				case 'entry':
 					return T.entry(info.sensor?.name || '', num(c.entryDelay, 30));
 				case 'alarm':
@@ -2130,6 +2253,10 @@ class HomeGuard extends utils.Adapter {
 			json.replace(/"countdown":\d+/, '') === this.lastStatusJson.replace(/"countdown":\d+/, '');
 		this.lastStatusJson = json;
 		await this.setStateChangedAsync('status.countdown', s.countdown, true);
+		// arming ends a running walk test
+		if (this.walk && s.mode !== 'off') {
+			this.endWalk();
+		}
 		if (countdownOnly) {
 			return;
 		}
@@ -2148,6 +2275,7 @@ class HomeGuard extends utils.Adapter {
 		await this.setStateChangedAsync('status.text', text, true);
 		await this.setStateChangedAsync('status.openContacts', JSON.stringify(s.openContacts.map(o => o.name)), true);
 		await this.setStateChangedAsync('status.openCount', s.openContacts.length, true);
+		await this.setStateChangedAsync('status.bypassed', JSON.stringify(s.bypassed.map(o => o.name)), true);
 		await this.setStateChangedAsync('status.readyFull', s.readyFull, true);
 		await this.setStateChangedAsync('status.readyPerimeter', s.readyPerimeter, true);
 		await this.updateSimulation();

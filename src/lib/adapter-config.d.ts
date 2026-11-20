@@ -11,6 +11,8 @@ export interface SensorRow {
 	delayed: boolean;
 	/** outer skin only: ignored in perimeter and night protection (you are at home), e.g. the bedroom window */
 	homeIgnore?: boolean;
+	/** window handle: tilted is no alarm in perimeter and night protection, fully open still is */
+	tiltOk?: boolean;
 	/** the sensor reports "open" as false */
 	invert: boolean;
 	/** motion detector: counts for the "several sensors" rule */
@@ -142,12 +144,14 @@ declare global {
 			exitDelayPerimeter: number;
 			armEarlyId: string;
 			entryDelay: number;
-			openCheck: 'refuse' | 'warn' | 'ignore';
+			openCheck: 'refuse' | 'warn' | 'ignore' | 'bypass';
 			alarmDuration: number;
 			nightEnabled: boolean;
 			nightStart: string;
 			nightEnd: string;
 			pin: string;
+			/** duress PIN: disarms like the PIN, but sends a silent alarm to the messengers */
+			pinDuress?: string;
 			pinForDisarmState: boolean;
 			pinForArm: boolean;
 			maxWrongPin: number;
@@ -158,6 +162,8 @@ declare global {
 			testSirens: boolean;
 			testActions: boolean;
 			testDuration: number;
+			/** walk test: minutes until it ends by itself */
+			walkTestMin?: number;
 			eveningLight: boolean;
 			morningLight: boolean;
 			simWake: string;

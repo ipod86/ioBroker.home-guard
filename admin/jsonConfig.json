@@ -1573,6 +1573,15 @@
 								},
 								{
 									"type": "checkbox",
+									"attr": "tiltOk",
+									"title": "tilted is OK",
+									"width": "7%",
+									"hidden": "data.enabled === false",
+									"disabled": "(data.circuit || 'perimeter') !== 'perimeter'",
+									"tooltip": "Window handles with 0 = closed, 1 = tilted, 2 = open: tilted is no alarm in perimeter and night protection, fully open is. In full protection tilted counts as open."
+								},
+								{
+									"type": "checkbox",
 									"attr": "invert",
 									"title": "inverted",
 									"width": "7%",
@@ -1768,6 +1777,10 @@
 								{
 									"value": "ignore",
 									"label": "Ignore"
+								},
+								{
+									"value": "bypass",
+									"label": "Arm and leave them out until they are closed"
 								}
 							],
 							"help": "What happens when a window is still open while switching on. \"Warn\" switches on anyway and tells you which one.",
@@ -2077,6 +2090,19 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
+						},
+						"pinDuress": {
+							"type": "password",
+							"label": "Duress PIN (optional)",
+							"help": "Disarms like the PIN, but sends a silent alarm to the messengers – for when somebody forces you to switch off. Must differ from the PIN.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"repeat": false,
+							"visible": true,
 							"hidden": "!(data.alarmEnabled) || (!data.pin)"
 						}
 					}
@@ -5160,6 +5186,15 @@
 						},
 						{
 							"type": "checkbox",
+							"attr": "tiltOk",
+							"title": "tilted is OK",
+							"width": "7%",
+							"hidden": "data.enabled === false",
+							"disabled": "(data.circuit || 'perimeter') !== 'perimeter'",
+							"tooltip": "Window handles with 0 = closed, 1 = tilted, 2 = open: tilted is no alarm in perimeter and night protection, fully open is. In full protection tilted counts as open."
+						},
+						{
+							"type": "checkbox",
 							"attr": "motion",
 							"title": "motion detector",
 							"width": "7%",
@@ -5219,6 +5254,15 @@
 					"lg": 12,
 					"xl": 12,
 					"text": "\"delayed\": entry delay instead of an immediate alarm (the door you come in through). \"inverted\": the sensor reports open as false. \"ignore at home\" (outer skin only): watched in full protection, ignored in perimeter and night protection – e.g. the bedroom window you tilt at night."
+				},
+				"iSensorsTilt": {
+					"type": "staticText",
+					"text": "\"tilted is OK\" (outer skin, window handles with 0 = closed, 1 = tilted, 2 = open): tilted is no alarm in perimeter and night protection, fully open is – in full protection tilted counts as open.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
 				},
 				"h3": {
 					"type": "header",
@@ -5342,6 +5386,10 @@
 						{
 							"value": "ignore",
 							"label": "Ignore"
+						},
+						{
+							"value": "bypass",
+							"label": "Arm and leave them out until they are closed"
 						}
 					],
 					"newLine": true
@@ -5418,6 +5466,20 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4
+				},
+				"pinDuress": {
+					"type": "password",
+					"label": "Duress PIN (optional)",
+					"help": "Disarms like the PIN, but sends a silent alarm to the messengers – for when somebody forces you to switch off. Must differ from the PIN.",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"repeat": false,
+					"visible": true,
+					"hidden": "!data.pin",
+					"newLine": true
 				},
 				"maxWrongPin": {
 					"type": "number",
@@ -6376,6 +6438,64 @@
 					"lg": 3,
 					"xl": 3,
 					"newLine": true
+				},
+				"walkH": {
+					"type": "header",
+					"text": "Walk test",
+					"size": 5,
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"newLine": true
+				},
+				"walkT": {
+					"type": "staticText",
+					"text": "Checks that every sensor works: start it while the system is disarmed, then open every door and window and walk past every motion detector. Home Guard ticks off every sensor that reports and tells you at the end which ones stayed silent (empty battery, wrong state). Arming ends it.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12
+				},
+				"walkTestMin": {
+					"type": "number",
+					"label": "Walk test duration (min)",
+					"default": 10,
+					"min": 1,
+					"max": 60,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2
+				},
+				"walkBtn": {
+					"type": "sendTo",
+					"label": "Start walk test",
+					"command": "walkStart",
+					"variant": "contained",
+					"showProcess": true,
+					"jsonData": "{}",
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3,
+					"newLine": true
+				},
+				"walkShow": {
+					"type": "sendTo",
+					"label": "Show result",
+					"command": "walkStatus",
+					"variant": "outlined",
+					"jsonData": "{}",
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3
 				}
 			}
 		},

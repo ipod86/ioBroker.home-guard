@@ -198,6 +198,7 @@
     "nightStart": "22:30",
     "nightEnd": "06:30",
     "pin": "",
+    "pinDuress": "",
     "pinForDisarmState": true,
     "pinForArm": false,
     "maxWrongPin": 3,
@@ -262,6 +263,7 @@
     "testSirens": false,
     "testActions": false,
     "testDuration": 15,
+    "walkTestMin": 10,
     "eveningLight": false,
     "simLearnWindow": "dark",
     "simLearnDarkOffset": 30,
@@ -573,6 +575,56 @@
         "read": true,
         "write": false,
         "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.bypassed",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Contacts left out until closed",
+          "de": "Ausgenommene offene Kontakte",
+          "ru": "Открытые контакты, исключённые до закрытия",
+          "pt": "Contactos excluídos até fecharem",
+          "nl": "Uitgezonderde open contacten",
+          "fr": "Contacts exclus jusqu'à leur fermeture",
+          "it": "Contatti esclusi fino alla chiusura",
+          "es": "Contactos excluidos hasta que se cierren",
+          "pl": "Kontakty pominięte do zamknięcia",
+          "uk": "Контакти, виключені до закриття",
+          "zh-cn": "关闭前被排除的触点"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "[]"
+      },
+      "native": {}
+    },
+    {
+      "_id": "status.walkTest",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Walk test: result",
+          "de": "Gehtest: Ergebnis",
+          "ru": "Проверка обходом: результат",
+          "pt": "Teste de passagem: resultado",
+          "nl": "Looptest: resultaat",
+          "fr": "Test de passage : résultat",
+          "it": "Test di passaggio: risultato",
+          "es": "Prueba de recorrido: resultado",
+          "pl": "Test obchodu: wynik",
+          "uk": "Перевірка обходом: результат",
+          "zh-cn": "巡检测试：结果"
+        },
+        "type": "string",
+        "role": "json",
+        "read": true,
+        "write": false,
+        "def": "{}"
       },
       "native": {}
     },
@@ -1121,6 +1173,31 @@
       "native": {}
     },
     {
+      "_id": "control.walkTest",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Walk test running",
+          "de": "Gehtest läuft",
+          "ru": "Идёт проверка обходом",
+          "pt": "Teste de passagem em curso",
+          "nl": "Looptest loopt",
+          "fr": "Test de passage en cours",
+          "it": "Test di passaggio in corso",
+          "es": "Prueba de recorrido en curso",
+          "pl": "Trwa test obchodu",
+          "uk": "Триває перевірка обходом",
+          "zh-cn": "巡检测试进行中"
+        },
+        "type": "boolean",
+        "role": "switch",
+        "read": true,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
       "_id": "control.report",
       "type": "state",
       "common": {
@@ -1392,10 +1469,12 @@
     }
   ],
   "encryptedNative": [
-    "pin"
+    "pin",
+    "pinDuress"
   ],
   "protectedNative": [
-    "pin"
+    "pin",
+    "pinDuress"
   ],
   "notifications": [
     {

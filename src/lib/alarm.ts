@@ -31,6 +31,8 @@ export interface SensorDef {
 	motion: boolean;
 	/** 24 h sensors: only a message, message and speech, or a full alarm (sirens, lamps, actions) */
 	hazard?: 'notify' | 'speech' | 'alarm';
+	/** window handle: "tilted" is no alarm in perimeter and night protection (fully open still is) */
+	tiltOk?: boolean;
 }
 
 export interface AlarmOptions {
@@ -38,7 +40,8 @@ export interface AlarmOptions {
 	exitDelayPerimeter: number; // s
 	armEarlyId: string;
 	entryDelay: number; // s
-	openCheck: 'refuse' | 'warn' | 'ignore';
+	/** open contacts when arming: refuse, warn, ignore, or bypass them until they are closed */
+	openCheck: 'refuse' | 'warn' | 'ignore' | 'bypass';
 	alarmDuration: number; // s
 	motionCount: number;
 	motionWindowSec: number;
@@ -64,6 +67,8 @@ export interface EventInfo {
 	sensors?: SensorDef[];
 	source?: string;
 	panic?: boolean;
+	/** openWarning: the open contacts are bypassed until they are closed */
+	bypass?: boolean;
 }
 
 export interface AlarmStatus {
@@ -77,6 +82,8 @@ export interface AlarmStatus {
 	readyPerimeter: boolean;
 	lastTrigger: string;
 	lastTriggerTime: number;
+	/** open contacts left out at arming, watched again as soon as they are closed */
+	bypassed: SensorDef[];
 }
 
 /**
@@ -98,6 +105,21 @@ export function isOpenValue(val: unknown, invert = false): boolean {
 		open = false;
 	}
 	return invert ? !open : open;
+}
+
+/**
+ * Is a value "tilted"? Window handles (Homematic WINDOW_STATE, rotary handles): 0 = closed, 1 = tilted, 2 = open
+ *
+ * @param val state value
+ */
+export function isTiltedValue(val: unknown): boolean {
+	if (typeof val === 'number') {
+		return val === 1;
+	}
+	if (typeof val === 'string') {
+		return ['tilted', 'gekippt'].includes(val.trim().toLowerCase());
+	}
+	return false;
 }
 
 /**
@@ -130,6 +152,9 @@ export class AlarmEngine {
 	phase: Phase = 'disarmed';
 	private sensors = new Map<string, SensorDef>();
 	private open = new Map<string, boolean>();
+	private tilted = new Map<string, boolean>();
+	/** open contacts bypassed at arming (openCheck "bypass") until they are closed */
+	private bypassed = new Set<string>();
 	private countdownEnd = 0;
 	private countdownTimer: unknown = null;
 	private tickTimer: unknown = null;
@@ -167,6 +192,12 @@ export class AlarmEngine {
 	setSensors(list: SensorDef[], values: Record<string, unknown>): void {
 		this.sensors = new Map(list.map(s => [s.id, s]));
 		this.open = new Map(list.map(s => [s.id, isOpenValue(values[s.id], s.invert)]));
+		this.tilted = new Map(list.map(s => [s.id, isTiltedValue(values[s.id])]));
+		for (const id of [...this.bypassed]) {
+			if (!this.sensors.has(id)) {
+				this.bypassed.delete(id);
+			}
+		}
 		this.publish();
 	}
 
@@ -184,8 +215,22 @@ export class AlarmEngine {
 	 */
 	openFor(mode: Mode): SensorDef[] {
 		return this.getSensors().filter(
-			s => this.open.get(s.id) && !s.motion && s.circuit !== '24h' && circuitActive(s.circuit, mode),
+			s => this.isOpen(s, mode) && !s.motion && s.circuit !== '24h' && circuitActive(s.circuit, mode),
 		);
+	}
+
+	/**
+	 * open as far as the alarm is concerned: a tilted window with "tilted is fine" counts as closed at home
+	 * (perimeter and night protection), but as open in full protection
+	 *
+	 * @param s the sensor
+	 * @param mode mode to judge for
+	 */
+	private isOpen(s: SensorDef, mode: Mode): boolean {
+		if (!this.open.get(s.id)) {
+			return false;
+		}
+		return !(s.tiltOk && this.tilted.get(s.id) && mode !== 'full');
 	}
 
 	/**
@@ -199,9 +244,14 @@ export class AlarmEngine {
 		if (!s) {
 			return;
 		}
-		const was = this.open.get(id) || false;
-		const now = isOpenValue(val, s.invert);
-		this.open.set(id, now);
+		const was = this.isOpen(s, this.mode);
+		this.open.set(id, isOpenValue(val, s.invert));
+		this.tilted.set(id, isTiltedValue(val));
+		const now = this.isOpen(s, this.mode);
+		// a bypassed contact is watched again as soon as it is closed
+		if (!now && this.bypassed.delete(id)) {
+			this.publish();
+		}
 		// close the early-arming contact (e.g. front door) while the exit delay runs: armed at once
 		if (this.phase === 'arming' && id === this.opts.armEarlyId && was && !now) {
 			this.finishArming();
@@ -242,6 +292,9 @@ export class AlarmEngine {
 		}
 		if (!circuitActive(s.circuit, this.mode)) {
 			return;
+		}
+		if (this.bypassed.has(s.id)) {
+			return; // left out at arming because it was open - watched again once it is closed
 		}
 		// entry delay running: inside sensors follow (walking to the panel past motion detectors is no alarm)
 		if (this.phase === 'entry' && s.circuit === 'interior') {
@@ -298,7 +351,11 @@ export class AlarmEngine {
 		if (hadAlarm) {
 			this.host.event('alarmEnd', { mode, source });
 		}
-		if (open.length && this.opts.openCheck === 'warn') {
+		this.bypassed.clear();
+		if (open.length && this.opts.openCheck === 'bypass') {
+			open.forEach(s => this.bypassed.add(s.id));
+			this.host.event('openWarning', { mode, sensors: open, source, bypass: true });
+		} else if (open.length && this.opts.openCheck === 'warn') {
 			this.host.event('openWarning', { mode, sensors: open, source });
 		}
 		const delay =
@@ -451,6 +508,7 @@ export class AlarmEngine {
 		this.armingMode = 'off';
 		this.phase = 'disarmed';
 		this.motionHits = [];
+		this.bypassed.clear();
 		if (hadAlarm) {
 			this.host.event('alarmEnd', { mode: 'off', source });
 		}
@@ -529,6 +587,7 @@ export class AlarmEngine {
 	status(): AlarmStatus {
 		const countdown = this.countdownEnd ? Math.max(0, Math.ceil((this.countdownEnd - this.host.now()) / 1000)) : 0;
 		const openAll = this.getSensors().filter(s => this.open.get(s.id) && !s.motion && s.circuit !== 'report');
+		const bypassed = this.getSensors().filter(s => this.bypassed.has(s.id));
 		return {
 			mode: this.mode,
 			phase: this.phase,
@@ -540,6 +599,7 @@ export class AlarmEngine {
 			readyPerimeter: this.openFor('perimeter').length === 0,
 			lastTrigger: this.lastTrigger,
 			lastTriggerTime: this.lastTriggerTime,
+			bypassed,
 		};
 	}
 

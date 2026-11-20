@@ -20,7 +20,8 @@ var alarm_exports = {};
 __export(alarm_exports, {
   AlarmEngine: () => AlarmEngine,
   circuitActive: () => circuitActive,
-  isOpenValue: () => isOpenValue
+  isOpenValue: () => isOpenValue,
+  isTiltedValue: () => isTiltedValue
 });
 module.exports = __toCommonJS(alarm_exports);
 function isOpenValue(val, invert = false) {
@@ -36,6 +37,15 @@ function isOpenValue(val, invert = false) {
     open = false;
   }
   return invert ? !open : open;
+}
+function isTiltedValue(val) {
+  if (typeof val === "number") {
+    return val === 1;
+  }
+  if (typeof val === "string") {
+    return ["tilted", "gekippt"].includes(val.trim().toLowerCase());
+  }
+  return false;
 }
 function circuitActive(circuit, mode) {
   if (circuit === "24h") {
@@ -67,6 +77,9 @@ class AlarmEngine {
   phase = "disarmed";
   sensors = /* @__PURE__ */ new Map();
   open = /* @__PURE__ */ new Map();
+  tilted = /* @__PURE__ */ new Map();
+  /** open contacts bypassed at arming (openCheck "bypass") until they are closed */
+  bypassed = /* @__PURE__ */ new Set();
   countdownEnd = 0;
   countdownTimer = null;
   tickTimer = null;
@@ -88,6 +101,12 @@ class AlarmEngine {
   setSensors(list, values) {
     this.sensors = new Map(list.map((s) => [s.id, s]));
     this.open = new Map(list.map((s) => [s.id, isOpenValue(values[s.id], s.invert)]));
+    this.tilted = new Map(list.map((s) => [s.id, isTiltedValue(values[s.id])]));
+    for (const id of [...this.bypassed]) {
+      if (!this.sensors.has(id)) {
+        this.bypassed.delete(id);
+      }
+    }
     this.publish();
   }
   /**
@@ -103,8 +122,21 @@ class AlarmEngine {
    */
   openFor(mode) {
     return this.getSensors().filter(
-      (s) => this.open.get(s.id) && !s.motion && s.circuit !== "24h" && circuitActive(s.circuit, mode)
+      (s) => this.isOpen(s, mode) && !s.motion && s.circuit !== "24h" && circuitActive(s.circuit, mode)
     );
+  }
+  /**
+   * open as far as the alarm is concerned: a tilted window with "tilted is fine" counts as closed at home
+   * (perimeter and night protection), but as open in full protection
+   *
+   * @param s the sensor
+   * @param mode mode to judge for
+   */
+  isOpen(s, mode) {
+    if (!this.open.get(s.id)) {
+      return false;
+    }
+    return !(s.tiltOk && this.tilted.get(s.id) && mode !== "full");
   }
   /**
    * a sensor value changed
@@ -117,9 +149,13 @@ class AlarmEngine {
     if (!s) {
       return;
     }
-    const was = this.open.get(id) || false;
-    const now = isOpenValue(val, s.invert);
-    this.open.set(id, now);
+    const was = this.isOpen(s, this.mode);
+    this.open.set(id, isOpenValue(val, s.invert));
+    this.tilted.set(id, isTiltedValue(val));
+    const now = this.isOpen(s, this.mode);
+    if (!now && this.bypassed.delete(id)) {
+      this.publish();
+    }
     if (this.phase === "arming" && id === this.opts.armEarlyId && was && !now) {
       this.finishArming();
       return;
@@ -155,6 +191,9 @@ class AlarmEngine {
       return;
     }
     if (!circuitActive(s.circuit, this.mode)) {
+      return;
+    }
+    if (this.bypassed.has(s.id)) {
       return;
     }
     if (this.phase === "entry" && s.circuit === "interior") {
@@ -203,7 +242,11 @@ class AlarmEngine {
     if (hadAlarm) {
       this.host.event("alarmEnd", { mode, source });
     }
-    if (open.length && this.opts.openCheck === "warn") {
+    this.bypassed.clear();
+    if (open.length && this.opts.openCheck === "bypass") {
+      open.forEach((s) => this.bypassed.add(s.id));
+      this.host.event("openWarning", { mode, sensors: open, source, bypass: true });
+    } else if (open.length && this.opts.openCheck === "warn") {
       this.host.event("openWarning", { mode, sensors: open, source });
     }
     const delay = mode === "full" ? this.opts.exitDelayFull : mode === "perimeter" ? this.opts.exitDelayPerimeter : 0;
@@ -345,6 +388,7 @@ class AlarmEngine {
     this.armingMode = "off";
     this.phase = "disarmed";
     this.motionHits = [];
+    this.bypassed.clear();
     if (hadAlarm) {
       this.host.event("alarmEnd", { mode: "off", source });
     }
@@ -416,6 +460,7 @@ class AlarmEngine {
   status() {
     const countdown = this.countdownEnd ? Math.max(0, Math.ceil((this.countdownEnd - this.host.now()) / 1e3)) : 0;
     const openAll = this.getSensors().filter((s) => this.open.get(s.id) && !s.motion && s.circuit !== "report");
+    const bypassed = this.getSensors().filter((s) => this.bypassed.has(s.id));
     return {
       mode: this.mode,
       phase: this.phase,
@@ -426,7 +471,8 @@ class AlarmEngine {
       readyFull: this.openFor("full").length === 0,
       readyPerimeter: this.openFor("perimeter").length === 0,
       lastTrigger: this.lastTrigger,
-      lastTriggerTime: this.lastTriggerTime
+      lastTriggerTime: this.lastTriggerTime,
+      bypassed
     };
   }
   /**
@@ -440,6 +486,7 @@ class AlarmEngine {
 0 && (module.exports = {
   AlarmEngine,
   circuitActive,
-  isOpenValue
+  isOpenValue,
+  isTiltedValue
 });
 //# sourceMappingURL=alarm.js.map

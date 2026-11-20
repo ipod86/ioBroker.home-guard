@@ -28,9 +28,9 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 
 - **Three modes**: full protection (all sensors), perimeter protection (doors and windows only, you are at home) and night protection (perimeter, armed automatically at night). Doors and windows you open at home (e.g. the bedroom window) can be ignored in perimeter and night protection. 24 h sensors (smoke, water) always trigger.
 - **Exit delay** per mode, **arming at once** when the front door closes, **entry delay** (silent alarm) for delayed sensors such as the front door.
-- **Open window check** when arming: warn and arm anyway, refuse, or ignore. Tilted windows (value 1) count as open.
+- **Open window check** when arming: warn and arm anyway, refuse, ignore, or **bypass** – open contacts are left out and watched again as soon as they are closed. Tilted windows (value 1) count as open; with **"tilted is OK"** per window handle (0 = closed, 1 = tilted, 2 = open) tilted is no alarm in perimeter and night protection, fully open still is.
 - **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm. During the entry delay the inside sensors follow: walking past motion detectors to the panel is no alarm.
-- **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out.
+- **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out. Optional **duress PIN**: disarms like the PIN, but sends a silent alarm to the messengers.
 - **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
 - **Notifications** directly to Telegram, e-mail, Pushover, Pushsafer, Gotify, WhatsApp and Signal (CallMeBot), SMS (gsmsms, seven.io), Discord, MAX, the ioBroker Visu app (iot) and Synology Chat – each in its own format with the fields it needs; only installed messengers are offered; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any states through an actions table – devices, scenes, scripts (e.g. outdoor lights on, lock the door when armed, roller shutters down, camera recording).
@@ -46,6 +46,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Sirens per mode**: every alarm, full protection only (outside siren) or perimeter/night only (inside siren), each with its own duration.
 - **Morning light**: the morning lamps on at wake-up time (later on the weekend) and off after sunrise (own offset and random delay, optionally at the latest at a set time – e.g. when you leave the house – or as soon as the brightness sensor reports daylight) – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions & test*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
+- **Walk test** (tab *Actions & test* or `control.walkTest`): while disarmed, open every door and window and walk past every motion detector – Home Guard ticks off every sensor that reports and tells you at the end which ones stayed silent (result also in `status.walkTest`).
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Widget "Home Guard panel"** (web component) for AURA, vis-2 and other visualisations that support web components: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
 
@@ -97,6 +98,8 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `status.armed`, `status.alarm`, `status.entry` | flags |
 | `status.countdown` | seconds of the running exit/entry delay |
 | `status.openContacts`, `status.openCount` | open doors/windows |
+| `status.bypassed` | open contacts left out at arming until they are closed |
+| `status.walkTest` | walk test: running, reported and silent sensors (JSON) |
 | `status.readyFull`, `status.readyPerimeter` | arming possible without open contacts |
 | `status.lastTrigger`, `status.lastTriggerTime` | last sensor that triggered |
 | `status.wrongPin` | wrong PIN entries in a row |
@@ -113,6 +116,7 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `control.eveningOn` / `control.eveningOff` | evening light: switch on / off automatically (also switches in the panel; "on" switched on in the evening: the lamps go on at once) |
 | `control.morningOn` / `control.morningOff` | morning light: switch on / off automatically |
 | `control.autoArm` | automatic arming/disarming by presence on/off (also a switch in the panel) |
+| `control.walkTest` | start (true) or stop (false) the walk test |
 | `simulation.active` | simulation is running |
 | `simulation.next`, `simulation.plan` | next step and plan of the evening |
 | `simulation.learned`, `simulation.learnedDays` | learned days |
@@ -146,6 +150,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) feat: "tilted is OK" per window handle, bypass open contacts when arming, duress PIN, walk test
 * (ipod86) fix: setup assistant – sensor rows without a tick no longer count as "already set up"; the automatic search ticks the matching question instead
 
 ### 0.3.4 (2026-11-20)

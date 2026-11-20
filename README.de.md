@@ -16,9 +16,9 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Automatische Sensorsuche** – auch ohne Funktionen: Sensoren werden über ihre Rolle, den Homematic-Gerätetyp und die Datenpunktnamen von Zigbee, deCONZ, Hue und Shelly gefunden. Gefundene Sensoren stehen ohne Haken in der Sensortabelle, mit Raum, Name und einem Hinweis (aktueller Wert, Kamera, seit 30+ Tagen keine Meldung) – du hakst an, was du nutzen willst. Aliase gehen vor ihren Zielen, Thermostat-Fenster und deaktivierte Adapter bleiben außen vor.
 - **Drei Modi**: Vollschutz (alle Sensoren), Hüllschutz (nur Türen und Fenster – du bist zu Hause) und Nachtschutz (wie Hüllschutz, nachts automatisch). Türen und Fenster, die ihr zu Hause öffnet (z. B. das Schlafzimmerfenster), lassen sich im Hüll- und Nachtschutz ignorieren. 24-h-Sensoren (Rauch, Wasser) lösen immer aus.
 - **Ausgangsverzögerung** je Modus, **sofort scharf**, wenn die Haustür zufällt, **Eingangsverzögerung** (stiller Alarm) für verzögerte Sensoren wie die Haustür.
-- **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern oder ignorieren. Gekippte Fenster (Wert 1) zählen als offen.
+- **Offen-Fenster-Prüfung** beim Scharfschalten: warnen und trotzdem scharf, verweigern, ignorieren oder **ausnehmen** – offene Kontakte bleiben außen vor und sind wieder scharf, sobald sie geschlossen werden. Gekippte Fenster (Wert 1) zählen als offen; mit **„gekippt ist ok“** je Fenstergriff (0 = zu, 1 = gekippt, 2 = offen) ist gekippt im Hüll- und Nachtschutz kein Alarm, ganz offen schon.
 - **Bewegungsmelder** lösen erst aus, wenn mehrere verschiedene Melder innerhalb einer einstellbaren Zeit (Standard 120 s) melden – eine Katze oder ein Vorhang allein ist kein Alarm. Während der Eingangsverzögerung sind die Innen-Sensoren Mitläufer: Wer an den Bewegungsmeldern vorbei zum Panel geht, löst keinen Alarm aus.
-- **PIN** (verschlüsselt gespeichert), auf Wunsch auch zum Scharfschalten; Meldung nach Fehleingaben und Sperre der PIN-Eingabe für einige Minuten gegen Ausprobieren.
+- **PIN** (verschlüsselt gespeichert), auf Wunsch auch zum Scharfschalten; Meldung nach Fehleingaben und Sperre der PIN-Eingabe für einige Minuten gegen Ausprobieren. Optional eine **Bedrohungs-PIN**: schaltet unscharf wie die PIN, schickt aber still einen Alarm an die Messenger.
 - **Türschloss** (z. B. Nuki) schaltet beim Aufschließen unscharf, **Anwesenheit** (Personen, Handys) schaltet scharf, wenn der Letzte geht, und den Vollschutz unscharf, wenn jemand heimkommt.
 - **Benachrichtigungen** direkt an Telegram, E-Mail, Pushover, Pushsafer, Gotify, WhatsApp und Signal (CallMeBot), SMS (gsmsms, seven.io), Discord, MAX, die ioBroker Visu App (iot) und Synology Chat – jeweils im eigenen Format mit den Feldern, die der Messenger braucht; angeboten werden nur installierte Messenger; zusätzlich an den Benachrichtigungsmanager selbst; Alarmmeldung wiederholen bis quittiert; **Sprachausgabe** (z. B. Alexa, SayIt).
 - **Bei Alarm**: Lampen an oder blinkend (danach wieder wie vorher), Sirenen, beliebige Geräte über eine Aktionstabelle (z. B. Tür abschließen beim Scharfschalten, Rollläden runter, Kameraaufnahme).
@@ -34,6 +34,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Sirenen je Modus**: bei jedem Alarm, nur bei Vollschutz (Außensirene) oder nur bei Hüll-/Nachtschutz (Innensirene), jeweils mit eigener Dauer.
 - **Morgenlicht**: die Morgenlampen zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus (eigener Versatz und Zufall, wahlweise spätestens zu einer festen Zeit – z. B. wenn ihr aus dem Haus geht – oder sobald der Helligkeitssensor Tageslicht meldet) – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen & Test*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
+- **Gehtest** (Reiter *Aktionen & Test* oder `control.walkTest`): bei unscharfer Anlage jede Tür und jedes Fenster öffnen und an jedem Bewegungsmelder vorbeigehen – Home Guard hakt jeden Sensor ab, der sich meldet, und sagt am Ende, welche stumm geblieben sind (Ergebnis auch in `status.walkTest`).
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Widget „Home Guard Panel“** (Web-Komponente) für AURA, vis-2 und andere Visualisierungen, die Web-Komponenten unterstützen: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
@@ -85,6 +86,8 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `status.armed`, `status.alarm`, `status.entry` | Schalter |
 | `status.countdown` | Sekunden der laufenden Ausgangs-/Eingangsverzögerung |
 | `status.openContacts`, `status.openCount` | offene Türen/Fenster |
+| `status.bypassed` | beim Scharfschalten ausgenommene offene Kontakte, bis sie geschlossen werden |
+| `status.walkTest` | Gehtest: läuft, gemeldete und stumme Sensoren (JSON) |
 | `status.readyFull`, `status.readyPerimeter` | Scharfschalten ohne offene Kontakte möglich |
 | `status.lastTrigger`, `status.lastTriggerTime` | letzter auslösender Sensor |
 | `status.wrongPin` | falsche PIN-Eingaben in Folge |
@@ -101,6 +104,7 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `control.eveningOn` / `control.eveningOff` | Abendlicht: automatisch an / aus (auch als Schalter im Panel; „an“ abends eingeschaltet: die Lampen gehen sofort an) |
 | `control.morningOn` / `control.morningOff` | Morgenlicht: automatisch an / aus |
 | `control.autoArm` | Automatisch scharf/unscharf über Anwesenheit ein/aus (auch als Schalter im Panel) |
+| `control.walkTest` | Gehtest starten (true) oder beenden (false) |
 | `simulation.active` | Simulation läuft |
 | `simulation.next`, `simulation.plan` | nächster Schritt und Plan des Abends |
 | `simulation.learned`, `simulation.learnedDays` | gelernte Tage |
@@ -135,6 +139,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) Neu: „gekippt ist ok“ je Fenstergriff, offene Kontakte beim Scharfschalten ausnehmen, Bedrohungs-PIN, Gehtest
 * (ipod86) Fix: Assistent – Sensorzeilen ohne Haken gelten nicht mehr als „schon eingerichtet“; die automatische Suche hakt stattdessen die passende Frage an
 
 ### 0.3.4 (2026-11-20)

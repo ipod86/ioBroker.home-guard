@@ -16,6 +16,15 @@ const T = {
 		arming: (m: string, sec: number) => `⏳ ${m} wird in ${sec} Sekunden scharf geschaltet`,
 		disarmed: (src: string) => `🔓 Alarmanlage unscharf${src}`,
 		armingFailed: (m: string, list: string) => `⚠️ ${m} nicht scharf geschaltet – offen: ${list}`,
+		openBypass: (m: string, list: string) =>
+			`⚠️ ${m} scharf – offen und ausgenommen, bis es geschlossen wird: ${list}`,
+		duress: (src: string) => `🆘 STILLER ALARM: Die Anlage wurde mit der Bedrohungs-PIN ausgeschaltet${src}`,
+		walkStart: (min: number) =>
+			`🚶 Gehtest gestartet (${min} min) – jetzt jede Tür, jedes Fenster und jeden Bewegungsmelder auslösen`,
+		walkDone: (seen: number, total: number, missing: string) =>
+			missing
+				? `🚶 Gehtest beendet: ${seen} von ${total} Sensoren gemeldet. Nicht gemeldet: ${missing}`
+				: `🚶 Gehtest beendet: alle ${total} Sensoren haben sich gemeldet`,
 		openWarning: (m: string, list: string) => `⚠️ ${m} scharf, aber offen: ${list}`,
 		entry: (name: string, sec: number) => `🚪 ${name} geöffnet – bitte innerhalb von ${sec} Sekunden entschärfen`,
 		alarm: (name: string) => `🚨 ALARM: ${name}`,
@@ -65,6 +74,14 @@ const T = {
 		arming: (m: string, sec: number) => `⏳ ${m} will be armed in ${sec} seconds`,
 		disarmed: (src: string) => `🔓 Alarm system disarmed${src}`,
 		armingFailed: (m: string, list: string) => `⚠️ ${m} not armed – open: ${list}`,
+		openBypass: (m: string, list: string) => `⚠️ ${m} armed – open and left out until closed: ${list}`,
+		duress: (src: string) => `🆘 SILENT ALARM: the system was disarmed with the duress PIN${src}`,
+		walkStart: (min: number) =>
+			`🚶 Walk test started (${min} min) – now trigger every door, window and motion detector`,
+		walkDone: (seen: number, total: number, missing: string) =>
+			missing
+				? `🚶 Walk test finished: ${seen} of ${total} sensors reported. Not reported: ${missing}`
+				: `🚶 Walk test finished: all ${total} sensors reported`,
 		openWarning: (m: string, list: string) => `⚠️ ${m} armed, but open: ${list}`,
 		entry: (name: string, sec: number) => `🚪 ${name} opened – please disarm within ${sec} seconds`,
 		alarm: (name: string) => `🚨 ALARM: ${name}`,

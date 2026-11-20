@@ -281,4 +281,49 @@ describe('AlarmEngine', () => {
 		always.engine.sensorChanged('gate', true);
 		expect(always.events).to.deep.equal(['report']);
 	});
+
+	it('tilted is fine at home with "tiltOk": fully open still triggers, in full protection tilted counts as open', () => {
+		const t = setup({ exitDelayFull: 0 });
+		const bed: SensorDef = {
+			id: 'bed',
+			name: 'Schlafzimmerfenster',
+			circuit: 'perimeter',
+			delayed: false,
+			invert: false,
+			motion: false,
+			tiltOk: true,
+		};
+		t.engine.setSensors([...t.engine.getSensors(), bed], { bed: 0 });
+		t.engine.arm('night', 'state');
+		t.engine.sensorChanged('bed', 1); // tilted: no alarm at night
+		expect(t.status().phase).to.equal('armed');
+		t.engine.sensorChanged('bed', 2); // fully opened: alarm
+		expect(t.status().phase).to.equal('alarm');
+		t.engine.disarm('pin');
+		t.engine.sensorChanged('bed', 1);
+		// full protection: the tilted window is an open contact when arming
+		expect(t.engine.arm('full', 'state').open.map(s => s.id)).to.deep.equal(['bed']);
+		t.engine.disarm('pin');
+		t.engine.sensorChanged('bed', 0);
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('bed', 1); // tilting while away: alarm
+		expect(t.status().phase).to.equal('alarm');
+	});
+
+	it('bypass: open contacts are left out at arming and watched again once closed', () => {
+		const t = setup({ openCheck: 'bypass', exitDelayFull: 0 });
+		t.engine.sensorChanged('win', 2);
+		const r = t.engine.arm('perimeter', 'state');
+		expect(r.ok).to.equal(true);
+		expect(t.events).to.include('openWarning');
+		expect(t.status().phase).to.equal('armed');
+		expect(t.status().bypassed.map(s => s.id)).to.deep.equal(['win']);
+		t.engine.sensorChanged('win', 0); // closed: watched again
+		expect(t.status().bypassed).to.deep.equal([]);
+		expect(t.status().phase).to.equal('armed');
+		t.engine.sensorChanged('win', 2); // opened again: alarm
+		expect(t.status().phase).to.equal('alarm');
+		t.engine.disarm('pin');
+		expect(t.status().bypassed).to.deep.equal([]);
+	});
 });
