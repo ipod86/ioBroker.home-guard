@@ -1327,6 +1327,15 @@ class HomeGuard extends utils.Adapter {
         known.add(s.id);
       }
       added += extra.length;
+      const flag = {
+        perimeter: "wizHasDoors",
+        interior: "wizHasMotion",
+        "24h": "wizHasFire",
+        report: "wizHasReport"
+      }[circuit];
+      if (flag && extra.length) {
+        out[flag] = true;
+      }
       const hasEnum = !empty(enumKey) || !!out[enumKey];
       lines.push(
         hasEnum ? tr(

@@ -45,22 +45,22 @@
 						{
 							"value": 5,
 							"label": "Alarm system: outer skin",
-							"hidden": "data.wizStep !== 5 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "data.wizStep !== 5 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 6,
 							"label": "Alarm system: inside",
-							"hidden": "data.wizStep !== 6 && !(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "data.wizStep !== 6 && !(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						{
 							"value": 7,
 							"label": "Alarm system: danger & emergency",
-							"hidden": "data.wizStep !== 7 && !(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "data.wizStep !== 7 && !(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						{
 							"value": 8,
 							"label": "Alarm system: report only",
-							"hidden": "data.wizStep !== 8 && !(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "data.wizStep !== 8 && !(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						{
 							"value": 9,
@@ -75,7 +75,7 @@
 						{
 							"value": 11,
 							"label": "Alarm system: at night",
-							"hidden": "data.wizStep !== 11 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "data.wizStep !== 11 && !(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						{
 							"value": 12,
@@ -105,7 +105,7 @@
 						{
 							"value": 17,
 							"label": "Light: morning",
-							"hidden": "data.wizStep !== 17 && !((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "data.wizStep !== 17 && !((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						{
 							"value": 18,
@@ -115,7 +115,7 @@
 						{
 							"value": 19,
 							"label": "Alexa",
-							"hidden": "data.wizStep !== 19 && !((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "data.wizStep !== 19 && !((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						{
 							"value": 20,
@@ -402,7 +402,7 @@
 						"wizHasDoors": {
 							"type": "checkbox",
 							"label": "Door and window contacts, glass break or vibration detectors",
-							"hidden": "!data.alarmEnabled || ((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))",
+							"hidden": "!data.alarmEnabled || ((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -417,7 +417,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled || !((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))",
+							"hidden": "!data.alarmEnabled || !((data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -426,7 +426,7 @@
 						"wizHasMotion": {
 							"type": "checkbox",
 							"label": "Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …)",
-							"hidden": "!data.alarmEnabled || ((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))",
+							"hidden": "!data.alarmEnabled || ((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior'))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -441,7 +441,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled || !((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))",
+							"hidden": "!data.alarmEnabled || !((data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior'))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -450,7 +450,7 @@
 						"wizHasFire": {
 							"type": "checkbox",
 							"label": "Smoke, heat, water or gas detectors, or a panic button",
-							"hidden": "!data.alarmEnabled || ((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))",
+							"hidden": "!data.alarmEnabled || ((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -465,7 +465,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled || !((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))",
+							"hidden": "!data.alarmEnabled || !((data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -474,7 +474,7 @@
 						"wizHasReport": {
 							"type": "checkbox",
 							"label": "Sensors that should only report, e.g. garden gate, letter box or doorbell",
-							"hidden": "!data.alarmEnabled || ((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))",
+							"hidden": "!data.alarmEnabled || ((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report'))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -489,7 +489,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled || !((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))",
+							"hidden": "!data.alarmEnabled || !((data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report'))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -498,7 +498,7 @@
 						"wizHasSiren": {
 							"type": "checkbox",
 							"label": "A siren (or a socket with a horn)",
-							"hidden": "!data.alarmEnabled || ((data.sirens || []).some(r => r && r.id))",
+							"hidden": "!data.alarmEnabled || ((data.sirens || []).some(r => r && r.enabled !== false && r.id))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -513,7 +513,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.alarmEnabled || !((data.sirens || []).some(r => r && r.id))",
+							"hidden": "!data.alarmEnabled || !((data.sirens || []).some(r => r && r.enabled !== false && r.id))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -566,7 +566,7 @@
 						"wizHasAlexa": {
 							"type": "checkbox",
 							"label": "Amazon Echo (Alexa) – for the alarm or radio in the simulation",
-							"hidden": "!(data.alarmEnabled || data.simEnabled) || (data.echos || []).some(r => r && r.device)",
+							"hidden": "!(data.alarmEnabled || data.simEnabled) || (data.echos || []).some(r => r && r.enabled !== false && r.device)",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -581,7 +581,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled || data.simEnabled) || !(data.echos || []).some(r => r && r.device)",
+							"hidden": "!(data.alarmEnabled || data.simEnabled) || !(data.echos || []).some(r => r && r.enabled !== false && r.device)",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -614,7 +614,7 @@
 						"wizHasDevices": {
 							"type": "checkbox",
 							"label": "A TV, radio or similar that should also run during the simulation",
-							"hidden": "!data.simEnabled || ((data.simLamps || []).some(r => r && r.id && r.type === 'device'))",
+							"hidden": "!data.simEnabled || ((data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.type === 'device'))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -629,7 +629,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!data.simEnabled || !((data.simLamps || []).some(r => r && r.id && r.type === 'device'))",
+							"hidden": "!data.simEnabled || !((data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.type === 'device'))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -897,7 +897,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -912,7 +912,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w4t": {
 							"type": "staticText",
@@ -922,7 +922,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w4tx": {
 							"type": "staticText",
@@ -932,7 +932,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w4tb": {
 							"type": "staticText",
@@ -945,7 +945,7 @@
 							"style": {
 								"fontWeight": "bold"
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w4s": {
 							"type": "staticText",
@@ -959,7 +959,7 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"autoPerimeter": {
 							"type": "checkbox",
@@ -969,7 +969,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"enumPerimeter": {
 							"type": "selectSendTo",
@@ -983,7 +983,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.autoPerimeter)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))) || (!data.autoPerimeter)"
 						},
 						"w4ih": {
 							"type": "header",
@@ -995,7 +995,7 @@
 							"lg": 12,
 							"xl": 12,
 							"newLine": true,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w4it": {
 							"type": "staticText",
@@ -1005,7 +1005,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						}
 					}
 				},
@@ -1043,7 +1043,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))",
+							"hidden": "(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -1058,7 +1058,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						"w5t": {
 							"type": "staticText",
@@ -1068,7 +1068,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						"w5tb": {
 							"type": "staticText",
@@ -1081,7 +1081,7 @@
 							"style": {
 								"fontWeight": "bold"
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						"w5s": {
 							"type": "staticText",
@@ -1095,7 +1095,7 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						"autoFull": {
 							"type": "checkbox",
@@ -1105,7 +1105,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior')))"
 						},
 						"enumFull": {
 							"type": "selectSendTo",
@@ -1119,7 +1119,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))) || (!data.autoFull)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior'))) || (!data.autoFull)"
 						}
 					}
 				},
@@ -1157,7 +1157,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))",
+							"hidden": "(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -1172,7 +1172,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"w6t": {
 							"type": "staticText",
@@ -1182,7 +1182,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"w6tb": {
 							"type": "staticText",
@@ -1195,7 +1195,7 @@
 							"style": {
 								"fontWeight": "bold"
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"w6s": {
 							"type": "staticText",
@@ -1209,7 +1209,7 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"autoFire": {
 							"type": "checkbox",
@@ -1219,7 +1219,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"enumFire": {
 							"type": "selectSendTo",
@@ -1233,7 +1233,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))) || (!data.autoFire)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))) || (!data.autoFire)"
 						},
 						"hazardDefault": {
 							"type": "select",
@@ -1253,7 +1253,7 @@
 								}
 							],
 							"default": "speech",
-							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))) || (!data.autoFire)",
+							"hidden": "!(data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))) || (!data.autoFire)",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -1297,7 +1297,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))",
+							"hidden": "(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -1312,7 +1312,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"w7t": {
 							"type": "staticText",
@@ -1322,7 +1322,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"w7tb": {
 							"type": "staticText",
@@ -1335,7 +1335,7 @@
 							"style": {
 								"fontWeight": "bold"
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"w7s": {
 							"type": "staticText",
@@ -1349,7 +1349,7 @@
 								"fontStyle": "italic",
 								"opacity": 0.8
 							},
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"autoReport": {
 							"type": "checkbox",
@@ -1359,7 +1359,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"enumReport": {
 							"type": "selectSendTo",
@@ -1373,7 +1373,7 @@
 							"manual": true,
 							"noTranslation": true,
 							"label": "Function report-only sensors",
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))) || (!data.autoReport)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report'))) || (!data.autoReport)"
 						},
 						"reportWhen": {
 							"type": "select",
@@ -1395,7 +1395,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						}
 					}
 				},
@@ -1458,7 +1458,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w8l": {
 							"type": "staticText",
@@ -1468,7 +1468,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled || !(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"hidden": "!(data.alarmEnabled) || (!data.lockEnabled || !(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))",
 							"style": {
 								"color": "#2e9d4f",
 								"fontWeight": "bold"
@@ -1771,7 +1771,7 @@
 								}
 							],
 							"help": "What happens when a window is still open while switching on. \"Warn\" switches on anyway and tells you which one.",
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"armEarlyId": {
 							"type": "objectId",
@@ -1782,7 +1782,7 @@
 							"lg": 4,
 							"xl": 4,
 							"help": "Optional, may stay empty: the door contact of the front door. As soon as you close it behind you, the system is on at once – no waiting for the exit delay.",
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						}
 					}
 				},
@@ -1820,7 +1820,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))",
+							"hidden": "(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -1835,7 +1835,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w10t": {
 							"type": "staticText",
@@ -1845,7 +1845,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"w10tx": {
 							"type": "staticText",
@@ -1855,7 +1855,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"nightEnabled": {
 							"type": "checkbox",
@@ -1865,7 +1865,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.alarmEnabled)"
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))) || (!data.alarmEnabled)"
 						},
 						"nightStart": {
 							"type": "text",
@@ -1875,7 +1875,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
 							"help": "Suggestion: 23:00"
 						},
 						"nightEnd": {
@@ -1886,7 +1886,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
+							"hidden": "!(data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))) || (!data.nightEnabled)",
 							"help": "Suggestion: 06:00"
 						}
 					}
@@ -2310,7 +2310,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter')))"
 						},
 						"notifyHazard": {
 							"type": "checkbox",
@@ -2321,7 +2321,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h')))"
 						},
 						"notifyReport": {
 							"type": "checkbox",
@@ -2332,7 +2332,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report')))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report')))"
 						},
 						"w13sp": {
 							"type": "header",
@@ -2424,7 +2424,7 @@
 							"type": "checkbox",
 							"label": "Yes, lamps should go on or blink on an alarm",
 							"help": "Makes the alarm visible from outside and chases intruders away; afterwards the lamps go back as they were.",
-							"hidden": "!(data.alarmEnabled) || ((data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id))",
+							"hidden": "!(data.alarmEnabled) || ((data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.enabled !== false && r.id))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2439,7 +2439,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"enumLamps": {
 							"type": "selectSendTo",
@@ -2453,7 +2453,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)) || !data.lampsAuto)"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.enabled !== false && r.id)) || !data.lampsAuto)"
 						},
 						"lampMode": {
 							"type": "select",
@@ -2473,7 +2473,7 @@
 									"label": "Switch on"
 								}
 							],
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"lamps": {
 							"type": "table",
@@ -2504,7 +2504,7 @@
 									"width": "32%"
 								}
 							],
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQLamps || (data.lampsAuto && data.enumLamps) || (data.lamps || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"w14s": {
 							"type": "header",
@@ -2515,7 +2515,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"w14st": {
 							"type": "staticText",
@@ -2525,7 +2525,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"sirens": {
 							"type": "table",
@@ -2593,7 +2593,7 @@
 									"max": 3600
 								}
 							],
-							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizHasSiren || (data.sirens || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"w14x": {
 							"type": "header",
@@ -2609,7 +2609,7 @@
 						"wizQActions": {
 							"type": "checkbox",
 							"label": "Yes, switch something else too (roller shutters, outdoor light, camera …)",
-							"hidden": "!(data.alarmEnabled) || ((data.actions || []).some(r => r && r.id))",
+							"hidden": "!(data.alarmEnabled) || ((data.actions || []).some(r => r && r.enabled !== false && r.id))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -2624,7 +2624,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.enabled !== false && r.id)))"
 						},
 						"actions": {
 							"type": "table",
@@ -2733,7 +2733,7 @@
 									"default": "true"
 								}
 							],
-							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.id)))"
+							"hidden": "!(data.alarmEnabled) || (!(data.wizQActions || (data.actions || []).some(r => r && r.enabled !== false && r.id)))"
 						}
 					}
 				},
@@ -2879,7 +2879,7 @@
 						"wizSimMorning": {
 							"type": "checkbox",
 							"label": "The simulation should also make light in the morning (at wake-up time)",
-							"hidden": "!(data.simEnabled) || (data.morningLight || (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))",
+							"hidden": "!(data.simEnabled) || (data.morningLight || (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -3169,7 +3169,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"hidden": "((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -3184,7 +3184,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						"w17c": {
 							"type": "staticText",
@@ -3194,7 +3194,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))) || (!data.morningLight)"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning))))) || (!data.morningLight)"
 						},
 						"w17t": {
 							"type": "staticText",
@@ -3204,7 +3204,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						"w17def": {
 							"type": "sendTo",
@@ -3218,7 +3218,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						"simWake": {
 							"type": "text",
@@ -3229,7 +3229,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))",
 							"help": "When you get up on working days. Suggestion: 06:30.",
 							"newLine": true
 						},
@@ -3244,7 +3244,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))",
 							"help": "So the lamps do not go on at exactly the same minute every morning. Suggestion: 20 min."
 						},
 						"simWakeWeekendLater": {
@@ -3258,7 +3258,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))",
 							"help": "Suggestion: 60 min."
 						},
 						"simMorningOffOffset": {
@@ -3272,7 +3272,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))",
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))",
 							"help": "In the morning the lamps go off this long after sunrise. Suggestion: 5 min."
 						},
 						"simMorningOffTime": {
@@ -3285,7 +3285,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						"simMorningLuxAbove": {
 							"type": "number",
@@ -3298,7 +3298,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))) || (!(data.wizHasLux || !!data.simLuxId))"
+							"hidden": "!((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning))))) || (!(data.wizHasLux || !!data.simLuxId))"
 						}
 					}
 				},
@@ -3447,7 +3447,7 @@
 							"jsonData": "{}",
 							"manual": true,
 							"noTranslation": true,
-							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto || !(data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning)))))"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simAuto || !(data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning)))))"
 						},
 						"w18dt": {
 							"type": "staticText",
@@ -3457,7 +3457,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled || !(data.wizHasDevices || (data.simLamps || []).some(r => r && r.id && r.type === 'device')))"
+							"hidden": "!((data.simEnabled || data.eveningLight || data.morningLight)) || (!data.simEnabled || !(data.wizHasDevices || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.type === 'device')))"
 						},
 						"w18lh": {
 							"type": "header",
@@ -4058,7 +4058,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))",
+							"hidden": "((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))",
 							"style": {
 								"fontStyle": "italic",
 								"opacity": 0.8
@@ -4073,7 +4073,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19at": {
 							"type": "staticText",
@@ -4083,7 +4083,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19a1": {
 							"type": "header",
@@ -4094,7 +4094,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
 						},
 						"wizAlexaAlarm": {
 							"type": "checkbox",
@@ -4105,7 +4105,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled"
 						},
 						"wizEchoAlarmVolume": {
 							"type": "number",
@@ -4119,7 +4119,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm",
 							"newLine": true
 						},
 						"wizEchoAlarmSound": {
@@ -4150,7 +4150,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
 						},
 						"wizEchoAlarmText": {
 							"type": "checkbox",
@@ -4162,7 +4162,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.alarmEnabled || !data.wizAlexaAlarm"
 						},
 						"w19a2": {
 							"type": "header",
@@ -4173,7 +4173,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
 						},
 						"wizAlexaSim": {
 							"type": "checkbox",
@@ -4184,7 +4184,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled"
 						},
 						"wizEchoSimDevice": {
 							"type": "selectSendTo",
@@ -4198,7 +4198,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoStations": {
@@ -4210,7 +4210,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoSimVolume": {
 							"type": "number",
@@ -4224,7 +4224,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoWindow": {
 							"type": "select",
@@ -4250,7 +4250,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoTimes": {
@@ -4262,7 +4262,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim || data.wizEchoWindow !== 'custom'"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim || data.wizEchoWindow !== 'custom'"
 						},
 						"wizEchoCount": {
 							"type": "text",
@@ -4274,7 +4274,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim",
 							"newLine": true
 						},
 						"wizEchoDur": {
@@ -4287,7 +4287,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"wizEchoLearn": {
 							"type": "checkbox",
@@ -4299,7 +4299,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || !data.simEnabled || !data.wizAlexaSim"
 						},
 						"w19adef": {
 							"type": "sendTo",
@@ -4313,7 +4313,7 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)) || (!data.wizAlexaAlarm && !data.wizAlexaSim)",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)) || (!data.wizAlexaAlarm && !data.wizAlexaSim)",
 							"newLine": true
 						},
 						"w19a3": {
@@ -4325,7 +4325,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"w19atab": {
 							"type": "staticText",
@@ -4335,7 +4335,7 @@
 							"md": 12,
 							"lg": 12,
 							"xl": 12,
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))"
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))"
 						},
 						"echos": {
 							"type": "table",
@@ -4495,7 +4495,7 @@
 									"hidden": "!data.sim"
 								}
 							],
-							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled))",
+							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))",
 							"useCardFor": [
 								"xs",
 								"sm",
@@ -4726,7 +4726,7 @@
 					"type": "sendTo",
 					"label": "◀ Back",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": -1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "outlined",
 					"hidden": "data.wizStep <= 0",
@@ -4741,7 +4741,7 @@
 					"type": "sendTo",
 					"label": "Next ▶",
 					"command": "wizardNav",
-					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
+					"jsonData": "{\"step\": \"${data.wizStep}\", \"dir\": 1, \"need\": \"${[(true), (true), (true), ((data.alarmEnabled || data.simEnabled) && data.presenceEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))), (data.alarmEnabled && (data.wizHasMotion || (data.autoFull && data.enumFull) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'interior'))), (data.alarmEnabled && (data.wizHasFire || (data.autoFire && data.enumFire) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === '24h'))), (data.alarmEnabled && (data.wizHasReport || (data.autoReport && data.enumReport) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'report'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled && (data.wizHasDoors || (data.autoPerimeter && data.enumPerimeter) || (data.sensors || []).some(r => r && r.enabled !== false && r.circuit === 'perimeter'))), (data.alarmEnabled), (data.alarmEnabled), (data.alarmEnabled), (data.simEnabled), (data.eveningLight || data.simEnabled), ((data.morningLight || (data.simEnabled && (data.wizSimMorning || (data.simAuto && data.enumMorningLamps) || (data.simLamps || []).some(r => r && r.enabled !== false && r.id && r.morning))))), ((data.simEnabled || data.eveningLight || data.morningLight)), ((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled)), (true)].map(x => (x ? 1 : 0)).join('')}\"}",
 					"useNative": true,
 					"variant": "contained",
 					"hidden": "data.wizStep >= 20",

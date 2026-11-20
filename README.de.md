@@ -134,6 +134,9 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) Fix: Assistent – Sensorzeilen ohne Haken gelten nicht mehr als „schon eingerichtet“; die automatische Suche hakt stattdessen die passende Frage an
+
 ### 0.3.4 (2026-11-20)
 * (ipod86) Fix: Befunde der Prüfung – Logmeldungen nur noch englisch, Fehler bei Hintergrundaufgaben werden geloggt, Texte des Assistenten und des Testalarms in allen Admin-Sprachen, Übersetzungen korrigiert
 * (ipod86) Geändert: Admin – breite Tabellen (Sensoren, Lampen, Echos, Messenger) als Karten, Reaktion nur bei Gefahrenmeldern, Alexa-Seite im Assistenten auch bei schon eingerichteten Echos, klarere Texte

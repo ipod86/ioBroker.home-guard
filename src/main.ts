@@ -1501,6 +1501,16 @@ class HomeGuard extends utils.Adapter {
 				known.add(s.id);
 			}
 			added += extra.length;
+			// unticked rows do not count as set up – tick the question, so that the page of the area is shown
+			const flag = {
+				perimeter: 'wizHasDoors',
+				interior: 'wizHasMotion',
+				'24h': 'wizHasFire',
+				report: 'wizHasReport',
+			}[circuit as string];
+			if (flag && extra.length) {
+				out[flag] = true;
+			}
 			const hasEnum = !empty(enumKey) || !!out[enumKey];
 			lines.push(
 				hasEnum
