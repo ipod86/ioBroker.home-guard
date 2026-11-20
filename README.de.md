@@ -134,8 +134,8 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
-* (ipod86) Neu: Türen und Fenster, die ihr zu Hause öffnet (z. B. das Schlafzimmerfenster), im Hüll- und Nachtschutz ignorieren, mit Info-Logmeldung beim Öffnen
+### 0.3.3 (2026-11-20)
+* (ipod86) Neu: Spalte „zu Hause ignorieren“ in der Sensortabelle – Türen und Fenster, die ihr zu Hause öffnet (z. B. das Schlafzimmerfenster), werden im Hüll- und Nachtschutz ignoriert, mit Info-Logmeldung beim Öffnen
 
 ### 0.3.2 (2026-11-19)
 * (ipod86) Neu: Die automatische Suche findet auch Sensoren ohne Funktionen und listet sie ohne Haken in der Sensortabelle
