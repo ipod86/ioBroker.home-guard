@@ -60,16 +60,6 @@ const T = {
     testPrefix: "\u{1F9EA} TEST \u2013 ",
     testTrigger: "Testausl\xF6ser",
     testEnd: "\u{1F9EA} Test beendet",
-    testBusy: "Gerade l\xE4uft ein echter Alarm oder eine Eingangsverz\xF6gerung \u2013 kein Test m\xF6glich",
-    testNothing: "Nichts zu testen \u2013 f\xFCr die angehakten Teile ist nichts eingerichtet",
-    testRunning: (s, list) => `Test l\xE4uft ${s} s: ${list}`,
-    testParts: {
-      notify: "Benachrichtigungen",
-      speech: "Sprachausgabe",
-      lamps: (n) => `${n} Lampe${n === 1 ? "" : "n"}`,
-      sirens: (n) => `${n} Sirene${n === 1 ? "" : "n"}`,
-      actions: (n) => `${n} Aktion${n === 1 ? "" : "en"}`
-    },
     alarmWord: "Alarm",
     by: {
       pin: "PIN",
@@ -85,9 +75,6 @@ const T = {
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Testnachricht von Home Guard",
-    nmMissing: "Der Adapter \u201Enotification-manager\u201C ist nicht installiert. Ohne ihn erscheinen Alarme nur in der Glocke des Admins und gehen an keinen Messenger. Installiere ihn \xFCber \u201EAdapter\u201C und richte dort die Messenger ein.",
-    nmStopped: "Der Adapter \u201Enotification-manager\u201C ist installiert, l\xE4uft aber nicht. Starte die Instanz, damit Alarme weitergeleitet werden.",
-    nmOk: "Der Adapter \u201Enotification-manager\u201C ist installiert und l\xE4uft. Welche Messenger die Alarme bekommen, stellst du in seinen Einstellungen ein.",
     onOff: ["aus", "an"]
   },
   en: {
@@ -122,16 +109,6 @@ const T = {
     testPrefix: "\u{1F9EA} TEST \u2013 ",
     testTrigger: "test trigger",
     testEnd: "\u{1F9EA} Test finished",
-    testBusy: "A real alarm or entry delay is running \u2013 no test possible",
-    testNothing: "Nothing to test \u2013 nothing is set up for the ticked parts",
-    testRunning: (s, list) => `Test running for ${s} s: ${list}`,
-    testParts: {
-      notify: "notifications",
-      speech: "speech output",
-      lamps: (n) => `${n} lamp${n === 1 ? "" : "s"}`,
-      sirens: (n) => `${n} siren${n === 1 ? "" : "s"}`,
-      actions: (n) => `${n} action${n === 1 ? "" : "s"}`
-    },
     alarmWord: "Alarm",
     by: {
       pin: "PIN",
@@ -147,9 +124,6 @@ const T = {
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Test message from Home Guard",
-    nmMissing: 'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.',
-    nmStopped: 'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.',
-    nmOk: 'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.',
     onOff: ["off", "on"]
   }
 };

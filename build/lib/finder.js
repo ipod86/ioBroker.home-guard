@@ -212,25 +212,25 @@ function sameDevices(ids, objects) {
   }
   return out;
 }
-function sensorNote(s, state, now, de) {
+function sensorNote(s, state, now, tr) {
   const parts = [];
   if (state && state.val !== null && state.val !== void 0) {
     const on = (0, import_alarm.isOpenValue)(state.val, s.invert);
-    const word = s.circuit === "perimeter" ? on ? de ? "offen" : "open" : de ? "zu" : "closed" : s.circuit === "interior" ? on ? de ? "Bewegung" : "motion" : de ? "ruhig" : "quiet" : on ? "ALARM" : "ok";
-    parts.push(`${de ? "jetzt" : "now"}: ${word}`);
+    const word = s.circuit === "perimeter" ? tr(on ? "open" : "closed") : s.circuit === "interior" ? tr(on ? "motion" : "quiet") : on ? "ALARM" : "ok";
+    parts.push(tr("now: %s", word));
   } else {
-    parts.push(de ? "noch kein Wert" : "no value yet");
+    parts.push(tr("no value yet"));
   }
   const days = (state == null ? void 0 : state.ts) ? Math.floor((now - state.ts) / 864e5) : -1;
   const stale = days >= 30;
   if (stale) {
-    parts.push(de ? `seit ${days} Tagen keine Meldung` : `no report for ${days} days`);
+    parts.push(tr("no report for %s days", days));
   }
   if (s.camera) {
-    parts.push(de ? "Kamera \u2013 oft Fehlalarme" : "camera \u2013 often false alarms");
+    parts.push(tr("camera \u2013 often false alarms"));
   }
   if (s.invert) {
-    parts.push(de ? "meldet \u201Ezu\u201C als true, umgekehrt gesetzt" : 'reports "closed" as true, set inverted');
+    parts.push(tr('reports "closed" as true, set inverted'));
   }
   return { note: parts.join(" \xB7 "), stale };
 }

@@ -1,6 +1,7 @@
 // Setup assistant: finds sensors without functions - by role, by the device type of Homematic and by the state
 // names of known adapters. Pure functions, the adapter only collects the objects and states.
 
+import type { Tr } from './i18n';
 import { isOpenValue } from './alarm';
 
 /** area of a found sensor */
@@ -293,51 +294,39 @@ export function sameDevices(ids: Iterable<string>, objects: Record<string, Finde
  * @param s found sensor
  * @param state its state (value and time of the last report)
  * @param now current time
- * @param de German texts
+ * @param tr translation function
  */
 export function sensorNote(
 	s: FoundSensor,
 	state: { val: unknown; ts?: number; lc?: number } | null | undefined,
 	now: number,
-	de: boolean,
+	tr: Tr,
 ): { note: string; stale: boolean } {
 	const parts: string[] = [];
 	if (state && state.val !== null && state.val !== undefined) {
 		const on = isOpenValue(state.val, s.invert);
 		const word =
 			s.circuit === 'perimeter'
-				? on
-					? de
-						? 'offen'
-						: 'open'
-					: de
-						? 'zu'
-						: 'closed'
+				? tr(on ? 'open' : 'closed')
 				: s.circuit === 'interior'
-					? on
-						? de
-							? 'Bewegung'
-							: 'motion'
-						: de
-							? 'ruhig'
-							: 'quiet'
+					? tr(on ? 'motion' : 'quiet')
 					: on
 						? 'ALARM'
 						: 'ok';
-		parts.push(`${de ? 'jetzt' : 'now'}: ${word}`);
+		parts.push(tr('now: %s', word));
 	} else {
-		parts.push(de ? 'noch kein Wert' : 'no value yet');
+		parts.push(tr('no value yet'));
 	}
 	const days = state?.ts ? Math.floor((now - state.ts) / 86_400_000) : -1;
 	const stale = days >= 30;
 	if (stale) {
-		parts.push(de ? `seit ${days} Tagen keine Meldung` : `no report for ${days} days`);
+		parts.push(tr('no report for %s days', days));
 	}
 	if (s.camera) {
-		parts.push(de ? 'Kamera – oft Fehlalarme' : 'camera – often false alarms');
+		parts.push(tr('camera – often false alarms'));
 	}
 	if (s.invert) {
-		parts.push(de ? 'meldet „zu“ als true, umgekehrt gesetzt' : 'reports "closed" as true, set inverted');
+		parts.push(tr('reports "closed" as true, set inverted'));
 	}
 	return { note: parts.join(' · '), stale };
 }

@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { findSensors, sameDevices, sensorNote, type FinderObject } from './finder';
+import { fill, loadTr, trEn } from './i18n';
 
 const st = (role: string, name = '', extra: Partial<FinderObject['common']> = {}): FinderObject => ({
 	type: 'state',
@@ -89,13 +90,22 @@ describe('sameDevices', () => {
 describe('sensorNote', () => {
 	const now = Date.UTC(2026, 10, 18);
 	it('value, camera and silence', () => {
-		const n = sensorNote(byId['reolink.0.sensor.motion'], { val: false, ts: now - 45 * 86_400_000 }, now, true);
-		expect(n.note).to.equal('jetzt: ruhig · seit 45 Tagen keine Meldung · Kamera – oft Fehlalarme');
+		const n = sensorNote(byId['reolink.0.sensor.motion'], { val: false, ts: now - 45 * 86_400_000 }, now, trEn);
+		expect(n.note).to.equal('now: quiet · no report for 45 days · camera – often false alarms');
 		expect(n.stale).to.equal(true);
 	});
 	it('inverted contact', () => {
-		const n = sensorNote(byId['zigbee.0.x.contact'], { val: true, ts: now }, now, true);
-		expect(n.note).to.match(/^jetzt: zu · meldet/);
+		const n = sensorNote(byId['zigbee.0.x.contact'], { val: true, ts: now }, now, trEn);
+		expect(n.note).to.match(/^now: closed · reports/);
 		expect(n.stale).to.equal(false);
+	});
+});
+
+describe('i18n', () => {
+	it('fills placeholders in order', () => {
+		expect(fill('%s: "%s" (%s states)', ['Presence', 'Anwesend', 4])).to.equal('Presence: "Anwesend" (4 states)');
+	});
+	it('falls back to English for a missing file', () => {
+		expect(loadTr('xx', '/nonexistent')('no report for %s days', 3)).to.equal('no report for 3 days');
 	});
 });

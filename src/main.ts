@@ -27,7 +27,17 @@ import { WIZARD_DEFAULTS, bestEnum, nextStep, type EnumInfo, type ScanKind } fro
 import { findSensors, sameDevices, sensorNote, type FinderObject, type FoundCircuit } from './lib/finder';
 import { sunTimes } from './lib/sun';
 import { texts, type Texts } from './lib/texts';
+import { loadTr, trEn, type Tr } from './lib/i18n';
+import { join } from 'node:path';
 import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
+
+// box under "Alarm also to the ioBroker notifications" (translated through admin/i18n)
+const NM_MISSING =
+	'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.';
+const NM_STOPPED =
+	'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.';
+const NM_OK =
+	'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.';
 
 const MODES: Mode[] = ['off', 'full', 'perimeter', 'night'];
 type LightSwitch = 'eveningOn' | 'eveningOff' | 'morningOn' | 'morningOff';
@@ -132,6 +142,8 @@ interface LampOut {
 class HomeGuard extends utils.Adapter {
 	private T: Texts = texts('en');
 	private sysLang = 'en';
+	/** texts shown in the admin, in the system language */
+	private tr: Tr = trEn;
 	private lat = 51;
 	private lon = 10;
 	private alarm!: AlarmEngine;
@@ -201,8 +213,8 @@ class HomeGuard extends utils.Adapter {
 	public constructor(options: Partial<utils.AdapterOptions> = {}) {
 		super({ ...options, name: 'home-guard' });
 		this.on('ready', this.onReady.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
-		this.on('message', this.onMessage.bind(this));
+		this.on('stateChange', (id, state) => this.bg(this.onStateChange(id, state), 'stateChange'));
+		this.on('message', obj => this.bg(this.onMessage(obj), 'message'));
 		this.on('objectChange', this.onObjectChange.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
@@ -220,6 +232,7 @@ class HomeGuard extends utils.Adapter {
 		const lang = sys?.common?.language || 'en';
 		this.sysLang = lang;
 		this.T = texts(lang);
+		this.tr = loadTr(lang, join(__dirname, '..', 'admin', 'i18n'));
 		// lamp table of an older version (one type per row): turned into roles, the instance restarts with it
 		if (await this.migrateSimLamps()) {
 			return;
@@ -247,9 +260,9 @@ class HomeGuard extends utils.Adapter {
 				now: () => Date.now(),
 				setTimer: (fn, ms) => this.setTimeout(fn, ms),
 				clearTimer: h => this.clearTimeout(h as ioBroker.Timeout),
-				publish: s => void this.publishAlarm(s),
-				event: (e, info) => void this.onAlarmEvent(e, info),
-				outputs: on => void this.setOutputs(on),
+				publish: s => this.bg(this.publishAlarm(s), 'publishAlarm'),
+				event: (e, info) => this.bg(this.onAlarmEvent(e, info), 'onAlarmEvent'),
+				outputs: on => this.bg(this.setOutputs(on), 'setOutputs'),
 			},
 			{
 				// limits as in the settings, also in code: a timer above 2^31 ms would fire at once
@@ -271,8 +284,8 @@ class HomeGuard extends utils.Adapter {
 				setTimer: (fn, ms) => this.setTimeout(fn, ms),
 				clearTimer: h => this.clearTimeout(h as ioBroker.Timeout),
 				isOn: id => this.simLampVals.get(id) || false,
-				switchLamp: (id, on) => void this.switchLamp(id, on),
-				publish: (active, plan, next) => void this.publishSim(active, plan, next),
+				switchLamp: (id, on) => this.bg(this.switchLamp(id, on), 'switchLamp'),
+				publish: (active, plan, next) => this.bg(this.publishSim(active, plan, next), 'publishSim'),
 				// end of the simulation (e.g. coming home): devices like the TV off, lamps stay on - or as set per row
 				offOnStop: id => this.stopOff.get(id) ?? this.simLamps.find(l => l.id === id)?.type === 'device',
 			},
@@ -286,7 +299,7 @@ class HomeGuard extends utils.Adapter {
 				setTimer: (fn, ms) => this.setTimeout(fn, ms),
 				clearTimer: h => this.clearTimeout(h as ioBroker.Timeout),
 				isOn: id => this.simLampVals.get(id) || false,
-				switchLamp: (id, on) => void this.switchLamp(id, on),
+				switchLamp: (id, on) => this.bg(this.switchLamp(id, on), 'switchLamp'),
 				publish: (active, plan, next) => {
 					const text =
 						active && next ? `${new Date(next.at).toLocaleString()} ${next.on ? 'on' : 'off'}` : '';
@@ -362,13 +375,23 @@ class HomeGuard extends utils.Adapter {
 		this.wrongPin = num((await this.getStateAsync('status.wrongPin'))?.val, 0);
 
 		// every minute: night mode, sabotage (hourly), daily new simulation plan, learned days cleanup
-		this.minuteTimer = this.setInterval(() => void this.everyMinute(), 60000);
+		this.minuteTimer = this.setInterval(() => this.bg(this.everyMinute(), 'everyMinute'), 60000);
 		this.started = true;
 		await this.everyMinute();
 		await this.updateSimulation();
 		this.log.info(
 			`Home Guard ready: ${this.sensorIds.size} sensors, ${this.presenceIds.length} presence states, ${this.simLamps.length} simulation lamps, ${this.lampOuts.length} alarm lamps`,
 		);
+	}
+
+	/**
+	 * Runs a promise in the background and logs a failure instead of leaving it unhandled
+	 *
+	 * @param p the promise
+	 * @param what name for the log line
+	 */
+	private bg(p: Promise<unknown>, what: string): void {
+		p.catch((e: unknown) => this.log.warn(`${what}: ${e instanceof Error ? e.message : String(e)}`));
 	}
 
 	/**
@@ -497,7 +520,7 @@ class HomeGuard extends utils.Adapter {
 		}
 		this.rescanTimer = this.setTimeout(() => {
 			this.rescanTimer = undefined;
-			void this.rescan(id);
+			this.bg(this.rescan(id), 'rescan');
 		}, 3000);
 	}
 
@@ -918,20 +941,8 @@ class HomeGuard extends utils.Adapter {
 					c.alarmEnabled &&
 					(this.alarm.mode === 'perimeter' || this.alarm.mode === 'night')
 				) {
-					const de = this.sysLang === 'de';
-					const mode =
-						this.alarm.mode === 'night'
-							? de
-								? 'Nachtschutz'
-								: 'night protection'
-							: de
-								? 'Hüllschutz'
-								: 'perimeter protection';
-					this.log.info(
-						de
-							? `${ign.name} geöffnet – im ${mode} ignoriert (zu Hause erlaubt)`
-							: `${ign.name} opened – ignored in ${mode} (allowed at home)`,
-					);
+					const mode = this.alarm.mode === 'night' ? 'night protection' : 'perimeter protection';
+					this.log.info(`${ign.name} opened – ignored in ${mode} (allowed at home)`);
 				}
 				ign.open = open;
 			}
@@ -951,6 +962,9 @@ class HomeGuard extends utils.Adapter {
 			await this.onPresence(was, this.someoneHome());
 		}
 		if (this.simLampVals.has(id)) {
+			// the lamp states are the switching (SET) states the simulation writes itself; many devices and aliases
+			// never confirm them with ack=true, so the last written value is the best known one. Only confirmed
+			// values are learned as real use (see "confirmed" below).
 			const on = isOpenValue(state.val);
 			const before = this.simLampVals.get(id);
 			this.simLampVals.set(id, on);
@@ -1137,23 +1151,23 @@ class HomeGuard extends utils.Adapter {
 		this.pinError = 'wrong pin';
 		if (!c.pin || pin === String(c.pin)) {
 			this.wrongPin = 0;
-			void this.setStateAsync('status.wrongPin', 0, true);
+			this.bg(this.setStateAsync('status.wrongPin', 0, true), 'setStateAsync');
 			if (mode === 'off') {
 				this.alarm.disarm(source);
 			} else {
 				this.alarm.arm(mode, source);
 			}
-			void this.updateSimulation();
+			this.bg(this.updateSimulation(), 'updateSimulation');
 			return true;
 		}
 		this.wrongPin++;
-		void this.setStateAsync('status.wrongPin', this.wrongPin, true);
+		this.bg(this.setStateAsync('status.wrongPin', this.wrongPin, true), 'setStateAsync');
 		if (this.wrongPin >= Math.max(1, num(c.maxWrongPin, 3))) {
 			const lockMin = clamp(num(c.pinLockMin, 5), 0, 120);
 			if (lockMin > 0) {
 				this.pinLockedUntil = Date.now() + lockMin * 60000;
 			}
-			void this.onAlarmEvent('wrongPin', {});
+			this.bg(this.onAlarmEvent('wrongPin', {}), 'onAlarmEvent');
 		}
 		return false;
 	}
@@ -1298,12 +1312,12 @@ class HomeGuard extends utils.Adapter {
 					style: { color, background: bg, padding: '8px 12px', borderRadius: 4 },
 				});
 				if (!nm.rows.length) {
-					return reply(box(this.T.nmMissing, '#663c00', '#fff4e5'));
+					return reply(box(this.tr(NM_MISSING), '#663c00', '#fff4e5'));
 				}
 				if (!alive) {
-					return reply(box(this.T.nmStopped, '#663c00', '#fff4e5'));
+					return reply(box(this.tr(NM_STOPPED), '#663c00', '#fff4e5'));
 				}
-				return reply(box(this.T.nmOk, '#014361', '#e5f6fd'));
+				return reply(box(this.tr(NM_OK), '#014361', '#e5f6fd'));
 			}
 			case 'getMessengers': {
 				const inst = await this.getObjectViewAsync('system', 'instance', {
@@ -1357,7 +1371,7 @@ class HomeGuard extends utils.Adapter {
 	 * @returns the settings to fill in, and a text with the result
 	 */
 	private async wizardScan(form: Record<string, unknown>): Promise<Record<string, unknown>> {
-		const de = this.sysLang === 'de';
+		const tr = this.tr;
 		const empty = (k: string): boolean => {
 			const v = form[k] ?? (this.config as unknown as Record<string, unknown>)[k];
 			return v === undefined || v === null || v === '' || v === 'undefined' || v === 'null';
@@ -1383,25 +1397,25 @@ class HomeGuard extends utils.Adapter {
 			}
 			infos.push({ id, name: String(name || id.split('.').pop()), roles });
 		}
-		const kinds: [ScanKind, string, string, string, string][] = [
-			['perimeter', 'autoPerimeter', 'enumPerimeter', 'Türen und Fenster', 'Doors and windows'],
-			['full', 'autoFull', 'enumFull', 'Bewegungsmelder', 'Motion detectors'],
-			['fire', 'autoFire', 'enumFire', 'Gefahrenmelder', 'Danger detectors'],
-			['report', 'autoReport', 'enumReport', 'Melde-Sensoren', 'Report-only sensors'],
-			['lamps', 'lampsAuto', 'enumLamps', 'Lampen bei Alarm', 'Lamps on alarm'],
-			['evening', 'simAuto', 'enumSimLamps', 'Abendlicht', 'Evening light'],
-			['morning', 'simAuto', 'enumMorningLamps', 'Morgenlicht', 'Morning light'],
-			['presence', 'presenceAuto', 'enumPresence', 'Anwesenheit', 'Presence'],
+		const kinds: [ScanKind, string, string, string][] = [
+			['perimeter', 'autoPerimeter', 'enumPerimeter', 'Doors and windows'],
+			['full', 'autoFull', 'enumFull', 'Motion detectors'],
+			['fire', 'autoFire', 'enumFire', 'Danger detectors'],
+			['report', 'autoReport', 'enumReport', 'Report-only sensors'],
+			['lamps', 'lampsAuto', 'enumLamps', 'Lamps on alarm'],
+			['evening', 'simAuto', 'enumSimLamps', 'Evening light'],
+			['morning', 'simAuto', 'enumMorningLamps', 'Morning light'],
+			['presence', 'presenceAuto', 'enumPresence', 'Presence'],
 		];
-		for (const [kind, autoKey, enumKey, labelDe, labelEn] of kinds) {
-			const label = de ? labelDe : labelEn;
+		for (const [kind, autoKey, enumKey, labelEn] of kinds) {
+			const label = tr(labelEn);
 			if (!empty(enumKey)) {
-				lines.push(`${label}: ${de ? 'schon gewählt' : 'already chosen'}`);
+				lines.push(tr('%s: already chosen', label));
 				continue;
 			}
 			const best = bestEnum(kind, infos);
 			if (!best) {
-				lines.push(`${label}: ${de ? 'nichts Passendes gefunden' : 'nothing suitable found'}`);
+				lines.push(tr('%s: nothing suitable found', label));
 				continue;
 			}
 			out[autoKey] = true;
@@ -1410,7 +1424,9 @@ class HomeGuard extends utils.Adapter {
 				out.presenceEnabled = true;
 			}
 			lines.push(
-				`${label}: „${best.name}“ (${best.count} ${de ? (best.count === 1 ? 'Datenpunkt' : 'Datenpunkte') : best.count === 1 ? 'state' : 'states'})`,
+				best.count === 1
+					? tr('%s: "%s" (1 state)', label, best.name)
+					: tr('%s: "%s" (%s states)', label, best.name, best.count),
 			);
 		}
 		const view = await this.getObjectViewAsync('system', 'state', { startkey: '', endkey: '\u9999' });
@@ -1443,10 +1459,10 @@ class HomeGuard extends utils.Adapter {
 			rows.map(r => r.id),
 			objects,
 		);
-		const areas: [FoundCircuit, string, string, string, string][] = [
-			['perimeter', 'enumPerimeter', 'autoPerimeter', 'Türen und Fenster', 'Doors and windows'],
-			['interior', 'enumFull', 'autoFull', 'Bewegungsmelder', 'Motion detectors'],
-			['24h', 'enumFire', 'autoFire', 'Gefahrenmelder', 'Danger detectors'],
+		const areas: [FoundCircuit, string, string, string][] = [
+			['perimeter', 'enumPerimeter', 'autoPerimeter', 'Doors and windows'],
+			['interior', 'enumFull', 'autoFull', 'Motion detectors'],
+			['24h', 'enumFire', 'autoFire', 'Danger detectors'],
 		];
 		// a device in any chosen function is not offered again (also not as its alias or alias target)
 		const inEnums = new Set<string>();
@@ -1461,13 +1477,13 @@ class HomeGuard extends utils.Adapter {
 		const known = new Set([...inTable, ...sameDevices(inEnums, objects)]);
 		const now = Date.now();
 		let added = 0;
-		for (const [circuit, enumKey, , labelDe, labelEn] of areas) {
+		for (const [circuit, enumKey, , labelEn] of areas) {
 			const extra = found.filter(s => s.circuit === circuit && !known.has(s.id));
 			if (!extra.length) {
 				continue;
 			}
 			const states = await this.getForeignStatesAsync(extra.map(s => s.id));
-			const noted = extra.map(s => ({ s, ...sensorNote(s, states[s.id], now, de) }));
+			const noted = extra.map(s => ({ s, ...sensorNote(s, states[s.id], now, tr) }));
 			// silent for a month or longer: at the end
 			noted.sort((a, b) => Number(a.stale) - Number(b.stale));
 			for (const { s, note } of noted) {
@@ -1487,9 +1503,17 @@ class HomeGuard extends utils.Adapter {
 			added += extra.length;
 			const hasEnum = !empty(enumKey) || !!out[enumKey];
 			lines.push(
-				de
-					? `${labelDe}: ${extra.length} ${hasEnum ? 'weitere ' : ''}Geräte gefunden – stehen ohne Haken in der Sensortabelle, anhaken was überwacht werden soll`
-					: `${labelEn}: ${extra.length} ${hasEnum ? 'more ' : ''}devices found – listed unticked in the sensor table, tick what should be watched`,
+				hasEnum
+					? tr(
+							'%s: %s more devices found – listed unticked in the sensor table, tick what should be watched',
+							tr(labelEn),
+							extra.length,
+						)
+					: tr(
+							'%s: %s devices found – listed unticked in the sensor table, tick what should be watched',
+							tr(labelEn),
+							extra.length,
+						),
 			);
 		}
 		if (added) {
@@ -1506,7 +1530,7 @@ class HomeGuard extends utils.Adapter {
 				out.lockEnabled = true;
 				out.lockId = lock.id;
 				out.lockValues = /lockState$/i.test(lock.id) ? '3,5,6' : 'false';
-				lines.push(`${de ? 'Türschloss' : 'Door lock'}: ${lock.id}`);
+				lines.push(tr('Door lock: %s', lock.id));
 			}
 		}
 		// messenger: the first instance that can send messages, Telegram first
@@ -1525,7 +1549,7 @@ class HomeGuard extends utils.Adapter {
 				);
 			if (ids.length) {
 				out.notify = [{ enabled: true, instance: ids[0], user: '', chatId: '' }];
-				lines.push(`${de ? 'Messenger' : 'Messenger'}: ${ids[0]}`);
+				lines.push(tr('Messenger: %s', ids[0]));
 			}
 		}
 		// only ticks on the page "What do you have?" - the state itself is chosen later on its page
@@ -1557,7 +1581,7 @@ class HomeGuard extends utils.Adapter {
 		const speaker = insts.find(id => /^(alexa2|sayit)\.\d+$/.test(id));
 		if (speaker && empty('speechId')) {
 			out.wizHasSpeaker = true;
-			lines.push(`${de ? 'Lautsprecher' : 'Speaker'}: ${speaker}`);
+			lines.push(tr('Speaker: %s', speaker));
 		}
 		// a real siren: role of a siren/alarm switch, or a writable state that is called "siren" itself
 		// (not settings of other devices such as the acoustic alarm of a water detector)
@@ -1570,7 +1594,7 @@ class HomeGuard extends utils.Adapter {
 		);
 		if (siren && !(this.config.sirens || []).some(r => r && r.id)) {
 			out.wizHasSiren = true;
-			lines.push(`${de ? 'Sirene' : 'Siren'}: ${siren.id}`);
+			lines.push(tr('Siren: %s', siren.id));
 		}
 		const lux = view.rows.filter(
 			r => r.value?.common?.unit === 'lx' || r.value?.common?.role === 'value.brightness',
@@ -1578,9 +1602,10 @@ class HomeGuard extends utils.Adapter {
 		if (lux.length && empty('simLuxId')) {
 			out.wizHasLux = true;
 			lines.push(
-				de
-					? `Helligkeit: ${lux.length} Datenpunkt(e) mit Lux – ob einer draußen ist, prüfst du auf der Seite „Licht: abends“`
-					: `Brightness: ${lux.length} state(s) with lux – whether one is outdoors, you check on the page "Light: evening"`,
+				tr(
+					'Brightness: %s state(s) with lux – whether one is outdoors, you check on the page "Light: evening"',
+					lux.length,
+				),
 			);
 		}
 		out.wizScanInfo = lines.join('\n');
@@ -1820,7 +1845,7 @@ class HomeGuard extends utils.Adapter {
 			if (!row?.instance || row.enabled === false) {
 				continue;
 			}
-			void this.notifyOne(row, text, alert);
+			this.bg(this.notifyOne(row, text, alert), 'notifyOne');
 		}
 		if (test) {
 			this.log.info('Test notification sent');
@@ -1907,7 +1932,10 @@ class HomeGuard extends utils.Adapter {
 				this.blinkTimer = this.setInterval(() => {
 					this.blinkOn = !this.blinkOn;
 					for (const l of this.lampOuts) {
-						void this.setForeignStateAsync(l.id, this.blinkOn ? l.on : l.off, false);
+						this.bg(
+							this.setForeignStateAsync(l.id, this.blinkOn ? l.on : l.off, false),
+							'setForeignStateAsync',
+						);
 					}
 				}, ms);
 			}
@@ -1956,7 +1984,10 @@ class HomeGuard extends utils.Adapter {
 			const sec = clamp(num(s.durationSec, 0), 0, 3600);
 			if (on && sec > 0) {
 				this.sirenTimers.push(
-					this.setTimeout(() => void this.setForeignStateAsync(s.id, off, false), sec * 1000),
+					this.setTimeout(
+						() => this.bg(this.setForeignStateAsync(s.id, off, false), 'setForeignStateAsync'),
+						sec * 1000,
+					),
 				);
 			}
 		}
@@ -1976,7 +2007,7 @@ class HomeGuard extends utils.Adapter {
 		const T = this.T;
 		const phase = this.alarm.status().phase;
 		if (phase === 'alarm' || phase === 'entry' || this.outputsOn) {
-			return { error: T.testBusy };
+			return { error: this.tr('A real alarm or an entry delay is running – no test possible') };
 		}
 		await this.endTest();
 		const on = (k: string, d: boolean): boolean =>
@@ -1993,17 +2024,17 @@ class HomeGuard extends utils.Adapter {
 			(on('sirens', false) && sirenCount > 0) ||
 			(on('actions', false) && actionCount > 0);
 		if (!anything) {
-			return { result: T.testNothing };
+			return { result: this.tr('Nothing to test – nothing is set up for the ticked parts') };
 		}
 		this.addLog('test', text);
 		this.log.info(`Test alarm for ${duration} s`);
 		if (on('notify', true) && (c.notify || []).some(r => r?.instance && r.enabled !== false)) {
 			this.notifyAll(text, false, true);
-			done.push(T.testParts.notify);
+			done.push(this.tr('notifications'));
 		}
 		if (on('speech', true) && c.speechId) {
 			await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, '').trim());
-			done.push(T.testParts.speech);
+			done.push(this.tr('speech output'));
 		}
 		const test: NonNullable<typeof this.test> = { timer: undefined, lamps: [], sirens: false, actions: false };
 		if (on('lamps', true) && this.lampOuts.length) {
@@ -2018,28 +2049,32 @@ class HomeGuard extends utils.Adapter {
 					() => {
 						lit = !lit;
 						for (const l of test.lamps) {
-							void this.setForeignStateAsync(l.id, lit ? l.on : l.off, false);
+							this.bg(this.setForeignStateAsync(l.id, lit ? l.on : l.off, false), 'setForeignStateAsync');
 						}
 					},
 					clamp(num(c.blinkSec, 1), 0.5, 10) * 1000,
 				);
 			}
-			done.push(T.testParts.lamps(test.lamps.length));
+			done.push(test.lamps.length === 1 ? this.tr('1 lamp') : this.tr('%s lamps', test.lamps.length));
 		}
 		if (on('sirens', false) && sirenCount) {
 			this.echoAlarmText = text;
 			await this.sirens(true);
 			test.sirens = true;
-			done.push(T.testParts.sirens(sirenCount));
+			done.push(sirenCount === 1 ? this.tr('1 siren') : this.tr('%s sirens', sirenCount));
 		}
 		if (on('actions', false) && actionCount) {
 			await this.runActions('alarm');
 			test.actions = true;
-			done.push(T.testParts.actions(actionCount));
+			done.push(actionCount === 1 ? this.tr('1 action') : this.tr('%s actions', actionCount));
 		}
-		test.timer = this.setTimeout(() => void this.endTest(), duration * 1000);
+		test.timer = this.setTimeout(() => this.bg(this.endTest(), 'endTest'), duration * 1000);
 		this.test = test;
-		return { result: done.length ? T.testRunning(duration, done.join(', ')) : T.testNothing };
+		return {
+			result: done.length
+				? this.tr('Test running for %s s: %s', duration, done.join(', '))
+				: this.tr('Nothing to test – nothing is set up for the ticked parts'),
+		};
 	}
 
 	/**
@@ -2136,7 +2171,7 @@ class HomeGuard extends utils.Adapter {
 	private addLog(type: string, text: string): void {
 		this.log_.unshift({ ts: Date.now(), type, text });
 		this.log_ = this.log_.slice(0, Math.max(10, num(this.config.logSize, 100)));
-		void this.setStateAsync('status.log', JSON.stringify(this.log_), true);
+		this.bg(this.setStateAsync('status.log', JSON.stringify(this.log_), true), 'setStateAsync');
 	}
 
 	// ======================================================================
@@ -2414,7 +2449,7 @@ class HomeGuard extends utils.Adapter {
 			if (automatic) {
 				for (const id of new Set(this.simLamps.filter(l => l.type === 'morning').map(l => l.id))) {
 					if (this.simLampVals.get(id)) {
-						void this.switchLamp(id, false);
+						this.bg(this.switchLamp(id, false), 'switchLamp');
 					}
 				}
 			}
@@ -2549,7 +2584,7 @@ class HomeGuard extends utils.Adapter {
 			}
 		};
 		await once();
-		this.echoAlarmTimer = this.setInterval(() => void once(), 20000);
+		this.echoAlarmTimer = this.setInterval(() => this.bg(once(), 'echoAlarm'), 20000);
 	}
 
 	/**
@@ -2583,8 +2618,7 @@ class HomeGuard extends utils.Adapter {
 					? (n as Record<string, string>)[this.sysLang] || (n as Record<string, string>).en
 					: n) || r.id,
 			);
-			const de = this.sysLang === 'de';
-			out.push({ value: r.id, label: player ? name : `${name} (${de ? 'nur Ansagen' : 'speech only'})`, player });
+			out.push({ value: r.id, label: player ? name : this.tr('%s (speech only)', name), player });
 		}
 		return out.sort((a, b) => a.label.localeCompare(b.label));
 	}
@@ -2626,8 +2660,11 @@ class HomeGuard extends utils.Adapter {
 		this.learnSaveTimer = this.setTimeout(() => {
 			this.learnSaveTimer = undefined;
 			this.learner.prune(Date.now(), num(this.config.simLearnDays, 28));
-			void this.setStateAsync('simulation.learned', JSON.stringify(this.learner.data), true);
-			void this.setStateAsync('simulation.learnedDays', Object.keys(this.learner.data.days).length, true);
+			this.bg(this.setStateAsync('simulation.learned', JSON.stringify(this.learner.data), true), 'setStateAsync');
+			this.bg(
+				this.setStateAsync('simulation.learnedDays', Object.keys(this.learner.data.days).length, true),
+				'setStateAsync',
+			);
 		}, 5000);
 	}
 
