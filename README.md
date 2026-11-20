@@ -149,7 +149,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.4.0 (2026-11-20)
 * (ipod86) feat: "tilted is OK" per window handle, bypass open contacts when arming, duress PIN, walk test
 * (ipod86) fix: setup assistant – sensor rows without a tick no longer count as "already set up"; the automatic search ticks the matching question instead
 

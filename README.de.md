@@ -138,7 +138,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.4.0 (2026-11-20)
 * (ipod86) Neu: „gekippt ist ok“ je Fenstergriff, offene Kontakte beim Scharfschalten ausnehmen, Bedrohungs-PIN, Gehtest
 * (ipod86) Fix: Assistent – Sensorzeilen ohne Haken gelten nicht mehr als „schon eingerichtet“; die automatische Suche hakt stattdessen die passende Frage an
 
