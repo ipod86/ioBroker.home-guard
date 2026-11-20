@@ -145,7 +145,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.3.3 (2026-11-20)
 * (ipod86) feat: new column "ignore at home" in the sensor table – doors and windows you open at home (e.g. the bedroom window) are ignored in perimeter and night protection, with an info log line when opened
 
 ### 0.3.2 (2026-11-19)

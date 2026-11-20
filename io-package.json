@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "news": {
+      "0.3.3": {
+        "en": "feat: new column \"ignore at home\" in the sensor table – doors and windows you open at home (e.g. the bedroom window) are ignored in perimeter and night protection, with an info log line when opened",
+        "de": "Feat: neue Spalte „Zu Hause ignorieren“ in der Sensortabelle — Türen und Fenster, die Sie zu Hause öffnen (z. B. das Schlafzimmerfenster), werden beim Öffnen ignoriert",
+        "ru": "подвиг: новая колонка «Не обращай внимания дома» в таблице датчиков — двери и окна, которые вы открываете дома (например, окно спальни), игнорируются в системе защиты по периметру и в ночное время, а при открытии появляется строка в информационном журнале",
+        "pt": "feat: nova coluna “ignorar em casa” na mesa de sensores — portas e janelas que você abre em casa (ex: janela do quarto) são ignoradas no perímetro e noite, com uma linha de log ao abrir",
+        "nl": "prestatie: nieuwe kolom „negeer thuis” in de sensortabel — deuren en ramen die u thuis opent (bijvoorbeeld het raam in de slaapkamer) worden genegeerd voor de bescherming van de omgeving en de nacht, met een informatieloglijn wanneer ze worden geopend",
+        "fr": "exploit : nouvelle colonne « Ignorer à la maison » dans le tableau des capteurs — les portes et fenêtres que vous ouvrez à la maison (par exemple, la fenêtre de la chambre) ne sont pas prises en compte",
+        "it": "feat: nuova colonna «ignora a casa» nella tabella dei sensori: le porte e le finestre che apre in casa (ad esempio la finestra della camera) sono ignorate",
+        "es": "hazaña: nueva columna «ignorar en casa» en la tabla de sensores: las puertas y ventanas que abre en casa (por ejemplo, la del dormitorio) se ignoran en la protección perimetral y nocturna, con una línea de información al abrirla",
+        "pl": "feat: nowa kolumna „ignoruj w domu” w tabeli czujników — drzwi i okna otwierane w domu (np. okno sypialni) są ignorowane w ochronie obwodowej i nocnej, z linią dziennika informacji po otwarciu",
+        "uk": "feat: нова колонка «ігнорувати вдома» в таблиці датчиків - двері та вікна, які ви відкриваєте вдома (наприклад, вікно спальні), ігноруються в периметрі та нічному захисті, з лінією інформаційного журналу при відкритті",
+        "zh-cn": "壮举：传感器表中新增了 “在家里忽略” 栏目 — 周界和夜间防护系统会忽略您在家中打开的门窗（例如卧室的窗户），打开时会显示一条信息记录线"
+      },
       "0.3.2": {
         "en": "feat: automatic search also finds sensors without functions and lists them unticked in the sensor table\nfeat: notification tab shows the status of the notification manager\nchange: shorter messenger settings\nfix: better detection in the search (aliases, door locks, contacts, doorbells, thermostat windows)",
         "de": "Feat: Automatische Suche findet auch Sensoren ohne Funktion und listet sie in der Sensortabelle\nfeat: Der Info-Tab zeigt den Status des Meldemanagers\nÄnderung: kürzere Messenger-Einstellungen\nFix: Bessere Suche (Aliase, Türschlösser, Kontakte, Klingeln, Thermostate)",
@@ -80,19 +93,6 @@
         "pl": "wewnętrzne: zmiana zmiennej timera (repochecker W5051); pierwsze wydanie publikowane automatycznie przez GitHub (zaufane publikowanie)",
         "uk": "внутрішній: змінна таймера перейменована (repochecker W5051); перший випуск опублікований автоматично через GitHub (довірена публікація)",
         "zh-cn": "内部：计时器变量已重命名（repochecker W5051）；首次通过 GitHub 自动发布（可信发布）"
-      },
-      "0.1.0": {
-        "en": "initial release: alarm system with full, perimeter and night protection, presence simulation (dusk, learned, combined) and web component (AURA 0.106.0+, vis-2 2.20.7+)",
-        "de": "Erste Version: Alarmanlage mit Voll- und Nachtschutz, Präsenzsimulation (Dämmerung, gelernt, kombiniert) und Webkomponente (AURA 0.106.0+, vis-2 2.20.7+)",
-        "ru": "первая версия: система охранной сигнализации с полной защитой, защитой по периметру и ночью, симуляция присутствия (в сумерках, обучение, комбинированная защита) и веб-компонент (AURA 0.106.0+, vis-2 2.20.7+)",
-        "pt": "versão inicial: sistema de alarme com proteção total, perimetral e noturna, simulação de presença e componente web (AURA 0.106.0+, vis-2 2.20.7+)",
-        "nl": "eerste versie: alarmsysteem met volledige perimeter- en nachtbeveiliging, aanwezigheidssimulatie (schemering, geleerd, gecombineerd) en webcomponent (AURA 0.106.0+, vis-2 2.20.7+)",
-        "fr": "version initiale : système d'alarme avec protection complète, périmétrique et nocturne, simulation de présence (crépuscule, appris, combiné) et composant Web (AURA 0.106.0+, vis-2 2.20.7+)",
-        "it": "versione iniziale: sistema di allarme con protezione completa, perimetrale e notturna, simulazione di presenza e web (AURA 0.106.0+, vis-2 2.20.7+)",
-        "es": "versión inicial: sistema de alarma con protección total, perimetral y nocturna, simulación de presencia (anochecer, aprendido, combinado) y componente web (AURA 0.106.0+, vis-2 2.20.7+)",
-        "pl": "pierwsza wersja: system alarmowy z pełną ochroną obwodową i nocną, symulacją obecności (zmierzch, uczony, połączony) i komponentem sieciowym (AURA 0.106.0+, vis-2 2.20.7+)",
-        "uk": "початковий випуск: сигналізація з повним, периметральним та нічним захистом, моделювання присутності (сутінки, вивчені, комбіновані) та веб-компонент (AURA 0.106.0+, vis-2 2.20.7+)",
-        "zh-cn": "初始版本：具有全面保护、周界和夜间保护的警报系统、存在模拟（黄昏、学习、组合）和网络组件（AURA 0.106.0+，vis-2 2.20.7+）"
       }
     },
     "titleLang": {
