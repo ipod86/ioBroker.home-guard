@@ -6485,10 +6485,10 @@
 					"xl": 3,
 					"newLine": true
 				},
-				"walkShow": {
+				"walkStop": {
 					"type": "sendTo",
-					"label": "Show result",
-					"command": "walkStatus",
+					"label": "Cancel walk test",
+					"command": "walkStop",
 					"variant": "outlined",
 					"jsonData": "{}",
 					"xs": 12,
@@ -6496,6 +6496,17 @@
 					"md": 4,
 					"lg": 3,
 					"xl": 3
+				},
+				"walkLive": {
+					"type": "state",
+					"oid": "status.walkTestHtml",
+					"control": "html",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"newLine": true
 				}
 			}
 		},

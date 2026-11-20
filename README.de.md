@@ -34,7 +34,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Sirenen je Modus**: bei jedem Alarm, nur bei Vollschutz (Außensirene) oder nur bei Hüll-/Nachtschutz (Innensirene), jeweils mit eigener Dauer.
 - **Morgenlicht**: die Morgenlampen zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus (eigener Versatz und Zufall, wahlweise spätestens zu einer festen Zeit – z. B. wenn ihr aus dem Haus geht – oder sobald der Helligkeitssensor Tageslicht meldet) – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen & Test*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
-- **Gehtest** (Reiter *Aktionen & Test* oder `control.walkTest`): bei unscharfer Anlage jede Tür und jedes Fenster öffnen und an jedem Bewegungsmelder vorbeigehen – Home Guard hakt jeden Sensor ab, der sich meldet, und sagt am Ende, welche stumm geblieben sind (Ergebnis auch in `status.walkTest`).
+- **Gehtest** (Reiter *Aktionen & Test* oder `control.walkTest`): bei unscharfer Anlage jede Tür und jedes Fenster öffnen und an jedem Bewegungsmelder vorbeigehen – in den Einstellungen zeigt eine Live-Liste jeden Sensor mit rotem Kreuz, das zum grünen Haken wird, sobald er sich meldet; sind alle grün, endet der Test von selbst, sonst sagt er, welche stumm geblieben sind (Ergebnis auch in `status.walkTest`).
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Widget „Home Guard Panel“** (Web-Komponente) für AURA, vis-2 und andere Visualisierungen, die Web-Komponenten unterstützen: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
@@ -88,6 +88,7 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `status.openContacts`, `status.openCount` | offene Türen/Fenster |
 | `status.bypassed` | beim Scharfschalten ausgenommene offene Kontakte, bis sie geschlossen werden |
 | `status.walkTest` | Gehtest: läuft, gemeldete und stumme Sensoren (JSON) |
+| `status.walkTestHtml` | Gehtest als Liste für die Einstellungsseite (HTML) |
 | `status.readyFull`, `status.readyPerimeter` | Scharfschalten ohne offene Kontakte möglich |
 | `status.lastTrigger`, `status.lastTriggerTime` | letzter auslösender Sensor |
 | `status.wrongPin` | falsche PIN-Eingaben in Folge |
@@ -138,6 +139,9 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) Neu: Gehtest mit Live-Liste in den Einstellungen (rotes Kreuz wird zum grünen Haken)
+
 ### 0.4.0 (2026-11-20)
 * (ipod86) Neu: „gekippt ist ok“ je Fenstergriff, offene Kontakte beim Scharfschalten ausnehmen, Bedrohungs-PIN, Gehtest
 * (ipod86) Fix: Assistent – Sensorzeilen ohne Haken gelten nicht mehr als „schon eingerichtet“; die automatische Suche hakt stattdessen die passende Frage an

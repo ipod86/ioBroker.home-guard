@@ -376,6 +376,7 @@ class HomeGuard extends utils.Adapter {
 		}
 		this.wrongPin = num((await this.getStateAsync('status.wrongPin'))?.val, 0);
 		await this.setStateAsync('control.walkTest', false, true);
+		await this.setStateAsync('status.walkTestHtml', this.walkHtml([], [], false), true);
 		await this.setStateAsync('status.bypassed', '[]', true);
 
 		// every minute: night mode, sabotage (hourly), daily new simulation plan, learned days cleanup
@@ -432,6 +433,7 @@ class HomeGuard extends utils.Adapter {
 			this.setStateAsync('status.walkTest', JSON.stringify({ running: false, seen, missing, total }), true),
 			'setStateAsync',
 		);
+		this.bg(this.setStateAsync('status.walkTestHtml', this.walkHtml(seen, missing, false), true), 'setStateAsync');
 	}
 
 	/**
@@ -456,6 +458,46 @@ class HomeGuard extends utils.Adapter {
 			'status.walkTest',
 			JSON.stringify({ running: !!this.walk, until: this.walk?.until ?? 0, seen, missing, total }),
 			true,
+		);
+		await this.setStateAsync('status.walkTestHtml', this.walkHtml(seen, missing, !!this.walk), true);
+		// every sensor reported: done
+		if (this.walk && total > 0 && !missing.length) {
+			this.endWalk();
+		}
+	}
+
+	/**
+	 * The walk test as HTML for the admin page (state shown live): red cross until a sensor reports, then a green tick
+	 *
+	 * @param seen names of the sensors that reported
+	 * @param missing names of the sensors that did not report yet
+	 * @param running the test is still running
+	 */
+	private walkHtml(seen: string[], missing: string[], running: boolean): string {
+		const esc = (t: string): string =>
+			t.replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch] as string);
+		const total = seen.length + missing.length;
+		if (!running && !total) {
+			return `<div style="opacity:.7">${esc(this.tr('No walk test is running'))}</div>`;
+		}
+		const row = (name: string, ok: boolean): string =>
+			`<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid rgba(128,128,128,.2)">` +
+			`<span style="font-size:20px;font-weight:bold;width:24px;text-align:center;color:${ok ? '#2e9d4f' : '#d32f2f'}">${ok ? '✓' : '✗'}</span>` +
+			`<span>${esc(name)}</span></div>`;
+		let head: string;
+		if (running) {
+			const min = Math.max(0, Math.ceil(((this.walk?.until ?? 0) - Date.now()) / 60000));
+			head = esc(this.tr('%s of %s sensors reported – still %s min', seen.length, total, min));
+		} else if (!missing.length) {
+			head = `<span style="color:#2e9d4f">✔ ${esc(this.tr('Done – all sensors detected'))}</span>`;
+		} else {
+			head = `<span style="color:#d32f2f">${esc(this.tr('Walk test finished: %s of %s sensors reported', seen.length, total))}</span>`;
+		}
+		return (
+			`<div style="max-width:640px;border:1px solid rgba(128,128,128,.35);border-radius:6px;overflow:hidden">` +
+			`<div style="padding:8px 10px;font-weight:bold;background:rgba(128,128,128,.12)">${head}</div>${missing
+				.map(n => row(n, false))
+				.join('')}${seen.map(n => row(n, true)).join('')}</div>`
 		);
 	}
 
@@ -1416,6 +1458,9 @@ class HomeGuard extends utils.Adapter {
 			}
 			case 'walkStatus':
 				return reply({ result: this.walkText() });
+			case 'walkStop':
+				this.endWalk();
+				return reply({ result: this.tr('Walk test stopped') });
 			case 'nmStatus': {
 				// box under "Alarm also to the ioBroker notifications": is the notification manager there and running?
 				const nm = await this.getObjectViewAsync('system', 'instance', {
@@ -2815,6 +2860,9 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private async everyMinute(): Promise<void> {
 		const c = this.config;
+		if (this.walk) {
+			await this.publishWalk();
+		}
 		const now = new Date();
 		const hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 		if (hm === this.lastMinute) {

@@ -549,12 +549,17 @@
 	"Checks that every sensor works: start it while the system is disarmed, then open every door and window and walk past every motion detector. Home Guard ticks off every sensor that reports and tells you at the end which ones stayed silent (empty battery, wrong state). Arming ends it.": "Checks that every sensor works: start it while the system is disarmed, then open every door and window and walk past every motion detector. Home Guard ticks off every sensor that reports and tells you at the end which ones stayed silent (empty battery, wrong state). Arming ends it.",
 	"Walk test duration (min)": "Walk test duration (min)",
 	"Start walk test": "Start walk test",
-	"Show result": "Show result",
 	"\"tilted is OK\" (outer skin, window handles with 0 = closed, 1 = tilted, 2 = open): tilted is no alarm in perimeter and night protection, fully open is – in full protection tilted counts as open.": "\"tilted is OK\" (outer skin, window handles with 0 = closed, 1 = tilted, 2 = open): tilted is no alarm in perimeter and night protection, fully open is – in full protection tilted counts as open.",
 	"Walk test started – trigger every sensor now": "Walk test started – trigger every sensor now",
 	"The walk test only runs while the alarm system is disarmed": "The walk test only runs while the alarm system is disarmed",
 	"No sensors to test": "No sensors to test",
 	"No walk test is running – the last result is in the logbook": "No walk test is running – the last result is in the logbook",
 	"%s of %s sensors reported. Still missing: %s": "%s of %s sensors reported. Still missing: %s",
-	"All %s sensors reported": "All %s sensors reported"
+	"All %s sensors reported": "All %s sensors reported",
+	"Cancel walk test": "Cancel walk test",
+	"Walk test stopped": "Walk test stopped",
+	"No walk test is running": "No walk test is running",
+	"%s of %s sensors reported – still %s min": "%s of %s sensors reported – still %s min",
+	"Done – all sensors detected": "Done – all sensors detected",
+	"Walk test finished: %s of %s sensors reported": "Walk test finished: %s of %s sensors reported"
 }

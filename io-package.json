@@ -629,6 +629,31 @@
       "native": {}
     },
     {
+      "_id": "status.walkTestHtml",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Walk test (HTML for the settings page)",
+          "de": "Gehtest (HTML für die Einstellungsseite)",
+          "ru": "Проверка обходом (HTML для страницы настроек)",
+          "pt": "Teste de passagem (HTML para a página de definições)",
+          "nl": "Looptest (HTML voor de instellingenpagina)",
+          "fr": "Test de passage (HTML pour la page des paramètres)",
+          "it": "Test di passaggio (HTML per la pagina delle impostazioni)",
+          "es": "Prueba de recorrido (HTML para la página de ajustes)",
+          "pl": "Test obchodu (HTML dla strony ustawień)",
+          "uk": "Перевірка обходом (HTML для сторінки налаштувань)",
+          "zh-cn": "巡检测试（设置页面的 HTML）"
+        },
+        "type": "string",
+        "role": "html",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
       "_id": "status.readyFull",
       "type": "state",
       "common": {
