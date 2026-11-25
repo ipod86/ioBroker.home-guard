@@ -151,7 +151,8 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.1 (2026-11-25)
+* (ipod86) change: setting "after disarming without presence" – new name, only shown when persons are set up
 * (ipod86) change: walk test – the door lock is shown below the sensors with its current state and no longer counts
 
 ### 0.5.0 (2026-11-25)
