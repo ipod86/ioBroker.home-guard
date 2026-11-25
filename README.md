@@ -151,7 +151,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) fix: the presence simulation (lamps, TV, Echo radio) stops at once when somebody disarms at the door, not only when the presence detection notices
+* (ipod86) fix: the presence simulation (lamps, TV, Echo radio) stops at once when the system is disarmed, not only when the presence detection notices
 * (ipod86) feat: walk test with a live list in the settings (red cross turns into a green tick)
 
 ### 0.4.0 (2026-11-20)

@@ -140,7 +140,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) Fix: Die Anwesenheitssimulation (Lampen, Fernseher, Echo-Radio) endet sofort, wenn jemand an der Tür unscharf schaltet, nicht erst, wenn die Anwesenheitserkennung es merkt
+* (ipod86) Fix: Die Anwesenheitssimulation (Lampen, Fernseher, Echo-Radio) endet sofort beim Unscharfschalten, nicht erst, wenn die Anwesenheitserkennung es merkt
 * (ipod86) Neu: Gehtest mit Live-Liste in den Einstellungen (rotes Kreuz wird zum grünen Haken)
 
 ### 0.4.0 (2026-11-20)
