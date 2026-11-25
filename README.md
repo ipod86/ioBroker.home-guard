@@ -151,7 +151,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.2 (2026-11-25)
 * (ipod86) fix: clearer texts in the settings and the setup assistant; hints name the pages as the page list does
 
 ### 0.5.1 (2026-11-25)

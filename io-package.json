@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "news": {
+      "0.5.2": {
+        "en": "fix: clearer texts in the settings and the setup assistant; hints name the pages as the page list does",
+        "de": "Fix: Klarere Texte in den Einstellungen und im Setup; Tipps benennen Seiten wie die Seitenliste",
+        "ru": "исправлено: более четкие тексты в настройках и помощнике по настройке; подсказки называют страницы так же, как и в списке страниц",
+        "pt": "correção: textos mais claros nas configurações e no assistente; dicas nomeiam as páginas como na lista",
+        "nl": "opgelost: duidelijkere teksten in de instellingen en de configuratieassistent; hints geven de pagina's een naam zoals in de paginalijst",
+        "fr": "fix : textes plus clairs dans les réglages et dans l'assistant de configuration ; astuces nomment les pages",
+        "it": "correzione: testi più chiari nelle impostazioni e nel setup assistant; suggerimenti nomina le pagine",
+        "es": "solución: textos más claros en los ajustes y el asistente de configuración; consejos nombra las páginas como en la lista",
+        "pl": "poprawka: wyraźniejsze teksty w ustawieniach i asystent konfiguracji; wskazówki nazwij strony tak, jak robi to lista stron",
+        "uk": "виправлення: чіткіші тексти в налаштуваннях та помічнику налаштування; підказки називають сторінки так, як це робить список сторінок",
+        "zh-cn": "修复：设置和设置助手中的文字更清晰；提示按照页面列表命名页面"
+      },
       "0.5.1": {
         "en": "change: walk test – the door lock is shown below the sensors with its live state and no longer counts\nchange: setting \"after disarming without presence\" – new name, only shown when persons are set up",
         "de": "Geändert: Gehtest – das Türschloss steht unter den Sensoren mit seinem aktuellen Zustand und zählt nicht mehr mit\nGeändert: Einstellung „Nach dem Unscharfschalten ohne Anwesenheit“ – neuer Name, nur sichtbar, wenn Personen hinterlegt sind",
@@ -80,19 +93,6 @@
         "pl": "feat: automatyczne wyszukiwanie znajduje również czujniki bez funkcji i wyświetla je bez zaznaczenia w tabeli czujników\nfeat: karta powiadomień pokazuje stan menedżera powiadomień\nzmiana: krótsze ustawienia komunikatora\npoprawka: lepsze wykrywanie w wyszukiwaniu (aliasy, zamki drzwiowe, styki, dzwonki do drzwi, okna termostatu)",
         "uk": "feat: автоматичний пошук також знаходить датчики без функцій і перераховує їх без позначки в таблиці датчиків\nfeat: вкладка сповіщень показує статус менеджера сповіщень\nзміна: коротші налаштування месенджера\nвиправлення: краще виявлення в пошуку (псевдоніми, дверні замки, контакти, дверні дзвінки, вікна термостата)",
         "zh-cn": "新功能：自动搜索还能找到没有功能的传感器，并在传感器表中不勾选地列出它们\nfeat: 通知选项卡显示通知管理器的状态\n更改：缩短信使设置\n修复：更好的搜索检测（别名、门锁、联系人、门铃、恒温器窗口）"
-      },
-      "0.3.1": {
-        "en": "feat: messengers sent to directly in their own format: in addition Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu app and Synology Chat; only supported and installed messengers can be chosen, each with its own fields\nchange: no more generic notification format and free instance input – other messengers via the notification manager",
-        "de": "Feat: Direktnachrichten im eigenen Format: zusätzlich Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu App und Synology Chat; es können nur unterstützte und installierte Messenger ausgewählt werden, jeder mit eigenen Feldern\nÄnderung: kein generisches Meldeformat und freie Instanzeingabe mehr — andere Messenger über den Meldemanager",
-        "ru": "feat: мессенджеры отправляются напрямую в своем формате: кроме Gotify, SMS (gsmsms, seven.io), Discord, MAX, приложение IOBroker Visu и Synology Chat; можно выбрать только поддерживаемые и установленные мессенджеры, каждый со своими полями\nизменение: больше нет универсального формата уведомлений и бесплатного ввода сообщений — другие мессенджеры через менеджер уведомлений",
-        "pt": "feat: mensagens enviadas diretamente em seu próprio formato: além de Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu e Synology Chat; só é possível escolher mensageiros compatíveis e instalados, cada um com seus campos\nmudança: não há mais formatos genéricos e instâncias gratuitas — outros mensageiros via gestor de notificações",
-        "nl": "nieuw: messengers die rechtstreeks in hun eigen formaat worden doorgestuurd: daarnaast Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu-app en Synology Chat; alleen ondersteunde en geïnstalleerde messengers kunnen worden gekozen, elk met zijn eigen velden\nwijziging: geen algemeen meldingsformaat meer en invoer van gratis exemplaren — andere boodschappers via de meldingsbeheerder",
-        "fr": "exploit : envoi direct à des messageries dans leur propre format : en plus Gotify, SMS (gsmsms, seven.io), Discord, MAX, IObroker Visu et Synology Chat ; seuls les messageries compatibles et installées peuvent être sélectionnées, chacune avec ses propres champs\nchangement : plus de format de notification générique ni de saisie d'instance gratuite — autres messageries via le gestionnaire de notifications",
-        "it": "feat: messenger inviati direttamente nel loro formato: oltre a Gotify, SMS (gsmsms, seven.io), Discord, MAX, app IOBroker Visu e Synology Chat; si possono scegliere solo i messenger supportati e installati, ognuno con i suoi campi\nmodifica: niente più formati generici e input gratuito di istanze — altri messenger tramite il gestore notifiche",
-        "es": "nuevo: mensajeros enviados directamente en su propio formato: además de Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu app y Synology Chat; solo se pueden elegir los mensajeros compatibles e instalados, cada uno con sus propios campos\ncambio: no más formato de notificación genérico y entrada de instancia gratuita, otros mensajeros a través del gestor de notificaciones",
-        "pl": "feat: komunikatory wysyłane bezpośrednio we własnym formacie: dodatkowo Gotify, SMS (gsmsms, seven.io), Discord, MAX, aplikacja ioBroker Visu i Synology Chat; można wybrać tylko obsługiwane i zainstalowane komunikatory, każdy z własnymi polami\nzmiana: brak już ogólnego formatu powiadomień i darmowego wprowadzania instancji - inne komunikatory za pośrednictwem menedżera powiadomień",
-        "uk": "feat: месенджери надсилаються безпосередньо у власному форматі: крім Gotify, SMS (gsmsms, seven.io), Discord, MAX, додаток IObroker Visu та Synology Chat; можна вибрати лише підтримувані та встановлені месенджери, кожен зі своїми полями\nзміна: більше немає загального формату сповіщень та безкоштовного введення екземпляра - інші месенджери через менеджер сповіщень",
-        "zh-cn": "新功能：以自己的格式直接发送信使：此外 Gotify、短信（gsmsms、seven.io）、Discord、MAX、ioBroker Visu 应用程序和 Synology Chat；只能选择支持和已安装的信使，每个信使都有自己的字段\n更改：不再使用通用的通知格式和免费实例输入——通过通知管理器输入其他信使"
       }
     },
     "titleLang": {

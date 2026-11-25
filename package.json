@@ -1,6 +1,6 @@
 {
   "name": "iobroker.home-guard",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Alarm system with full, perimeter and night protection, exit and entry delay, open window check, PIN, door lock and presence integration, plus a presence simulation that runs on its own or together with the alarm system.",
   "author": {
     "name": "ipod86",
