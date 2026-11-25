@@ -32,7 +32,7 @@
 	"Actions & test": "Azioni e test",
 	"Actions on alarm": "Azioni in caso di allarme",
 	"Active": "Attivo",
-	"After disarming": "Dopo il disinserimento",
+	"After disarming without presence": "Dopo il disinserimento senza presenza",
 	"Alarm": "Allarme",
 	"Alarm also to the ioBroker notifications (notification manager)": "Allarme anche alle notifiche di ioBroker (gestore notifiche)",
 	"Alarm duration for lamps and sirens (s, 0 = until acknowledged)": "Durata dell'allarme per lampade e sirene (s, 0 = fino alla conferma)",

@@ -32,7 +32,7 @@
 	"Actions & test": "Действия и проверка",
 	"Actions on alarm": "Действия при тревоге",
 	"Active": "Активно",
-	"After disarming": "После снятия с охраны",
+	"After disarming without presence": "После снятия с охраны без присутствия",
 	"Alarm": "Тревога",
 	"Alarm also to the ioBroker notifications (notification manager)": "Тревога также в уведомления ioBroker (менеджер уведомлений)",
 	"Alarm duration for lamps and sirens (s, 0 = until acknowledged)": "Длительность тревоги для ламп и сирен (с, 0 = до подтверждения)",

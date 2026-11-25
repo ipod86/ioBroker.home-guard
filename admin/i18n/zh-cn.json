@@ -32,7 +32,7 @@
 	"Actions & test": "动作与测试",
 	"Actions on alarm": "报警时的动作",
 	"Active": "已激活",
-	"After disarming": "撤防后",
+	"After disarming without presence": "撤防后无人在家时",
 	"Alarm": "报警",
 	"Alarm also to the ioBroker notifications (notification manager)": "报警也发送到 ioBroker 通知（通知管理器）",
 	"Alarm duration for lamps and sirens (s, 0 = until acknowledged)": "灯和警报器的报警时长（秒，0 = 直到确认）",

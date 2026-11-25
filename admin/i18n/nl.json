@@ -32,7 +32,7 @@
 	"Actions & test": "Acties & test",
 	"Actions on alarm": "Acties bij alarm",
 	"Active": "Actief",
-	"After disarming": "Na het uitschakelen",
+	"After disarming without presence": "Na het uitschakelen zonder aanwezigheid",
 	"Alarm": "Alarm",
 	"Alarm also to the ioBroker notifications (notification manager)": "Alarm ook naar de ioBroker-meldingen (notification manager)",
 	"Alarm duration for lamps and sirens (s, 0 = until acknowledged)": "Alarmduur voor lampen en sirenes (s, 0 = tot bevestiging)",

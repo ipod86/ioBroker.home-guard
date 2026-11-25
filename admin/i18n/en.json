@@ -562,7 +562,6 @@
 	"%s of %s sensors reported – still %s min": "%s of %s sensors reported – still %s min",
 	"Done – all sensors detected": "Done – all sensors detected",
 	"Walk test finished: %s of %s sensors reported": "Walk test finished: %s of %s sensors reported",
-	"After disarming": "After disarming",
 	"Simulation stays off until armed again or somebody leaves (recommended)": "Simulation stays off until armed again or somebody leaves (recommended)",
 	"Simulation may run again after some minutes when nobody is at home": "Simulation may run again after some minutes when nobody is at home",
 	"Arm again after some minutes when nobody is at home": "Arm again after some minutes when nobody is at home",
@@ -570,5 +569,6 @@
 	"Minutes": "Minutes",
 	"⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.": "⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.",
 	"counts as unlocked": "counts as unlocked",
-	"not unlocked": "not unlocked"
+	"not unlocked": "not unlocked",
+	"After disarming without presence": "After disarming without presence"
 }

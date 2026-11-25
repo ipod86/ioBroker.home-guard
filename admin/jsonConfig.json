@@ -2060,7 +2060,7 @@
 						},
 						"afterDisarm": {
 							"type": "select",
-							"label": "After disarming",
+							"label": "After disarming without presence",
 							"options": [
 								{
 									"value": "untilArm",
@@ -2082,7 +2082,7 @@
 							"lg": 6,
 							"xl": 6,
 							"newLine": true,
-							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)"
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 						},
 						"afterDisarmMin": {
 							"type": "number",
@@ -2095,7 +2095,7 @@
 							"md": 4,
 							"lg": 2,
 							"xl": 2,
-							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || !data.afterDisarm || data.afterDisarm === 'untilArm'"
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || !data.afterDisarm || data.afterDisarm === 'untilArm' || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 						},
 						"afterDisarmWarn": {
 							"type": "staticText",
@@ -2109,7 +2109,7 @@
 								"color": "#d32f2f",
 								"fontWeight": "bold"
 							},
-							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || data.afterDisarm !== 'rearmAfter'"
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || data.afterDisarm !== 'rearmAfter' || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 						},
 						"w12n": {
 							"type": "header",
@@ -5745,7 +5745,7 @@
 				},
 				"afterDisarm": {
 					"type": "select",
-					"label": "After disarming",
+					"label": "After disarming without presence",
 					"options": [
 						{
 							"value": "untilArm",
@@ -5767,7 +5767,7 @@
 					"lg": 6,
 					"xl": 6,
 					"newLine": true,
-					"hidden": "!data.presenceEnabled || !data.alarmEnabled"
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 				},
 				"afterDisarmMin": {
 					"type": "number",
@@ -5780,7 +5780,7 @@
 					"md": 4,
 					"lg": 2,
 					"xl": 2,
-					"hidden": "!data.presenceEnabled || !data.alarmEnabled || !data.afterDisarm || data.afterDisarm === 'untilArm'"
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled || !data.afterDisarm || data.afterDisarm === 'untilArm' || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 				},
 				"afterDisarmWarn": {
 					"type": "staticText",
@@ -5794,7 +5794,7 @@
 						"color": "#d32f2f",
 						"fontWeight": "bold"
 					},
-					"hidden": "!data.presenceEnabled || !data.alarmEnabled || data.afterDisarm !== 'rearmAfter'"
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled || data.afterDisarm !== 'rearmAfter' || !((data.presenceAuto && data.enumPresence) || (data.presence || []).some(r => r && r.enabled !== false && r.id))"
 				}
 			}
 		},
