@@ -190,6 +190,8 @@ class HomeGuard extends utils.Adapter {
 	private minuteTimer: ioBroker.Interval | undefined;
 	private rescanTimer: ioBroker.Timeout | undefined;
 	private wrongPin = 0;
+	/** somebody disarmed at home (lock, PIN, panel): counts as at home until then, before the presence detection notices */
+	private arrivedUntil = 0;
 	/** walk test: running until, sensors that reported */
 	private walk: { until: number; seen: Map<string, number>; timer?: ioBroker.Timeout } | null = null;
 	private pinLockedUntil = 0;
@@ -1867,6 +1869,11 @@ class HomeGuard extends utils.Adapter {
 	private async onAlarmEvent(e: AlarmEvent, info: EventInfo): Promise<void> {
 		const c = this.config;
 		const names = (info.sensors || []).map(s => s.name).join(', ');
+		// disarmed by a person at the door (lock, PIN, panel …): somebody is at home now, even if the phone is not yet
+		// in the Wi-Fi - so the simulation (lamps, TV, Echo radio) stops at once and does not wait for the presence
+		if (e === 'disarmed' && !['presence', 'night', 'schedule'].includes(info.source || '')) {
+			this.arrivedUntil = Date.now() + 15 * 60000;
+		}
 		// the text in a language: system language for messages, logbook and speech, English for the ioBroker log
 		const textIn = (T: Texts): string => {
 			switch (e) {
@@ -2369,7 +2376,7 @@ class HomeGuard extends utils.Adapter {
 		}
 		const st = this.alarm?.status();
 		const armedFull = !!st && st.mode === 'full' && st.phase !== 'disarmed';
-		const away = this.presenceIds.length > 0 && !this.someoneHome();
+		const away = this.presenceIds.length > 0 && !this.someoneHome() && Date.now() >= this.arrivedUntil;
 		switch (c.simCoupling) {
 			case 'alarm':
 				return armedFull;

@@ -139,6 +139,8 @@ class HomeGuard extends utils.Adapter {
   minuteTimer;
   rescanTimer;
   wrongPin = 0;
+  /** somebody disarmed at home (lock, PIN, panel): counts as at home until then, before the presence detection notices */
+  arrivedUntil = 0;
   /** walk test: running until, sensors that reported */
   walk = null;
   pinLockedUntil = 0;
@@ -1660,6 +1662,9 @@ class HomeGuard extends utils.Adapter {
     var _a, _b, _c;
     const c = this.config;
     const names = (info.sensors || []).map((s) => s.name).join(", ");
+    if (e === "disarmed" && !["presence", "night", "schedule"].includes(info.source || "")) {
+      this.arrivedUntil = Date.now() + 15 * 6e4;
+    }
     const textIn = (T) => {
       var _a2, _b2, _c2, _d, _e;
       switch (e) {
@@ -2123,7 +2128,7 @@ class HomeGuard extends utils.Adapter {
     }
     const st = (_a = this.alarm) == null ? void 0 : _a.status();
     const armedFull = !!st && st.mode === "full" && st.phase !== "disarmed";
-    const away = this.presenceIds.length > 0 && !this.someoneHome();
+    const away = this.presenceIds.length > 0 && !this.someoneHome() && Date.now() >= this.arrivedUntil;
     switch (c.simCoupling) {
       case "alarm":
         return armedFull;
