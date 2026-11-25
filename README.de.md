@@ -170,33 +170,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 * (ipod86) Geändert: kürzere Messenger-Einstellungen
 * (ipod86) Fix: bessere Erkennung bei der Suche (Aliase, Türschlösser, Kontakte, Türklingeln, Thermostat-Fenster)
 
-### 0.3.1 (2026-11-18)
-* (ipod86) Neu: direkt im eigenen Format zusätzlich an Gotify, SMS (gsmsms, seven.io), Discord, MAX, ioBroker Visu App und Synology Chat; wählbar sind nur unterstützte und installierte Messenger, jeweils mit eigenen Feldern
-* (ipod86) Geändert: kein allgemeines Benachrichtigungsformat und keine freie Instanzeingabe mehr – andere Messenger über den Benachrichtigungsmanager
-
-### 0.3.0 (2026-11-18)
-* (ipod86) Simulation: Zeitfenster je Gerät – abends, den ganzen Tag oder eigene Zeiten – mit eigener Anzahl (auch Bereich wie 1–3 = jeden Tag zufällig) und Dauer
-* (ipod86) Amazon Echo (alexa2): je Echo für den Alarm (Lautstärke, Ton, Ansage) und als Radio in der Simulation (Sender oder Zufallssender, Lautstärke, Zeitfenster, Lernen); Assistentenseite „Alexa“
-* (ipod86) Einrichtungsassistent: Die Alexa-Seite fragt jede Einstellung einzeln mit Erklärung ab; die Lampenseite erklärt die Tabelle Spalte für Spalte
-
-### 0.2.1 (2026-11-16)
-* (ipod86) Fix: Panel – die PIN-Tastatur war im dunklen Design weiß mit unsichtbaren Tasten; sie nutzt jetzt die Farben des Panels
-
-### 0.2.0 (2026-11-15)
-* (ipod86) Fix: Abend- und Morgenlicht funktionieren auch ohne Anwesenheitssimulation
-* (ipod86) Einrichtungsassistent: geführte Ersteinrichtung – erst was du nutzen willst und was du hast, dann nur die passenden Seiten; automatische Suche, Zeitvorschläge und Abschlussprüfung; die übrigen Tabs erscheinen danach
-* (ipod86) Simulation: Der Typ „TV / Gerät“ heißt jetzt „Gerät / Szene / Skript“ – jeder Datenpunkt kann während der Simulation geschaltet werden
-* (ipod86) Einstellungen: Abend und Morgen haben je einen eigenen Bereich (Zeiten, Helligkeit); nur sichtbar, wenn Abend-/Morgenlicht oder Simulation sie nutzen
-* (ipod86) Morgenlicht aus: eigener Versatz nach Sonnenaufgang, späteste Uhrzeit, Helligkeitssensor; das Panel zeigt „an“ und „aus“ für Abend- und Morgenlicht nebeneinander
-* (ipod86) Simulationslampen: eigene Funktion für das Morgenlicht; in der Tabelle hat eine Lampe Rollen (Abend, Morgen, Kurzbesuche, Schlafenszeit – mehrere gleichzeitig) statt eines Typs; ältere Tabellen werden automatisch umgestellt
-* (ipod86) Abend-/Morgenlicht: Ein- und Ausschalten als Datenpunkte (`control.eveningOn` …) und Schalter im Panel, nur sichtbar wenn eingerichtet; die Simulation läuft nur gekoppelt (Alarmanlage/niemand zu Hause), der manuelle Schalter `simulation.enabled` entfällt
-* (ipod86) Gelernte Simulation: Lerntag nach Werktag/Wochenende (Standard, mehr Abwechslung) oder nach gleichem Wochentag (nur mit mindestens 3 davon)
-
-### 0.1.1 (2026-11-14)
-* (ipod86) intern: Timer-Variable umbenannt (Repochecker W5051); erste Version automatisch über GitHub veröffentlicht (Trusted Publishing)
-
-### 0.1.0 (2026-11-14)
-* (ipod86) Erste Version: Alarmanlage mit Voll-, Außenhaut- und Nachtschutz, Anwesenheitssimulation (Dämmerung, gelernt, kombiniert) und Widget (Web-Komponente; AURA 0.106.0+, vis-2 2.20.7+ und andere Visualisierungen)
+Ältere Einträge stehen in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## Lizenz
 
