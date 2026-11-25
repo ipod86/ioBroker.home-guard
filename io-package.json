@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "home-guard",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "news": {
+      "0.5.0": {
+        "en": "feat: walk test with a live list in the settings (red cross turns into a green tick), door lock as its own check point\nfeat: setting \"after disarming\" – simulation off until armed again, simulation again or arm again after some minutes\nfix: the presence simulation stops at once when the system is disarmed",
+        "de": "Neu: Gehtest mit Live-Liste in den Einstellungen (rotes Kreuz wird zum grünen Haken), Türschloss als eigener Prüfpunkt\nNeu: Einstellung „Nach dem Unscharfschalten“ – Simulation aus bis wieder scharf, Simulation wieder oder wieder scharf nach einigen Minuten\nFix: Die Anwesenheitssimulation endet sofort beim Unscharfschalten",
+        "ru": "новое: проверка обходом со списком в реальном времени в настройках (красный крестик становится зелёной галочкой), дверной замок как отдельный пункт проверки\nновое: настройка «После снятия с охраны» – имитация выключена до новой постановки на охрану, снова имитация или снова охрана через несколько минут\nисправлено: имитация присутствия сразу прекращается при снятии с охраны",
+        "pt": "novo: teste de passagem com lista em tempo real nas definições (a cruz vermelha passa a visto verde), fechadura como ponto de verificação próprio\nnovo: definição \"Depois de desativar\" – simulação desligada até voltar a ativar, simulação de novo ou ativar de novo após alguns minutos\ncorreção: a simulação de presença termina de imediato ao desativar",
+        "nl": "nieuw: looptest met live lijst in de instellingen (rood kruis wordt groen vinkje), deurslot als eigen controlepunt\nnieuw: instelling \"Na het uitschakelen\" – simulatie uit tot er weer ingeschakeld wordt, simulatie weer of opnieuw inschakelen na een paar minuten\nfix: de aanwezigheidssimulatie stopt meteen bij het uitschakelen",
+        "fr": "nouveau : test de passage avec liste en direct dans les paramètres (la croix rouge devient une coche verte), serrure comme point de contrôle à part\nnouveau : paramètre « Après le désarmement » – simulation arrêtée jusqu'au prochain armement, reprise de la simulation ou réarmement après quelques minutes\ncorrectif : la simulation de présence s'arrête aussitôt au désarmement",
+        "it": "nuovo: test di passaggio con elenco in tempo reale nelle impostazioni (la croce rossa diventa una spunta verde), serratura come punto di controllo a sé\nnuovo: impostazione «Dopo il disinserimento» – simulazione spenta fino al reinserimento, di nuovo simulazione o reinserimento dopo alcuni minuti\ncorrezione: la simulazione di presenza si ferma subito al disinserimento",
+        "es": "nuevo: prueba de recorrido con lista en directo en los ajustes (la cruz roja pasa a marca verde), cerradura como punto de comprobación propio\nnuevo: ajuste «Después de desarmar» – simulación apagada hasta volver a armar, simulación de nuevo o volver a armar tras unos minutos\ncorrección: la simulación de presencia se detiene al momento al desarmar",
+        "pl": "nowość: test obchodu z listą na żywo w ustawieniach (czerwony krzyżyk zmienia się w zielony znacznik), zamek drzwi jako osobny punkt kontroli\nnowość: ustawienie „Po rozbrojeniu” – symulacja wyłączona do ponownego uzbrojenia, ponowna symulacja lub ponowne uzbrojenie po kilku minutach\npoprawka: symulacja obecności kończy się od razu po rozbrojeniu",
+        "uk": "нове: перевірка обходом зі списком у реальному часі в налаштуваннях (червоний хрестик стає зеленою позначкою), дверний замок як окремий пункт перевірки\nнове: налаштування «Після зняття з охорони» – імітація вимкнена до нової постановки на охорону, знову імітація або знову охорона через кілька хвилин\nвиправлено: імітація присутності одразу припиняється під час зняття з охорони",
+        "zh-cn": "新功能：设置中带实时列表的巡检测试（红叉变为绿勾），门锁作为单独的检查项\n新功能：“撤防后”设置 – 模拟保持关闭直到再次布防，或几分钟后重新模拟或重新布防\n修复：撤防时在家模拟立即停止"
+      },
       "0.4.0": {
         "en": "feat: \"tilted is OK\" per window handle, bypass open contacts when arming, duress PIN, walk test\nfix: setup assistant – sensor rows without a tick no longer count as \"already set up\"",
         "de": "Neu: „gekippt ist ok“ je Fenstergriff, offene Kontakte beim Scharfschalten ausnehmen, Bedrohungs-PIN, Gehtest\nFix: Assistent – Sensorzeilen ohne Haken gelten nicht mehr als „schon eingerichtet“",
@@ -80,19 +93,6 @@
         "pl": "symulacja: okno czasowe na urządzenie - wieczorem, cały dzień lub własne godziny - z własną liczbą (również przedział 1-3 = losowy każdego dnia) i czasem trwania\nAmazon Echo (alexa2): na Echo dla alarmu (głośność, dźwięk, ogłoszenie) i jako radio w symulacji (stacja lub stacja losowa, głośność, okno czasowe, uczenie się); strona asystenta konfiguracji „Alexa”\nasystent konfiguracji: strona Alexa pyta o każde ustawienie pojedynczo z wyjaśnieniem; strona lampy wyjaśnia tabelę kolumna po kolumnie",
         "uk": "моделювання: часове вікно на пристрій - ввечері, цілий день або власний час - з власним підрахунком (також діапазон, наприклад 1-3 = випадковий кожен день) та тривалістю\nAmazon Echo (alexa2): за Echo для сигналізації (гучність, звук, оголошення) та як радіо в моделюванні (станція або випадкова станція, гучність, часове вікно, навчання); сторінка помічника налаштування «Alexa»\nпомічник налаштування: сторінка Alexa запитує кожне налаштування по одному з поясненням; сторінка лампи пояснює таблицю стовпчик за стовпцем",
         "zh-cn": "模拟：每台设备的时间窗口 — 晚上、全天或自己的时间 — 有自己的计数（也是 1-3 的范围 = 每天随机）和持续时间\n亚马逊 Echo（alexa2）：每个 Echo 用于警报（音量、声音、通知），并在模拟中用作广播（电台或随机电台、音量、时间窗口、学习）；设置辅助页面 “Alexa”\n设置助手：Alexa 页面逐一询问每项设置并提供解释；灯页逐列解释表格"
-      },
-      "0.2.1": {
-        "en": "fix: panel – the PIN keypad was white with invisible keys in a dark theme; it now uses the colours of the panel",
-        "de": "Fix: Bedienfeld – die PIN-Tastatur war im dunklen Design weiß mit unsichtbaren Tasten; sie nutzt jetzt die Farben des Bedienfelds",
-        "ru": "исправлено: панель — клавиатура PIN-кода была белой с невидимыми клавишами в темной теме; теперь она использует цвета панели",
-        "pt": "fix: panel — o PIN era branco com teclas invisíveis em um tema escuro; agora usa as cores do painel",
-        "nl": "opgelost: paneel — het pincodetoetsenbord was wit met onzichtbare toetsen in een donker thema; nu worden de kleuren van het paneel gebruikt",
-        "fr": "fix : panel — le code PIN était blanc avec des touches invisibles sur le thème foncé ; il reprend les couleurs du panneau",
-        "it": "fix: pannello — il PIN era bianco con tasti invisibili a tema scuro; ora usa i colori del pannello",
-        "es": "fix: panel: el teclado PIN era blanco con teclas invisibles en un tema oscuro; ahora usa los colores del panel",
-        "pl": "poprawka: panel — klawiatura PIN była biała z niewidocznymi klawiszami w ciemnym motywie; teraz wykorzystuje kolory panelu",
-        "uk": "fix: panel - клавіатура PIN-коду була білою з невидимими клавішами в темній темі; тепер вона використовує кольори панелі",
-        "zh-cn": "修复：面板 — PIN 键盘为白色，深色主题中的按键不可见；它现在使用面板的颜色"
       }
     },
     "titleLang": {

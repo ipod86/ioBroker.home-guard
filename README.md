@@ -151,7 +151,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.0 (2026-11-25)
 * (ipod86) feat: walk test – the door lock is its own check point (unlock once)
 * (ipod86) feat: setting "after disarming": simulation off until armed again (default), simulation again after some minutes, or arm again after some minutes when nobody is at home
 * (ipod86) fix: the presence simulation (lamps, TV, Echo radio) stops at once when the system is disarmed, not only when the presence detection notices

@@ -140,7 +140,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.0 (2026-11-25)
 * (ipod86) Neu: Gehtest – das Türschloss ist ein eigener Prüfpunkt (einmal aufschließen)
 * (ipod86) Neu: Einstellung „Nach dem Unscharfschalten“: Simulation aus bis wieder scharf (Standard), Simulation nach einigen Minuten wieder oder nach einigen Minuten wieder scharf, wenn niemand zu Hause ist
 * (ipod86) Fix: Die Anwesenheitssimulation (Lampen, Fernseher, Echo-Radio) endet sofort beim Unscharfschalten, nicht erst, wenn die Anwesenheitserkennung es merkt
