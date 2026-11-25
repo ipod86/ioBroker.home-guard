@@ -230,7 +230,7 @@ function sensorNote(s, state, now, tr) {
     parts.push(tr("camera \u2013 often false alarms"));
   }
   if (s.invert) {
-    parts.push(tr('reports "closed" as true, set inverted'));
+    parts.push(tr('reports "closed" as true \u2013 "inverted" ticked'));
   }
   return { note: parts.join(" \xB7 "), stale };
 }

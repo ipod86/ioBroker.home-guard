@@ -326,7 +326,7 @@ export function sensorNote(
 		parts.push(tr('camera – often false alarms'));
 	}
 	if (s.invert) {
-		parts.push(tr('reports "closed" as true, set inverted'));
+		parts.push(tr('reports "closed" as true – "inverted" ticked'));
 	}
 	return { note: parts.join(' · '), stale };
 }
