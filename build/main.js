@@ -141,6 +141,8 @@ class HomeGuard extends utils.Adapter {
   wrongPin = 0;
   /** disarmed: somebody is at home - until the system is armed again or somebody really leaves (presence) */
   arrived = false;
+  /** timer of the setting "after disarming" (minutes) */
+  arrivedTimer;
   /** walk test: running until, sensors that reported */
   walk = null;
   pinLockedUntil = 0;
@@ -308,6 +310,9 @@ class HomeGuard extends utils.Adapter {
     this.wrongPin = num((_i = await this.getStateAsync("status.wrongPin")) == null ? void 0 : _i.val, 0);
     await this.setStateAsync("control.walkTest", false, true);
     this.arrived = !!((_j = await this.getStateAsync("status.arrived")) == null ? void 0 : _j.val);
+    if (this.arrived) {
+      this.startArrivedTimer();
+    }
     await this.setStateAsync("status.walkTestHtml", this.walkHtml([], [], false), true);
     await this.setStateAsync("status.bypassed", "[]", true);
     this.minuteTimer = this.setInterval(() => this.bg(this.everyMinute(), "everyMinute"), 6e4);
@@ -439,7 +444,38 @@ class HomeGuard extends utils.Adapter {
       return;
     }
     this.arrived = on;
+    if (!on && this.arrivedTimer) {
+      this.clearTimeout(this.arrivedTimer);
+      this.arrivedTimer = void 0;
+    }
     this.bg(this.setStateAsync("status.arrived", on, true), "setStateAsync");
+  }
+  /**
+   * Setting "after disarming" with minutes: after the time the simulation may run again, or the system is armed again
+   * - both only when the presence detection says nobody is at home
+   */
+  startArrivedTimer() {
+    const c = this.config;
+    if (this.arrivedTimer) {
+      this.clearTimeout(this.arrivedTimer);
+      this.arrivedTimer = void 0;
+    }
+    const how = c.afterDisarm || "untilArm";
+    if (how === "untilArm" || !this.presenceIds.length) {
+      return;
+    }
+    const min = clamp(num(c.afterDisarmMin, 30), 1, 1440);
+    this.arrivedTimer = this.setTimeout(() => {
+      this.arrivedTimer = void 0;
+      if (this.someoneHome()) {
+        return;
+      }
+      this.setArrived(false);
+      if (how === "rearmAfter" && c.alarmEnabled && this.autoArm && this.alarm.mode === "off") {
+        this.alarm.arm(c.presenceArm && c.presenceArm !== "off" ? c.presenceArm : "full", "rearm");
+      }
+      this.bg(this.updateSimulation(), "updateSimulation");
+    }, min * 6e4);
   }
   /**
    * Runs a promise in the background and logs a failure instead of leaving it unhandled
@@ -1680,6 +1716,7 @@ class HomeGuard extends utils.Adapter {
     const names = (info.sensors || []).map((s) => s.name).join(", ");
     if (e === "disarmed") {
       this.setArrived(true);
+      this.startArrivedTimer();
     } else if (e === "arming" || e === "armedFull" || e === "armedPerimeter" || e === "armedNight") {
       this.setArrived(false);
     }

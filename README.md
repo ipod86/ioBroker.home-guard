@@ -31,7 +31,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Open window check** when arming: warn and arm anyway, refuse, ignore, or **bypass** – open contacts are left out and watched again as soon as they are closed. Tilted windows (value 1) count as open; with **"tilted is OK"** per window handle (0 = closed, 1 = tilted, 2 = open) tilted is no alarm in perimeter and night protection, fully open still is.
 - **Motion detectors** trigger only when several different detectors report within a set time (default 120 s) – a cat or a curtain alone is no alarm. During the entry delay the inside sensors follow: walking past motion detectors to the panel is no alarm.
 - **PIN** (stored encrypted), optionally also needed for arming; report after wrong entries and lock of the PIN entry for some minutes against trying out. Optional **duress PIN**: disarms like the PIN, but sends a silent alarm to the messengers.
-- **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home.
+- **Door lock** (e.g. Nuki) disarms when it is opened, **presence** (persons, phones) arms when the last one leaves and disarms full protection when somebody comes home. **After disarming** the presence simulation stops at once; choose whether it stays off until the system is armed again (default), may run again after some minutes, or the system arms itself again after some minutes when the presence detection still says nobody is at home.
 - **Notifications** directly to Telegram, e-mail, Pushover, Pushsafer, Gotify, WhatsApp and Signal (CallMeBot), SMS (gsmsms, seven.io), Discord, MAX, the ioBroker Visu app (iot) and Synology Chat – each in its own format with the fields it needs; only installed messengers are offered; additionally to the notification manager itself; repeating alarm message until acknowledged; **speech output** (e.g. Alexa, SayIt).
 - **On alarm**: lamps on or blinking (and back as before afterwards), sirens, any states through an actions table – devices, scenes, scripts (e.g. outdoor lights on, lock the door when armed, roller shutters down, camera recording).
 - **Sabotage check**: sensors that have not reported for a set number of hours are reported (empty battery, radio problem).
@@ -152,6 +152,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) feat: setting "after disarming": simulation off until armed again (default), simulation again after some minutes, or arm again after some minutes when nobody is at home
 * (ipod86) fix: the presence simulation (lamps, TV, Echo radio) stops at once when the system is disarmed, not only when the presence detection notices
 * (ipod86) feat: walk test with a live list in the settings (red cross turns into a green tick)
 

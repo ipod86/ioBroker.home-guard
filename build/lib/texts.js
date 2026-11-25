@@ -75,7 +75,8 @@ const T = {
       delay: "",
       panic: "Panik-Taste",
       schedule: "Zeitplan",
-      message: "Befehl"
+      message: "Befehl",
+      rearm: "wieder scharf, niemand zu Hause"
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Testnachricht von Home Guard",
@@ -128,7 +129,8 @@ const T = {
       delay: "",
       panic: "panic button",
       schedule: "schedule",
-      message: "command"
+      message: "command",
+      rearm: "armed again, nobody at home"
     },
     via: (s) => s ? ` (${s})` : "",
     test: "\u{1F9EA} Test message from Home Guard",

@@ -2058,6 +2058,59 @@
 							"xl": 4,
 							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)"
 						},
+						"afterDisarm": {
+							"type": "select",
+							"label": "After disarming",
+							"options": [
+								{
+									"value": "untilArm",
+									"label": "Simulation stays off until armed again or somebody leaves (recommended)"
+								},
+								{
+									"value": "simAfter",
+									"label": "Simulation may run again after some minutes when nobody is at home"
+								},
+								{
+									"value": "rearmAfter",
+									"label": "Arm again after some minutes when nobody is at home"
+								}
+							],
+							"help": "Disarming means somebody comes home – often before the phone is in the Wi-Fi. So the presence simulation stops at once. Here you choose what happens when the presence detection still says nobody is at home.",
+							"xs": 12,
+							"sm": 12,
+							"md": 8,
+							"lg": 6,
+							"xl": 6,
+							"newLine": true,
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled)"
+						},
+						"afterDisarmMin": {
+							"type": "number",
+							"label": "Minutes",
+							"min": 1,
+							"max": 1440,
+							"default": 30,
+							"xs": 12,
+							"sm": 12,
+							"md": 4,
+							"lg": 2,
+							"xl": 2,
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || !data.afterDisarm || data.afterDisarm === 'untilArm'"
+						},
+						"afterDisarmWarn": {
+							"type": "staticText",
+							"text": "⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"style": {
+								"color": "#d32f2f",
+								"fontWeight": "bold"
+							},
+							"hidden": "!(data.alarmEnabled) || (!data.presenceEnabled) || data.afterDisarm !== 'rearmAfter'"
+						},
 						"w12n": {
 							"type": "header",
 							"text": "PIN",
@@ -5689,6 +5742,59 @@
 					"lg": 4,
 					"xl": 4,
 					"hidden": "!data.presenceEnabled || !data.alarmEnabled"
+				},
+				"afterDisarm": {
+					"type": "select",
+					"label": "After disarming",
+					"options": [
+						{
+							"value": "untilArm",
+							"label": "Simulation stays off until armed again or somebody leaves (recommended)"
+						},
+						{
+							"value": "simAfter",
+							"label": "Simulation may run again after some minutes when nobody is at home"
+						},
+						{
+							"value": "rearmAfter",
+							"label": "Arm again after some minutes when nobody is at home"
+						}
+					],
+					"help": "Disarming means somebody comes home – often before the phone is in the Wi-Fi. So the presence simulation stops at once. Here you choose what happens when the presence detection still says nobody is at home.",
+					"xs": 12,
+					"sm": 12,
+					"md": 8,
+					"lg": 6,
+					"xl": 6,
+					"newLine": true,
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled"
+				},
+				"afterDisarmMin": {
+					"type": "number",
+					"label": "Minutes",
+					"min": 1,
+					"max": 1440,
+					"default": 30,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 2,
+					"xl": 2,
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled || !data.afterDisarm || data.afterDisarm === 'untilArm'"
+				},
+				"afterDisarmWarn": {
+					"type": "staticText",
+					"text": "⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"style": {
+						"color": "#d32f2f",
+						"fontWeight": "bold"
+					},
+					"hidden": "!data.presenceEnabled || !data.alarmEnabled || data.afterDisarm !== 'rearmAfter'"
 				}
 			}
 		},

@@ -561,5 +561,12 @@
 	"No walk test is running": "No walk test is running",
 	"%s of %s sensors reported – still %s min": "%s of %s sensors reported – still %s min",
 	"Done – all sensors detected": "Done – all sensors detected",
-	"Walk test finished: %s of %s sensors reported": "Walk test finished: %s of %s sensors reported"
+	"Walk test finished: %s of %s sensors reported": "Walk test finished: %s of %s sensors reported",
+	"After disarming": "After disarming",
+	"Simulation stays off until armed again or somebody leaves (recommended)": "Simulation stays off until armed again or somebody leaves (recommended)",
+	"Simulation may run again after some minutes when nobody is at home": "Simulation may run again after some minutes when nobody is at home",
+	"Arm again after some minutes when nobody is at home": "Arm again after some minutes when nobody is at home",
+	"Disarming means somebody comes home – often before the phone is in the Wi-Fi. So the presence simulation stops at once. Here you choose what happens when the presence detection still says nobody is at home.": "Disarming means somebody comes home – often before the phone is in the Wi-Fi. So the presence simulation stops at once. Here you choose what happens when the presence detection still says nobody is at home.",
+	"Minutes": "Minutes",
+	"⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.": "⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees."
 }

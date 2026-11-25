@@ -196,6 +196,10 @@ declare global {
 			presence: IdRow[];
 			presenceArm: 'off' | 'full' | 'perimeter';
 			presenceDisarm: boolean;
+			/** after disarming: simulation off until armed/leaving, or for some minutes, or re-arm after some minutes when nobody is at home */
+			afterDisarm?: 'untilArm' | 'simAfter' | 'rearmAfter';
+			/** minutes for afterDisarm "simAfter" / "rearmAfter" */
+			afterDisarmMin?: number;
 			// notifications
 			notify: NotifyRow[];
 			notifyArmed: boolean;

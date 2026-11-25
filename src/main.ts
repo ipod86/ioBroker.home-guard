@@ -192,6 +192,8 @@ class HomeGuard extends utils.Adapter {
 	private wrongPin = 0;
 	/** disarmed: somebody is at home - until the system is armed again or somebody really leaves (presence) */
 	private arrived = false;
+	/** timer of the setting "after disarming" (minutes) */
+	private arrivedTimer?: ioBroker.Timeout;
 	/** walk test: running until, sensors that reported */
 	private walk: { until: number; seen: Map<string, number>; timer?: ioBroker.Timeout } | null = null;
 	private pinLockedUntil = 0;
@@ -379,6 +381,9 @@ class HomeGuard extends utils.Adapter {
 		this.wrongPin = num((await this.getStateAsync('status.wrongPin'))?.val, 0);
 		await this.setStateAsync('control.walkTest', false, true);
 		this.arrived = !!(await this.getStateAsync('status.arrived'))?.val;
+		if (this.arrived) {
+			this.startArrivedTimer(); // after a restart the minutes start again
+		}
 		await this.setStateAsync('status.walkTestHtml', this.walkHtml([], [], false), true);
 		await this.setStateAsync('status.bypassed', '[]', true);
 
@@ -527,7 +532,39 @@ class HomeGuard extends utils.Adapter {
 			return;
 		}
 		this.arrived = on;
+		if (!on && this.arrivedTimer) {
+			this.clearTimeout(this.arrivedTimer);
+			this.arrivedTimer = undefined;
+		}
 		this.bg(this.setStateAsync('status.arrived', on, true), 'setStateAsync');
+	}
+
+	/**
+	 * Setting "after disarming" with minutes: after the time the simulation may run again, or the system is armed again
+	 * - both only when the presence detection says nobody is at home
+	 */
+	private startArrivedTimer(): void {
+		const c = this.config;
+		if (this.arrivedTimer) {
+			this.clearTimeout(this.arrivedTimer);
+			this.arrivedTimer = undefined;
+		}
+		const how = c.afterDisarm || 'untilArm';
+		if (how === 'untilArm' || !this.presenceIds.length) {
+			return;
+		}
+		const min = clamp(num(c.afterDisarmMin, 30), 1, 1440);
+		this.arrivedTimer = this.setTimeout(() => {
+			this.arrivedTimer = undefined;
+			if (this.someoneHome()) {
+				return; // somebody is at home after all: stays as it is until somebody leaves
+			}
+			this.setArrived(false);
+			if (how === 'rearmAfter' && c.alarmEnabled && this.autoArm && this.alarm.mode === 'off') {
+				this.alarm.arm(c.presenceArm && c.presenceArm !== 'off' ? c.presenceArm : 'full', 'rearm');
+			}
+			this.bg(this.updateSimulation(), 'updateSimulation');
+		}, min * 60000);
 	}
 
 	/**
@@ -1890,6 +1927,7 @@ class HomeGuard extends utils.Adapter {
 		// once and stays off until the system is armed again or the presence detection sees somebody leave
 		if (e === 'disarmed') {
 			this.setArrived(true);
+			this.startArrivedTimer();
 		} else if (e === 'arming' || e === 'armedFull' || e === 'armedPerimeter' || e === 'armedNight') {
 			this.setArrived(false);
 		}
