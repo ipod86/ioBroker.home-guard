@@ -512,6 +512,7 @@
 	"camera – often false alarms": "kamera – często fałszywe alarmy",
 	"closed": "zamknięte",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off wtedy nie rozbrajają – tylko control.pin, panel lub zamek",
+	"counts as unlocked": "liczy się jako otwarty",
 	"delayed": "opóźniony",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "np. „30-90” = od pół godziny do półtorej godziny, za każdym razem losowo.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "np. Nuki, Danalock, Homematic lub dowolny zamek ze stanem otwarty/zamknięty",
@@ -534,6 +535,7 @@
 	"no report for %s days": "brak zgłoszeń od %s dni",
 	"no sound": "bez dźwięku",
 	"no value yet": "jeszcze brak wartości",
+	"not unlocked": "nie otwarty",
 	"notifications": "powiadomienia",
 	"now: %s": "teraz: %s",
 	"only while armed": "tylko gdy uzbrojony",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ Wszystko, co ważne, jest skonfigurowane.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Detektory ruchu lub inne czujniki wewnątrz (czujnik obecności, fotokomórka, kamera z detekcją ruchu…) – już skonfigurowane",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Czujniki, które powinny jedynie raportować m.in. bramka ogrodowa, skrzynka na listy czy dzwonek do drzwi – już ustawione",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detektory dymu, ciepła, wody lub gazu albo przycisk napadowy – już skonfigurowane",
-	"🔑 Door lock: unlock once": "🔑 Zamek drzwi: otwórz raz"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detektory dymu, ciepła, wody lub gazu albo przycisk napadowy – już skonfigurowane"
 }

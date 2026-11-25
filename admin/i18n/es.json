@@ -134,7 +134,7 @@
 	"Documentation": "Documentación",
 	"Done – all sensors detected": "Listo – todos los sensores detectados",
 	"Door and window contacts, glass break or vibration detectors": "Contactos de puertas y ventanas, detectores de rotura de cristales o vibraciones.",
-	"Door lock": "Cerradura de la puerta",
+	"Door lock": "Cerradura",
 	"Door lock: %s": "Cerradura: %s",
 	"Doors and windows": "Puertas y ventanas",
 	"Doors and windows with the tick \"ignore at home\" are not watched at night.": "Las puertas y ventanas con la marca «ignorar en casa» no se vigilan por la noche.",
@@ -512,6 +512,7 @@
 	"camera – often false alarms": "cámara – a menudo falsas alarmas",
 	"closed": "cerrado",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off no desarman entonces – solo control.pin, el panel o la cerradura",
+	"counts as unlocked": "cuenta como desbloqueada",
 	"delayed": "retardado",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "p. ej. «30-90» = entre media hora y hora y media, al azar cada vez.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "p. ej. Nuki, Danalock, Homematic o cualquier cerradura con estado abierto/cerrado",
@@ -534,6 +535,7 @@
 	"no report for %s days": "sin avisos desde hace %s días",
 	"no sound": "sin sonido",
 	"no value yet": "aún sin valor",
+	"not unlocked": "no desbloqueada",
 	"notifications": "notificaciones",
 	"now: %s": "ahora: %s",
 	"only while armed": "solo cuando está armado",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔Todo lo importante está configurado.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Detectores de movimiento u otros detectores en el interior (sensor de presencia, barrera luminosa, cámara con detección de movimiento…) – ya configurados",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensores que solo deberían informar, p. Puerta de jardín, buzón o timbre: ya configurados.",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de humo, calor, agua o gas, o un botón de pánico (ya configurado)",
-	"🔑 Door lock: unlock once": "🔑 Cerradura: desbloquear una vez"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de humo, calor, agua o gas, o un botón de pánico (ya configurado)"
 }

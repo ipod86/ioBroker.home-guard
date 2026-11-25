@@ -32,9 +32,6 @@ import { join } from 'node:path';
 import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
 
 // box under "Alarm also to the ioBroker notifications" (translated through admin/i18n)
-/** walk test: key of the door lock in the list of reported items */
-const WALK_LOCK = '#lock';
-
 const NM_MISSING =
 	'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.';
 const NM_STOPPED =
@@ -195,6 +192,9 @@ class HomeGuard extends utils.Adapter {
 	private wrongPin = 0;
 	/** disarmed: somebody is at home - until the system is armed again or somebody really leaves (presence) */
 	private arrived = false;
+	/** walk test: current value of the door lock and the texts of its values */
+	private lockVal: ioBroker.StateValue | undefined;
+	private lockTexts: Record<string, string> | null = null;
 	/** timer of the setting "after disarming" (minutes) */
 	private arrivedTimer?: ioBroker.Timeout;
 	/** walk test: running until, sensors that reported */
@@ -452,10 +452,6 @@ class HomeGuard extends utils.Adapter {
 	 */
 	private walkResult(): { seen: string[]; missing: string[]; total: number } {
 		const items = this.alarm.getSensors().map(s => ({ id: s.id, name: s.name }));
-		// the door lock as its own check point: it disarms, so unlocking it once must work
-		if (this.config.alarmEnabled && this.config.lockEnabled && this.config.lockId) {
-			items.push({ id: WALK_LOCK, name: this.tr('🔑 Door lock: unlock once') });
-		}
 		const seenIds = this.walk?.seen ?? new Map<string, number>();
 		return {
 			seen: items.filter(s => seenIds.has(s.id)).map(s => s.name),
@@ -468,6 +464,13 @@ class HomeGuard extends utils.Adapter {
 	 * Writes the running walk test to status.walkTest
 	 */
 	private async publishWalk(): Promise<void> {
+		const c = this.config;
+		if (c.alarmEnabled && c.lockEnabled && c.lockId && this.lockTexts === null) {
+			const o = await this.getForeignObjectAsync(c.lockId);
+			const st = (o?.common as ioBroker.StateCommon | undefined)?.states;
+			this.lockTexts = st && typeof st === 'object' && !Array.isArray(st) ? st : {};
+			this.lockVal = (await this.getForeignStateAsync(c.lockId))?.val;
+		}
 		const { seen, missing, total } = this.walkResult();
 		await this.setStateAsync(
 			'status.walkTest',
@@ -512,7 +515,34 @@ class HomeGuard extends utils.Adapter {
 			`<div style="max-width:640px;border:1px solid rgba(128,128,128,.35);border-radius:6px;overflow:hidden">` +
 			`<div style="padding:8px 10px;font-weight:bold;background:rgba(128,128,128,.12)">${head}</div>${missing
 				.map(n => row(n, false))
-				.join('')}${seen.map(n => row(n, true)).join('')}</div>`
+				.join('')}${seen.map(n => row(n, true)).join('')}${this.walkLockHtml(esc)}</div>`
+		);
+	}
+
+	/**
+	 * Door lock below the sensors of the walk test (does not count): its current state, live
+	 *
+	 * @param esc HTML escaping
+	 */
+	private walkLockHtml(esc: (t: string) => string): string {
+		const c = this.config;
+		if (!c.alarmEnabled || !c.lockEnabled || !c.lockId) {
+			return '';
+		}
+		const values = String(c.lockValues || '')
+			.split(/[,;\s]+/)
+			.filter(Boolean);
+		const val = this.lockVal;
+		const has = val !== undefined && val !== null;
+		const text = has ? (this.lockTexts?.[String(val)] ?? String(val)) : this.tr('no value yet');
+		const unlocked = has && values.includes(String(val));
+		const badge = has
+			? `<span style="margin-left:auto;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:${unlocked ? '#2e9d4f' : '#757575'}">${esc(this.tr(unlocked ? 'counts as unlocked' : 'not unlocked'))}</span>`
+			: '';
+		return (
+			`<div style="border-top:3px double rgba(128,128,128,.45);display:flex;align-items:center;gap:10px;padding:8px 10px">` +
+			`<span style="font-size:18px;width:24px;text-align:center">🔑</span>` +
+			`<span>${esc(this.tr('Door lock'))}: <b>${esc(text)}</b>${has && text !== String(val) ? ` (${esc(String(val))})` : ''}</span>${badge}</div>`
 		);
 	}
 
@@ -1152,9 +1182,9 @@ class HomeGuard extends utils.Adapter {
 			if (values.includes(String(state.val)) && this.alarm.mode !== 'off') {
 				this.alarm.disarm('lock');
 			}
-			// walk test: unlocking with one of the "unlocked" values ticks off the door lock
-			if (this.walk && !this.walk.seen.has(WALK_LOCK) && values.includes(String(state.val))) {
-				this.walk.seen.set(WALK_LOCK, Date.now());
+			// walk test: the door lock is shown below the sensors with its current state
+			this.lockVal = state.val;
+			if (this.walk) {
 				this.bg(this.publishWalk(), 'publishWalk');
 			}
 		}

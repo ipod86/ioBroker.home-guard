@@ -31,7 +31,6 @@ var import_texts = require("./lib/texts");
 var import_i18n = require("./lib/i18n");
 var import_node_path = require("node:path");
 var import_messengers = require("./lib/messengers");
-const WALK_LOCK = "#lock";
 const NM_MISSING = 'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.';
 const NM_STOPPED = 'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.';
 const NM_OK = 'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.';
@@ -142,6 +141,9 @@ class HomeGuard extends utils.Adapter {
   wrongPin = 0;
   /** disarmed: somebody is at home - until the system is armed again or somebody really leaves (presence) */
   arrived = false;
+  /** walk test: current value of the door lock and the texts of its values */
+  lockVal;
+  lockTexts = null;
   /** timer of the setting "after disarming" (minutes) */
   arrivedTimer;
   /** walk test: running until, sensors that reported */
@@ -376,9 +378,6 @@ class HomeGuard extends utils.Adapter {
   walkResult() {
     var _a, _b;
     const items = this.alarm.getSensors().map((s) => ({ id: s.id, name: s.name }));
-    if (this.config.alarmEnabled && this.config.lockEnabled && this.config.lockId) {
-      items.push({ id: WALK_LOCK, name: this.tr("\u{1F511} Door lock: unlock once") });
-    }
     const seenIds = (_b = (_a = this.walk) == null ? void 0 : _a.seen) != null ? _b : /* @__PURE__ */ new Map();
     return {
       seen: items.filter((s) => seenIds.has(s.id)).map((s) => s.name),
@@ -390,11 +389,18 @@ class HomeGuard extends utils.Adapter {
    * Writes the running walk test to status.walkTest
    */
   async publishWalk() {
-    var _a, _b;
+    var _a, _b, _c, _d;
+    const c = this.config;
+    if (c.alarmEnabled && c.lockEnabled && c.lockId && this.lockTexts === null) {
+      const o = await this.getForeignObjectAsync(c.lockId);
+      const st = (_a = o == null ? void 0 : o.common) == null ? void 0 : _a.states;
+      this.lockTexts = st && typeof st === "object" && !Array.isArray(st) ? st : {};
+      this.lockVal = (_b = await this.getForeignStateAsync(c.lockId)) == null ? void 0 : _b.val;
+    }
     const { seen, missing, total } = this.walkResult();
     await this.setStateAsync(
       "status.walkTest",
-      JSON.stringify({ running: !!this.walk, until: (_b = (_a = this.walk) == null ? void 0 : _a.until) != null ? _b : 0, seen, missing, total }),
+      JSON.stringify({ running: !!this.walk, until: (_d = (_c = this.walk) == null ? void 0 : _c.until) != null ? _d : 0, seen, missing, total }),
       true
     );
     await this.setStateAsync("status.walkTestHtml", this.walkHtml(seen, missing, !!this.walk), true);
@@ -426,7 +432,26 @@ class HomeGuard extends utils.Adapter {
     } else {
       head = `<span style="color:#d32f2f">${esc(this.tr("Walk test finished: %s of %s sensors reported", seen.length, total))}</span>`;
     }
-    return `<div style="max-width:640px;border:1px solid rgba(128,128,128,.35);border-radius:6px;overflow:hidden"><div style="padding:8px 10px;font-weight:bold;background:rgba(128,128,128,.12)">${head}</div>${missing.map((n) => row(n, false)).join("")}${seen.map((n) => row(n, true)).join("")}</div>`;
+    return `<div style="max-width:640px;border:1px solid rgba(128,128,128,.35);border-radius:6px;overflow:hidden"><div style="padding:8px 10px;font-weight:bold;background:rgba(128,128,128,.12)">${head}</div>${missing.map((n) => row(n, false)).join("")}${seen.map((n) => row(n, true)).join("")}${this.walkLockHtml(esc)}</div>`;
+  }
+  /**
+   * Door lock below the sensors of the walk test (does not count): its current state, live
+   *
+   * @param esc HTML escaping
+   */
+  walkLockHtml(esc) {
+    var _a, _b;
+    const c = this.config;
+    if (!c.alarmEnabled || !c.lockEnabled || !c.lockId) {
+      return "";
+    }
+    const values = String(c.lockValues || "").split(/[,;\s]+/).filter(Boolean);
+    const val = this.lockVal;
+    const has = val !== void 0 && val !== null;
+    const text = has ? (_b = (_a = this.lockTexts) == null ? void 0 : _a[String(val)]) != null ? _b : String(val) : this.tr("no value yet");
+    const unlocked = has && values.includes(String(val));
+    const badge = has ? `<span style="margin-left:auto;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:${unlocked ? "#2e9d4f" : "#757575"}">${esc(this.tr(unlocked ? "counts as unlocked" : "not unlocked"))}</span>` : "";
+    return `<div style="border-top:3px double rgba(128,128,128,.45);display:flex;align-items:center;gap:10px;padding:8px 10px"><span style="font-size:18px;width:24px;text-align:center">\u{1F511}</span><span>${esc(this.tr("Door lock"))}: <b>${esc(text)}</b>${has && text !== String(val) ? ` (${esc(String(val))})` : ""}</span>${badge}</div>`;
   }
   /**
    * Text for the admin button "Show result"
@@ -1011,8 +1036,8 @@ class HomeGuard extends utils.Adapter {
       if (values.includes(String(state.val)) && this.alarm.mode !== "off") {
         this.alarm.disarm("lock");
       }
-      if (this.walk && !this.walk.seen.has(WALK_LOCK) && values.includes(String(state.val))) {
-        this.walk.seen.set(WALK_LOCK, Date.now());
+      this.lockVal = state.val;
+      if (this.walk) {
         this.bg(this.publishWalk(), "publishWalk");
       }
     }

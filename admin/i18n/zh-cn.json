@@ -512,6 +512,7 @@
 	"camera – often false alarms": "摄像头 – 经常误报",
 	"closed": "已关闭",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "此时 control.mode/control.off 不会撤防 – 只有 control.pin、面板或门锁可以",
+	"counts as unlocked": "视为已解锁",
 	"delayed": "延时",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "例如“30-90”= 半小时到一个半小时之间，每次随机。",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "例如 Nuki、Danalock、Homematic 或任何具有开/关状态的门锁",
@@ -534,6 +535,7 @@
 	"no report for %s days": "已 %s 天无报告",
 	"no sound": "无声音",
 	"no value yet": "暂无数值",
+	"not unlocked": "未解锁",
 	"notifications": "通知",
 	"now: %s": "当前：%s",
 	"only while armed": "仅布防时",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ 所有重要的事情都已设置完毕。",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ 内部运动探测器或其他探测器（存在传感器、光栅、具有运动检测功能的摄像头……） – 已设置",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ 应仅报告的传感器，例如花园大门、信箱或门铃 – 已设置",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置",
-	"🔑 Door lock: unlock once": "🔑 门锁：解锁一次"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置"
 }

@@ -512,6 +512,7 @@
 	"camera – often false alarms": "камера – часто ложные тревоги",
 	"closed": "закрыто",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off тогда не снимают с охраны – только control.pin, панель или замок",
+	"counts as unlocked": "считается открытым",
 	"delayed": "с задержкой",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "напр. «30-90» = от получаса до полутора часов, каждый раз случайно.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "напр. Nuki, Danalock, Homematic или любой замок с состоянием открыт/закрыт",
@@ -534,6 +535,7 @@
 	"no report for %s days": "нет сообщений уже %s дн.",
 	"no sound": "без звука",
 	"no value yet": "значения пока нет",
+	"not unlocked": "не открыт",
 	"notifications": "уведомления",
 	"now: %s": "сейчас: %s",
 	"only while armed": "только на охране",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ Все важное настроено.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Детекторы движения или другие датчики внутри (датчик присутствия, световой барьер, камера с детектором движения…) – уже настроены",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Датчики, которые должны только сообщать, например. садовые ворота, почтовый ящик или дверной звонок – уже установлены",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Детекторы дыма, тепла, воды или газа или тревожная кнопка – уже настроены",
-	"🔑 Door lock: unlock once": "🔑 Дверной замок: открыть один раз"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Детекторы дыма, тепла, воды или газа или тревожная кнопка – уже настроены"
 }

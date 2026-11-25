@@ -512,6 +512,7 @@
 	"camera – often false alarms": "camera – vaak vals alarm",
 	"closed": "dicht",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off schakelen dan niet uit – alleen control.pin, het paneel of het slot",
+	"counts as unlocked": "telt als ontgrendeld",
 	"delayed": "vertraagd",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "bijv. „30-90” = tussen een half uur en anderhalf uur, telkens willekeurig.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "bijv. Nuki, Danalock, Homematic of elk slot met een open/dicht-status",
@@ -534,6 +535,7 @@
 	"no report for %s days": "al %s dagen geen melding",
 	"no sound": "geen geluid",
 	"no value yet": "nog geen waarde",
+	"not unlocked": "niet ontgrendeld",
 	"notifications": "meldingen",
 	"now: %s": "nu: %s",
 	"only while armed": "alleen als ingeschakeld",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ Alles wat belangrijk is, is ingesteld.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Bewegingsmelders of andere melders binnen (aanwezigheidssensor, fotocel, camera met bewegingsdetectie…) – al ingesteld",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensoren die alleen moeten rapporteren, b.v. tuinpoort, brievenbus of deurbel – al geïnstalleerd",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rook-, hitte-, water- of gasmelders, of een paniekknop – al ingesteld",
-	"🔑 Door lock: unlock once": "🔑 Deurslot: één keer ontgrendelen"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rook-, hitte-, water- of gasmelders, of een paniekknop – al ingesteld"
 }

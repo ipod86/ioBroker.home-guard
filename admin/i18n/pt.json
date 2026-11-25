@@ -134,7 +134,7 @@
 	"Documentation": "Documentação",
 	"Done – all sensors detected": "Concluído – todos os sensores detetados",
 	"Door and window contacts, glass break or vibration detectors": "Contatos de portas e janelas, detectores de quebra de vidro ou vibração",
-	"Door lock": "Fechadura da porta",
+	"Door lock": "Fechadura",
 	"Door lock: %s": "Fechadura: %s",
 	"Doors and windows": "Portas e janelas",
 	"Doors and windows with the tick \"ignore at home\" are not watched at night.": "Portas e janelas com a marca \"ignorar em casa\" não são vigiadas à noite.",
@@ -512,6 +512,7 @@
 	"camera – often false alarms": "câmara – muitas vezes falsos alarmes",
 	"closed": "fechado",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off não desativam então – só control.pin, o painel ou a fechadura",
+	"counts as unlocked": "conta como destrancada",
 	"delayed": "retardado",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "p. ex. «30-90» = entre meia hora e hora e meia, aleatório de cada vez.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "p. ex. Nuki, Danalock, Homematic ou qualquer fechadura com estado aberto/fechado",
@@ -534,6 +535,7 @@
 	"no report for %s days": "sem avisos há %s dias",
 	"no sound": "sem som",
 	"no value yet": "ainda sem valor",
+	"not unlocked": "não destrancada",
 	"notifications": "notificações",
 	"now: %s": "agora: %s",
 	"only while armed": "só quando ativado",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ Tudo que é importante está configurado.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Detectores de movimento ou outros detectores internos (sensor de presença, barreira luminosa, câmera com detecção de movimento…) – já configurados",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensores que devem reportar apenas, por ex. portão de jardim, caixa de correio ou campainha – já configurado",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de fumaça, calor, água ou gás, ou botão de pânico – já configurado",
-	"🔑 Door lock: unlock once": "🔑 Fechadura: destrancar uma vez"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de fumaça, calor, água ou gás, ou botão de pânico – já configurado"
 }

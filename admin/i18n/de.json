@@ -512,6 +512,7 @@
 	"camera – often false alarms": "Kamera – oft Fehlalarme",
 	"closed": "zu",
 	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "control.mode/control.off schalten dann nicht unscharf – nur control.pin, das Bedienfeld oder das Schloss",
+	"counts as unlocked": "zählt als aufgeschlossen",
 	"delayed": "verzögert",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "z. B. „30-90“ = zwischen einer halben und anderthalb Stunden, jedes Mal zufällig.",
 	"e.g. Nuki, Danalock, Homematic or any lock with an open/closed state": "z. B. Nuki, Danalock, Homematic oder jedes Schloss mit einem Auf/Zu-Zustand",
@@ -534,6 +535,7 @@
 	"no report for %s days": "seit %s Tagen keine Meldung",
 	"no sound": "kein Ton",
 	"no value yet": "noch kein Wert",
+	"not unlocked": "nicht aufgeschlossen",
 	"notifications": "Benachrichtigungen",
 	"now: %s": "jetzt: %s",
 	"only while armed": "nur wenn scharf",
@@ -568,6 +570,5 @@
 	"✔ Everything important is set up.": "✔ Alles Wichtige ist eingerichtet.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Bewegungsmelder oder andere Melder im Haus (Präsenzmelder, Lichtschranke, Kamera mit Bewegungserkennung …) – schon eingerichtet",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensoren, die nur melden sollen, z. B. Gartentor, Briefkasten oder Klingel – schon eingerichtet",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rauch-, Hitze-, Wasser- oder Gasmelder oder einen Panikknopf – schon eingerichtet",
-	"🔑 Door lock: unlock once": "🔑 Türschloss: einmal aufschließen"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rauch-, Hitze-, Wasser- oder Gasmelder oder einen Panikknopf – schon eingerichtet"
 }
