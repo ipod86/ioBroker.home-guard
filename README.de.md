@@ -140,6 +140,9 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### 0.5.2 (2026-11-25)
+* (ipod86) Fix: verständlichere Texte in den Einstellungen und im Einrichtungsassistenten; Hinweise nennen die Seiten so wie die Seitenauswahl
+
 ### 0.5.1 (2026-11-25)
 * (ipod86) Geändert: Einstellung „Nach dem Unscharfschalten ohne Anwesenheit“ – neuer Name, nur sichtbar, wenn Personen hinterlegt sind
 * (ipod86) Geändert: Gehtest – das Türschloss steht unter den Sensoren mit seinem aktuellen Zustand und zählt nicht mehr mit
