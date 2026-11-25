@@ -190,8 +190,8 @@ class HomeGuard extends utils.Adapter {
 	private minuteTimer: ioBroker.Interval | undefined;
 	private rescanTimer: ioBroker.Timeout | undefined;
 	private wrongPin = 0;
-	/** disarmed: counts as somebody at home until then, before the presence detection notices */
-	private arrivedUntil = 0;
+	/** disarmed: somebody is at home - until the system is armed again or somebody really leaves (presence) */
+	private arrived = false;
 	/** walk test: running until, sensors that reported */
 	private walk: { until: number; seen: Map<string, number>; timer?: ioBroker.Timeout } | null = null;
 	private pinLockedUntil = 0;
@@ -1348,6 +1348,9 @@ class HomeGuard extends utils.Adapter {
 			await this.updateSimulation();
 			return;
 		}
+		if (wasHome && !isHome) {
+			this.arrived = false; // somebody really left: the simulation may run again when nobody is at home
+		}
 		if (!this.autoArm) {
 			await this.updateSimulation();
 			return;
@@ -1869,10 +1872,12 @@ class HomeGuard extends utils.Adapter {
 	private async onAlarmEvent(e: AlarmEvent, info: EventInfo): Promise<void> {
 		const c = this.config;
 		const names = (info.sensors || []).map(s => s.name).join(', ');
-		// disarmed: somebody comes home, even if the phone is not yet in the Wi-Fi - so the simulation (lamps, TV,
-		// Echo radio) stops at once and does not wait for the presence detection
+		// disarmed: somebody comes home, even with an empty phone - the simulation (lamps, TV, Echo radio) stops at
+		// once and stays off until the system is armed again or the presence detection sees somebody leave
 		if (e === 'disarmed') {
-			this.arrivedUntil = Date.now() + 15 * 60000;
+			this.arrived = true;
+		} else if (e === 'arming' || e === 'armedFull' || e === 'armedPerimeter' || e === 'armedNight') {
+			this.arrived = false;
 		}
 		// the text in a language: system language for messages, logbook and speech, English for the ioBroker log
 		const textIn = (T: Texts): string => {
@@ -2376,7 +2381,7 @@ class HomeGuard extends utils.Adapter {
 		}
 		const st = this.alarm?.status();
 		const armedFull = !!st && st.mode === 'full' && st.phase !== 'disarmed';
-		const away = this.presenceIds.length > 0 && !this.someoneHome() && Date.now() >= this.arrivedUntil;
+		const away = this.presenceIds.length > 0 && !this.someoneHome() && !this.arrived;
 		switch (c.simCoupling) {
 			case 'alarm':
 				return armedFull;
