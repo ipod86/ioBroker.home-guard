@@ -378,6 +378,7 @@ class HomeGuard extends utils.Adapter {
 		}
 		this.wrongPin = num((await this.getStateAsync('status.wrongPin'))?.val, 0);
 		await this.setStateAsync('control.walkTest', false, true);
+		this.arrived = !!(await this.getStateAsync('status.arrived'))?.val;
 		await this.setStateAsync('status.walkTestHtml', this.walkHtml([], [], false), true);
 		await this.setStateAsync('status.bypassed', '[]', true);
 
@@ -514,6 +515,19 @@ class HomeGuard extends utils.Adapter {
 		return missing.length
 			? this.tr('%s of %s sensors reported. Still missing: %s', seen.length, total, missing.join(', '))
 			: this.tr('All %s sensors reported', total);
+	}
+
+	/**
+	 * Remembers "somebody came home" (disarmed) in status.arrived, so it survives a restart
+	 *
+	 * @param on somebody came home
+	 */
+	private setArrived(on: boolean): void {
+		if (this.arrived === on) {
+			return;
+		}
+		this.arrived = on;
+		this.bg(this.setStateAsync('status.arrived', on, true), 'setStateAsync');
 	}
 
 	/**
@@ -1349,7 +1363,7 @@ class HomeGuard extends utils.Adapter {
 			return;
 		}
 		if (wasHome && !isHome) {
-			this.arrived = false; // somebody really left: the simulation may run again when nobody is at home
+			this.setArrived(false); // somebody really left: the simulation may run again when nobody is at home
 		}
 		if (!this.autoArm) {
 			await this.updateSimulation();
@@ -1875,9 +1889,9 @@ class HomeGuard extends utils.Adapter {
 		// disarmed: somebody comes home, even with an empty phone - the simulation (lamps, TV, Echo radio) stops at
 		// once and stays off until the system is armed again or the presence detection sees somebody leave
 		if (e === 'disarmed') {
-			this.arrived = true;
+			this.setArrived(true);
 		} else if (e === 'arming' || e === 'armedFull' || e === 'armedPerimeter' || e === 'armedNight') {
-			this.arrived = false;
+			this.setArrived(false);
 		}
 		// the text in a language: system language for messages, logbook and speech, English for the ioBroker log
 		const textIn = (T: Texts): string => {

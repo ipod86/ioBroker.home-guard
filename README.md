@@ -100,6 +100,7 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `status.openContacts`, `status.openCount` | open doors/windows |
 | `status.bypassed` | open contacts left out at arming until they are closed |
 | `status.walkTest` | walk test: running, reported and silent sensors (JSON) |
+| `status.arrived` | somebody came home (disarmed): the simulation stays off until armed again or somebody leaves |
 | `status.walkTestHtml` | walk test as a list for the settings page (HTML) |
 | `status.readyFull`, `status.readyPerimeter` | arming possible without open contacts |
 | `status.lastTrigger`, `status.lastTriggerTime` | last sensor that triggered |

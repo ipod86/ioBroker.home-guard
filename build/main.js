@@ -178,7 +178,7 @@ class HomeGuard extends utils.Adapter {
    * Start: settings, sensors, presence, lamps, subscriptions, timers
    */
   async onReady() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
     const c = this.config;
     const sys = await this.getForeignObjectAsync("system.config");
     const lang = ((_a = sys == null ? void 0 : sys.common) == null ? void 0 : _a.language) || "en";
@@ -307,6 +307,7 @@ class HomeGuard extends utils.Adapter {
     }
     this.wrongPin = num((_i = await this.getStateAsync("status.wrongPin")) == null ? void 0 : _i.val, 0);
     await this.setStateAsync("control.walkTest", false, true);
+    this.arrived = !!((_j = await this.getStateAsync("status.arrived")) == null ? void 0 : _j.val);
     await this.setStateAsync("status.walkTestHtml", this.walkHtml([], [], false), true);
     await this.setStateAsync("status.bypassed", "[]", true);
     this.minuteTimer = this.setInterval(() => this.bg(this.everyMinute(), "everyMinute"), 6e4);
@@ -427,6 +428,18 @@ class HomeGuard extends utils.Adapter {
       return this.tr("No walk test is running \u2013 the last result is in the logbook");
     }
     return missing.length ? this.tr("%s of %s sensors reported. Still missing: %s", seen.length, total, missing.join(", ")) : this.tr("All %s sensors reported", total);
+  }
+  /**
+   * Remembers "somebody came home" (disarmed) in status.arrived, so it survives a restart
+   *
+   * @param on somebody came home
+   */
+  setArrived(on) {
+    if (this.arrived === on) {
+      return;
+    }
+    this.arrived = on;
+    this.bg(this.setStateAsync("status.arrived", on, true), "setStateAsync");
   }
   /**
    * Runs a promise in the background and logs a failure instead of leaving it unhandled
@@ -1185,7 +1198,7 @@ class HomeGuard extends utils.Adapter {
       return;
     }
     if (wasHome && !isHome) {
-      this.arrived = false;
+      this.setArrived(false);
     }
     if (!this.autoArm) {
       await this.updateSimulation();
@@ -1666,9 +1679,9 @@ class HomeGuard extends utils.Adapter {
     const c = this.config;
     const names = (info.sensors || []).map((s) => s.name).join(", ");
     if (e === "disarmed") {
-      this.arrived = true;
+      this.setArrived(true);
     } else if (e === "arming" || e === "armedFull" || e === "armedPerimeter" || e === "armedNight") {
-      this.arrived = false;
+      this.setArrived(false);
     }
     const textIn = (T) => {
       var _a2, _b2, _c2, _d, _e;

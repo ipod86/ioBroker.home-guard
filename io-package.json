@@ -879,6 +879,31 @@
       "native": {}
     },
     {
+      "_id": "status.arrived",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Somebody came home (disarmed, simulation off)",
+          "de": "Jemand ist heimgekommen (unscharf, Simulation aus)",
+          "ru": "Кто-то вернулся домой (снято с охраны, имитация выкл.)",
+          "pt": "Alguém chegou a casa (desativado, simulação desligada)",
+          "nl": "Iemand is thuisgekomen (uitgeschakeld, simulatie uit)",
+          "fr": "Quelqu'un est rentré (désarmé, simulation arrêtée)",
+          "it": "Qualcuno è rientrato (disinserito, simulazione spenta)",
+          "es": "Alguien ha llegado a casa (desarmado, simulación apagada)",
+          "pl": "Ktoś wrócił do domu (rozbrojono, symulacja wył.)",
+          "uk": "Хтось повернувся додому (знято з охорони, імітація вимк.)",
+          "zh-cn": "有人回家（已撤防，模拟关闭）"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
       "_id": "status.present",
       "type": "state",
       "common": {

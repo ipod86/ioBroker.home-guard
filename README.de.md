@@ -88,6 +88,7 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `status.openContacts`, `status.openCount` | offene Türen/Fenster |
 | `status.bypassed` | beim Scharfschalten ausgenommene offene Kontakte, bis sie geschlossen werden |
 | `status.walkTest` | Gehtest: läuft, gemeldete und stumme Sensoren (JSON) |
+| `status.arrived` | jemand ist heimgekommen (unscharf): die Simulation bleibt aus, bis wieder scharf oder jemand geht |
 | `status.walkTestHtml` | Gehtest als Liste für die Einstellungsseite (HTML) |
 | `status.readyFull`, `status.readyPerimeter` | Scharfschalten ohne offene Kontakte möglich |
 | `status.lastTrigger`, `status.lastTriggerTime` | letzter auslösender Sensor |
