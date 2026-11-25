@@ -568,5 +568,6 @@
 	"✔ Everything important is set up.": "✔ 所有重要的事情都已设置完毕。",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ 内部运动探测器或其他探测器（存在传感器、光栅、具有运动检测功能的摄像头……） – 已设置",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ 应仅报告的传感器，例如花园大门、信箱或门铃 – 已设置",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置",
+	"🔑 Door lock: unlock once": "🔑 门锁：解锁一次"
 }

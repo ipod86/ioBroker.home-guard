@@ -46,7 +46,7 @@ Home Guard is an alarm system and a presence simulation in one adapter. Both par
 - **Sirens per mode**: every alarm, full protection only (outside siren) or perimeter/night only (inside siren), each with its own duration.
 - **Morning light**: the morning lamps on at wake-up time (later on the weekend) and off after sunrise (own offset and random delay, optionally at the latest at a set time – e.g. when you leave the house – or as soon as the brightness sensor reports daylight) – during the simulation, or every morning like the evening light; with learned days the real mornings are replayed.
 - **Test alarm** in the settings (tab *Actions & test*): tick what is really switched (notifications, speech, lamps, sirens, actions), with a question before and marked as a test – no arming, no real alarm, afterwards everything back as before.
-- **Walk test** (tab *Actions & test* or `control.walkTest`): while disarmed, open every door and window and walk past every motion detector – in the settings a live list shows every sensor with a red cross that turns into a green tick as soon as it reports; when all are green the test ends by itself, otherwise it tells you which ones stayed silent (result also in `status.walkTest`).
+- **Walk test** (tab *Actions & test* or `control.walkTest`): while disarmed, open every door and window and walk past every motion detector – in the settings a live list shows every sensor with a red cross that turns into a green tick as soon as it reports; the door lock (if set up) is its own check point – unlock it once; when all are green the test ends by itself, otherwise it tells you which ones stayed silent (result also in `status.walkTest`).
 - **Restart during an alarm**: the alarm stays until acknowledged, sirens are switched off.
 - **Widget "Home Guard panel"** (web component) for AURA, vis-2 and other visualisations that support web components: status, mode buttons, PIN keypad, open windows, who is at home (optional), switch for automatic arming, switches for the evening/morning light, monitored sensors and a logbook to open.
 
@@ -152,6 +152,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) feat: walk test – the door lock is its own check point (unlock once)
 * (ipod86) feat: setting "after disarming": simulation off until armed again (default), simulation again after some minutes, or arm again after some minutes when nobody is at home
 * (ipod86) fix: the presence simulation (lamps, TV, Echo radio) stops at once when the system is disarmed, not only when the presence detection notices
 * (ipod86) feat: walk test with a live list in the settings (red cross turns into a green tick)

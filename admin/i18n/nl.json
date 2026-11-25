@@ -568,5 +568,6 @@
 	"✔ Everything important is set up.": "✔ Alles wat belangrijk is, is ingesteld.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Bewegingsmelders of andere melders binnen (aanwezigheidssensor, fotocel, camera met bewegingsdetectie…) – al ingesteld",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensoren die alleen moeten rapporteren, b.v. tuinpoort, brievenbus of deurbel – al geïnstalleerd",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rook-, hitte-, water- of gasmelders, of een paniekknop – al ingesteld"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rook-, hitte-, water- of gasmelders, of een paniekknop – al ingesteld",
+	"🔑 Door lock: unlock once": "🔑 Deurslot: één keer ontgrendelen"
 }

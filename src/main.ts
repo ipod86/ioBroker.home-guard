@@ -32,6 +32,9 @@ import { join } from 'node:path';
 import { MESSENGERS, adapterOf, listMessengers, sendToMessenger, type MessengerRow } from './lib/messengers';
 
 // box under "Alarm also to the ioBroker notifications" (translated through admin/i18n)
+/** walk test: key of the door lock in the list of reported items */
+const WALK_LOCK = '#lock';
+
 const NM_MISSING =
 	'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.';
 const NM_STOPPED =
@@ -448,12 +451,16 @@ class HomeGuard extends utils.Adapter {
 	 * Sensors of the walk test: reported and not yet reported (report-only sensors count too)
 	 */
 	private walkResult(): { seen: string[]; missing: string[]; total: number } {
-		const sensors = this.alarm.getSensors();
+		const items = this.alarm.getSensors().map(s => ({ id: s.id, name: s.name }));
+		// the door lock as its own check point: it disarms, so unlocking it once must work
+		if (this.config.alarmEnabled && this.config.lockEnabled && this.config.lockId) {
+			items.push({ id: WALK_LOCK, name: this.tr('🔑 Door lock: unlock once') });
+		}
 		const seenIds = this.walk?.seen ?? new Map<string, number>();
 		return {
-			seen: sensors.filter(s => seenIds.has(s.id)).map(s => s.name),
-			missing: sensors.filter(s => !seenIds.has(s.id)).map(s => s.name),
-			total: sensors.length,
+			seen: items.filter(s => seenIds.has(s.id)).map(s => s.name),
+			missing: items.filter(s => !seenIds.has(s.id)).map(s => s.name),
+			total: items.length,
 		};
 	}
 
@@ -1144,6 +1151,11 @@ class HomeGuard extends utils.Adapter {
 				.filter(Boolean);
 			if (values.includes(String(state.val)) && this.alarm.mode !== 'off') {
 				this.alarm.disarm('lock');
+			}
+			// walk test: unlocking with one of the "unlocked" values ticks off the door lock
+			if (this.walk && !this.walk.seen.has(WALK_LOCK) && values.includes(String(state.val))) {
+				this.walk.seen.set(WALK_LOCK, Date.now());
+				this.bg(this.publishWalk(), 'publishWalk');
 			}
 		}
 		if (this.presenceVals.has(id) && confirmed) {

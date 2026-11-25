@@ -568,5 +568,6 @@
 	"✔ Everything important is set up.": "✔Todo lo importante está configurado.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Detectores de movimiento u otros detectores en el interior (sensor de presencia, barrera luminosa, cámara con detección de movimiento…) – ya configurados",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensores que solo deberían informar, p. Puerta de jardín, buzón o timbre: ya configurados.",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de humo, calor, agua o gas, o un botón de pánico (ya configurado)"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de humo, calor, agua o gas, o un botón de pánico (ya configurado)",
+	"🔑 Door lock: unlock once": "🔑 Cerradura: desbloquear una vez"
 }

@@ -34,7 +34,7 @@ Home Guard vereint eine Alarmanlage und eine Anwesenheitssimulation in einem Ada
 - **Sirenen je Modus**: bei jedem Alarm, nur bei Vollschutz (Außensirene) oder nur bei Hüll-/Nachtschutz (Innensirene), jeweils mit eigener Dauer.
 - **Morgenlicht**: die Morgenlampen zur Aufstehzeit an (am Wochenende später) und nach Sonnenaufgang aus (eigener Versatz und Zufall, wahlweise spätestens zu einer festen Zeit – z. B. wenn ihr aus dem Haus geht – oder sobald der Helligkeitssensor Tageslicht meldet) – während der Simulation oder wie das Abendlicht jeden Morgen; mit gelernten Tagen werden die echten Morgen nachgespielt.
 - **Alarm testen** in den Einstellungen (Reiter *Aktionen & Test*): anhaken, was wirklich geschaltet wird (Benachrichtigungen, Sprachausgabe, Lampen, Sirenen, Aktionen), mit Rückfrage und als Test gekennzeichnet – ohne Scharfschalten, ohne echten Alarm, danach alles wieder wie vorher.
-- **Gehtest** (Reiter *Aktionen & Test* oder `control.walkTest`): bei unscharfer Anlage jede Tür und jedes Fenster öffnen und an jedem Bewegungsmelder vorbeigehen – in den Einstellungen zeigt eine Live-Liste jeden Sensor mit rotem Kreuz, das zum grünen Haken wird, sobald er sich meldet; sind alle grün, endet der Test von selbst, sonst sagt er, welche stumm geblieben sind (Ergebnis auch in `status.walkTest`).
+- **Gehtest** (Reiter *Aktionen & Test* oder `control.walkTest`): bei unscharfer Anlage jede Tür und jedes Fenster öffnen und an jedem Bewegungsmelder vorbeigehen – in den Einstellungen zeigt eine Live-Liste jeden Sensor mit rotem Kreuz, das zum grünen Haken wird, sobald er sich meldet; das Türschloss (falls eingerichtet) ist ein eigener Prüfpunkt – einmal aufschließen; sind alle grün, endet der Test von selbst, sonst sagt er, welche stumm geblieben sind (Ergebnis auch in `status.walkTest`).
 - **Neustart während eines Alarms**: Der Alarm bleibt bis zur Quittierung bestehen, die Sirenen werden ausgeschaltet.
 - **Widget „Home Guard Panel“** (Web-Komponente) für AURA, vis-2 und andere Visualisierungen, die Web-Komponenten unterstützen: Status, Modus-Tasten, PIN-Tastatur, offene Fenster, wer zu Hause ist (optional), Schalter für Automatik, Schalter für Abend-/Morgenlicht, überwachte Sensoren und ein ausklappbares Logbuch.
 
@@ -141,6 +141,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (ipod86) Neu: Gehtest – das Türschloss ist ein eigener Prüfpunkt (einmal aufschließen)
 * (ipod86) Neu: Einstellung „Nach dem Unscharfschalten“: Simulation aus bis wieder scharf (Standard), Simulation nach einigen Minuten wieder oder nach einigen Minuten wieder scharf, wenn niemand zu Hause ist
 * (ipod86) Fix: Die Anwesenheitssimulation (Lampen, Fernseher, Echo-Radio) endet sofort beim Unscharfschalten, nicht erst, wenn die Anwesenheitserkennung es merkt
 * (ipod86) Neu: Gehtest mit Live-Liste in den Einstellungen (rotes Kreuz wird zum grünen Haken)

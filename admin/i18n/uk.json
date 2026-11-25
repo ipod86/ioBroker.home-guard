@@ -568,5 +568,6 @@
 	"✔ Everything important is set up.": "✔ Все важливе налаштовано.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Детектори руху або інші детектори всередині (датчик присутності, світловий бар’єр, камера з детектором руху…) – уже налаштовано",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Датчики, які повинні лише повідомляти, напр. садові ворота, поштова скринька чи дверний дзвінок – уже налаштовані",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Датчики диму, тепла, води чи газу або тривожна кнопка – уже налаштовано"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Датчики диму, тепла, води чи газу або тривожна кнопка – уже налаштовано",
+	"🔑 Door lock: unlock once": "🔑 Дверний замок: відімкнути один раз"
 }

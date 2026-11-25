@@ -31,6 +31,7 @@ var import_texts = require("./lib/texts");
 var import_i18n = require("./lib/i18n");
 var import_node_path = require("node:path");
 var import_messengers = require("./lib/messengers");
+const WALK_LOCK = "#lock";
 const NM_MISSING = 'The "notification-manager" adapter is not installed. Without it alarms only appear in the bell of the admin and go to no messenger. Install it under "Adapters" and set up the messengers there.';
 const NM_STOPPED = 'The "notification-manager" adapter is installed but not running. Start the instance so that alarms are forwarded.';
 const NM_OK = 'The "notification-manager" adapter is installed and running. Which messengers get the alarms is set in its settings.';
@@ -374,12 +375,15 @@ class HomeGuard extends utils.Adapter {
    */
   walkResult() {
     var _a, _b;
-    const sensors = this.alarm.getSensors();
+    const items = this.alarm.getSensors().map((s) => ({ id: s.id, name: s.name }));
+    if (this.config.alarmEnabled && this.config.lockEnabled && this.config.lockId) {
+      items.push({ id: WALK_LOCK, name: this.tr("\u{1F511} Door lock: unlock once") });
+    }
     const seenIds = (_b = (_a = this.walk) == null ? void 0 : _a.seen) != null ? _b : /* @__PURE__ */ new Map();
     return {
-      seen: sensors.filter((s) => seenIds.has(s.id)).map((s) => s.name),
-      missing: sensors.filter((s) => !seenIds.has(s.id)).map((s) => s.name),
-      total: sensors.length
+      seen: items.filter((s) => seenIds.has(s.id)).map((s) => s.name),
+      missing: items.filter((s) => !seenIds.has(s.id)).map((s) => s.name),
+      total: items.length
     };
   }
   /**
@@ -1006,6 +1010,10 @@ class HomeGuard extends utils.Adapter {
       const values = String(c.lockValues || "").split(/[,;\s]+/).filter(Boolean);
       if (values.includes(String(state.val)) && this.alarm.mode !== "off") {
         this.alarm.disarm("lock");
+      }
+      if (this.walk && !this.walk.seen.has(WALK_LOCK) && values.includes(String(state.val))) {
+        this.walk.seen.set(WALK_LOCK, Date.now());
+        this.bg(this.publishWalk(), "publishWalk");
       }
     }
     if (this.presenceVals.has(id) && confirmed) {
