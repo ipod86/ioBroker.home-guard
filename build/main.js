@@ -327,15 +327,16 @@ class HomeGuard extends utils.Adapter {
     );
   }
   /**
-   * Starts the walk test: every sensor that reports "open" is ticked off. Returns an error text or ''.
+   * Starts the walk test: every sensor that reports "open" is ticked off. Returns an English error text or ''
+   * (translate it with this.tr for the admin, log it as it is).
    */
   startWalk() {
     var _a;
     if (this.alarm.mode !== "off") {
-      return this.tr("The walk test only runs while the alarm system is disarmed");
+      return "The walk test only runs while the alarm system is disarmed";
     }
     if (!this.alarm.getSensors().length) {
-      return this.tr("No sensors to test");
+      return "No sensors to test";
     }
     const min = clamp(num(this.config.walkTestMin, 10), 1, 60);
     if ((_a = this.walk) == null ? void 0 : _a.timer) {
@@ -1368,7 +1369,7 @@ class HomeGuard extends utils.Adapter {
       case "walkStart": {
         const err = this.startWalk();
         return reply(
-          err ? { error: err } : { result: this.tr("Walk test started \u2013 trigger every sensor now") }
+          err ? { error: this.tr(err) } : { result: this.tr("Walk test started \u2013 trigger every sensor now") }
         );
       }
       case "walkStatus":
