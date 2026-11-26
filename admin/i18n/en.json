@@ -570,5 +570,13 @@
 	"not unlocked": "not unlocked",
 	"After disarming without presence": "After disarming without presence",
 	"Acknowledge only with the PIN": "Acknowledge only with the PIN",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\"."
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".",
+	"Test": "Test",
+	"Test alarm sound": "Test alarm sound",
+	"Test an Echo": "Test an Echo",
+	"Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.": "Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.",
+	"Choose an Echo first": "Choose an Echo first",
+	"Home Guard test": "Home Guard test",
+	"Sent to %s – the sound should play in a few seconds": "Sent to %s – the sound should play in a few seconds",
+	"not used for the alarm": "not used for the alarm"
 }

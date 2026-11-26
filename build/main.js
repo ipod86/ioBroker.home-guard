@@ -1402,6 +1402,10 @@ class HomeGuard extends utils.Adapter {
           err ? { error: this.tr(err) } : { result: this.tr("Walk test started \u2013 trigger every sensor now") }
         );
       }
+      case "echoTest":
+        return reply(await this.echoTest(msg));
+      case "echoTestList":
+        return reply(await this.echoTestList());
       case "walkStatus":
         return reply({ result: this.walkText() });
       case "walkStop":
@@ -2573,7 +2577,6 @@ class HomeGuard extends utils.Adapter {
     const secs = clamp(num(this.config.alarmDuration, 180), 0, 3600);
     this.echoAlarmUntil = secs > 0 ? Date.now() + Math.max(20, secs) * 1e3 : Number.MAX_SAFE_INTEGER;
     const once = async () => {
-      var _a;
       if (Date.now() > this.echoAlarmUntil) {
         if (this.echoAlarmTimer) {
           this.clearInterval(this.echoAlarmTimer);
@@ -2584,20 +2587,7 @@ class HomeGuard extends utils.Adapter {
       const words = (this.echoAlarmText || this.T.phase.alarm || "Alarm").replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim().replace(/[<>&]/g, " ");
       for (const r of echos) {
         try {
-          const v = Number(r.alarmVolume);
-          const vol = r.alarmVolume !== "" && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
-          const sound = ECHO_SOUNDS[(_a = r.alarmSound) != null ? _a : "siren"] || "";
-          const nodes = [{ command: "volume", value: vol }];
-          if (sound) {
-            nodes.push({ command: "sound", value: sound });
-          }
-          if (r.alarmText !== false && words) {
-            nodes.push({ command: "speak", value: words });
-          }
-          if (sound) {
-            nodes.push({ command: "sound", value: sound });
-          }
-          await this.echoSequence(r.device, nodes);
+          await this.echoSequence(r.device, this.echoAlarmNodes(r, words));
         } catch (e) {
           this.log.warn(`Echo ${r.device}: ${e.message}`);
         }
@@ -2614,6 +2604,98 @@ class HomeGuard extends utils.Adapter {
     }
     await once();
     this.echoAlarmTimer = this.setInterval(() => this.bg(once(), "echoAlarm"), 2e4);
+  }
+  /**
+   * The alarm routine of one Echo row: volume, sound, text, sound - played one after the other
+   *
+   * @param r row of the Echo table (also unsaved values from the test button)
+   * @param words text to speak
+   */
+  echoAlarmNodes(r, words) {
+    var _a;
+    const v = Number(r.alarmVolume);
+    const vol = r.alarmVolume !== "" && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
+    const sound = ECHO_SOUNDS[(_a = r.alarmSound) != null ? _a : "siren"] || "";
+    const nodes = [{ command: "volume", value: vol }];
+    if (sound) {
+      nodes.push({ command: "sound", value: sound });
+    }
+    if (r.alarmText !== false && words) {
+      nodes.push({ command: "speak", value: words });
+    }
+    if (sound) {
+      nodes.push({ command: "sound", value: sound });
+    }
+    return nodes;
+  }
+  /**
+   * Name of an Echo: own name in the table, else the name in alexa2, else the object id
+   *
+   * @param device device object
+   * @param own own name from the table
+   */
+  async echoName(device, own) {
+    var _a;
+    if (own) {
+      return own;
+    }
+    const obj = await this.getForeignObjectAsync(device).catch(() => null);
+    const n = (_a = obj == null ? void 0 : obj.common) == null ? void 0 : _a.name;
+    const name = typeof n === "object" ? n[this.sysLang] || n.en : n;
+    return name || device;
+  }
+  /**
+   * Test button in the settings: plays the alarm of one Echo once (with the values shown, even unsaved),
+   * then sets its volume back
+   *
+   * @param msg device and optionally volume, sound and text of the row
+   * @returns result or error for the settings page
+   */
+  async echoTest(msg) {
+    var _a, _b, _c, _d, _e, _f;
+    const device = typeof msg.device === "string" ? msg.device : "";
+    if (!/^alexa2\.\d+\.Echo-Devices\.[^.]+$/.test(device)) {
+      return { error: this.tr("Choose an Echo first") };
+    }
+    const row = (this.config.echos || []).find((r) => (r == null ? void 0 : r.device) === device);
+    const pick = (k) => {
+      const v = msg[k];
+      if (typeof v === "boolean" || typeof v === "number") {
+        return String(v);
+      }
+      return typeof v === "string" && v !== "" && v !== "undefined" && v !== "null" ? v : void 0;
+    };
+    const settings = {
+      alarmVolume: (_b = (_a = pick("volume")) != null ? _a : row == null ? void 0 : row.alarmVolume) != null ? _b : 80,
+      alarmSound: (_d = (_c = pick("sound")) != null ? _c : row == null ? void 0 : row.alarmSound) != null ? _d : "siren",
+      alarmText: ((_f = pick("text")) != null ? _f : String((_e = row == null ? void 0 : row.alarmText) != null ? _e : true)) !== "false"
+    };
+    const st = await this.getForeignStateAsync(`${device}.Player.volume`).catch(() => null);
+    const before = st && st.val !== null && Number.isFinite(Number(st.val)) ? Number(st.val) : void 0;
+    await this.echoSequence(device, this.echoAlarmNodes(settings, this.tr("Home Guard test")));
+    if (before !== void 0 && !this.echoAlarmUntil) {
+      this.setTimeout(() => {
+        if (!this.echoAlarmUntil) {
+          this.bg(this.echoSequence(device, [{ command: "volume", value: before }]), "echoTest");
+        }
+      }, 25e3);
+    }
+    const name = await this.echoName(device, row == null ? void 0 : row.name);
+    return { result: this.tr("Sent to %s \u2013 the sound should play in a few seconds", name) };
+  }
+  /**
+   * The Echos of the table, for the test selection in the tab "Actions & test"
+   */
+  async echoTestList() {
+    const out = [];
+    for (const r of this.config.echos || []) {
+      if (!(r == null ? void 0 : r.device) || r.enabled === false) {
+        continue;
+      }
+      const name = await this.echoName(r.device, r.name);
+      out.push({ value: r.device, label: r.alarm ? name : `${name} (${this.tr("not used for the alarm")})` });
+    }
+    return out;
   }
   /**
    * Plays commands on an Echo as one routine (alexa2 message sendSequenceCommand), strictly one after the other.

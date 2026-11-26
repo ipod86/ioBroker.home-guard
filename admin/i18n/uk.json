@@ -570,5 +570,13 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Датчики, які повинні лише повідомляти, напр. садові ворота, поштова скринька чи дверний дзвінок – уже налаштовані",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Датчики диму, тепла, води чи газу або тривожна кнопка – уже налаштовано",
 	"Acknowledge only with the PIN": "Підтверджувати лише з PIN",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Увімк.: заглушити тривогу, що триває, може лише той, хто знає PIN (клавіатура на панелі або control.ackPin; control.ack відхиляється). Вимк.: підтвердити може будь-хто біля панелі – сирени та світло вимикаються, але система залишається на охороні, і будь-який наступний датчик одразу знову викликає тривогу; ви отримаєте повідомлення «підтверджено без PIN»."
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Увімк.: заглушити тривогу, що триває, може лише той, хто знає PIN (клавіатура на панелі або control.ackPin; control.ack відхиляється). Вимк.: підтвердити може будь-хто біля панелі – сирени та світло вимикаються, але система залишається на охороні, і будь-який наступний датчик одразу знову викликає тривогу; ви отримаєте повідомлення «підтверджено без PIN».",
+	"Test": "Тест",
+	"Test alarm sound": "Перевірити звук тривоги",
+	"Test an Echo": "Перевірити Echo",
+	"Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.": "Один раз відтворює звук тривоги й текст на вибраному Echo – з гучністю та звуком із таблиці Echo – а потім повертає гучність.",
+	"Choose an Echo first": "Спочатку виберіть Echo",
+	"Home Guard test": "Тест Home Guard",
+	"Sent to %s – the sound should play in a few seconds": "Надіслано на %s – звук має пролунати за кілька секунд",
+	"not used for the alarm": "не використовується для тривоги"
 }

@@ -570,5 +570,13 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensoren die alleen moeten rapporteren, b.v. tuinpoort, brievenbus of deurbel – al geïnstalleerd",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rook-, hitte-, water- of gasmelders, of een paniekknop – al ingesteld",
 	"Acknowledge only with the PIN": "Bevestigen alleen met de pincode",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Aan: alleen wie de pincode kent, kan een lopend alarm stilzetten (toetsenblok in het paneel of control.ackPin; control.ack wordt geweigerd). Uit: iedereen bij het paneel kan bevestigen – sirenes en licht gaan uit, maar het systeem blijft ingeschakeld en elke volgende sensor laat het alarm meteen weer afgaan; je krijgt het bericht ‘bevestigd zonder pincode’."
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Aan: alleen wie de pincode kent, kan een lopend alarm stilzetten (toetsenblok in het paneel of control.ackPin; control.ack wordt geweigerd). Uit: iedereen bij het paneel kan bevestigen – sirenes en licht gaan uit, maar het systeem blijft ingeschakeld en elke volgende sensor laat het alarm meteen weer afgaan; je krijgt het bericht ‘bevestigd zonder pincode’.",
+	"Test": "Test",
+	"Test alarm sound": "Alarmgeluid testen",
+	"Test an Echo": "Een Echo testen",
+	"Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.": "Speelt het alarmgeluid en de tekst één keer af op de gekozen Echo – met volume en geluid uit de Echo-tabel – en zet daarna het volume terug.",
+	"Choose an Echo first": "Kies eerst een Echo",
+	"Home Guard test": "Home Guard-test",
+	"Sent to %s – the sound should play in a few seconds": "Verzonden naar %s – het geluid zou over een paar seconden moeten klinken",
+	"not used for the alarm": "niet gebruikt voor het alarm"
 }

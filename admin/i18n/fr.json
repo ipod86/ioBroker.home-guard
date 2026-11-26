@@ -570,5 +570,13 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Capteurs qui doivent uniquement signaler, par ex. portail de jardin, boîte aux lettres ou sonnette – déjà installés",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Détecteurs de fumée, de chaleur, d'eau ou de gaz, ou bouton panique – déjà configurés",
 	"Acknowledge only with the PIN": "Acquitter uniquement avec le PIN",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Activé : seule une personne connaissant le PIN peut faire taire une alarme en cours (clavier du panneau ou control.ackPin ; control.ack est refusé). Désactivé : n'importe qui au panneau peut acquitter – sirènes et lumières s'arrêtent, mais le système reste armé et tout autre capteur redéclenche immédiatement l'alarme ; vous recevez le message « acquittée sans PIN »."
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Activé : seule une personne connaissant le PIN peut faire taire une alarme en cours (clavier du panneau ou control.ackPin ; control.ack est refusé). Désactivé : n'importe qui au panneau peut acquitter – sirènes et lumières s'arrêtent, mais le système reste armé et tout autre capteur redéclenche immédiatement l'alarme ; vous recevez le message « acquittée sans PIN ».",
+	"Test": "Test",
+	"Test alarm sound": "Tester le son d'alarme",
+	"Test an Echo": "Tester un Echo",
+	"Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.": "Joue une fois le son d'alarme et le texte sur l'Echo choisi – avec le volume et le son du tableau des Echo – puis rétablit le volume.",
+	"Choose an Echo first": "Choisissez d'abord un Echo",
+	"Home Guard test": "Test Home Guard",
+	"Sent to %s – the sound should play in a few seconds": "Envoyé à %s – le son devrait retentir dans quelques secondes",
+	"not used for the alarm": "non utilisé pour l'alarme"
 }

@@ -4583,6 +4583,18 @@
 									"width": "5%",
 									"default": true,
 									"hidden": "!data.sim"
+								},
+								{
+									"type": "sendTo",
+									"attr": "_test",
+									"title": "Test",
+									"label": "Test alarm sound",
+									"command": "echoTest",
+									"variant": "outlined",
+									"showProcess": true,
+									"jsonData": "{\"device\":\"${data.device}\",\"volume\":\"${data.alarmVolume}\",\"sound\":\"${data.alarmSound}\",\"text\":\"${data.alarmText}\"}",
+									"width": "8%",
+									"hidden": "!data.device || !data.alarm"
 								}
 							],
 							"hidden": "!((data.wizHasAlexa || (data.echos || []).some(r => r && r.enabled !== false && r.device)) && (data.alarmEnabled || data.simEnabled))",
@@ -6634,6 +6646,53 @@
 					"lg": 12,
 					"xl": 12,
 					"newLine": true
+				},
+				"echoH": {
+					"type": "header",
+					"text": "Test an Echo",
+					"size": 5,
+					"newLine": true,
+					"hidden": "!data.echos || !data.echos.length"
+				},
+				"echoI": {
+					"type": "staticText",
+					"text": "Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.",
+					"xs": 12,
+					"sm": 12,
+					"md": 12,
+					"lg": 12,
+					"xl": 12,
+					"newLine": true,
+					"hidden": "!data.echos || !data.echos.length"
+				},
+				"_echoTest": {
+					"type": "selectSendTo",
+					"label": "Echo",
+					"command": "echoTestList",
+					"jsonData": "{}",
+					"noTranslation": true,
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3,
+					"newLine": true,
+					"hidden": "!data.echos || !data.echos.length"
+				},
+				"echoTestBtn": {
+					"type": "sendTo",
+					"label": "Test alarm sound",
+					"command": "echoTest",
+					"variant": "contained",
+					"showProcess": true,
+					"jsonData": "{\"device\":\"${data._echoTest}\"}",
+					"xs": 12,
+					"sm": 12,
+					"md": 4,
+					"lg": 3,
+					"xl": 3,
+					"hidden": "!data.echos || !data.echos.length",
+					"disabled": "!data._echoTest"
 				}
 			}
 		},
@@ -7532,6 +7591,18 @@
 							"width": "5%",
 							"default": true,
 							"hidden": "!data.sim"
+						},
+						{
+							"type": "sendTo",
+							"attr": "_test",
+							"title": "Test",
+							"label": "Test alarm sound",
+							"command": "echoTest",
+							"variant": "outlined",
+							"showProcess": true,
+							"jsonData": "{\"device\":\"${data.device}\",\"volume\":\"${data.alarmVolume}\",\"sound\":\"${data.alarmSound}\",\"text\":\"${data.alarmText}\"}",
+							"width": "8%",
+							"hidden": "!data.device || !data.alarm"
 						}
 					],
 					"useCardFor": [

@@ -1590,6 +1590,10 @@ class HomeGuard extends utils.Adapter {
 					err ? { error: this.tr(err) } : { result: this.tr('Walk test started – trigger every sensor now') },
 				);
 			}
+			case 'echoTest':
+				return reply(await this.echoTest(msg));
+			case 'echoTestList':
+				return reply(await this.echoTestList());
 			case 'walkStatus':
 				return reply({ result: this.walkText() });
 			case 'walkStop':
@@ -2903,22 +2907,7 @@ class HomeGuard extends utils.Adapter {
 				.replace(/[<>&]/g, ' ');
 			for (const r of echos) {
 				try {
-					const v = Number(r.alarmVolume);
-					const vol =
-						r.alarmVolume !== '' && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
-					const sound = ECHO_SOUNDS[r.alarmSound ?? 'siren'] || '';
-					// one routine on the Echo, played one after the other: volume, sound, text, sound
-					const nodes: { command: string; value: string | number }[] = [{ command: 'volume', value: vol }];
-					if (sound) {
-						nodes.push({ command: 'sound', value: sound });
-					}
-					if (r.alarmText !== false && words) {
-						nodes.push({ command: 'speak', value: words });
-					}
-					if (sound) {
-						nodes.push({ command: 'sound', value: sound });
-					}
-					await this.echoSequence(r.device, nodes);
+					await this.echoSequence(r.device, this.echoAlarmNodes(r, words));
 				} catch (e) {
 					this.log.warn(`Echo ${r.device}: ${(e as Error).message}`);
 				}
@@ -2936,6 +2925,104 @@ class HomeGuard extends utils.Adapter {
 		}
 		await once();
 		this.echoAlarmTimer = this.setInterval(() => this.bg(once(), 'echoAlarm'), 20000);
+	}
+
+	/**
+	 * The alarm routine of one Echo row: volume, sound, text, sound - played one after the other
+	 *
+	 * @param r row of the Echo table (also unsaved values from the test button)
+	 * @param words text to speak
+	 */
+	private echoAlarmNodes(
+		r: Pick<EchoRow, 'alarmVolume' | 'alarmSound' | 'alarmText'>,
+		words: string,
+	): { command: string; value: string | number }[] {
+		const v = Number(r.alarmVolume);
+		const vol = r.alarmVolume !== '' && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
+		const sound = ECHO_SOUNDS[r.alarmSound ?? 'siren'] || '';
+		const nodes: { command: string; value: string | number }[] = [{ command: 'volume', value: vol }];
+		if (sound) {
+			nodes.push({ command: 'sound', value: sound });
+		}
+		if (r.alarmText !== false && words) {
+			nodes.push({ command: 'speak', value: words });
+		}
+		if (sound) {
+			nodes.push({ command: 'sound', value: sound });
+		}
+		return nodes;
+	}
+
+	/**
+	 * Name of an Echo: own name in the table, else the name in alexa2, else the object id
+	 *
+	 * @param device device object
+	 * @param own own name from the table
+	 */
+	private async echoName(device: string, own?: string | null): Promise<string> {
+		if (own) {
+			return own;
+		}
+		const obj = await this.getForeignObjectAsync(device).catch(() => null);
+		const n = obj?.common?.name;
+		const name = typeof n === 'object' ? (n as Record<string, string>)[this.sysLang] || n.en : n;
+		return name || device;
+	}
+
+	/**
+	 * Test button in the settings: plays the alarm of one Echo once (with the values shown, even unsaved),
+	 * then sets its volume back
+	 *
+	 * @param msg device and optionally volume, sound and text of the row
+	 * @returns result or error for the settings page
+	 */
+	private async echoTest(msg: Record<string, unknown>): Promise<{ result?: string; error?: string }> {
+		const device = typeof msg.device === 'string' ? msg.device : '';
+		if (!/^alexa2\.\d+\.Echo-Devices\.[^.]+$/.test(device)) {
+			return { error: this.tr('Choose an Echo first') };
+		}
+		const row = (this.config.echos || []).find(r => r?.device === device);
+		// values of the row as shown in the settings (even unsaved); missing ones from the saved table
+		const pick = (k: string): string | undefined => {
+			const v = msg[k];
+			if (typeof v === 'boolean' || typeof v === 'number') {
+				return String(v);
+			}
+			return typeof v === 'string' && v !== '' && v !== 'undefined' && v !== 'null' ? v : undefined;
+		};
+		const settings = {
+			alarmVolume: pick('volume') ?? row?.alarmVolume ?? 80,
+			alarmSound: pick('sound') ?? row?.alarmSound ?? 'siren',
+			alarmText: (pick('text') ?? String(row?.alarmText ?? true)) !== 'false',
+		};
+		const st = await this.getForeignStateAsync(`${device}.Player.volume`).catch(() => null);
+		const before = st && st.val !== null && Number.isFinite(Number(st.val)) ? Number(st.val) : undefined;
+		await this.echoSequence(device, this.echoAlarmNodes(settings, this.tr('Home Guard test')));
+		if (before !== undefined && !this.echoAlarmUntil) {
+			// after the sounds - not during a real alarm, which sets the volume back itself
+			this.setTimeout(() => {
+				if (!this.echoAlarmUntil) {
+					this.bg(this.echoSequence(device, [{ command: 'volume', value: before }]), 'echoTest');
+				}
+			}, 25000);
+		}
+		const name = await this.echoName(device, row?.name);
+		return { result: this.tr('Sent to %s – the sound should play in a few seconds', name) };
+	}
+
+	/**
+	 * The Echos of the table, for the test selection in the tab "Actions & test"
+	 */
+	private async echoTestList(): Promise<{ value: string; label: string }[]> {
+		const out: { value: string; label: string }[] = [];
+		for (const r of this.config.echos || []) {
+			if (!r?.device || r.enabled === false) {
+				continue;
+			}
+			const name = await this.echoName(r.device, r.name);
+			out.push({ value: r.device, label: r.alarm ? name : `${name} (${this.tr('not used for the alarm')})` });
+		}
+		return out;
 	}
 
 	/**

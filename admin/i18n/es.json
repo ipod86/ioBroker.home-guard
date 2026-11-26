@@ -570,5 +570,13 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensores que solo deberían informar, p. Puerta de jardín, buzón o timbre: ya configurados.",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Detectores de humo, calor, agua o gas, o un botón de pánico (ya configurado)",
 	"Acknowledge only with the PIN": "Confirmar solo con el PIN",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Activado: solo quien conoce el PIN puede silenciar una alarma en curso (teclado del panel o control.ackPin; control.ack se rechaza). Desactivado: cualquiera en el panel puede confirmar – sirenas y luces se apagan, pero el sistema sigue armado y cualquier otro sensor vuelve a disparar la alarma al instante; recibes el mensaje «confirmada sin PIN»."
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Activado: solo quien conoce el PIN puede silenciar una alarma en curso (teclado del panel o control.ackPin; control.ack se rechaza). Desactivado: cualquiera en el panel puede confirmar – sirenas y luces se apagan, pero el sistema sigue armado y cualquier otro sensor vuelve a disparar la alarma al instante; recibes el mensaje «confirmada sin PIN».",
+	"Test": "Prueba",
+	"Test alarm sound": "Probar sonido de alarma",
+	"Test an Echo": "Probar un Echo",
+	"Plays the alarm sound and the text once on the chosen Echo – with the volume and sound from the Echo table – and then sets the volume back.": "Reproduce una vez el sonido de alarma y el texto en el Echo elegido – con el volumen y el sonido de la tabla de Echo – y después restablece el volumen.",
+	"Choose an Echo first": "Elige primero un Echo",
+	"Home Guard test": "Prueba de Home Guard",
+	"Sent to %s – the sound should play in a few seconds": "Enviado a %s – el sonido debería sonar en unos segundos",
+	"not used for the alarm": "no se usa para la alarma"
 }
