@@ -62,6 +62,17 @@ const ECHO_SOUNDS = {
   siren: "amzn_sfx_scifi_alarm_04",
   horn: "air_horn_03"
 };
+const ECHO_SOUND_FALLBACK = [
+  "amzn_sfx_scifi_alarm_04",
+  "amzn_sfx_scifi_alarm_01",
+  "air_horn_03",
+  "buzzers_pistols_01",
+  "bell_02"
+];
+const ECHO_SOUNDS_BEFORE = 3;
+const ECHO_SOUNDS_AFTER = 3;
+const ECHO_SOUND_SECS = 4;
+const ECHO_SPEAK_SECS_PER_CHAR = 0.08;
 function deviceWindow(row) {
   var _a, _b;
   const out = {};
@@ -120,6 +131,10 @@ class HomeGuard extends utils.Adapter {
   echoSim = /* @__PURE__ */ new Map();
   /** alarm on the Echos: repeat timer, end time, text of the alarm */
   echoAlarmTimer;
+  /** sound per Echo during an alarm (checked once against the list of alexa2) */
+  echoAlarmSound = /* @__PURE__ */ new Map();
+  /** missing sounds already reported in the log */
+  echoSoundWarned = /* @__PURE__ */ new Set();
   echoAlarmUntil = 0;
   echoAlarmText = "";
   /** volume of the Echos before the alarm, set again when it ends */
@@ -1732,7 +1747,7 @@ class HomeGuard extends utils.Adapter {
     rows = rows.map((r) => {
       const out = { ...r, alarm };
       if (alarm) {
-        out.alarmVolume = val(form.wizEchoAlarmVolume, 80);
+        out.alarmVolume = val(form.wizEchoAlarmVolume, 100);
         out.alarmSound = String(val(form.wizEchoAlarmSound, "siren"));
         out.alarmText = form.wizEchoAlarmText !== false && form.wizEchoAlarmText !== "false";
       }
@@ -2552,7 +2567,7 @@ class HomeGuard extends utils.Adapter {
    */
   async echoAlarm(on) {
     if (this.echoAlarmTimer) {
-      this.clearInterval(this.echoAlarmTimer);
+      this.clearTimeout(this.echoAlarmTimer);
       this.echoAlarmTimer = void 0;
     }
     const echos = this.alarmEchos();
@@ -2571,28 +2586,12 @@ class HomeGuard extends utils.Adapter {
           }
         }
         this.echoVolBefore.clear();
+        this.echoAlarmSound.clear();
       }
       return;
     }
     const secs = clamp(num(this.config.alarmDuration, 180), 0, 3600);
     this.echoAlarmUntil = secs > 0 ? Date.now() + Math.max(20, secs) * 1e3 : Number.MAX_SAFE_INTEGER;
-    const once = async () => {
-      if (Date.now() > this.echoAlarmUntil) {
-        if (this.echoAlarmTimer) {
-          this.clearInterval(this.echoAlarmTimer);
-          this.echoAlarmTimer = void 0;
-        }
-        return;
-      }
-      const words = (this.echoAlarmText || this.T.phase.alarm || "Alarm").replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim().replace(/[<>&]/g, " ");
-      for (const r of echos) {
-        try {
-          await this.echoSequence(r.device, this.echoAlarmNodes(r, words));
-        } catch (e) {
-          this.log.warn(`Echo ${r.device}: ${e.message}`);
-        }
-      }
-    };
     for (const r of echos) {
       if (!this.echoVolBefore.has(r.device)) {
         const st = await this.getForeignStateAsync(`${r.device}.Player.volume`).catch(() => null);
@@ -2601,31 +2600,99 @@ class HomeGuard extends utils.Adapter {
           this.echoVolBefore.set(r.device, before);
         }
       }
+      if (!this.echoAlarmSound.has(r.device)) {
+        this.echoAlarmSound.set(r.device, await this.echoSoundFor(r.device, r.alarmSound));
+      }
     }
-    await once();
-    this.echoAlarmTimer = this.setInterval(() => this.bg(once(), "echoAlarm"), 2e4);
+    const round = async () => {
+      this.echoAlarmTimer = void 0;
+      if (!this.echoAlarmUntil || Date.now() > this.echoAlarmUntil) {
+        return;
+      }
+      const words = (this.echoAlarmText || this.T.phase.alarm || "Alarm").replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim().replace(/[<>&]/g, " ");
+      let longest = 10;
+      for (const r of echos) {
+        const nodes = this.echoAlarmNodes(r, words, this.echoAlarmSound.get(r.device));
+        longest = Math.max(longest, this.echoRoundSecs(nodes));
+        try {
+          await this.echoSequence(r.device, nodes);
+        } catch (e) {
+          this.log.warn(`Echo ${r.device}: ${e.message}`);
+        }
+      }
+      if (this.echoAlarmUntil && Date.now() < this.echoAlarmUntil) {
+        this.echoAlarmTimer = this.setTimeout(() => this.bg(round(), "echoAlarm"), longest * 1e3);
+      }
+    };
+    await round();
   }
   /**
-   * The alarm routine of one Echo row: volume, sound, text, sound - played one after the other
+   * The sound to play on an Echo: the chosen one, if alexa2 still offers it, else a replacement
+   * (Amazon may rename or remove sounds - then the alarm must still sound)
+   *
+   * @param device device object
+   * @param choice siren, bell or horn from the table
+   * @returns sound id for alexa-remote, '' = none
+   */
+  async echoSoundFor(device, choice) {
+    var _a, _b;
+    const wanted = (_a = ECHO_SOUNDS[choice != null ? choice : "siren"]) != null ? _a : "";
+    if (!wanted) {
+      return "";
+    }
+    const obj = await this.getForeignObjectAsync(`${device}.Commands.sound`).catch(() => null);
+    const states = (_b = obj == null ? void 0 : obj.common) == null ? void 0 : _b.states;
+    const offered = states && typeof states === "object" && !Array.isArray(states) ? Object.keys(states) : [];
+    if (!offered.length || offered.includes(wanted)) {
+      return wanted;
+    }
+    const other = ECHO_SOUND_FALLBACK.find((id) => offered.includes(id)) || offered[0];
+    const key = `${device}|${wanted}`;
+    if (!this.echoSoundWarned.has(key)) {
+      this.echoSoundWarned.add(key);
+      this.log.warn(
+        `Echo ${device}: Amazon no longer offers the sound "${wanted}" - "${other}" is played instead. Please tell the developer.`
+      );
+    }
+    return other;
+  }
+  /**
+   * Estimated length of one alarm round in seconds
+   *
+   * @param nodes commands of the round
+   */
+  echoRoundSecs(nodes) {
+    let secs = 1;
+    for (const n of nodes) {
+      if (n.command === "sound") {
+        secs += ECHO_SOUND_SECS;
+      } else if (n.command === "speak") {
+        secs += 1.5 + String(n.value).length * ECHO_SPEAK_SECS_PER_CHAR;
+      }
+    }
+    return Math.ceil(secs);
+  }
+  /**
+   * One alarm round of an Echo row: volume, sounds, text, sounds - played one after the other
    *
    * @param r row of the Echo table (also unsaved values from the test button)
    * @param words text to speak
+   * @param sound sound id (checked by echoSoundFor)
    */
-  echoAlarmNodes(r, words) {
-    var _a;
+  echoAlarmNodes(r, words, sound) {
     const v = Number(r.alarmVolume);
-    const vol = r.alarmVolume !== "" && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
-    const sound = ECHO_SOUNDS[(_a = r.alarmSound) != null ? _a : "siren"] || "";
+    const vol = r.alarmVolume !== "" && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 100;
     const nodes = [{ command: "volume", value: vol }];
-    if (sound) {
-      nodes.push({ command: "sound", value: sound });
-    }
+    const sounds = (n) => {
+      for (let i = 0; sound && i < n; i++) {
+        nodes.push({ command: "sound", value: sound });
+      }
+    };
+    sounds(ECHO_SOUNDS_BEFORE);
     if (r.alarmText !== false && words) {
       nodes.push({ command: "speak", value: words });
     }
-    if (sound) {
-      nodes.push({ command: "sound", value: sound });
-    }
+    sounds(ECHO_SOUNDS_AFTER);
     return nodes;
   }
   /**
@@ -2666,19 +2733,23 @@ class HomeGuard extends utils.Adapter {
       return typeof v === "string" && v !== "" && v !== "undefined" && v !== "null" ? v : void 0;
     };
     const settings = {
-      alarmVolume: (_b = (_a = pick("volume")) != null ? _a : row == null ? void 0 : row.alarmVolume) != null ? _b : 80,
-      alarmSound: (_d = (_c = pick("sound")) != null ? _c : row == null ? void 0 : row.alarmSound) != null ? _d : "siren",
-      alarmText: ((_f = pick("text")) != null ? _f : String((_e = row == null ? void 0 : row.alarmText) != null ? _e : true)) !== "false"
+      alarmVolume: (_b = (_a = pick("volume")) != null ? _a : row == null ? void 0 : row.alarmVolume) != null ? _b : 100,
+      alarmText: ((_d = pick("text")) != null ? _d : String((_c = row == null ? void 0 : row.alarmText) != null ? _c : true)) !== "false"
     };
+    const sound = await this.echoSoundFor(device, (_f = (_e = pick("sound")) != null ? _e : row == null ? void 0 : row.alarmSound) != null ? _f : "siren");
     const st = await this.getForeignStateAsync(`${device}.Player.volume`).catch(() => null);
     const before = st && st.val !== null && Number.isFinite(Number(st.val)) ? Number(st.val) : void 0;
-    await this.echoSequence(device, this.echoAlarmNodes(settings, this.tr("Home Guard test")));
+    const nodes = this.echoAlarmNodes(settings, this.tr("Home Guard test"), sound);
+    await this.echoSequence(device, nodes);
     if (before !== void 0 && !this.echoAlarmUntil) {
-      this.setTimeout(() => {
-        if (!this.echoAlarmUntil) {
-          this.bg(this.echoSequence(device, [{ command: "volume", value: before }]), "echoTest");
-        }
-      }, 25e3);
+      this.setTimeout(
+        () => {
+          if (!this.echoAlarmUntil) {
+            this.bg(this.echoSequence(device, [{ command: "volume", value: before }]), "echoTest");
+          }
+        },
+        (this.echoRoundSecs(nodes) + 5) * 1e3
+      );
     }
     const name = await this.echoName(device, row == null ? void 0 : row.name);
     return { result: this.tr("Sent to %s \u2013 the sound should play in a few seconds", name) };

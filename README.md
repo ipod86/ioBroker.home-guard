@@ -185,7 +185,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 * (ipod86) new: option "Acknowledge only with the PIN" and state `control.ackPin` (write the PIN to acknowledge) – off by default; without it the message says clearly that the system stays armed
 * (ipod86) after acknowledging an alarm while armed, the next sensor triggers at once (no new entry delay)
 * (ipod86) new: "Test alarm sound" button for every Echo (Echo table and tab Actions & test)
-* (ipod86) fix: Echo alarm sounds really play now (Amazon routine sounds instead of SSML audio); volume is set back afterwards
+* (ipod86) fix: Echo alarm sounds really play now (Amazon routine sounds instead of SSML audio); volume is set back afterwards; mostly siren (3× before and after the announcement), rounds follow without a pause, default volume 100, a replacement sound if Amazon removes the chosen one
 * (ipod86) fix: walk test errors logged in English, zh-cn text translated, unused translations removed
 
 ### 0.5.2 (2026-11-25)

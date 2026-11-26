@@ -308,7 +308,7 @@
     "wizHasAlexa": false,
     "wizAlexaAlarm": false,
     "wizAlexaSim": false,
-    "wizEchoAlarmVolume": 80,
+    "wizEchoAlarmVolume": 100,
     "wizEchoAlarmSound": "siren",
     "wizEchoAlarmText": true,
     "wizEchoSimDevice": "",
