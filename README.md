@@ -151,6 +151,12 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (ipod86) new: option "Acknowledge only with the PIN" – off by default; without it the message says clearly that the system stays armed
+* (ipod86) after acknowledging an alarm while armed, the next sensor triggers at once (no new entry delay)
+* (ipod86) fix: Echo alarm sounds really play now (Amazon routine sounds instead of SSML audio); volume is set back afterwards
+* (ipod86) fix: walk test errors logged in English, zh-cn text translated, unused translations removed
+
 ### 0.5.2 (2026-11-25)
 * (ipod86) fix: clearer texts in the settings and the setup assistant; hints name the pages as the page list does
 
