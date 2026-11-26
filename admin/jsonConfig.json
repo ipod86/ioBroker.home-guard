@@ -1759,8 +1759,8 @@
 						},
 						"alarmRetrigger": {
 							"type": "checkbox",
-							"label": "Sound again when another sensor triggers",
-							"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – once per sensor. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
+							"label": "Sound again on further movement or another sensor",
+							"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – also when the same motion detector sees movement again. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -5570,8 +5570,8 @@
 				},
 				"alarmRetrigger": {
 					"type": "checkbox",
-					"label": "Sound again when another sensor triggers",
-					"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – once per sensor. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
+					"label": "Sound again on further movement or another sensor",
+					"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – also when the same motion detector sees movement again. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,

@@ -202,7 +202,7 @@ describe('AlarmEngine', () => {
 		expect(last.triggered).to.deep.equal(['BWM Flur']);
 	});
 
-	it('retrigger: after the alarm duration a further sensor sounds again, once per sensor - only when set', () => {
+	it('retrigger: after the alarm duration further movement sounds again (same detector too) - only when set', () => {
 		const t = setup({ exitDelayFull: 0, retrigger: true });
 		t.engine.arm('full', 'state');
 		t.engine.sensorChanged('win', 2);
@@ -215,8 +215,9 @@ describe('AlarmEngine', () => {
 		t.tick(181);
 		expect(t.outputs).to.deep.equal([true, false, true, false]);
 		t.engine.sensorChanged('pir2', false);
-		t.engine.sensorChanged('pir2', true); // same sensor again: nothing
-		expect(t.outputs).to.deep.equal([true, false, true, false]);
+		t.engine.sensorChanged('pir2', true); // the same detector sees movement again: sounds again
+		expect(t.outputs).to.deep.equal([true, false, true, false, true]);
+		expect(t.events.filter(e => e === 'alarmMore')).to.have.length(2); // but reported only once per sensor
 		const off = setup({ exitDelayFull: 0 });
 		off.engine.arm('full', 'state');
 		off.engine.sensorChanged('win', 2);

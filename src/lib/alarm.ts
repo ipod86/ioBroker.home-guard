@@ -44,7 +44,7 @@ export interface AlarmOptions {
 	/** open contacts when arming: refuse, warn, ignore, or bypass them until they are closed */
 	openCheck: 'refuse' | 'warn' | 'ignore' | 'bypass';
 	alarmDuration: number; // s
-	/** after the alarm duration: a further sensor starts the outputs again for one more alarm duration */
+	/** after the alarm duration: further movement or a further sensor starts the outputs again for one more alarm duration */
 	retrigger?: boolean;
 	motionCount: number;
 	motionWindowSec: number;
@@ -303,6 +303,16 @@ export class AlarmEngine {
 			// alarm already running: further sensors are collected and reported once each (where is the burglar?)
 			if (this.mode !== 'off' && circuitActive(s.circuit, this.mode) && !this.bypassed.has(s.id)) {
 				this.more(s);
+				// sirens already silent after the alarm duration (not acknowledged): any further movement or
+				// sensor - the same one again too - sounds again for one more alarm duration, when set so
+				if (
+					this.opts.retrigger &&
+					this.opts.alarmDuration > 0 &&
+					this.outputTimer === null &&
+					this.alarmActive
+				) {
+					this.startOutputs();
+				}
 			}
 			return;
 		}
@@ -513,10 +523,6 @@ export class AlarmEngine {
 		this.alarmIds.add(s.id);
 		this.alarmNames.push(s.name);
 		this.host.event('alarmMore', { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
-		// sirens already silent after the alarm duration (not acknowledged): sound again, when set so
-		if (this.opts.retrigger && this.opts.alarmDuration > 0 && this.outputTimer === null && this.alarmActive) {
-			this.startOutputs();
-		}
 	}
 
 	/**

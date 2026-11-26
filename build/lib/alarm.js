@@ -195,6 +195,9 @@ class AlarmEngine {
     if (this.phase === "alarm") {
       if (this.mode !== "off" && circuitActive(s.circuit, this.mode) && !this.bypassed.has(s.id)) {
         this.more(s);
+        if (this.opts.retrigger && this.opts.alarmDuration > 0 && this.outputTimer === null && this.alarmActive) {
+          this.startOutputs();
+        }
       }
       return;
     }
@@ -386,9 +389,6 @@ class AlarmEngine {
     this.alarmIds.add(s.id);
     this.alarmNames.push(s.name);
     this.host.event("alarmMore", { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
-    if (this.opts.retrigger && this.opts.alarmDuration > 0 && this.outputTimer === null && this.alarmActive) {
-      this.startOutputs();
-    }
   }
   /**
    * Panic alarm, also when disarmed
