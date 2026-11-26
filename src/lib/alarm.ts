@@ -69,6 +69,8 @@ export interface EventInfo {
 	panic?: boolean;
 	/** openWarning: the open contacts are bypassed until they are closed */
 	bypass?: boolean;
+	/** alarmEnd: the alarm was acknowledged - outputs off, the system stays armed */
+	acked?: boolean;
 }
 
 export interface AlarmStatus {
@@ -167,6 +169,8 @@ export class AlarmEngine {
 	private lastTrigger = '';
 	private lastTriggerTime = 0;
 	private alarmActive = false;
+	/** alarm acknowledged while armed: the same incident - a further sensor alarms at once, without entry delay */
+	private afterAck = false;
 	/** report-only sensors switched on (state control.report) */
 	reportOn = true;
 
@@ -310,7 +314,7 @@ export class AlarmEngine {
 			}
 			this.motionHits = [];
 		}
-		if (s.delayed && this.opts.entryDelay > 0) {
+		if (s.delayed && this.opts.entryDelay > 0 && !this.afterAck) {
 			if (this.phase === 'armed') {
 				this.startEntry(s);
 			}
@@ -348,6 +352,7 @@ export class AlarmEngine {
 		this.clearTimers();
 		this.stopOutputs();
 		this.alarmActive = false;
+		this.afterAck = false;
 		if (hadAlarm) {
 			this.host.event('alarmEnd', { mode, source });
 		}
@@ -489,7 +494,9 @@ export class AlarmEngine {
 		this.stopOutputs();
 		this.alarmActive = false;
 		this.phase = this.mode === 'off' ? 'disarmed' : 'armed';
-		this.host.event('alarmEnd', { mode: this.mode, source });
+		// still armed: whoever acknowledged is maybe not the owner - the next sensor alarms without entry delay
+		this.afterAck = this.mode !== 'off';
+		this.host.event('alarmEnd', { mode: this.mode, source, acked: true });
 		this.publish();
 	}
 
@@ -504,6 +511,7 @@ export class AlarmEngine {
 		this.clearTimers();
 		this.stopOutputs();
 		this.alarmActive = false;
+		this.afterAck = false;
 		this.mode = 'off';
 		this.armingMode = 'off';
 		this.phase = 'disarmed';

@@ -154,6 +154,8 @@ declare global {
 			pinDuress?: string;
 			pinForDisarmState: boolean;
 			pinForArm: boolean;
+			/** acknowledging an alarm only with the PIN (panel, message "ack" with pin); control.ack is refused then */
+			pinForAck: boolean;
 			maxWrongPin: number;
 			pinLockMin: number;
 			testNotify: boolean;

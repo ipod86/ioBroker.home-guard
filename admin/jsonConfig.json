@@ -2145,6 +2145,17 @@
 							"xl": 4,
 							"hidden": "!(data.alarmEnabled) || (!data.pin)"
 						},
+						"pinForAck": {
+							"type": "checkbox",
+							"label": "Acknowledge only with the PIN",
+							"help": "On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
+						},
 						"pinDuress": {
 							"type": "password",
 							"label": "Duress PIN (optional)",
@@ -5514,6 +5525,16 @@
 				"pinForArm": {
 					"type": "checkbox",
 					"label": "PIN also for arming",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4
+				},
+				"pinForAck": {
+					"type": "checkbox",
+					"label": "Acknowledge only with the PIN",
+					"help": "On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,

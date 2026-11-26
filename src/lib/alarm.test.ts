@@ -152,6 +152,22 @@ describe('AlarmEngine', () => {
 		expect(t.events).to.include('alarmEnd');
 	});
 
+	it('acknowledged while armed: the delayed door alarms at once, after disarm/arm the entry delay is back', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('win', true);
+		expect(t.status().phase).to.equal('alarm');
+		t.engine.ack('widget');
+		expect(t.status().phase).to.equal('armed');
+		t.engine.sensorChanged('door', true);
+		expect(t.status().phase).to.equal('alarm'); // no entry delay within the same incident
+		t.engine.disarm('pin');
+		t.engine.sensorChanged('door', false);
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('door', true);
+		expect(t.status().phase).to.equal('entry');
+	});
+
 	it('window opens: immediate alarm; closing does not trigger', () => {
 		const t = setup({ exitDelayFull: 0 });
 		t.engine.arm('perimeter', 'state');

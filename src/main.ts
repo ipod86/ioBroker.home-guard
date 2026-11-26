@@ -70,11 +70,14 @@ function rowRoles(row: SimLampRow): Set<LampType> {
 	return roles;
 }
 
-/** sounds of the Amazon sound library for the alarm on an Echo */
+/**
+ * sounds for the alarm on an Echo: ids of the Amazon routine sounds (alexa2 Commands.sound).
+ * An <audio> tag in SSML is silently dropped by Amazon outside of skills - only the routine sounds really play.
+ */
 const ECHO_SOUNDS: Record<string, string> = {
-	bell: 'soundbank://soundlibrary/alarms/beeps_and_bloops/bell_02',
-	siren: 'soundbank://soundlibrary/scifi/amzn_sfx_scifi_alarm_04',
-	horn: 'soundbank://soundlibrary/alarms/air_horns/air_horn_01',
+	bell: 'bell_02',
+	siren: 'amzn_sfx_scifi_alarm_04',
+	horn: 'air_horn_03',
 };
 
 /**
@@ -168,6 +171,8 @@ class HomeGuard extends utils.Adapter {
 	private echoAlarmTimer: ioBroker.Interval | undefined;
 	private echoAlarmUntil = 0;
 	private echoAlarmText = '';
+	/** volume of the Echos before the alarm, set again when it ends */
+	private echoVolBefore = new Map<string, number>();
 	/** switches of the evening and morning light (control.eveningOn …), all on for a new instance */
 	private lightSw: Record<LightSwitch, boolean> = {
 		eveningOn: true,
@@ -1285,8 +1290,15 @@ class HomeGuard extends utils.Adapter {
 				return;
 			case 'control.ack':
 				if (val) {
-					await this.endTest();
-					this.alarm.ack('state');
+					if (this.config.pin && this.config.pinForAck) {
+						// a state carries no PIN: acknowledging is only possible in the panel (or with control.pin)
+						this.log.warn(
+							'Acknowledging by state needs the PIN – use the panel or control.pin (see settings)',
+						);
+					} else {
+						await this.endTest();
+						this.alarm.ack('state');
+					}
 				}
 				await reset(false);
 				return;
@@ -1382,10 +1394,10 @@ class HomeGuard extends utils.Adapter {
 	 * checks a PIN; correct: switch to the mode, wrong: count
 	 *
 	 * @param pin entered PIN
-	 * @param mode mode to switch to when the PIN is right
+	 * @param mode mode to switch to when the PIN is right ('ack' = only acknowledge the alarm)
 	 * @param source who entered the PIN
 	 */
-	private checkPin(pin: string, mode: Mode, source: string): boolean {
+	private checkPin(pin: string, mode: Mode | 'ack', source: string): boolean {
 		const c = this.config;
 		if (c.pin && Date.now() < this.pinLockedUntil) {
 			// too many wrong entries: no PIN is checked until the lock time is over (against trying out)
@@ -1403,6 +1415,11 @@ class HomeGuard extends utils.Adapter {
 		if (!c.pin || pin === String(c.pin) || duress) {
 			this.wrongPin = 0;
 			this.bg(this.setStateAsync('status.wrongPin', 0, true), 'setStateAsync');
+			if (mode === 'ack') {
+				this.bg(this.endTest(), 'endTest');
+				this.alarm.ack(source);
+				return true;
+			}
 			if (mode === 'off') {
 				this.alarm.disarm(source);
 			} else {
@@ -1508,10 +1525,19 @@ class HomeGuard extends utils.Adapter {
 			case 'cancel':
 				this.alarm.cancelArming('message');
 				return reply({ ok: true });
-			case 'ack':
+			case 'ack': {
+				if (c.pin && c.pinForAck) {
+					const pin = str(msg.pin);
+					if (!pin) {
+						return reply({ ok: false, error: 'pin required' });
+					}
+					const ok = this.checkPin(pin, 'ack', str(msg.source, 'pin'));
+					return reply({ ok, error: ok ? undefined : this.pinError });
+				}
 				await this.endTest();
-				this.alarm.ack('message');
+				this.alarm.ack(str(msg.source, 'message'));
 				return reply({ ok: true });
+			}
 			case 'testAlarm':
 				return reply(await this.startTest(msg));
 			case 'panic':
@@ -1522,6 +1548,7 @@ class HomeGuard extends utils.Adapter {
 					...this.alarm.status(),
 					pinRequired: !!c.pin,
 					pinForArm: !!(c.pin && c.pinForArm),
+					pinForAck: !!(c.pin && c.pinForAck),
 					// only the length, so the panel can accept a complete PIN without OK - never the PIN itself
 					pinLength: c.pin ? String(c.pin).length : 0,
 					autoArmAvailable:
@@ -1999,7 +2026,10 @@ class HomeGuard extends utils.Adapter {
 				case 'alarm':
 					return info.panic ? T.panic(info.sensor?.name || '') : T.alarm(info.sensor?.name || '');
 				case 'alarmEnd':
-					return T.alarmEnd(this.src(info.source, T));
+					// acknowledged while armed: say clearly that it is not over - and whether a PIN was needed
+					return info.acked && info.mode && info.mode !== 'off'
+						? T.alarmAcked(this.src(info.source, T), !!c.pin && !c.pinForAck)
+						: T.alarmEnd(this.src(info.source, T));
 				case 'wrongPin':
 					return T.wrongPin(this.wrongPin);
 				case 'sabotage':
@@ -2054,7 +2084,8 @@ class HomeGuard extends utils.Adapter {
 				}
 				break;
 			case 'alarmEnd':
-				notify = c.notifyAlarmEnd;
+				// acknowledged while armed: always told - it may have been somebody else at the panel
+				notify = c.notifyAlarmEnd || (!!info.acked && !!info.mode && info.mode !== 'off');
 				this.stopRepeat();
 				break;
 			case 'wrongPin':
@@ -2838,7 +2869,12 @@ class HomeGuard extends utils.Adapter {
 				this.echoAlarmUntil = 0;
 				for (const r of echos) {
 					await this.setForeignStateAsync(`${r.device}.Commands.deviceStop`, true, false).catch(() => {});
+					const before = this.echoVolBefore.get(r.device);
+					if (before !== undefined) {
+						await this.echoSequence(r.device, [{ command: 'volume', value: before }]);
+					}
 				}
+				this.echoVolBefore.clear();
 			}
 			return;
 		}
@@ -2859,22 +2895,75 @@ class HomeGuard extends utils.Adapter {
 				.replace(/[<>&]/g, ' ');
 			for (const r of echos) {
 				try {
-					const vol = Number(r.alarmVolume);
-					await this.setForeignStateAsync(
-						`${r.device}.Commands.speak-volume`,
-						r.alarmVolume !== '' && r.alarmVolume != null && vol >= 0 && vol <= 100 ? Math.round(vol) : 80,
-						false,
-					);
+					const v = Number(r.alarmVolume);
+					const vol =
+						r.alarmVolume !== '' && r.alarmVolume != null && v >= 0 && v <= 100 ? Math.round(v) : 80;
 					const sound = ECHO_SOUNDS[r.alarmSound ?? 'siren'] || '';
-					const ssml = `<speak>${sound ? `<audio src="${sound}"/>` : ''}${r.alarmText !== false ? ` ${words}` : ''}</speak>`;
-					await this.setForeignStateAsync(`${r.device}.Commands.ssml`, ssml, false);
+					// one routine on the Echo, played one after the other: volume, sound, text, sound
+					const nodes: { command: string; value: string | number }[] = [{ command: 'volume', value: vol }];
+					if (sound) {
+						nodes.push({ command: 'sound', value: sound });
+					}
+					if (r.alarmText !== false && words) {
+						nodes.push({ command: 'speak', value: words });
+					}
+					if (sound) {
+						nodes.push({ command: 'sound', value: sound });
+					}
+					await this.echoSequence(r.device, nodes);
 				} catch (e) {
 					this.log.warn(`Echo ${r.device}: ${(e as Error).message}`);
 				}
 			}
 		};
+		// remember the volume once per alarm, to set it back afterwards
+		for (const r of echos) {
+			if (!this.echoVolBefore.has(r.device)) {
+				const st = await this.getForeignStateAsync(`${r.device}.Player.volume`).catch(() => null);
+				const before = Number(st?.val);
+				if (st && st.val !== null && Number.isFinite(before)) {
+					this.echoVolBefore.set(r.device, before);
+				}
+			}
+		}
 		await once();
 		this.echoAlarmTimer = this.setInterval(() => this.bg(once(), 'echoAlarm'), 20000);
+	}
+
+	/**
+	 * Plays commands on an Echo as one routine (alexa2 message sendSequenceCommand), strictly one after the other.
+	 * Older alexa2 without that message: the single command states (volume, sound, speak) as a fallback.
+	 *
+	 * @param device device object, e.g. alexa2.0.Echo-Devices.G090XX
+	 * @param nodes commands of alexa-remote (volume, sound, speak …) with their values
+	 */
+	private async echoSequence(device: string, nodes: { command: string; value: string | number }[]): Promise<void> {
+		const m = /^(alexa2\.\d+)\.Echo-Devices\.([^.]+)$/.exec(device);
+		if (!m || !nodes.length) {
+			return;
+		}
+		try {
+			const res = (await this.sendToAsync(
+				m[1],
+				'sendSequenceCommand',
+				{ deviceSerialNumber: m[2], sequenceNodes: nodes, sequenceType: 'SerialNode' },
+				{ timeout: 15000 },
+			)) as { error?: unknown } | undefined;
+			if (res && res.error) {
+				const err = res.error as { message?: string };
+				throw new Error(typeof res.error === 'string' ? res.error : err.message || JSON.stringify(res.error));
+			}
+			return;
+		} catch (e) {
+			this.log.debug(`Echo ${device}: routine not possible (${(e as Error).message}) - single commands instead`);
+		}
+		for (const n of nodes) {
+			const id = n.command === 'volume' ? `${device}.Player.volume` : `${device}.Commands.${n.command}`;
+			await this.setForeignStateAsync(id, n.value, false).catch(() => {});
+			if (n.command === 'sound') {
+				await new Promise<void>(res => this.setTimeout(() => res(), 4000));
+			}
+		}
 	}
 
 	/**

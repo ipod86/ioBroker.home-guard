@@ -568,5 +568,7 @@
 	"⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.": "⚠ Careful: with an empty or forgotten phone you count as not at home – the system then arms itself while you are inside, and opening a door triggers the alarm. Only choose this if everybody reliably carries a phone that the presence detection sees.",
 	"counts as unlocked": "counts as unlocked",
 	"not unlocked": "not unlocked",
-	"After disarming without presence": "After disarming without presence"
+	"After disarming without presence": "After disarming without presence",
+	"Acknowledge only with the PIN": "Acknowledge only with the PIN",
+	"On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\"."
 }

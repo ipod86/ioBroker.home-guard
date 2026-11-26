@@ -568,5 +568,7 @@
 	"✔ Everything important is set up.": "✔ Tutto ciò che è importante è impostato.",
 	"✔ Motion detectors or other detectors inside (presence sensor, light barrier, camera with motion detection …) – already set up": "✔ Rilevatori di movimento o altri rilevatori interni (sensore di presenza, barriera fotoelettrica, telecamera con rilevamento di movimento...) – già predisposti",
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ Sensori che dovrebbero segnalare solo, ad es. cancello da giardino, cassetta delle lettere o campanello – già predisposti",
-	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rilevatori di fumo, calore, acqua o gas o pulsante antipanico – già predisposti"
+	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ Rilevatori di fumo, calore, acqua o gas o pulsante antipanico – già predisposti",
+	"Acknowledge only with the PIN": "Conferma solo con il PIN",
+	"On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "Attivo: solo chi conosce il PIN può silenziare un allarme in corso (tastierino del pannello; control.ack viene rifiutato). Disattivo: chiunque al pannello può confermare – sirene e luci si spengono, ma il sistema resta inserito e qualsiasi altro sensore fa scattare subito di nuovo l'allarme; ricevi il messaggio «confermato senza PIN»."
 }

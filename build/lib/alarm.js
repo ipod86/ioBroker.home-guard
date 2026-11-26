@@ -89,6 +89,8 @@ class AlarmEngine {
   lastTrigger = "";
   lastTriggerTime = 0;
   alarmActive = false;
+  /** alarm acknowledged while armed: the same incident - a further sensor alarms at once, without entry delay */
+  afterAck = false;
   /** report-only sensors switched on (state control.report) */
   reportOn = true;
   // ---------- sensors ----------
@@ -209,7 +211,7 @@ class AlarmEngine {
       }
       this.motionHits = [];
     }
-    if (s.delayed && this.opts.entryDelay > 0) {
+    if (s.delayed && this.opts.entryDelay > 0 && !this.afterAck) {
       if (this.phase === "armed") {
         this.startEntry(s);
       }
@@ -239,6 +241,7 @@ class AlarmEngine {
     this.clearTimers();
     this.stopOutputs();
     this.alarmActive = false;
+    this.afterAck = false;
     if (hadAlarm) {
       this.host.event("alarmEnd", { mode, source });
     }
@@ -370,7 +373,8 @@ class AlarmEngine {
     this.stopOutputs();
     this.alarmActive = false;
     this.phase = this.mode === "off" ? "disarmed" : "armed";
-    this.host.event("alarmEnd", { mode: this.mode, source });
+    this.afterAck = this.mode !== "off";
+    this.host.event("alarmEnd", { mode: this.mode, source, acked: true });
     this.publish();
   }
   /**
@@ -384,6 +388,7 @@ class AlarmEngine {
     this.clearTimers();
     this.stopOutputs();
     this.alarmActive = false;
+    this.afterAck = false;
     this.mode = "off";
     this.armingMode = "off";
     this.phase = "disarmed";

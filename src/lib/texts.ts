@@ -30,6 +30,8 @@ const T = {
 		alarm: (name: string) => `🚨 ALARM: ${name}`,
 		panic: (src: string) => `🚨 PANIK-ALARM ausgelöst (${src})`,
 		alarmEnd: (src: string) => `✅ Alarm beendet${src}`,
+		alarmAcked: (src: string, noPin: boolean) =>
+			`🔕 Alarm quittiert${src}${noPin ? ' – ohne PIN' : ''}. Die Anlage bleibt scharf: jeder weitere Sensor löst sofort wieder aus`,
 		wrongPin: (n: number) => `🔢 ${n}× falsche PIN eingegeben`,
 		sabotage: (list: string) => `🔋 Keine Meldung mehr von: ${list}`,
 		hazard: (name: string) => `⚠️ Gefahrenmelder hat ausgelöst: ${name}`,
@@ -88,6 +90,8 @@ const T = {
 		alarm: (name: string) => `🚨 ALARM: ${name}`,
 		panic: (src: string) => `🚨 PANIC alarm triggered (${src})`,
 		alarmEnd: (src: string) => `✅ Alarm ended${src}`,
+		alarmAcked: (src: string, noPin: boolean) =>
+			`🔕 Alarm acknowledged${src}${noPin ? ' – without PIN' : ''}. The system stays armed: any further sensor triggers the alarm at once`,
 		wrongPin: (n: number) => `🔢 Wrong PIN entered ${n} times`,
 		sabotage: (list: string) => `🔋 No more reports from: ${list}`,
 		hazard: (name: string) => `⚠️ Danger detector triggered: ${name}`,

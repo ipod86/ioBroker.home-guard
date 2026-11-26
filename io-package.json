@@ -201,6 +201,7 @@
     "pinDuress": "",
     "pinForDisarmState": true,
     "pinForArm": false,
+    "pinForAck": false,
     "maxWrongPin": 3,
     "lockEnabled": false,
     "lockId": "",

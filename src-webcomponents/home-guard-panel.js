@@ -645,7 +645,19 @@ class HomeGuardPanel extends IobWebComponent {
 		} else if (a === 'cancel') {
 			await this.send('cancel', {});
 		} else if (a === 'ack') {
-			await this.send('ack', {});
+			// acknowledging can need the PIN as well (setting of the adapter)
+			if (info.pinForAck) {
+				this.pad = { mode: 'ack', pin: '' };
+				this.render();
+				return;
+			}
+			const r = await this.doMode('ack', '');
+			if (r && r.error === 'pin required') {
+				// the setting was switched on after the panel loaded
+				this.msg = '';
+				this.info = { ...info, pinForAck: true };
+				this.pad = { mode: 'ack', pin: '' };
+			}
 		} else if (a === 'light') {
 			const k = b.dataset.k;
 			await this.setState(`${this.inst}.control.${k}`, this.val(`control.${k}`) === false);
@@ -702,7 +714,12 @@ class HomeGuardPanel extends IobWebComponent {
 	 * @returns {Promise<object|null>} the answer of the adapter
 	 */
 	async doMode(mode, pin) {
-		const r = mode === 'off' ? await this.send('disarm', { pin }) : await this.send('arm', { mode, pin });
+		const r =
+			mode === 'ack'
+				? await this.send('ack', { pin })
+				: mode === 'off'
+					? await this.send('disarm', { pin })
+					: await this.send('arm', { mode, pin });
 		if (r && r.ok === false) {
 			this.msg =
 				r.error === 'wrong pin'
@@ -759,6 +776,10 @@ class HomeGuardPanel extends IobWebComponent {
 				: phase === 'disarmed'
 					? ''
 					: esc(t.mode[mode] || mode);
+		// keypad for acknowledging: pointless once the alarm is over (disarmed elsewhere, alarm time ended)
+		if (this.pad && this.pad.mode === 'ack' && phase !== 'alarm') {
+			this.pad = null;
+		}
 		const start = `<style>${STYLE}</style><div class="wrap">`;
 		let html = start;
 		html += `<div class="head ${phase}">${ICON[mode === 'off' ? (phase === 'alarm' ? 'shield' : 'disarmed') : mode] || ICON.shield}<div class="t"><div class="big">${esc(
