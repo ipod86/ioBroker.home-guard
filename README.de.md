@@ -170,7 +170,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.3 (2026-11-26)
 * (ipod86) neu: Option „Quittieren nur mit PIN“ und Datenpunkt `control.ackPin` (PIN schreiben zum Quittieren) – standardmäßig aus; ohne sie sagt die Meldung klar, dass die Anlage scharf bleibt; der Einrichtungsassistent erklärt Quittieren und Ausschalten ausführlich
 * (ipod86) nach dem Quittieren eines Alarms im scharfen Zustand löst der nächste Sensor sofort aus (keine neue Eingangsverzögerung)
 * (ipod86) neu: weitere Sensoren während eines laufenden Alarms werden je einmal gemeldet (Nachricht, Protokoll), die Echos sagen alle an; die Alarmdauer nennt jetzt Sirenen, Echos und Lampen; neue Option „Erneut Alarm geben bei weiterer Bewegung oder einem weiteren Sensor“ (nach Ablauf der Alarmdauer)
