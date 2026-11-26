@@ -91,6 +91,9 @@ class AlarmEngine {
   alarmActive = false;
   /** alarm acknowledged while armed: the same incident - a further sensor alarms at once, without entry delay */
   afterAck = false;
+  /** sensors that triggered during the running alarm (ids and names, the first one first) */
+  alarmIds = /* @__PURE__ */ new Set();
+  alarmNames = [];
   /** report-only sensors switched on (state control.report) */
   reportOn = true;
   // ---------- sensors ----------
@@ -186,6 +189,12 @@ class AlarmEngine {
         this.lastTrigger = s.name;
         this.lastTriggerTime = this.host.now();
         this.host.event("hazard", { mode: this.mode, sensor: s });
+      }
+      return;
+    }
+    if (this.phase === "alarm") {
+      if (this.mode !== "off" && circuitActive(s.circuit, this.mode) && !this.bypassed.has(s.id)) {
+        this.more(s);
       }
       return;
     }
@@ -338,12 +347,20 @@ class AlarmEngine {
    * @param panic true for the panic button
    */
   alarm(s, panic = false) {
+    if (this.phase !== "alarm") {
+      this.alarmIds.clear();
+      this.alarmNames = [];
+    }
+    if (!this.alarmIds.has(s.id)) {
+      this.alarmIds.add(s.id);
+      this.alarmNames.push(s.name);
+    }
     this.clearTimers();
     this.phase = "alarm";
     this.alarmActive = true;
     this.lastTrigger = s.name;
     this.lastTriggerTime = this.host.now();
-    this.host.event("alarm", { mode: this.mode, sensor: s, panic });
+    this.host.event("alarm", { mode: this.mode, sensor: s, panic, triggered: [...this.alarmNames] });
     this.host.outputs(true);
     if (this.opts.alarmDuration > 0) {
       this.outputTimer = this.host.setTimer(() => {
@@ -352,6 +369,19 @@ class AlarmEngine {
       }, this.opts.alarmDuration * 1e3);
     }
     this.publish();
+  }
+  /**
+   * A further sensor during a running alarm: reported once per sensor, the alarm itself goes on unchanged
+   *
+   * @param s the sensor
+   */
+  more(s) {
+    if (this.alarmIds.has(s.id)) {
+      return;
+    }
+    this.alarmIds.add(s.id);
+    this.alarmNames.push(s.name);
+    this.host.event("alarmMore", { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
   }
   /**
    * Panic alarm, also when disarmed

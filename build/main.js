@@ -1794,7 +1794,7 @@ class HomeGuard extends utils.Adapter {
    * @param info details
    */
   async onAlarmEvent(e, info) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     const c = this.config;
     const names = (info.sensors || []).map((s) => s.name).join(", ");
     if (e === "disarmed") {
@@ -1804,7 +1804,7 @@ class HomeGuard extends utils.Adapter {
       this.setArrived(false);
     }
     const textIn = (T) => {
-      var _a2, _b2, _c2, _d, _e;
+      var _a2, _b2, _c2, _d2, _e2, _f;
       switch (e) {
         case "armedFull":
         case "armedPerimeter":
@@ -1825,6 +1825,8 @@ class HomeGuard extends utils.Adapter {
           return T.entry(((_a2 = info.sensor) == null ? void 0 : _a2.name) || "", num(c.entryDelay, 30));
         case "alarm":
           return info.panic ? T.panic(((_b2 = info.sensor) == null ? void 0 : _b2.name) || "") : T.alarm(((_c2 = info.sensor) == null ? void 0 : _c2.name) || "");
+        case "alarmMore":
+          return T.alarmMore(((_d2 = info.sensor) == null ? void 0 : _d2.name) || "", this.nameList(info.triggered, T));
         case "alarmEnd":
           return info.acked && info.mode && info.mode !== "off" ? T.alarmAcked(this.src(info.source, T), !!c.pin && !c.pinForAck) : T.alarmEnd(this.src(info.source, T));
         case "wrongPin":
@@ -1832,9 +1834,9 @@ class HomeGuard extends utils.Adapter {
         case "sabotage":
           return T.sabotage(names);
         case "hazard":
-          return T.hazard(((_d = info.sensor) == null ? void 0 : _d.name) || "");
+          return T.hazard(((_e2 = info.sensor) == null ? void 0 : _e2.name) || "");
         case "report":
-          return T.report(((_e = info.sensor) == null ? void 0 : _e.name) || "");
+          return T.report(((_f = info.sensor) == null ? void 0 : _f.name) || "");
       }
       return "";
     };
@@ -1870,8 +1872,8 @@ class HomeGuard extends utils.Adapter {
         speech = c.speechAlarm;
         await this.setStateAsync("status.lastTrigger", ((_a = info.sensor) == null ? void 0 : _a.name) || "", true);
         await this.setStateAsync("status.lastTriggerTime", Date.now(), true);
-        this.echoAlarmText = text;
-        this.startRepeat(text);
+        this.echoAlarmText = ((_c = (_b = info.triggered) == null ? void 0 : _b.length) != null ? _c : 0) > 1 ? this.T.alarm(this.nameList(info.triggered, this.T)) : text;
+        this.startRepeat(this.echoAlarmText);
         if (c.notificationManager) {
           try {
             await this.registerNotification("home-guard", "alarm", text);
@@ -1880,6 +1882,14 @@ class HomeGuard extends utils.Adapter {
           }
         }
         break;
+      case "alarmMore": {
+        notify = c.notifyAlarm;
+        this.echoAlarmText = this.T.alarm(this.nameList(info.triggered, this.T));
+        if (this.repeatTimer) {
+          this.startRepeat(this.echoAlarmText);
+        }
+        break;
+      }
       case "alarmEnd":
         notify = c.notifyAlarmEnd || !!info.acked && !!info.mode && info.mode !== "off";
         this.stopRepeat();
@@ -1895,8 +1905,8 @@ class HomeGuard extends utils.Adapter {
         break;
       case "hazard":
         notify = c.notifyHazard !== false;
-        speech = ((_b = info.sensor) == null ? void 0 : _b.hazard) === "speech";
-        await this.setStateAsync("status.lastTrigger", ((_c = info.sensor) == null ? void 0 : _c.name) || "", true);
+        speech = ((_d = info.sensor) == null ? void 0 : _d.hazard) === "speech";
+        await this.setStateAsync("status.lastTrigger", ((_e = info.sensor) == null ? void 0 : _e.name) || "", true);
         await this.setStateAsync("status.lastTriggerTime", Date.now(), true);
         if (c.notificationManager) {
           try {
@@ -1913,12 +1923,26 @@ class HomeGuard extends utils.Adapter {
     this.addLog(e, text);
     this.log.info(textIn((0, import_texts.texts)("en")));
     if (notify) {
-      this.notifyAll(text, false, e === "alarm" || e === "entry" || e === "sabotage" || e === "hazard");
+      this.notifyAll(
+        text,
+        false,
+        e === "alarm" || e === "alarmMore" || e === "entry" || e === "sabotage" || e === "hazard"
+      );
     }
     if (speech && c.speechId) {
       await this.setForeignStateAsync(c.speechId, text.replace(/[^\p{L}\p{N}\s.,:–-]/gu, "").trim());
     }
     await this.runActions(e);
+  }
+  /**
+   * Names of the sensors of an alarm for messages and announcements: the first four, then "and n more"
+   *
+   * @param names sensor names, the first one first
+   * @param T texts of the language
+   */
+  nameList(names, T) {
+    const list = (names || []).filter(Boolean);
+    return list.slice(0, 4).join(", ") + (list.length > 4 ? T.andMore(list.length - 4) : "");
   }
   /**
    * Repeats the alarm message until it is acknowledged

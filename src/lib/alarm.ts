@@ -16,6 +16,7 @@ export type AlarmEvent =
 	| 'openWarning'
 	| 'entry'
 	| 'alarm'
+	| 'alarmMore'
 	| 'alarmEnd'
 	| 'wrongPin'
 	| 'sabotage'
@@ -71,6 +72,8 @@ export interface EventInfo {
 	bypass?: boolean;
 	/** alarmEnd: the alarm was acknowledged - outputs off, the system stays armed */
 	acked?: boolean;
+	/** alarm, alarmMore: names of all sensors that triggered during this alarm, the first one first */
+	triggered?: string[];
 }
 
 export interface AlarmStatus {
@@ -171,6 +174,9 @@ export class AlarmEngine {
 	private alarmActive = false;
 	/** alarm acknowledged while armed: the same incident - a further sensor alarms at once, without entry delay */
 	private afterAck = false;
+	/** sensors that triggered during the running alarm (ids and names, the first one first) */
+	private alarmIds = new Set<string>();
+	private alarmNames: string[] = [];
 	/** report-only sensors switched on (state control.report) */
 	reportOn = true;
 
@@ -291,8 +297,15 @@ export class AlarmEngine {
 			}
 			return;
 		}
+		if (this.phase === 'alarm') {
+			// alarm already running: further sensors are collected and reported once each (where is the burglar?)
+			if (this.mode !== 'off' && circuitActive(s.circuit, this.mode) && !this.bypassed.has(s.id)) {
+				this.more(s);
+			}
+			return;
+		}
 		if (this.phase !== 'armed' && this.phase !== 'entry') {
-			return; // disarmed, exit delay running, or alarm already active
+			return; // disarmed or exit delay running
 		}
 		if (!circuitActive(s.circuit, this.mode)) {
 			return;
@@ -457,12 +470,20 @@ export class AlarmEngine {
 	 * @param panic true for the panic button
 	 */
 	alarm(s: SensorDef, panic = false): void {
+		if (this.phase !== 'alarm') {
+			this.alarmIds.clear();
+			this.alarmNames = [];
+		}
+		if (!this.alarmIds.has(s.id)) {
+			this.alarmIds.add(s.id);
+			this.alarmNames.push(s.name);
+		}
 		this.clearTimers();
 		this.phase = 'alarm';
 		this.alarmActive = true;
 		this.lastTrigger = s.name;
 		this.lastTriggerTime = this.host.now();
-		this.host.event('alarm', { mode: this.mode, sensor: s, panic });
+		this.host.event('alarm', { mode: this.mode, sensor: s, panic, triggered: [...this.alarmNames] });
 		this.host.outputs(true);
 		if (this.opts.alarmDuration > 0) {
 			this.outputTimer = this.host.setTimer(() => {
@@ -471,6 +492,20 @@ export class AlarmEngine {
 			}, this.opts.alarmDuration * 1000);
 		}
 		this.publish();
+	}
+
+	/**
+	 * A further sensor during a running alarm: reported once per sensor, the alarm itself goes on unchanged
+	 *
+	 * @param s the sensor
+	 */
+	private more(s: SensorDef): void {
+		if (this.alarmIds.has(s.id)) {
+			return;
+		}
+		this.alarmIds.add(s.id);
+		this.alarmNames.push(s.name);
+		this.host.event('alarmMore', { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
 	}
 
 	/**

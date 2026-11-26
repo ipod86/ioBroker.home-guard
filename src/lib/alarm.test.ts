@@ -1,5 +1,13 @@
 import { expect } from 'chai';
-import { AlarmEngine, isOpenValue, type AlarmEvent, type AlarmHost, type AlarmStatus, type SensorDef } from './alarm';
+import {
+	AlarmEngine,
+	isOpenValue,
+	type AlarmEvent,
+	type AlarmHost,
+	type AlarmStatus,
+	type EventInfo,
+	type SensorDef,
+} from './alarm';
 
 /**
  * Fake host with a manual clock
@@ -9,6 +17,7 @@ import { AlarmEngine, isOpenValue, type AlarmEvent, type AlarmHost, type AlarmSt
 function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 	engine: AlarmEngine;
 	events: AlarmEvent[];
+	infos: EventInfo[];
 	outputs: boolean[];
 	status: () => AlarmStatus;
 	tick: (sec: number) => void;
@@ -17,6 +26,7 @@ function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 	let timers: { at: number; fn: () => void; id: number }[] = [];
 	let nextId = 1;
 	const events: AlarmEvent[] = [];
+	const infos: EventInfo[] = [];
 	const outputs: boolean[] = [];
 	let last: AlarmStatus | null = null;
 	const host: AlarmHost = {
@@ -32,7 +42,10 @@ function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 		publish: s => {
 			last = s;
 		},
-		event: e => events.push(e),
+		event: (e, info) => {
+			events.push(e);
+			infos.push(info);
+		},
 		outputs: on => outputs.push(on),
 	};
 	const engine = new AlarmEngine(host, {
@@ -94,7 +107,7 @@ function setup(opts: Partial<AlarmEngine['opts']> = {}): {
 		}
 		now = end;
 	};
-	return { engine, events, outputs, status: () => last ?? engine.status(), tick };
+	return { engine, events, infos, outputs, status: () => last ?? engine.status(), tick };
 }
 
 describe('isOpenValue', () => {
@@ -166,6 +179,27 @@ describe('AlarmEngine', () => {
 		t.engine.arm('full', 'state');
 		t.engine.sensorChanged('door', true);
 		expect(t.status().phase).to.equal('entry');
+	});
+
+	it('further sensors during the alarm are reported once each with the list, the alarm goes on', () => {
+		const t = setup({ exitDelayFull: 0 });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('win', 2);
+		t.engine.sensorChanged('pir1', true); // one detector alone is enough during an alarm
+		t.engine.sensorChanged('pir1', false);
+		t.engine.sensorChanged('pir1', true); // the same sensor again: no second message
+		t.engine.sensorChanged('door', true); // delayed door: no entry delay, just reported
+		expect(t.events.filter(e => e === 'alarmMore')).to.have.length(2);
+		expect(t.infos[t.infos.length - 1].triggered).to.deep.equal(['Küchenfenster', 'BWM Flur', 'Haustür']);
+		expect(t.status().phase).to.equal('alarm');
+		expect(t.outputs.filter(o => o)).to.have.length(1); // sirens were not started again
+		// a new alarm after acknowledging starts a new list
+		t.engine.ack('widget');
+		t.engine.sensorChanged('pir2', true);
+		t.engine.sensorChanged('pir1', false);
+		t.engine.sensorChanged('pir1', true);
+		const last = t.infos[t.events.lastIndexOf('alarm')];
+		expect(last.triggered).to.deep.equal(['BWM Flur']);
 	});
 
 	it('window opens: immediate alarm; closing does not trigger', () => {

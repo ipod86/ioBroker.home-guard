@@ -1746,7 +1746,7 @@
 						},
 						"alarmDuration": {
 							"type": "number",
-							"label": "Alarm duration for lamps and sirens (s, 0 = until acknowledged)",
+							"label": "Alarm duration for sirens, Echos and lamps (s, 0 = until acknowledged)",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -1754,7 +1754,7 @@
 							"xl": 4,
 							"min": 0,
 							"max": 3600,
-							"help": "How long lamps blink and sirens sound. 0 = until somebody switches the alarm off. Suggestion: 180 s – an outdoor siren usually may not sound any longer.",
+							"help": "How long sirens sound, Echos play the alarm and lamps blink – for every alarm. 0 = until somebody acknowledges or switches off. Suggestion: 180 s – an outdoor siren usually must not sound any longer. A single siren can stop earlier with its own duration in the siren table. The messages and the logbook are not affected.",
 							"hidden": "!(data.alarmEnabled)"
 						},
 						"openCheck": {
@@ -4242,7 +4242,7 @@
 						"wizAlexaAlarm": {
 							"type": "checkbox",
 							"label": "Use the Echos for the alarm (sound and announcement)",
-							"help": "All Echos play a loud sound and read the alarm aloud, every 20 seconds while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
+							"help": "All Echos play the alarm sound several times and announce which sensors triggered, round after round while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
 							"xs": 12,
 							"sm": 12,
 							"md": 12,
@@ -5547,7 +5547,7 @@
 				},
 				"alarmDuration": {
 					"type": "number",
-					"label": "Alarm duration for lamps and sirens (s, 0 = until acknowledged)",
+					"label": "Alarm duration for sirens, Echos and lamps (s, 0 = until acknowledged)",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,
@@ -7692,7 +7692,7 @@
 				},
 				"al0h": {
 					"type": "staticText",
-					"text": "All Echos play a loud sound and read the alarm aloud, every 20 seconds while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
+					"text": "All Echos play the alarm sound several times and announce which sensors triggered, round after round while the alarm runs – as long as your sirens (alarm duration; with 0 until somebody acknowledges or disarms). An Echo is an addition to a real siren, not a replacement: it needs the internet and the Amazon login, and it can be unplugged.",
 					"xs": 12,
 					"sm": 12,
 					"md": 12,
