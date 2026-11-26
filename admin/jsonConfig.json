@@ -2122,6 +2122,16 @@
 							"xl": 12,
 							"hidden": "!(data.alarmEnabled)"
 						},
+						"w12pt": {
+							"type": "staticText",
+							"text": "The PIN protects switching off: with a PIN, only somebody who knows it can disarm the alarm system – in the panel, on the wall tablet or on the phone. Without a PIN, anybody who can reach the panel can switch it off – a burglar too. Choose 4 to 6 digits that are not easy to guess (no birthday, no 1234). The options below appear once a PIN is entered.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled)"
+						},
 						"pin": {
 							"type": "password",
 							"label": "PIN (empty = no PIN)",
@@ -2143,12 +2153,55 @@
 							"md": 6,
 							"lg": 4,
 							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)",
+							"help": "On: arming also asks for the PIN in the panel. Arming by state (control.mode, scripts, automations) is then refused. Off: anybody can arm – harmless, because arming never weakens the protection. Usually leave this off."
+						},
+						"pinForDisarmState": {
+							"type": "checkbox",
+							"label": "Disarm by state only with the PIN",
+							"help": "On: switching off by state (control.mode, control.off, scripts, a button in another visualisation) is refused – only the PIN written to control.pin, the panel or the door lock disarm. Recommended when other systems or visualisations can write to ioBroker states. Off: every script and every visualisation can switch off without the PIN.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
+						},
+						"w12ackh": {
+							"type": "header",
+							"text": "Acknowledge or switch off?",
+							"size": 5,
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
+						},
+						"w12ackt": {
+							"type": "staticText",
+							"text": "When the alarm sounds, it can be stopped in two ways. Switch off (disarm): the alarm system is off – this always needs the PIN. Acknowledge: sirens, alarm lights and Echos go quiet, but the alarm system stays armed – any further sensor triggers the alarm again at once, without entry delay.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
+							"hidden": "!(data.alarmEnabled) || (!data.pin)"
+						},
+						"w12ackt2": {
+							"type": "staticText",
+							"text": "Acknowledge without PIN (default): anybody at the panel can stop a false alarm, e.g. children or a guest without the PIN. A burglar who presses \"Acknowledge\" only gets silence: the system stays armed, the next door or motion detector raises the alarm again, and you get the message \"Alarm acknowledged – without PIN\". Acknowledge with PIN: only somebody with the PIN can silence the alarm – choose this if it should keep sounding until somebody with the PIN is there.",
+							"xs": 12,
+							"sm": 12,
+							"md": 12,
+							"lg": 12,
+							"xl": 12,
 							"hidden": "!(data.alarmEnabled) || (!data.pin)"
 						},
 						"pinForAck": {
 							"type": "checkbox",
 							"label": "Acknowledge only with the PIN",
-							"help": "On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".",
+							"help": "On: only somebody with the PIN can silence a running alarm (keypad in the panel, or the PIN written to control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens, lights and Echos stop, the system stays armed, and you get the message \"Alarm acknowledged – without PIN\".",
 							"xs": 12,
 							"sm": 12,
 							"md": 6,
@@ -5532,7 +5585,7 @@
 					"md": 6,
 					"lg": 4,
 					"xl": 4,
-					"help": "control.mode/control.off do not disarm then – only control.pin, the panel or the lock"
+					"help": "On: switching off by state (control.mode, control.off, scripts, a button in another visualisation) is refused – only the PIN written to control.pin, the panel or the door lock disarm. Recommended when other systems or visualisations can write to ioBroker states. Off: every script and every visualisation can switch off without the PIN."
 				},
 				"pinForArm": {
 					"type": "checkbox",
@@ -5541,12 +5594,13 @@
 					"sm": 12,
 					"md": 6,
 					"lg": 4,
-					"xl": 4
+					"xl": 4,
+					"help": "On: arming also asks for the PIN in the panel. Arming by state (control.mode, scripts, automations) is then refused. Off: anybody can arm – harmless, because arming never weakens the protection. Usually leave this off."
 				},
 				"pinForAck": {
 					"type": "checkbox",
 					"label": "Acknowledge only with the PIN",
-					"help": "On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".",
+					"help": "On: only somebody with the PIN can silence a running alarm (keypad in the panel, or the PIN written to control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens, lights and Echos stop, the system stays armed, and you get the message \"Alarm acknowledged – without PIN\".",
 					"xs": 12,
 					"sm": 12,
 					"md": 6,

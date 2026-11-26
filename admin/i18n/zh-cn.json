@@ -509,7 +509,6 @@
 	"between two times": "两个时间之间",
 	"camera – often false alarms": "摄像头 – 经常误报",
 	"closed": "已关闭",
-	"control.mode/control.off do not disarm then – only control.pin, the panel or the lock": "此时 control.mode/control.off 不会撤防 – 只有 control.pin、面板或门锁可以",
 	"counts as unlocked": "视为已解锁",
 	"delayed": "延时",
 	"e.g. \"30-90\" = between half an hour and an hour and a half, random each time.": "例如“30-90”= 半小时到一个半小时之间，每次随机。",
@@ -570,7 +569,6 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ 应仅报告的传感器，例如花园大门、信箱或门铃 – 已设置",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置",
 	"Acknowledge only with the PIN": "仅凭 PIN 确认报警",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "开启：只有知道 PIN 的人才能使正在进行的报警静音（面板键盘或 control.ackPin；control.ack 会被拒绝）。关闭：面板前的任何人都可以确认——警报器和灯光关闭，但系统仍保持布防，任何其他传感器都会立即再次触发报警；您会收到“未使用 PIN 确认”的消息。",
 	"Test": "测试",
 	"Test alarm sound": "测试报警声",
 	"Test an Echo": "测试 Echo",
@@ -578,5 +576,12 @@
 	"Choose an Echo first": "请先选择一个 Echo",
 	"Home Guard test": "Home Guard 测试",
 	"Sent to %s – the sound should play in a few seconds": "已发送到 %s——几秒钟后应会响起声音",
-	"not used for the alarm": "未用于报警"
+	"not used for the alarm": "未用于报警",
+	"The PIN protects switching off: with a PIN, only somebody who knows it can disarm the alarm system – in the panel, on the wall tablet or on the phone. Without a PIN, anybody who can reach the panel can switch it off – a burglar too. Choose 4 to 6 digits that are not easy to guess (no birthday, no 1234). The options below appear once a PIN is entered.": "PIN 码保护撤防：设置 PIN 后，只有知道它的人才能撤防报警系统——无论在面板、墙面平板还是手机上。没有 PIN，任何能接触到面板的人都能关闭它——包括窃贼。请选择 4 到 6 位不易猜到的数字（不要用生日，不要用 1234）。输入 PIN 后才会显示下面的选项。",
+	"On: arming also asks for the PIN in the panel. Arming by state (control.mode, scripts, automations) is then refused. Off: anybody can arm – harmless, because arming never weakens the protection. Usually leave this off.": "开启：在面板中布防也需要输入 PIN。此时通过状态布防（control.mode、脚本、自动化）会被拒绝。关闭：任何人都可以布防——这没有风险，因为布防从不会削弱保护。通常保持关闭。",
+	"On: switching off by state (control.mode, control.off, scripts, a button in another visualisation) is refused – only the PIN written to control.pin, the panel or the door lock disarm. Recommended when other systems or visualisations can write to ioBroker states. Off: every script and every visualisation can switch off without the PIN.": "开启：通过状态撤防（control.mode、control.off、脚本、其他可视化界面中的按钮）会被拒绝——只有写入 control.pin 的 PIN、面板或门锁才能撤防。当其他系统或可视化界面可以写入 ioBroker 状态时推荐开启。关闭：任何脚本和可视化界面都可以不用 PIN 撤防。",
+	"Acknowledge or switch off?": "确认还是撤防？",
+	"When the alarm sounds, it can be stopped in two ways. Switch off (disarm): the alarm system is off – this always needs the PIN. Acknowledge: sirens, alarm lights and Echos go quiet, but the alarm system stays armed – any further sensor triggers the alarm again at once, without entry delay.": "报警响起时，有两种方式让它停下。撤防：报警系统关闭——这始终需要 PIN。确认：警笛、报警灯和 Echo 安静下来，但报警系统仍保持布防——任何其他传感器都会立即再次触发报警，没有进入延时。",
+	"Acknowledge without PIN (default): anybody at the panel can stop a false alarm, e.g. children or a guest without the PIN. A burglar who presses \"Acknowledge\" only gets silence: the system stays armed, the next door or motion detector raises the alarm again, and you get the message \"Alarm acknowledged – without PIN\". Acknowledge with PIN: only somebody with the PIN can silence the alarm – choose this if it should keep sounding until somebody with the PIN is there.": "无需 PIN 确认（默认）：面板前的任何人都可以停止误报，例如孩子或没有 PIN 的客人。按下“确认”的窃贼只会得到安静：系统仍保持布防，下一扇门或下一个移动探测器会再次触发报警，你会收到“报警已确认——未使用 PIN”的消息。需 PIN 确认：只有知道 PIN 的人才能让报警静音——如果报警应一直响到有知道 PIN 的人到场，请选择此项。",
+	"On: only somebody with the PIN can silence a running alarm (keypad in the panel, or the PIN written to control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens, lights and Echos stop, the system stays armed, and you get the message \"Alarm acknowledged – without PIN\".": "开启：只有知道 PIN 的人才能让正在进行的报警静音（面板上的键盘，或写入 control.ackPin 的 PIN；control.ack 会被拒绝）。关闭：面板前的任何人都可以确认——警笛、灯光和 Echo 停止，系统仍保持布防，你会收到“报警已确认——未使用 PIN”的消息。"
 }
