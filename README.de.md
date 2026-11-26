@@ -102,6 +102,7 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | Tasten |
 | `control.cancel`, `control.ack`, `control.panic` | Scharfschalten abbrechen, Alarm quittieren, Panikalarm |
 | `control.pin` | PIN schreiben zum Unscharfschalten |
+| `control.ackPin` | PIN schreiben zum Quittieren eines laufenden Alarms – Sirenen, Licht und Echos gehen aus, die Anlage bleibt scharf |
 | `control.report` | Melde-Sensoren ein/aus |
 | `control.eveningOn` / `control.eveningOff` | Abendlicht: automatisch an / aus (auch als Schalter im Panel; „an“ abends eingeschaltet: die Lampen gehen sofort an) |
 | `control.morningOn` / `control.morningOff` | Morgenlicht: automatisch an / aus |
@@ -112,6 +113,7 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `simulation.learned`, `simulation.learnedDays` | gelernte Tage |
 
 Ist *Entschärfen per Datenpunkt nur mit PIN* gesetzt, schalten `control.mode` und `control.off` nicht unscharf – nur `control.pin`, das Panel oder das Türschloss.
+Ist *Quittieren nur mit PIN* gesetzt, wird `control.ack` abgelehnt – dann `control.ackPin`, das Panel oder `sendTo(… 'ack', { pin })` nutzen. Beide PIN-Datenpunkte leeren sich sofort wieder; falsche Eingaben zählen zur PIN-Sperre.
 
 ## Skripte (sendTo)
 
@@ -121,6 +123,7 @@ sendTo('home-guard.0', 'arm', { mode: 'perimeter', pin: '1234' });              
 sendTo('home-guard.0', 'disarm', { pin: '1234' });
 sendTo('home-guard.0', 'cancel', {});      // Ausgangsverzögerung abbrechen
 sendTo('home-guard.0', 'ack', {});         // Alarm quittieren
+sendTo('home-guard.0', 'ack', { pin: '1234' }); // bei „Quittieren nur mit PIN“
 sendTo('home-guard.0', 'panic', {});
 sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
@@ -141,7 +144,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) neu: Option „Quittieren nur mit PIN“ – standardmäßig aus; ohne sie sagt die Meldung klar, dass die Anlage scharf bleibt
+* (ipod86) neu: Option „Quittieren nur mit PIN“ und Datenpunkt `control.ackPin` (PIN schreiben zum Quittieren) – standardmäßig aus; ohne sie sagt die Meldung klar, dass die Anlage scharf bleibt
 * (ipod86) nach dem Quittieren eines Alarms im scharfen Zustand löst der nächste Sensor sofort aus (keine neue Eingangsverzögerung)
 * (ipod86) fix: Alarmtöne auf dem Echo werden jetzt wirklich abgespielt (Amazon-Routinentöne statt SSML-Audio); die Lautstärke wird danach zurückgesetzt
 * (ipod86) fix: Gehtest-Fehler englisch geloggt, zh-cn-Text übersetzt, ungenutzte Übersetzungen entfernt

@@ -1122,7 +1122,7 @@ class HomeGuard extends utils.Adapter {
         if (val) {
           if (this.config.pin && this.config.pinForAck) {
             this.log.warn(
-              "Acknowledging by state needs the PIN \u2013 use the panel or control.pin (see settings)"
+              "Acknowledging by control.ack needs the PIN \u2013 write the PIN to control.ackPin instead (see settings)"
             );
           } else {
             await this.endTest();
@@ -1141,6 +1141,13 @@ class HomeGuard extends utils.Adapter {
         await reset("");
         if (val !== "" && val !== null) {
           this.checkPin(String(val), "off", "pin");
+        }
+        return;
+      }
+      case "control.ackPin": {
+        await reset("");
+        if (val !== "" && val !== null) {
+          this.checkPin(String(val), "ack", "pin");
         }
         return;
       }

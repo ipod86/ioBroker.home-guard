@@ -114,6 +114,7 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `control.full`, `control.perimeter`, `control.night`, `control.off` | buttons |
 | `control.cancel`, `control.ack`, `control.panic` | cancel arming, acknowledge alarm, panic alarm |
 | `control.pin` | write the PIN to disarm |
+| `control.ackPin` | write the PIN to acknowledge a running alarm – sirens, lights and Echos stop, the system stays armed |
 | `control.report` | report-only sensors on/off |
 | `control.eveningOn` / `control.eveningOff` | evening light: switch on / off automatically (also switches in the panel; "on" switched on in the evening: the lamps go on at once) |
 | `control.morningOn` / `control.morningOff` | morning light: switch on / off automatically |
@@ -124,6 +125,7 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `simulation.learned`, `simulation.learnedDays` | learned days |
 
 If *Disarming by data point only with the PIN* is set, `control.mode` and `control.off` cannot disarm – only `control.pin`, the panel or the door lock.
+If *Acknowledge only with the PIN* is set, `control.ack` is refused – use `control.ackPin`, the panel or `sendTo(… 'ack', { pin })`. Both PIN states empty themselves at once; wrong entries count towards the PIN lock.
 
 ### Scripts (sendTo)
 
@@ -133,6 +135,7 @@ sendTo('home-guard.0', 'arm', { mode: 'perimeter', pin: '1234' });              
 sendTo('home-guard.0', 'disarm', { pin: '1234' });
 sendTo('home-guard.0', 'cancel', {});      // cancel the exit delay
 sendTo('home-guard.0', 'ack', {});         // acknowledge the alarm
+sendTo('home-guard.0', 'ack', { pin: '1234' }); // with "Acknowledge only with the PIN"
 sendTo('home-guard.0', 'panic', {});
 sendTo('home-guard.0', 'testAlarm', { notify: true, lamps: true, sirens: false, duration: 15 }, res => log(res.result));
 sendTo('home-guard.0', 'status', {}, status => log(JSON.stringify(status)));
@@ -152,7 +155,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (ipod86) new: option "Acknowledge only with the PIN" – off by default; without it the message says clearly that the system stays armed
+* (ipod86) new: option "Acknowledge only with the PIN" and state `control.ackPin` (write the PIN to acknowledge) – off by default; without it the message says clearly that the system stays armed
 * (ipod86) after acknowledging an alarm while armed, the next sensor triggers at once (no new entry delay)
 * (ipod86) fix: Echo alarm sounds really play now (Amazon routine sounds instead of SSML audio); volume is set back afterwards
 * (ipod86) fix: walk test errors logged in English, zh-cn text translated, unused translations removed

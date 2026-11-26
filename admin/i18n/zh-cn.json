@@ -570,5 +570,5 @@
 	"✔ Sensors that should only report, e.g. garden gate, letter box or doorbell – already set up": "✔ 应仅报告的传感器，例如花园大门、信箱或门铃 – 已设置",
 	"✔ Smoke, heat, water or gas detectors, or a panic button – already set up": "✔ 烟雾、热量、水或气体探测器或紧急按钮 – 已设置",
 	"Acknowledge only with the PIN": "仅凭 PIN 确认报警",
-	"On: only somebody with the PIN can silence a running alarm (panel keypad; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "开启：只有知道 PIN 的人才能使正在进行的报警静音（面板键盘；control.ack 会被拒绝）。关闭：面板前的任何人都可以确认——警报器和灯光关闭，但系统仍保持布防，任何其他传感器都会立即再次触发报警；您会收到“未使用 PIN 确认”的消息。"
+	"On: only somebody with the PIN can silence a running alarm (panel keypad or control.ackPin; control.ack is refused). Off: anybody at the panel can acknowledge – sirens and lights stop, but the system stays armed and any further sensor triggers the alarm at once; you get a message \"acknowledged without PIN\".": "开启：只有知道 PIN 的人才能使正在进行的报警静音（面板键盘或 control.ackPin；control.ack 会被拒绝）。关闭：面板前的任何人都可以确认——警报器和灯光关闭，但系统仍保持布防，任何其他传感器都会立即再次触发报警；您会收到“未使用 PIN 确认”的消息。"
 }

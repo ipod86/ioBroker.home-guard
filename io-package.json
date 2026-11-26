@@ -1201,6 +1201,31 @@
       "native": {}
     },
     {
+      "_id": "control.ackPin",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Enter PIN (acknowledges the alarm, stays armed)",
+          "de": "PIN eingeben (quittiert den Alarm, bleibt scharf)",
+          "ru": "Ввести PIN (подтверждает тревогу, охрана остаётся)",
+          "pt": "Introduzir PIN (confirma o alarme, continua ativado)",
+          "nl": "Pincode invoeren (bevestigt het alarm, blijft ingeschakeld)",
+          "fr": "Saisir le PIN (acquitte l'alarme, reste armé)",
+          "it": "Inserire PIN (conferma l'allarme, resta inserito)",
+          "es": "Introducir PIN (confirma la alarma, sigue armado)",
+          "pl": "Wprowadź PIN (potwierdza alarm, pozostaje uzbrojony)",
+          "uk": "Ввести PIN (підтверджує тривогу, охорона залишається)",
+          "zh-cn": "输入 PIN（确认报警，保持布防）"
+        },
+        "type": "string",
+        "role": "text",
+        "read": false,
+        "write": true,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
       "_id": "control.autoArm",
       "type": "state",
       "common": {

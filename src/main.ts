@@ -1291,9 +1291,9 @@ class HomeGuard extends utils.Adapter {
 			case 'control.ack':
 				if (val) {
 					if (this.config.pin && this.config.pinForAck) {
-						// a state carries no PIN: acknowledging is only possible in the panel (or with control.pin)
+						// a button carries no PIN: control.ackPin (PIN as value), the panel or message "ack" with pin
 						this.log.warn(
-							'Acknowledging by state needs the PIN – use the panel or control.pin (see settings)',
+							'Acknowledging by control.ack needs the PIN – write the PIN to control.ackPin instead (see settings)',
 						);
 					} else {
 						await this.endTest();
@@ -1312,6 +1312,14 @@ class HomeGuard extends utils.Adapter {
 				await reset('');
 				if (val !== '' && val !== null) {
 					this.checkPin(String(val), 'off', 'pin');
+				}
+				return;
+			}
+			case 'control.ackPin': {
+				// PIN as value: only acknowledges (sirens, lights, Echos off) - the system stays armed
+				await reset('');
+				if (val !== '' && val !== null) {
+					this.checkPin(String(val), 'ack', 'pin');
 				}
 				return;
 			}
