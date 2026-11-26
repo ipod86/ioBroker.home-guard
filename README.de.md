@@ -112,8 +112,35 @@ Eine Lampe in der Tabelle kann mehrere Rollen zugleich haben (z. B. die Küche a
 | `simulation.next`, `simulation.plan` | nächster Schritt und Plan des Abends |
 | `simulation.learned`, `simulation.learnedDays` | gelernte Tage |
 
-Ist *Entschärfen per Datenpunkt nur mit PIN* gesetzt, schalten `control.mode` und `control.off` nicht unscharf – nur `control.pin`, das Panel oder das Türschloss.
+Ist *Unscharf schalten per Datenpunkt nur mit PIN* gesetzt, schalten `control.mode` und `control.off` nicht unscharf – nur `control.pin`, das Panel oder das Türschloss.
 Ist *Quittieren nur mit PIN* gesetzt, wird `control.ack` abgelehnt – dann `control.ackPin`, das Panel oder `sendTo(… 'ack', { pin })` nutzen. Beide PIN-Datenpunkte leeren sich sofort wieder; falsche Eingaben zählen zur PIN-Sperre.
+
+## Bedienung über Datenpunkte (ohne Widget)
+
+Alles, was das Bedienfeld kann, geht auch über die Datenpunkte unter `home-guard.0.control` – im Admin (Reiter *Objekte*: Wert anklicken, eintragen, speichern), in Blockly (Baustein „steuere“), in einem JavaScript-Skript oder per Taste in jeder Visualisierung. Tasten bekommen `true` und gehen von selbst auf `false` zurück; die PIN-Datenpunkte leeren sich sofort wieder, die PIN bleibt also nirgends sichtbar stehen.
+
+| Was | Datenpunkt und Wert |
+|---|---|
+| Vollschutz | `control.full` = `true` (oder `control.mode` = `full`) |
+| Hüllschutz | `control.perimeter` = `true` (oder `control.mode` = `perimeter`) |
+| Nachtschutz | `control.night` = `true` (oder `control.mode` = `night`) |
+| Scharfschalten abbrechen (Ausgangsverzögerung läuft) | `control.cancel` = `true` |
+| Unscharf mit PIN | `control.pin` = deine PIN, z. B. `1234` – beendet auch einen laufenden Alarm |
+| Unscharf ohne PIN | `control.off` = `true` (oder `control.mode` = `off`) – nur wenn *Unscharf schalten per Datenpunkt nur mit PIN* **aus** ist |
+| Alarm quittieren mit PIN | `control.ackPin` = deine PIN – Sirenen, Licht und Echos gehen aus, die Anlage **bleibt scharf** |
+| Alarm quittieren ohne PIN | `control.ack` = `true` – nur wenn *Quittieren nur mit PIN* **aus** ist |
+| Panikalarm | `control.panic` = `true` |
+
+Was passiert ist, zeigen die `status`-Datenpunkte: `status.mode` und `status.phase` (`disarmed`, `arming`, `armed`, `entry`, `alarm`), `status.countdown` (Sekunden der Aus- oder Eingangsverzögerung), `status.alarm`, `status.openContacts` (was noch offen ist), `status.wrongPin` (falsche Eingaben in Folge) und `status.text` (die letzte Meldung). Ein abgelehnter Befehl (falsche PIN, PIN gesperrt, Taste laut Einstellungen nicht erlaubt) ändert nichts und steht im ioBroker-Log.
+
+```js
+setState('home-guard.0.control.full', true);       // Vollschutz scharf
+setState('home-guard.0.control.pin', '1234');      // mit PIN unscharf
+setState('home-guard.0.control.ackPin', '1234');   // Alarm mit PIN quittieren, bleibt scharf
+on({ id: 'home-guard.0.status.phase', change: 'ne' }, obj => log(`Home Guard: ${obj.state.val}`));
+```
+
+Ist *PIN auch zum Scharfschalten* eingeschaltet, wird Scharfschalten per Datenpunkt abgelehnt – dann im Bedienfeld oder per `sendTo` scharf schalten (siehe unten).
 
 ## Skripte (sendTo)
 

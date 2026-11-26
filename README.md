@@ -124,8 +124,35 @@ A lamp in the table can have several roles at once (e.g. the kitchen as evening 
 | `simulation.next`, `simulation.plan` | next step and plan of the evening |
 | `simulation.learned`, `simulation.learnedDays` | learned days |
 
-If *Disarming by data point only with the PIN* is set, `control.mode` and `control.off` cannot disarm – only `control.pin`, the panel or the door lock.
+If *Disarm by state only with the PIN* is set, `control.mode` and `control.off` cannot disarm – only `control.pin`, the panel or the door lock.
 If *Acknowledge only with the PIN* is set, `control.ack` is refused – use `control.ackPin`, the panel or `sendTo(… 'ack', { pin })`. Both PIN states empty themselves at once; wrong entries count towards the PIN lock.
+
+### Operating with states (without the widget)
+
+Everything the panel does also works with the states under `home-guard.0.control` – in the admin (tab *Objects*: click the value, enter it, save), in Blockly ("control" block), in a JavaScript script or with a button in any visualisation. Buttons take `true` and go back to `false` by themselves; the PIN states empty themselves at once, so the PIN never stays visible.
+
+| What | State and value |
+|---|---|
+| Full protection | `control.full` = `true` (or `control.mode` = `full`) |
+| Perimeter protection | `control.perimeter` = `true` (or `control.mode` = `perimeter`) |
+| Night protection | `control.night` = `true` (or `control.mode` = `night`) |
+| Cancel arming (exit delay running) | `control.cancel` = `true` |
+| Disarm with the PIN | `control.pin` = your PIN, e.g. `1234` – also ends a running alarm |
+| Disarm without the PIN | `control.off` = `true` (or `control.mode` = `off`) – only if *Disarm by state only with the PIN* is **off** |
+| Acknowledge the alarm with the PIN | `control.ackPin` = your PIN – sirens, lights and Echos stop, the system **stays armed** |
+| Acknowledge without the PIN | `control.ack` = `true` – only if *Acknowledge only with the PIN* is **off** |
+| Panic alarm | `control.panic` = `true` |
+
+What happened is shown in the `status` states: `status.mode` and `status.phase` (`disarmed`, `arming`, `armed`, `entry`, `alarm`), `status.countdown` (seconds of the exit or entry delay), `status.alarm`, `status.openContacts` (what is still open), `status.wrongPin` (wrong entries in a row) and `status.text` (the last message). A refused command (wrong PIN, PIN locked, button not allowed by the settings) changes nothing and is written to the ioBroker log.
+
+```js
+setState('home-guard.0.control.full', true);       // arm full protection
+setState('home-guard.0.control.pin', '1234');      // disarm with the PIN
+setState('home-guard.0.control.ackPin', '1234');   // acknowledge the alarm with the PIN, stays armed
+on({ id: 'home-guard.0.status.phase', change: 'ne' }, obj => log(`Home Guard: ${obj.state.val}`));
+```
+
+With *PIN also for arming* switched on, arming by state is refused – then arm in the panel or with `sendTo` (see below).
 
 ### Scripts (sendTo)
 
