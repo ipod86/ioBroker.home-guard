@@ -181,7 +181,7 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.5.3 (2026-11-26)
 * (ipod86) new: option "Acknowledge only with the PIN" and state `control.ackPin` (write the PIN to acknowledge) – off by default; without it the message says clearly that the system stays armed; the setup assistant explains acknowledging and switching off in detail
 * (ipod86) after acknowledging an alarm while armed, the next sensor triggers at once (no new entry delay)
 * (ipod86) new: further sensors during a running alarm are reported once each (message, logbook) and the Echos announce all of them; the alarm duration now names sirens, Echos and lamps; new option "Sound again on further movement or another sensor" (after the alarm duration)
@@ -205,19 +205,6 @@ Home Guard is a home automation helper, not a certified alarm system. It depends
 ### 0.4.0 (2026-11-20)
 * (ipod86) feat: "tilted is OK" per window handle, bypass open contacts when arming, duress PIN, walk test
 * (ipod86) fix: setup assistant – sensor rows without a tick no longer count as "already set up"; the automatic search ticks the matching question instead
-
-### 0.3.4 (2026-11-20)
-* (ipod86) fix: review findings – logs in English only, failures of background tasks are logged, texts of the setup assistant and the test alarm in all admin languages, corrected translations
-* (ipod86) change: admin – wide tables (sensors, lamps, Echos, messengers) as cards, reaction only for danger detectors, Alexa page in the assistant also for Echos already set up, clearer texts
-
-### 0.3.3 (2026-11-20)
-* (ipod86) feat: new column "ignore at home" in the sensor table – doors and windows you open at home (e.g. the bedroom window) are ignored in perimeter and night protection, with an info log line when opened
-
-### 0.3.2 (2026-11-19)
-* (ipod86) feat: automatic search also finds sensors without functions and lists them unticked in the sensor table
-* (ipod86) feat: notification tab shows the status of the notification manager
-* (ipod86) change: shorter messenger settings
-* (ipod86) fix: better detection in the search (aliases, door locks, contacts, doorbells, thermostat windows)
 
 Older changelogs are available in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
