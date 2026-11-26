@@ -146,6 +146,7 @@ declare global {
 			entryDelay: number;
 			openCheck: 'refuse' | 'warn' | 'ignore' | 'bypass';
 			alarmDuration: number;
+			alarmRetrigger: boolean;
 			nightEnabled: boolean;
 			nightStart: string;
 			nightEnd: string;

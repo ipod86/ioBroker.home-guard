@@ -173,7 +173,7 @@ Home Guard ist eine Hausautomations-Hilfe, keine zertifizierte Alarmanlage. Sie 
 ### **WORK IN PROGRESS**
 * (ipod86) neu: Option „Quittieren nur mit PIN“ und Datenpunkt `control.ackPin` (PIN schreiben zum Quittieren) – standardmäßig aus; ohne sie sagt die Meldung klar, dass die Anlage scharf bleibt; der Einrichtungsassistent erklärt Quittieren und Ausschalten ausführlich
 * (ipod86) nach dem Quittieren eines Alarms im scharfen Zustand löst der nächste Sensor sofort aus (keine neue Eingangsverzögerung)
-* (ipod86) neu: weitere Sensoren während eines laufenden Alarms werden je einmal gemeldet (Nachricht, Protokoll), die Echos sagen alle an; die Alarmdauer nennt jetzt Sirenen, Echos und Lampen
+* (ipod86) neu: weitere Sensoren während eines laufenden Alarms werden je einmal gemeldet (Nachricht, Protokoll), die Echos sagen alle an; die Alarmdauer nennt jetzt Sirenen, Echos und Lampen; neue Option „Erneut Alarm geben, wenn ein weiterer Sensor auslöst“ (nach Ablauf der Alarmdauer, einmal pro Sensor)
 * (ipod86) neu: Knopf „Alarmton testen“ für jeden Echo (Echo-Tabelle und Reiter Aktionen & Test)
 * (ipod86) fix: Alarmtöne auf dem Echo werden jetzt wirklich abgespielt (Amazon-Routinentöne statt SSML-Audio); die Lautstärke wird danach zurückgesetzt; überwiegend Sirene (3× vor und nach der Ansage), Durchgänge ohne Pause hintereinander, Standard-Lautstärke 100, Ersatzton, falls Amazon den gewählten Ton entfernt
 * (ipod86) fix: Gehtest-Fehler englisch geloggt, zh-cn-Text übersetzt, ungenutzte Übersetzungen entfernt

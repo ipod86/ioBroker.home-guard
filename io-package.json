@@ -194,6 +194,7 @@
     "entryDelay": 30,
     "openCheck": "warn",
     "alarmDuration": 180,
+    "alarmRetrigger": false,
     "nightEnabled": false,
     "nightStart": "22:30",
     "nightEnd": "06:30",

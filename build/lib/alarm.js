@@ -361,6 +361,11 @@ class AlarmEngine {
     this.lastTrigger = s.name;
     this.lastTriggerTime = this.host.now();
     this.host.event("alarm", { mode: this.mode, sensor: s, panic, triggered: [...this.alarmNames] });
+    this.startOutputs();
+    this.publish();
+  }
+  /** alarm outputs on, for the alarm duration (0 = until acknowledged or disarmed) */
+  startOutputs() {
     this.host.outputs(true);
     if (this.opts.alarmDuration > 0) {
       this.outputTimer = this.host.setTimer(() => {
@@ -368,7 +373,6 @@ class AlarmEngine {
         this.host.outputs(false);
       }, this.opts.alarmDuration * 1e3);
     }
-    this.publish();
   }
   /**
    * A further sensor during a running alarm: reported once per sensor, the alarm itself goes on unchanged
@@ -382,6 +386,9 @@ class AlarmEngine {
     this.alarmIds.add(s.id);
     this.alarmNames.push(s.name);
     this.host.event("alarmMore", { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
+    if (this.opts.retrigger && this.opts.alarmDuration > 0 && this.outputTimer === null && this.alarmActive) {
+      this.startOutputs();
+    }
   }
   /**
    * Panic alarm, also when disarmed

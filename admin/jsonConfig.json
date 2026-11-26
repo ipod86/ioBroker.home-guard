@@ -1757,6 +1757,17 @@
 							"help": "How long sirens sound, Echos play the alarm and lamps blink – for every alarm. 0 = until somebody acknowledges or switches off. Suggestion: 180 s – an outdoor siren usually must not sound any longer. A single siren can stop earlier with its own duration in the siren table. The messages and the logbook are not affected.",
 							"hidden": "!(data.alarmEnabled)"
 						},
+						"alarmRetrigger": {
+							"type": "checkbox",
+							"label": "Sound again when another sensor triggers",
+							"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – once per sensor. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
+							"xs": 12,
+							"sm": 12,
+							"md": 6,
+							"lg": 4,
+							"xl": 4,
+							"hidden": "!(data.alarmEnabled) || !(Number(data.alarmDuration) > 0)"
+						},
 						"openCheck": {
 							"type": "select",
 							"label": "Open doors/windows when arming",
@@ -5554,7 +5565,19 @@
 					"lg": 4,
 					"xl": 4,
 					"min": 0,
-					"max": 3600
+					"max": 3600,
+					"help": "How long sirens sound, Echos play the alarm and lamps blink – for every alarm. 0 = until somebody acknowledges or switches off. Suggestion: 180 s – an outdoor siren usually must not sound any longer. A single siren can stop earlier with its own duration in the siren table. The messages and the logbook are not affected."
+				},
+				"alarmRetrigger": {
+					"type": "checkbox",
+					"label": "Sound again when another sensor triggers",
+					"help": "Only when the alarm duration has run out and nobody has acknowledged yet: a further sensor (e.g. a motion detector inside) starts sirens, Echos and lamps again for one more alarm duration – once per sensor. Off: further sensors are only reported (message and logbook). Note: an outdoor siren can then sound longer than 3 minutes in total – check what is allowed where you live.",
+					"xs": 12,
+					"sm": 12,
+					"md": 6,
+					"lg": 4,
+					"xl": 4,
+					"hidden": "!(Number(data.alarmDuration) > 0)"
 				},
 				"h3": {
 					"type": "header",

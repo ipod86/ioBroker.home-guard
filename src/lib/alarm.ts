@@ -44,6 +44,8 @@ export interface AlarmOptions {
 	/** open contacts when arming: refuse, warn, ignore, or bypass them until they are closed */
 	openCheck: 'refuse' | 'warn' | 'ignore' | 'bypass';
 	alarmDuration: number; // s
+	/** after the alarm duration: a further sensor starts the outputs again for one more alarm duration */
+	retrigger?: boolean;
 	motionCount: number;
 	motionWindowSec: number;
 	/** report-only sensors: only while armed, or always */
@@ -484,6 +486,12 @@ export class AlarmEngine {
 		this.lastTrigger = s.name;
 		this.lastTriggerTime = this.host.now();
 		this.host.event('alarm', { mode: this.mode, sensor: s, panic, triggered: [...this.alarmNames] });
+		this.startOutputs();
+		this.publish();
+	}
+
+	/** alarm outputs on, for the alarm duration (0 = until acknowledged or disarmed) */
+	private startOutputs(): void {
 		this.host.outputs(true);
 		if (this.opts.alarmDuration > 0) {
 			this.outputTimer = this.host.setTimer(() => {
@@ -491,7 +499,6 @@ export class AlarmEngine {
 				this.host.outputs(false);
 			}, this.opts.alarmDuration * 1000);
 		}
-		this.publish();
 	}
 
 	/**
@@ -506,6 +513,10 @@ export class AlarmEngine {
 		this.alarmIds.add(s.id);
 		this.alarmNames.push(s.name);
 		this.host.event('alarmMore', { mode: this.mode, sensor: s, triggered: [...this.alarmNames] });
+		// sirens already silent after the alarm duration (not acknowledged): sound again, when set so
+		if (this.opts.retrigger && this.opts.alarmDuration > 0 && this.outputTimer === null && this.alarmActive) {
+			this.startOutputs();
+		}
 	}
 
 	/**

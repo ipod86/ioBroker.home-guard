@@ -202,6 +202,30 @@ describe('AlarmEngine', () => {
 		expect(last.triggered).to.deep.equal(['BWM Flur']);
 	});
 
+	it('retrigger: after the alarm duration a further sensor sounds again, once per sensor - only when set', () => {
+		const t = setup({ exitDelayFull: 0, retrigger: true });
+		t.engine.arm('full', 'state');
+		t.engine.sensorChanged('win', 2);
+		t.engine.sensorChanged('pir1', true); // still sounding: only reported
+		expect(t.outputs).to.deep.equal([true]);
+		t.tick(181);
+		expect(t.outputs).to.deep.equal([true, false]);
+		t.engine.sensorChanged('pir2', true);
+		expect(t.outputs).to.deep.equal([true, false, true]);
+		t.tick(181);
+		expect(t.outputs).to.deep.equal([true, false, true, false]);
+		t.engine.sensorChanged('pir2', false);
+		t.engine.sensorChanged('pir2', true); // same sensor again: nothing
+		expect(t.outputs).to.deep.equal([true, false, true, false]);
+		const off = setup({ exitDelayFull: 0 });
+		off.engine.arm('full', 'state');
+		off.engine.sensorChanged('win', 2);
+		off.tick(181);
+		off.engine.sensorChanged('pir1', true);
+		expect(off.outputs).to.deep.equal([true, false]);
+		expect(off.events).to.include('alarmMore');
+	});
+
 	it('window opens: immediate alarm; closing does not trigger', () => {
 		const t = setup({ exitDelayFull: 0 });
 		t.engine.arm('perimeter', 'state');

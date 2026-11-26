@@ -306,6 +306,7 @@ class HomeGuard extends utils.Adapter {
 				entryDelay: clamp(num(c.entryDelay, 30), 0, 600),
 				openCheck: c.openCheck || 'warn',
 				alarmDuration: clamp(num(c.alarmDuration, 180), 0, 3600),
+				retrigger: !!c.alarmRetrigger,
 				motionCount: clamp(num(c.motionCount, 2), 1, 10),
 				motionWindowSec: clamp(num(c.motionWindowSec, 120), 10, 1800),
 				reportWhen: c.reportWhen === 'always' ? 'always' : 'armed',
